@@ -4,27 +4,29 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import QtQuick 2.15
+import QtQuick
 
-import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.core as PlasmaCore
+import org.kde.ksvg as KSvg
+import org.kde.plasma.plasmoid
 
-PlasmaCore.SvgItem {
+KSvg.SvgItem {
     id: arrow
 
     anchors {
-        bottom: icon.bottom
+        bottom: arrow.parent.bottom
         horizontalCenter: iconBox.horizontalCenter
     }
 
-    visible: task.m.IsGroupParent === true
+    visible: parent.model.IsGroupParent
 
     states: [
         State {
             name: "top"
-            when: plasmoid.location === PlasmaCore.Types.TopEdge
+            when: Plasmoid.location === PlasmaCore.Types.TopEdge
             AnchorChanges {
                 target: arrow
-                anchors.top: icon.top
+                anchors.top: arrow.parent.top
                 anchors.left: undefined
                 anchors.right: undefined
                 anchors.bottom: undefined
@@ -34,11 +36,11 @@ PlasmaCore.SvgItem {
         },
         State {
             name: "left"
-            when: plasmoid.location === PlasmaCore.Types.LeftEdge
+            when: Plasmoid.location === PlasmaCore.Types.LeftEdge
             AnchorChanges {
                 target: arrow
                 anchors.top: undefined
-                anchors.left: icon.left
+                anchors.left: arrow.parent.left
                 anchors.right: undefined
                 anchors.bottom: undefined
                 anchors.horizontalCenter: undefined
@@ -47,12 +49,12 @@ PlasmaCore.SvgItem {
         },
         State {
             name: "right"
-            when: plasmoid.location === PlasmaCore.Types.RightEdge
+            when: Plasmoid.location === PlasmaCore.Types.RightEdge
             AnchorChanges {
                 target: arrow
                 anchors.top: undefined
                 anchors.left: undefined
-                anchors.right: icon.right
+                anchors.right: arrow.parent.right
                 anchors.bottom: undefined
                 anchors.horizontalCenter: undefined
                 anchors.verticalCenter: iconBox.verticalCenter
@@ -63,20 +65,20 @@ PlasmaCore.SvgItem {
     implicitWidth: Math.min(naturalSize.width, iconBox.width)
     implicitHeight: Math.min(naturalSize.height, iconBox.width)
 
-    svg: taskSvg
+    imagePath: "widgets/tasks"
     elementId: elementForLocation()
 
-    function elementForLocation() {
-        switch (plasmoid.location) {
-            case PlasmaCore.Types.LeftEdge:
-                return "group-expander-left";
-            case PlasmaCore.Types.TopEdge:
-                return "group-expander-top";
-            case PlasmaCore.Types.RightEdge:
-                return "group-expander-right";
-            case PlasmaCore.Types.BottomEdge:
-            default:
-                return "group-expander-bottom";
+    function elementForLocation(): string {
+        switch (Plasmoid.location) {
+        case PlasmaCore.Types.LeftEdge:
+            return "group-expander-left";
+        case PlasmaCore.Types.TopEdge:
+            return "group-expander-top";
+        case PlasmaCore.Types.RightEdge:
+            return "group-expander-right";
+        case PlasmaCore.Types.BottomEdge:
+        default:
+            return "group-expander-bottom";
         }
     }
 }

@@ -18,7 +18,7 @@
       <label>Whether to show only tasks that are on the current activity.</label>
       <default>true</default>
     </entry>
-    <entry name="showOnlyMinimized" type="Int">
+    <entry name="showOnlyMinimized" type="Bool">
       <label>Whether to show only window tasks that are minmized.</label>
       <default>false</default>
     </entry>
@@ -62,6 +62,10 @@
       <label>Whether launcher tasks are sorted separately at the left side of the widget or can be mixed with other tasks.</label>
       <default>true</default>
     </entry>
+    <entry name="hideLauncherOnStart" type="Bool">
+      <label>Whether launcher tasks should be hidden when their application is launched.</label>
+      <default>true</default>
+    </entry>
     <entry name="maxStripes" type="Int">
       <label>The maximum number of rows (in a horizontal-orientation containment, i.e. panel) or columns (in a vertical-orientation containment) to layout task buttons in.</label>
       <default>1</default>
@@ -79,6 +83,15 @@
     <entry name="showToolTips" type="Bool">
       <label>Whether to show tooltips when hovering task buttons.</label>
       <default>true</default>
+    </entry>
+    <entry name="taskMaxWidth" type="Enum">
+      <label>Tune the max width of task items.</label>
+      <choices>
+        <choice name="Narrow"/>
+        <choice name="Medium"/>
+        <choice name="Wide"/>
+      </choices>
+      <default>1</default>
     </entry>
     <entry name="wheelEnabled" type="Bool">
       <label>Whether using the mouse wheel with the mouse pointer above the widget should switch between tasks.</label>
@@ -123,6 +136,10 @@
     <entry name="iconSizeOverride" type="Bool">
       <label>Use icon size instead of scale.</label>
       <default>false</default>
+    </entry>
+    <entry name="fill" type="Bool">
+      <label>Whether task manager should occupy all available space.</label>
+      <default>true</default>
     </entry>
     <entry name="taskHoverEffect" type="Bool">
       <label>Whether task buttons should change in appearance when the mouse pointer is above them.</label>
@@ -279,4 +296,3 @@
   </group>
 
 </kcfg>
-

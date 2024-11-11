@@ -4,25 +4,25 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import org.kde.kirigami 2.19 as Kirigami
-import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.kcmutils as KCMUtils
+import org.kde.kirigami as Kirigami
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.plasmoid
 
-import org.kde.plasma.private.taskmanager 0.1 as TaskManagerApplet
+import org.kde.plasma.workspace.dbus as DBus
 
-Item {
-    width: childrenRect.width
-    height: childrenRect.height
-
+KCMUtils.SimpleKCM {
     property alias cfg_groupingStrategy: groupingStrategy.currentIndex
     property alias cfg_groupedTaskVisualization: groupedTaskVisualization.currentIndex
     property alias cfg_groupPopups: groupPopups.checked
     property alias cfg_onlyGroupWhenFull: onlyGroupWhenFull.checked
     property alias cfg_sortingStrategy: sortingStrategy.currentIndex
     property alias cfg_separateLaunchers: separateLaunchers.checked
+    property alias cfg_hideLauncherOnStart: hideLauncherOnStart.checked
     property alias cfg_middleClickAction: middleClickAction.currentIndex
     property alias cfg_wheelEnabled: wheelEnabled.checked
     property alias cfg_wheelSkipMinimized: wheelSkipMinimized.checked
@@ -35,8 +35,10 @@ Item {
     property alias cfg_reverseMode: reverseMode.checked
     property alias cfg_iconOnly: iconOnly.currentIndex
 
-    TaskManagerApplet.Backend {
-        id: backend
+    DBus.DBusServiceWatcher {
+        id: effectWatcher
+        busType: DBus.BusType.Session
+        watchedService: "org.kde.KWin.Effect.WindowView1"
     }
 
     Kirigami.FormLayout {
@@ -53,47 +55,39 @@ Item {
 
         ComboBox {
             id: groupingStrategy
-            Kirigami.FormData.label: i18n("Group:")
+            Kirigami.FormData.label: i18nc("@label:listbox how to group tasks", "Group:")
             Layout.fillWidth: true
             Layout.minimumWidth: Kirigami.Units.gridUnit * 14
-            model: [i18n("Do not group"), i18n("By program name")]
+            model: [
+                i18nc("@item:inlistbox how to group tasks", "Do not group"),
+                i18nc("@item:inlistbox how to group tasks", "By program name")
+            ]
         }
 
         ComboBox {
             id: groupedTaskVisualization
-            Kirigami.FormData.label: i18n("Clicking grouped task:")
+            Kirigami.FormData.label: i18nc("@label:listbox completes sentence like: … cycles through tasks", "Clicking grouped task:")
             Layout.fillWidth: true
             Layout.minimumWidth: Kirigami.Units.gridUnit * 14
 
             enabled: groupingStrategy.currentIndex !== 0
 
             model: [
-                i18nc("Completes the sentence 'Clicking grouped task cycles through tasks' ", "Cycles through tasks"),
-                i18nc("Completes the sentence 'Clicking grouped task shows tooltip window thumbnails' ", "Shows tooltip window thumbnails"),
-                i18nc("Completes the sentence 'Clicking grouped task shows windows side by side' ", "Shows windows side by side"),
-                i18nc("Completes the sentence 'Clicking grouped task shows textual list' ", "Shows textual list"),
+                i18nc("@item:inlistbox Completes the sentence 'Clicking grouped task cycles through tasks' ", "Cycles through tasks"),
+                i18nc("@item:inlistbox Completes the sentence 'Clicking grouped task shows small window previews' ", "Shows small window previews"),
+                i18nc("@item:inlistbox Completes the sentence 'Clicking grouped task shows large window previews' ", "Shows large window previews"),
+                i18nc("@item:inlistbox Completes the sentence 'Clicking grouped task shows textual list' ", "Shows textual list"),
             ]
-        }
-        // "You asked for Tooltips but Tooltips are disabled" message
-        Kirigami.InlineMessage {
-            Layout.fillWidth: true
-            visible: groupedTaskVisualization.currentIndex === 1 && !plasmoid.configuration.showToolTips && backend.windowViewAvailable
-            type: Kirigami.MessageType.Warning
-            text: i18n("Tooltips are disabled, so the windows will be displayed side by side instead.")
-        }
-        // "You asked for Tooltips but Tooltips are disabled and Window View is not available" message
-        Kirigami.InlineMessage {
-            Layout.fillWidth: true
-            visible: groupedTaskVisualization.currentIndex === 1 && !plasmoid.configuration.showToolTips && !backend.windowViewAvailable
-            type: Kirigami.MessageType.Warning
-            text: i18n("Tooltips are disabled, and the compositor does not support displaying windows side by side, so a textual list will be displayed instead")
+
+            Accessible.name: currentText
+            Accessible.onPressAction: currentIndex = currentIndex === count - 1 ? 0 : (currentIndex + 1)
         }
         // "You asked for Window View but Window View is not available" message
         Kirigami.InlineMessage {
             Layout.fillWidth: true
-            visible: groupedTaskVisualization.currentIndex === 2 && !backend.windowViewAvailable
+            visible: groupedTaskVisualization.currentIndex === 2 && !effectWatcher.registered
             type: Kirigami.MessageType.Warning
-            text: i18n("The compositor does not support displaying windows side by side, so a textual list will be displayed instead.")
+            text: i18nc("@info displayed as InlineMessage", "The compositor does not support displaying windows side by side, so a textual list will be displayed instead.")
         }
 
         Item {
@@ -103,35 +97,48 @@ Item {
         CheckBox {
             id: groupPopups
             visible: (!plasmoid.configuration.iconOnly)
-            text: i18n("Combine into single button")
+            text: i18nc("@option:check grouped task", "Combine into single button")
             enabled: groupingStrategy.currentIndex > 0
         }
 
         CheckBox {
             id: onlyGroupWhenFull
             visible: (!plasmoid.configuration.iconOnly)
-            text: i18n("Group only when the Task Manager is full")
+            text: i18nc("@option:check grouped task","Group only when the Task Manager is full")
             enabled: groupingStrategy.currentIndex > 0 && groupPopups.checked
+            Accessible.onPressAction: toggle()
         }
 
         Item {
             Kirigami.FormData.isSection: true
-            visible: (!plasmoid.configuration.iconOnly)
+            visible: (Plasmoid.pluginName !== "org.kde.plasma.icontasks")
         }
 
         ComboBox {
             id: sortingStrategy
-            Kirigami.FormData.label: i18n("Sort:")
+            Kirigami.FormData.label: i18nc("@label:listbox sort tasks in grouped task", "Sort:")
             Layout.fillWidth: true
             Layout.minimumWidth: Kirigami.Units.gridUnit * 14
-            model: [i18n("Do not sort"), i18n("Manually"), i18n("Alphabetically"), i18n("By desktop"), i18n("By activity")]
+            model: [
+                i18nc("@item:inlistbox sort tasks in grouped task", "Do not sort"),
+                i18nc("@item:inlistbox sort tasks in grouped task", "Manually"),
+                i18nc("@item:inlistbox sort tasks in grouped task", "Alphabetically"),
+                i18nc("@item:inlistbox sort tasks in grouped task", "By desktop"),
+                i18nc("@item:inlistbox sort tasks in grouped task", "By activity")
+            ]
         }
 
         CheckBox {
             id: separateLaunchers
             visible: (!plasmoid.configuration.iconOnly)
-            text: i18n("Keep launchers separate")
-            enabled: sortingStrategy.currentIndex == 1
+            text: i18nc("@option:check configure task sorting", "Keep launchers separate")
+            enabled: sortingStrategy.currentIndex === 1
+        }
+
+        CheckBox {
+            id: hideLauncherOnStart
+            visible: (!plasmoid.configuration.iconOnly)
+            text: i18nc("@option:check for icons-and-text task manager", "Hide launchers after application startup")
         }
 
         Item {
@@ -141,22 +148,22 @@ Item {
 
         CheckBox {
             id: minimizeActive
-            Kirigami.FormData.label: i18nc("Part of a sentence: 'Clicking active task minimizes the task'", "Clicking active task:")
-            text: i18nc("Part of a sentence: 'Clicking active task minimizes the task'", "Minimizes the task")
+            Kirigami.FormData.label: i18nc("@label for checkbox Part of a sentence: 'Clicking active task minimizes the task'", "Clicking active task:")
+            text: i18nc("@option:check Part of a sentence: 'Clicking active task minimizes the task'", "Minimizes the task")
         }
 
         ComboBox {
             id: middleClickAction
-            Kirigami.FormData.label: i18n("Middle-clicking any task:")
+            Kirigami.FormData.label: i18nc("@label:listbox completes sentence like: … does nothing", "Middle-clicking any task:")
             Layout.fillWidth: true
             Layout.minimumWidth: Kirigami.Units.gridUnit * 14
             model: [
-                i18nc("Part of a sentence: 'Middle-clicking any task does nothing'", "Does nothing"),
-                i18nc("Part of a sentence: 'Middle-clicking any task closes window or group'", "Closes window or group"),
-                i18nc("Part of a sentence: 'Middle-clicking any task opens a new window'", "Opens a new window"),
-                i18nc("Part of a sentence: 'Middle-clicking any task minimizes/restores window or group'", "Minimizes/Restores window or group"),
-                i18nc("Part of a sentence: 'Middle-clicking any task toggles grouping'", "Toggles grouping"),
-                i18nc("Part of a sentence: 'Middle-clicking any task brings it to the current virtual desktop'", "Brings it to the current virtual desktop")
+                i18nc("@item:inlistbox Part of a sentence: 'Middle-clicking any task does nothing'", "Does nothing"),
+                i18nc("@item:inlistbox Part of a sentence: 'Middle-clicking any task closes window or group'", "Closes window or group"),
+                i18nc("@item:inlistbox Part of a sentence: 'Middle-clicking any task opens a new window'", "Opens a new window"),
+                i18nc("@item:inlistbox Part of a sentence: 'Middle-clicking any task minimizes/restores window or group'", "Minimizes/Restores window or group"),
+                i18nc("@item:inlistbox Part of a sentence: 'Middle-clicking any task toggles grouping'", "Toggles grouping"),
+                i18nc("@item:inlistbox Part of a sentence: 'Middle-clicking any task brings it to the current virtual desktop'", "Brings it to the current virtual desktop")
             ]
         }
 
@@ -166,8 +173,8 @@ Item {
 
         CheckBox {
             id: wheelEnabled
-            Kirigami.FormData.label: i18nc("Part of a sentence: 'Mouse wheel cycles through tasks'", "Mouse wheel:")
-            text: i18nc("Part of a sentence: 'Mouse wheel cycles through tasks'", "Cycles through tasks")
+            Kirigami.FormData.label: i18nc("@label for checkbox Part of a sentence: 'Mouse wheel cycles through tasks'", "Mouse wheel:")
+            text: i18nc("@option:check Part of a sentence: 'Mouse wheel cycles through tasks'", "Cycles through tasks")
         }
 
         RowLayout {
@@ -176,7 +183,7 @@ Item {
             Item { implicitWidth: Kirigami.Units.gridUnit }
             CheckBox {
                 id: wheelSkipMinimized
-                text: i18n("Skip minimized tasks")
+                text: i18nc("@option:check mouse wheel task cycling", "Skip minimized tasks")
                 enabled: wheelEnabled.checked
             }
         }
@@ -187,23 +194,23 @@ Item {
 
         CheckBox {
             id: showOnlyCurrentScreen
-            Kirigami.FormData.label: i18n("Show only tasks:")
-            text: i18n("From current screen")
+            Kirigami.FormData.label: i18nc("@label for checkbox group, completes sentence like: … from current screen", "Show only tasks:")
+            text: i18nc("@option:check completes sentence: show only tasks", "From current screen")
         }
 
         CheckBox {
             id: showOnlyCurrentDesktop
-            text: i18n("From current desktop")
+            text: i18nc("@option:check completes sentence: show only tasks", "From current desktop")
         }
 
         CheckBox {
             id: showOnlyCurrentActivity
-            text: i18n("From current activity")
+            text: i18nc("@option:check completes sentence: show only tasks", "From current activity")
         }
 
         CheckBox {
             id: showOnlyMinimized
-            text: i18n("That are minimized")
+            text: i18nc("@option:check completes sentence: show only tasks", "That are minimized")
         }
 
         Item {
@@ -212,8 +219,8 @@ Item {
 
         CheckBox {
             id: unhideOnAttention
-            Kirigami.FormData.label: i18n("When panel is hidden:")
-            text: i18n("Unhide when a window wants attention")
+            Kirigami.FormData.label: i18nc("@label for checkbox, completes sentence: … unhide if window wants attention", "When panel is hidden:")
+            text: i18nc("@option:check completes sentence: When panel is hidden", "Unhide when a window wants attention")
         }
 
         Item {
@@ -225,20 +232,37 @@ Item {
         }
 
         RadioButton {
-            Kirigami.FormData.label: i18n("New tasks appear:")
+            Kirigami.FormData.label: i18nc("@label for radiobutton group completes sentence like: … on the bottom", "New tasks appear:")
             checked: !reverseMode.checked
-            text: Qt.application.layoutDirection === Qt.LeftToRight ? i18n("To the right") : i18n("To the left")
+            text: {
+                if (Plasmoid.formFactor === PlasmaCore.Types.Vertical) {
+                    return i18nc("@option:check completes sentence: New tasks appear", "On the bottom")
+                }
+                // horizontal
+                if (Qt.application.layoutDirection === Qt.LeftToRight) {
+                    return i18nc("@option:check completes sentence: New tasks appear", "To the right");
+                } else {
+                    return i18nc("@option:check completes sentence: New tasks appear", "To the left")
+                }
+            }
             ButtonGroup.group: reverseModeRadioButtonGroup
-            visible: reverseMode.visible
         }
 
         RadioButton {
             id: reverseMode
-            checked: plasmoid.configuration.reverseMode === true
-            text: Qt.application.layoutDirection === Qt.RightToLeft ? i18n("To the right") : i18n("To the left")
+            checked: Plasmoid.configuration.reverseMode === true
+            text: {
+                if (Plasmoid.formFactor === PlasmaCore.Types.Vertical) {
+                    return i18nc("@option:check completes sentence: New tasks appear", "On the top")
+                }
+                // horizontal
+                if (Qt.application.layoutDirection === Qt.LeftToRight) {
+                    return i18nc("@option:check completes sentence: New tasks appear", "To the left");
+                } else {
+                    return i18nc("@option:check completes sentence: New tasks appear", "To the right");
+                }
+            }
             ButtonGroup.group: reverseModeRadioButtonGroup
-            visible: plasmoid.formFactor === PlasmaCore.Types.Horizontal
         }
-
     }
 }

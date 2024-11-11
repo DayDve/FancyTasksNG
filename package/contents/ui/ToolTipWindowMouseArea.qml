@@ -6,28 +6,33 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-import QtQuick 2.15
+pragma ComponentBehavior: Bound
+
+import QtQuick
 
 MouseArea {
-    property var modelIndex
-    // winId won't be an int wayland
-    property var winId // FIXME Legacy
-    property Item rootTask
+    required property /*QModelIndex*/var modelIndex
+    required property /*undefined|WId where WId = int|string*/ var winId
+    required property Task rootTask
 
     acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
     hoverEnabled: true
-    enabled: winId !== 0
+    enabled: winId !== undefined
 
-    onClicked: {
-        if (mouse.button == Qt.LeftButton) {
+    onClicked: (mouse) => {
+        switch (mouse.button) {
+        case Qt.LeftButton:
             tasksModel.requestActivate(modelIndex);
-            rootTask.toolTipAreaItem.hideImmediately();
+            rootTask.hideImmediately();
             backend.cancelHighlightWindows();
-        } else if (mouse.button == Qt.MiddleButton) {
+            break;
+        case Qt.MiddleButton:
             backend.cancelHighlightWindows();
             tasksModel.requestClose(modelIndex);
-        } else /* right button */ {
+            break;
+        case Qt.RightButton:
             tasks.createContextMenu(rootTask, modelIndex).show();
+            break;
         }
     }
 

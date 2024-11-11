@@ -4,22 +4,24 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import QtQuick 2.15
+pragma ComponentBehavior: Bound
 
-import org.kde.plasma.private.volume 0.1
+import QtQuick
+
+import org.kde.plasma.private.volume
 
 QtObject {
     id: pulseAudio
 
-    signal streamsChanged
+    signal streamsChanged()
 
     // It's a JS object so we can do key lookup and don't need to take care of filtering duplicates.
-    property var pidMatches: ({})
+    property var pidMatches: new Set()
 
     // TODO Evict cache at some point, preferably if all instances of an application closed.
-    function registerPidMatch(appName) {
+    function registerPidMatch(appName: string) {
         if (!hasPidMatch(appName)) {
-            pidMatches[appName] = true;
+            pidMatches.add(appName);
 
             // In case this match is new, notify that streams might have changed.
             // This way we also catch the case when the non-playing instance
@@ -29,31 +31,41 @@ QtObject {
         }
     }
 
-    function hasPidMatch(appName) {
-        return pidMatches[appName] === true;
+    function hasPidMatch(appName: string): bool {
+        return pidMatches.has(appName);
     }
 
-    function findStreams(key, value) {
-        var streams = []
-        for (var i = 0, length = instantiator.count; i < length; ++i) {
-            var stream = instantiator.objectAt(i);
-            if (stream[key] === value) {
+    function findStreams(key: string, value: var): /*[QtObject]*/ var {
+        return findStreamsFn(stream => stream[key] === value);
+    }
+
+    function findStreamsFn(fn: var): var {
+        const streams = [];
+        for (let i = 0, count = instantiator.count; i < count; ++i) {
+            const stream = instantiator.objectAt(i);
+            if (fn(stream)) {
                 streams.push(stream);
             }
         }
-        return streams
+        return streams;
     }
 
-    function streamsForAppName(appName) {
+    function streamsForAppId(appId: string): /*[QtObject]*/ var {
+        return findStreams("portalAppId", appId);
+    }
+
+    function streamsForAppName(appName: string): /*[QtObject]*/ var {
         return findStreams("appName", appName);
     }
 
-    function streamsForPid(pid) {
-        var streams = findStreams("pid", pid);
+    function streamsForPid(pid: int): /*[QtObject]*/ var {
+        // skip stream that has portalAppId
+        // app using portal may have a sandbox pid
+        const streams = findStreamsFn(stream => stream.pid === pid && !stream.portalAppId);
 
         if (streams.length === 0) {
-            for (var i = 0, length = instantiator.count; i < length; ++i) {
-                var stream = instantiator.objectAt(i);
+            for (let i = 0, length = instantiator.count; i < length; ++i) {
+                const stream = instantiator.objectAt(i);
 
                 if (stream.parentPid === -1) {
                     stream.parentPid = backend.parentPid(stream.pid);
@@ -69,7 +81,7 @@ QtObject {
     }
 
     // QtObject has no default property, hence adding the Instantiator to one explicitly.
-    property var instantiator: Instantiator {
+    readonly property Instantiator instantiator: Instantiator {
         model: PulseObjectFilterModel {
             filters: [ { role: "VirtualStream", value: false } ]
             sourceModel: SinkInputModel {}
@@ -78,25 +90,26 @@ QtObject {
         delegate: QtObject {
             id: delegate
             required property var model
-            readonly property int pid: model.Client ? model.Client.properties["application.process.id"] : 0
+            readonly property int pid: model.Client?.properties["application.process.id"] ?? 0
             // Determined on demand.
             property int parentPid: -1
-            readonly property string appName: model.Client ? model.Client.properties["application.name"] : ""
+            readonly property string appName: model.Client?.properties["application.name"] ?? ""
+            readonly property string portalAppId: model.Client?.properties["pipewire.access.portal.app_id"] ?? ""
             readonly property bool muted: model.Muted
             // whether there is nothing actually going on on that stream
             readonly property bool corked: model.Corked
             readonly property int volume: model.Volume
 
-            function mute() {
-                model.Muted = true
+            function mute(): void {
+                model.Muted = true;
             }
-            function unmute() {
-                model.Muted = false
+            function unmute(): void {
+                model.Muted = false;
             }
         }
 
-        onObjectAdded: pulseAudio.streamsChanged()
-        onObjectRemoved: pulseAudio.streamsChanged()
+        onObjectAdded: (index, object) => pulseAudio.streamsChanged()
+        onObjectRemoved: (index, object) => pulseAudio.streamsChanged()
     }
 
     readonly property int minimalVolume: PulseAudio.MinimalVolume

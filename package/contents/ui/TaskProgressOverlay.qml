@@ -4,33 +4,43 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import QtQuick 2.15
+import QtQuick
+import QtQuick.Templates as T
 
-import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.ksvg as KSvg
+import org.kde.plasma.plasmoid
 
 import "code/tools.js" as TaskTools
 
-Item {
-    id: background
+T.ProgressBar {
+    id: control
 
-    Item {
-        id: progress
-        anchors {
-            top: parent.top
-            left: parent.left
-            bottom: parent.bottom
-        }
+    implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset,
+                            implicitContentWidth + leftPadding + rightPadding)
+    implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset,
+                             implicitContentHeight + topPadding + bottomPadding)
 
-        width: parent.width * (task.smartLauncherItem.progress / 100)
+    hoverEnabled: false
+    padding: 0
+
+    from: 0
+    to: 100
+    value: task.smartLauncherItem.progress
+
+    contentItem: Item {
         clip: true
 
-        PlasmaCore.FrameSvgItem {
-            enabledBorders: plasmoid.configuration.useBorders ? 1 | 2 | 4 | 8 : 0
+        KSvg.FrameSvgItem {
             id: progressFrame
-            width: background.width
-            height: background.height
+            enabledBorders: plasmoid.configuration.useBorders ? 1 | 2 | 4 | 8 : 0
+            anchors.left: parent.left
+            width: parent.width * control.position
+            height: parent.height
+
             imagePath: "widgets/tasks"
-            prefix: TaskTools.taskPrefix("progress").concat(TaskTools.taskPrefix("hover"))
+            prefix: TaskTools.taskPrefix("progress", Plasmoid.location).concat(TaskTools.taskPrefix("hover", Plasmoid.location))
         }
     }
+
+    background: null
 }
