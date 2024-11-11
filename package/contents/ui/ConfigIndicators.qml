@@ -2,16 +2,12 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-import org.kde.kirigami 2.19 as Kirigami
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.kquickcontrols 2.0 as KQControls
+import org.kde.kcmutils as KCMUtils
+import org.kde.kirigami as Kirigami
+import org.kde.plasma.core as PlasmaCore
+import org.kde.kquickcontrols as KQControls
 
-import org.kde.plasma.private.taskmanager 0.1 as TaskManagerApplet
-
-Kirigami.FormLayout {
-    anchors.left: parent.left
-    anchors.right: parent.right
-
+KCMUtils.SimpleKCM {
     property alias cfg_indicatorsEnabled: indicatorsEnabled.currentIndex
     property alias cfg_groupIconEnabled: groupIconEnabled.currentIndex
     property alias cfg_indicatorProgress: indicatorProgress.checked 
@@ -35,6 +31,8 @@ Kirigami.FormLayout {
     property alias cfg_indicatorDominantColor: indicatorDominantColor.checked
     property alias cfg_indicatorAccentColor:  indicatorAccentColor.checked
     property alias cfg_indicatorCustomColor: indicatorCustomColor.color 
+
+Kirigami.FormLayout {
 
     ComboBox {
         id: indicatorsEnabled
@@ -264,4 +262,5 @@ Kirigami.FormLayout {
     Item {
         Kirigami.FormData.isSection: true
     }
+}
 }

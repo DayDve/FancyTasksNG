@@ -4,25 +4,31 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import QtQuick 2.15
-
-import org.kde.plasma.core 2.0 as PlasmaCore
+import QtQuick
+import org.kde.kirigami as Kirigami
+import org.kde.graphicaleffects as KGraphicalEffects
+import org.kde.plasma.plasmoid
 
 Item {
+    id: root
+
     readonly property int iconWidthDelta: (icon.width - icon.paintedWidth) / 2
-    readonly property bool shiftBadgeDown: (plasmoid.configuration.iconOnly) && task.audioStreamIconLoaderItem.shown
+    readonly property bool shiftBadgeDown: (Plasmoid.pluginName === "org.kde.plasma.icontasks") && task.audioStreamIcon !== null
 
     Item {
         id: badgeMask
         anchors.fill: parent
 
         Rectangle {
-            readonly property int offset: Math.round(Math.max(PlasmaCore.Units.smallSpacing / 2, badgeMask.width / 32))
-            anchors.right: Qt.application.layoutDirection === Qt.RightToLeft ? undefined : parent.right
-            anchors.left: Qt.application.layoutDirection === Qt.RightToLeft ? parent.left : undefined
-            anchors.rightMargin: Qt.application.layoutDirection === Qt.RightToLeft ? 0 : -offset
-            anchors.leftMargin: Qt.application.layoutDirection === Qt.RightToLeft ? -offset : 0
-            y: shiftBadgeDown ? (icon.height/2) : 0
+            readonly property int offset: Math.round(Math.max(Kirigami.Units.smallSpacing / 2, badgeMask.width / 32))
+
+            anchors.right: parent.right
+            anchors.rightMargin: -offset
+            y: root.shiftBadgeDown ? (icon.height / 2) : 0
+
+            Behavior on y {
+                NumberAnimation { duration: Kirigami.Units.longDuration }
+            }
 
             visible: task.smartLauncherItem.countVisible
             width: badgeRect.width + offset * 2
@@ -49,35 +55,30 @@ Item {
         live: false
     }
 
-    ShaderEffect {
+    KGraphicalEffects.BadgeEffect {
         id: shader
 
         anchors.fill: parent
-        property var source: iconShaderSource
-        property var mask: maskShaderSource
+        source: iconShaderSource
+        mask: maskShaderSource
 
         onWidthChanged: maskShaderSource.scheduleUpdate()
         onHeightChanged: maskShaderSource.scheduleUpdate()
-
-        supportsAtlasTextures: true
-
-        fragmentShader: `
-            varying highp vec2 qt_TexCoord0;
-            uniform highp float qt_Opacity;
-            uniform lowp sampler2D source;
-            uniform lowp sampler2D mask;
-            void main() {
-                gl_FragColor = texture2D(source, qt_TexCoord0.st) * (1.0 - (texture2D(mask, qt_TexCoord0.st).a)) * qt_Opacity;
-            }
-        `
     }
 
     Badge {
-        readonly property int offset: Math.round(Math.max(PlasmaCore.Units.smallSpacing / 2, badgeMask.width / 32))
         id: badgeRect
-        anchors.right: Qt.application.layoutDirection === Qt.RightToLeft ? undefined : parent.right
-        anchors.left: Qt.application.layoutDirection === Qt.RightToLeft ? parent.left : undefined
-        y: offset + (shiftBadgeDown ? (icon.height/2) : 0)
+
+        anchors.right: parent.right
+        y: {
+            const offset = Math.round(Math.max(Kirigami.Units.smallSpacing / 2, badgeMask.width / 32));
+            return offset + (root.shiftBadgeDown ? (icon.height / 2) : 0);
+        }
+
+        Behavior on y {
+            NumberAnimation { duration: Kirigami.Units.longDuration }
+        }
+
         height: Math.round(parent.height * 0.4)
         visible: task.smartLauncherItem.countVisible
         number: task.smartLauncherItem.count

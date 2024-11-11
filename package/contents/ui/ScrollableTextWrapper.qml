@@ -4,29 +4,36 @@
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
 
-import QtQuick 2.15
+pragma ComponentBehavior: Bound
+
+import QtQuick
 
 MouseArea {
-    id: textWrapper
+    id: root
 
-    default property Text textItem
+    required property Text textItem
+
+    onTextItemChanged: {
+        textItem.parent = this;
+        textItem.width = Qt.binding(() => width);
+    }
 
     clip: textItem.elide === Text.ElideNone
     hoverEnabled: true
 
     onContainsMouseChanged: {
         if (!containsMouse) {
-            state = ""
+            state = "";
         }
     }
 
     Timer {
         id: timer
         interval: 500
-        running: textWrapper.containsMouse
+        running: root.containsMouse
         onTriggered: {
-            if (textWrapper.width < textItem.implicitWidth) {
-                textWrapper.state = "ShowRight"
+            if (root.width < root.textItem.implicitWidth) {
+                root.state = "ShowRight";
             }
         }
     }
@@ -34,20 +41,27 @@ MouseArea {
     states: [
         State {
             name: ""
-            PropertyChanges { target: textItem; x: 0 }
+            PropertyChanges {
+                target: root.textItem
+                x: 0
+            }
         },
         State {
             name: "ShowRight"
-            PropertyChanges { target: textItem; x: textWrapper.width - textItem.implicitWidth }
+            PropertyChanges {
+                target: root.textItem
+                x: root.width - root.textItem.implicitWidth
+            }
         }
     ]
 
     transitions: Transition {
         to: "ShowRight"
         NumberAnimation {
-            target: textItem; properties: "x";
-            easing.type: Easing.Linear;
-            duration: Math.abs(textItem.implicitWidth - textWrapper.width)*25
+            target: root.textItem
+            properties: "x"
+            easing.type: Easing.Linear
+            duration: Math.abs(root.textItem.implicitWidth - root.width) * 25
         }
     }
 }

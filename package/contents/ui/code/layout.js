@@ -7,8 +7,8 @@
 .import org.kde.plasma.core 2.0 as PlasmaCore
 .import org.kde.kirigami 2.19 as Kirigami
 
-const iconMargin = Math.round(PlasmaCore.Units.smallSpacing / 4);
-const labelMargin = PlasmaCore.Units.smallSpacing;
+const iconMargin = Math.round(Kirigami.Units.smallSpacing / 4);
+const labelMargin = Kirigami.Units.smallSpacing;
 
 function horizontalMargins() {
     const spacingAdjustment = (plasmoid.configuration.iconOnly) ? (Kirigami.Settings.tabletMode ? 3 : plasmoid.configuration.iconSpacing) : 1
@@ -23,8 +23,8 @@ function verticalMargins() {
 function adjustMargin(height, margin) {
     var available = height - verticalMargins();
 
-    if (available < PlasmaCore.Units.iconSizes.small) {
-        return Math.floor((margin * (PlasmaCore.Units.iconSizes.small / available)) / 3);
+    if (available < Kirigami.Units.iconSizes.small) {
+        return Math.floor((margin * (Kirigami.Units.iconSizes.small / available)) / 3);
     }
 
     return margin;
@@ -104,9 +104,9 @@ function preferredMinWidth() {
     var width = launcherWidth();
 
     if (!tasks.vertical && !tasks.iconsOnly) {
-      width +=
-          (PlasmaCore.Units.smallSpacing * 2) +
-          (plasmoid.configuration.maxButtonLength /*PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).width * 12*/);
+        width +=
+            (Kirigami.Units.smallSpacing * 2) +
+            (plasmoid.configuration.maxButtonLength /*PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).width * 12*/);
     }
 
     return width;
@@ -135,23 +135,23 @@ function preferredMinHeight() {
 
 function preferredMaxHeight() {
     if (tasks.vertical) {
-      return verticalMargins() +
-             Math.min(
-                 // Do not allow the preferred icon size to exceed the width of
-                 // the vertical task manager.
-                 tasks.width,
-                 tasks.iconsOnly ? tasks.width :
+        return verticalMargins() +
+            Math.min(
+                // Do not allow the preferred icon size to exceed the width of
+                // the vertical task manager.
+                tasks.width,
+                tasks.iconsOnly ? tasks.width :
                     Math.max(
                         PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height,
-                        PlasmaCore.Units.iconSizes.medium
+                        Kirigami.Units.iconSizes.medium
                     )
-             );
+            );
     } else {
-      return verticalMargins() +
-             Math.min(
-                 PlasmaCore.Units.iconSizes.small * 3,
-                 PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height *
-                     3);
+        return verticalMargins() +
+            Math.min(
+                Kirigami.Units.iconSizes.small * 3,
+                PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).height *
+                3);
     }
 }
 
@@ -186,14 +186,14 @@ function taskHeight() {
 }
 
 function launcherWidth() {
-    var baseWidth = tasks.vertical ? preferredMinHeight() : Math.min(tasks.height, PlasmaCore.Units.iconSizes.small * 3);
+    var baseWidth = tasks.vertical ? preferredMinHeight() : Math.min(tasks.height, Kirigami.Units.iconSizes.small * 3);
 
     return (baseWidth + horizontalMargins())
         - (adjustMargin(baseWidth, taskFrame.margins.top) + adjustMargin(baseWidth, taskFrame.margins.bottom));
 }
 
 function maximumContextMenuTextWidth() {
-  return (PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).width * 28);
+    return (PlasmaCore.Theme.mSize(PlasmaCore.Theme.defaultFont).width * 28);
 }
 
 function layout(container) {
@@ -204,8 +204,7 @@ function layout(container) {
     var adjustedWidth = width;
     var height = taskHeight();
 
-    if (!tasks.vertical && stripes == 1 && taskCount)
-    {
+    if (!tasks.vertical && stripes == 1 && taskCount) {
         var shrink = ((tasksModel.count - tasksModel.logicalLauncherCount) * preferredMaxWidth())
             + (tasksModel.logicalLauncherCount * launcherWidth()) > taskList.width;
         width = Math.min(shrink ? width + Math.floor(launcherLayoutWidthDiff() / taskCount) : width,

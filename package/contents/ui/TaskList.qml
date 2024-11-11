@@ -4,35 +4,53 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import QtQuick 2.15
-import org.kde.plasma.core 2.0 as PlasmaCore
+import QtQuick
+import QtQuick.Layouts
+import org.kde.plasma.plasmoid
+import "code/layoutmetrics.js" as LayoutMetrics
 
-Flow {
+GridLayout {
     property bool animating: false
 
-    readonly property bool tasksGrowInOppositeDirection: plasmoid.configuration.reverseMode
-    readonly property bool isHorizontalPanel: plasmoid.formFactor === PlasmaCore.Types.Horizontal
+    rowSpacing: 0
+    columnSpacing: 0
 
-    layoutDirection: (tasksGrowInOppositeDirection && isHorizontalPanel)
-        ? (Qt.application.layoutDirection === Qt.LeftToRight)
-            ? Qt.RightToLeft
-            : Qt.LeftToRight
-        : Qt.application.layoutDirection
-
-    property int rows: Math.floor(height / children[0].height)
-    property int columns: Math.floor(width / children[0].width)
-
-    move: Transition {
-        SequentialAnimation {
-            PropertyAction { target: taskList; property: "animating"; value: true }
-
-            NumberAnimation {
-                properties: "x, y"
-                easing.type: Easing.OutQuad
-                duration: PlasmaCore.Units.longDuration
-            }
-
-            PropertyAction { target: taskList; property: "animating"; value: false }
-        }
+    property int animationsRunning: 0
+    onAnimationsRunningChanged: {
+        animating = animationsRunning > 0;
     }
+
+    readonly property real minimumWidth: children
+        .filter(item => item.visible && item.width > 0)
+        .reduce((minimumWidth, item) => Math.min(minimumWidth, item.width), Infinity)
+
+    readonly property int stripeCount: {
+        if (tasks.plasmoid.configuration.maxStripes === 1) {
+            return 1;
+        }
+
+        // The maximum number of stripes allowed by the applet's size
+        const stripeSizeLimit = tasks.vertical
+            ? Math.floor(tasks.width / children[0].implicitWidth)
+            : Math.floor(tasks.height / children[0].implicitHeight)
+        const maxStripes = Math.min(tasks.plasmoid.configuration.maxStripes, stripeSizeLimit)
+
+        if (tasks.plasmoid.configuration.forceStripes) {
+            return maxStripes;
+        }
+
+        // The number of tasks that will fill a "stripe" before starting the next one
+        const maxTasksPerStripe = tasks.vertical
+            ? Math.ceil(tasks.height / LayoutMetrics.preferredMinHeight())
+            : Math.ceil(tasks.width / LayoutMetrics.preferredMinWidth())
+
+        return Math.min(Math.ceil(tasksModel.count / maxTasksPerStripe), maxStripes)
+    }
+
+    readonly property int orthogonalCount: {
+        return Math.ceil(tasksModel.count / stripeCount);
+    }
+
+    rows: tasks.vertical ? orthogonalCount : stripeCount
+    columns: tasks.vertical ? stripeCount : orthogonalCount
 }

@@ -4,17 +4,27 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import QtQuick 2.15
+import QtQuick
 
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.kirigami 2.20 as Kirigami
-import QtGraphicalEffects 1.15
+import org.kde.plasma.extras as PlasmaExtras
+import org.kde.kirigami as Kirigami
+import org.kde.ksvg as KSvg
 
-MouseArea {
-    property string dominantIconColor
+Item {
     id: audioStreamIconBox
-    hoverEnabled: true
-    onClicked: toggleMuted()
+
+    width: Math.min(Math.min(iconBox.width, iconBox.height) * 0.4, Kirigami.Units.iconSizes.smallMedium)
+    height: width
+    anchors {
+        top: frame.top
+        right: frame.right
+        rightMargin: taskFrame.margins.right
+        topMargin: Math.round(taskFrame.margins.top * indicatorScale)
+    }
+
+    readonly property real indicatorScale: 1.2
+
+    activeFocusOnTab: true
 
     // Using States rather than a simple Behavior we can apply different transitions,
     // which allows us to delay showing the icon but hide it instantly still.
@@ -28,7 +38,7 @@ MouseArea {
             }
             PropertyChanges {
                 target: audioStreamIcon
-                elementId: "audio-volume-high"
+                source: "audio-volume-high-symbolic"
             }
         },
         State {
@@ -40,7 +50,7 @@ MouseArea {
             }
             PropertyChanges {
                 target: audioStreamIcon
-                elementId: "audio-volume-muted"
+                source: "audio-volume-muted-symbolic"
             }
         }
     ]
@@ -56,7 +66,7 @@ MouseArea {
                  }
                  NumberAnimation {
                      property: "opacity"
-                     duration: PlasmaCore.Units.longDuration
+                     duration: Kirigami.Units.longDuration
                  }
              }
         },
@@ -66,7 +76,7 @@ MouseArea {
              SequentialAnimation {
                  NumberAnimation {
                      property: "opacity"
-                     duration: PlasmaCore.Units.longDuration
+                     duration: Kirigami.Units.longDuration
                  }
              }
         },
@@ -74,7 +84,7 @@ MouseArea {
              to: ""
              NumberAnimation {
                  property: "opacity"
-                 duration: PlasmaCore.Units.longDuration
+                 duration: Kirigami.Units.longDuration
              }
         }
     ]
@@ -82,37 +92,43 @@ MouseArea {
     opacity: 0
     visible: opacity > 0
 
-    PlasmaCore.FrameSvgItem {
-        id: audioStreamFrame
+    Keys.onReturnPressed: event => toggleMuted()
+    Keys.onEnterPressed: event => Keys.returnPressed(event);
+    Keys.onSpacePressed: event => Keys.returnPressed(event);
+
+    Accessible.checkable: true
+    Accessible.checked: task.muted
+    Accessible.name: task.muted ? i18nc("@action:button", "Unmute") : i18nc("@action:button", "Mute")
+    Accessible.description: task.muted ? i18nc("@info:tooltip %1 is the window title", "Unmute %1", model.display) : i18nc("@info:tooltip %1 is the window title", "Mute %1", model.display)
+    Accessible.role: Accessible.Button
+
+    HoverHandler {
+        id: hoverHandler
+    }
+
+    TapHandler {
+        id: tapHandler
+        gesturePolicy: TapHandler.ReleaseWithinBounds // Exclusive grab
+        onTapped: (eventPoint, button) => toggleMuted()
+    }
+
+    PlasmaExtras.Highlight {
         anchors.fill: audioStreamIcon
-        visible: parent.containsMouse && !plasmoid.configuration.buttonColorize ? true : false
-        imagePath: "widgets/viewitem"
-        prefix: "hover"
+        hovered: hoverHandler.hovered || parent.activeFocus
+        pressed: tapHandler.pressed
     }
 
-    ColorOverlay {
-        id: colorOverrideAudio
-        anchors.fill: audioStreamFrame
-        source: audioStreamFrame
-        color: plasmoid.configuration.buttonColorizeDominant ? dominantIconColor : plasmoid.configuration.buttonColorizeCustom
-        visible: parent.containsMouse && plasmoid.configuration.buttonColorize ? true : false
-    }
-
-    PlasmaCore.Svg {
-        id: audioSvg
-        imagePath: "icons/audio"
-    }
-
-    PlasmaCore.SvgItem {
+    Kirigami.Icon {
         id: audioStreamIcon
 
         // Need audio indicator twice, to keep iconBox in the center.
-        readonly property var requiredSpace: Math.min(iconBox.width, iconBox.height)
-                                             + Math.min(Math.min(iconBox.width, iconBox.height), PlasmaCore.Units.iconSizes.smallMedium) * 2
-        svg: audioSvg
-        smooth: false
+        readonly property real requiredSpace: Math.min(iconBox.width, iconBox.height)
+            + Math.min(Math.min(iconBox.width, iconBox.height), Kirigami.Units.iconSizes.smallMedium) * 2
 
-        height: Math.round(Math.min(parent.height * indicatorScale, PlasmaCore.Units.iconSizes.smallMedium))
+        source: "audio-volume-high-symbolic"
+        selected: tapHandler.pressed
+
+        height: Math.round(Math.min(parent.height * indicatorScale, Kirigami.Units.iconSizes.smallMedium))
         width: height
 
         anchors {
@@ -126,7 +142,7 @@ MouseArea {
                 when: tasks.vertical && frame.width < audioStreamIcon.requiredSpace
 
                 PropertyChanges {
-                    target: audioStreamIconLoader
+                    target: audioStreamIconBox
                     anchors.rightMargin: Math.round(taskFrame.margins.right * indicatorScale)
                 }
             },
@@ -136,15 +152,15 @@ MouseArea {
                 when: frame.width > audioStreamIcon.requiredSpace
 
                 AnchorChanges {
-                    target: audioStreamIconLoader
+                    target: audioStreamIconBox
 
                     anchors.top: undefined
                     anchors.verticalCenter: frame.verticalCenter
                 }
 
                 PropertyChanges {
-                    target: audioStreamIconLoader
-                    width: PlasmaCore.Units.roundToIconSize(Math.min(Math.min(iconBox.width, iconBox.height), PlasmaCore.Units.iconSizes.smallMedium))
+                    target: audioStreamIconBox
+                    width: Kirigami.Units.iconSizes.roundedIconSize(Math.min(Math.min(iconBox.width, iconBox.height), Kirigami.Units.iconSizes.smallMedium))
                 }
 
                 PropertyChanges {
@@ -160,17 +176,17 @@ MouseArea {
                 when: frame.height > audioStreamIcon.requiredSpace
 
                 AnchorChanges {
-                    target: audioStreamIconLoader
+                    target: audioStreamIconBox
 
                     anchors.right: undefined
                     anchors.horizontalCenter: frame.horizontalCenter
                 }
 
                 PropertyChanges {
-                    target: audioStreamIconLoader
+                    target: audioStreamIconBox
 
                     anchors.topMargin: taskFrame.margins.top
-                    width: PlasmaCore.Units.roundToIconSize(Math.min(Math.min(iconBox.width, iconBox.height), PlasmaCore.Units.iconSizes.smallMedium))
+                    width: Kirigami.Units.iconSizes.roundedIconSize(Math.min(Math.min(iconBox.width, iconBox.height), Kirigami.Units.iconSizes.smallMedium))
                 }
 
                 PropertyChanges {

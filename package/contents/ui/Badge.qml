@@ -4,10 +4,10 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-import QtQuick 2.15
+import QtQuick
 
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 3.0 as PlasmaComponents3
+import org.kde.plasma.components as PlasmaComponents3
+import org.kde.kirigami as Kirigami
 
 // This top-level item is an opaque background that goes behind the colored
 // background, for contrast. It's not an Item since that it would be square,
@@ -24,18 +24,16 @@ Rectangle {
 
     radius: height / 2
 
-    color: PlasmaCore.Theme.backgroundColor
+    color: Kirigami.Theme.backgroundColor
 
     // Colored background
     Rectangle {
-        readonly property color color_: PlasmaCore.Theme.highlightColor
-
         anchors.fill: parent
         radius: height / 2
 
-        color: Qt.rgba(color_.r, color_.g, color_.b, 0.3)
-        border.color: color_
-        border.width: PlasmaCore.Units.devicePixelRatio
+        color: Qt.alpha(Kirigami.Theme.highlightColor, 0.3)
+        border.color: Kirigami.Theme.highlightColor
+        border.width: 1
     }
 
     // Number
@@ -43,7 +41,7 @@ Rectangle {
         id: label
         anchors.centerIn: parent
         width: height
-        height: Math.min(PlasmaCore.Units.gridUnit * 2, Math.round(parent.height))
+        height: Math.min(Kirigami.Units.gridUnit * 2, Math.round(parent.height))
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         fontSizeMode: Text.VerticalFit
@@ -58,5 +56,6 @@ Rectangle {
                 return badgeRect.number.toLocaleString(Qt.locale(), 'f', 0);
             }
         }
+        textFormat: Text.PlainText
     }
 }
