@@ -861,9 +861,18 @@ PlasmaCore.ToolTipArea {
 
         Kirigami.Icon {
             id: icon
-
-            anchors.fill: parent
-
+            property int growSize: active ? 20 : 0
+            width: parent.width + growSize
+            height: parent.height + growSize
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            Behavior on growSize {
+                NumberAnimation {
+                    duration: 250
+                    easing.type: Easing.InOutQuad
+                }
+            }
+            roundToIconSize: growSize === 0
             active: task.highlighted
             enabled: true
 
