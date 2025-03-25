@@ -1,11 +1,3 @@
-# Notice
-Development of this project has more or less resumed. Help is always wanted and appreciated, however.  
-I'm struggling with burn out at the moment. I'm hoping to return to the project soon but I need to get that under control.  
-Currently I'm almost done with the overhauls of indicators which should finalize the Plasma 5 version of this plasmoid. Once that is completed, Plasma 5 will be split into its own fork and the main branch will be for Plasma 6. Any new features and code improvements the plasma 6 widget offers will be back ported in. I'm also in the process of modularizing the FancyTasks additions in order to make development simpler. 
-
-# Contact
-You can reach me at ideas@alexankitty.com, by putting an issue on this github, by commenting on the [AUR package](https://aur.archlinux.org/packages/fancytasks), by commenting on the kde-look page, or on the [FancyTasks KDE Reddit community](https://www.reddit.com/r/fancytaskskde/).
-
 # FancyTasks+
 
 ![Fancy Tasks Icon](https://github.com/alexankitty/FancyTasks/blob/main/package/FancyTasks.png?raw=true)
@@ -14,6 +6,10 @@ This is a fork of [FancyTasks](https://github.com//alexankitty/FancyTasks) and [
 - Configurable icon zoom on hover
 - With better padding on hover previews
 - With a option in configuration which allows you to choose apps to pin and rearrange them 
+
+# Contact
+You can reach me at ideas@alexankitty.com, by putting an issue on this github, by commenting on the [AUR package](https://aur.archlinux.org/packages/fancytasks), by commenting on the kde-look page, or on the [FancyTasks KDE Reddit community](https://www.reddit.com/r/fancytaskskde/).
+
 ## Installing
 
 If your distro does not include kirigami2, install it now. It's required for the settings, and used for the dominant icon color effect. Python3 is required for installing.
