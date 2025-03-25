@@ -24,16 +24,16 @@ Loader {
     id: toolTipDelegate
 
     property Task parentTask
-    property /*QModelIndex*/var rootIndex
+    property /*QModelIndex*/ var rootIndex
 
     property string appName
     property int pidParent
     property bool isGroup
 
-    property /*list<WId> where WId = int|string*/ var windows: []
+    property /*list<WId> where WId = int|string*/  var windows: []
     readonly property bool isWin: windows.length > 0
 
-    property /*QIcon*/ var icon
+    property /*QIcon*/  var icon
     property url launcherUrl
     property bool isLauncher
     property bool isMinimized
@@ -41,7 +41,7 @@ Loader {
     // Needed for generateSubtext()
     property string display
     property string genericName
-    property /*list<var>*/ var virtualDesktops: [] // Can't use list<var> because of QTBUG-127600
+    property /*list<var>*/  var virtualDesktops: [] // Can't use list<var> because of QTBUG-127600
     property bool isOnAllVirtualDesktops
     property list<string> activities: []
 

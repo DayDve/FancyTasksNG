@@ -6,6 +6,7 @@
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 
 import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PlasmaComponents3
@@ -42,7 +43,7 @@ PlasmoidItem {
     readonly property Component pulseAudioComponent: Qt.createComponent("PulseAudio.qml")
 
     property bool needLayoutRefresh: false
-    property /*list<WId> where WId = int|string*/ var taskClosedWithMouseMiddleButton: []
+    property /*list<WId> where WId = int|string*/   var taskClosedWithMouseMiddleButton: []
     property alias taskList: taskList
 
     preferredRepresentation: fullRepresentation
@@ -70,7 +71,7 @@ PlasmoidItem {
         return !vertical ? 0 : LayoutMetrics.preferredMinHeight();
     }
 
-//BEGIN TODO: this is not precise enough: launchers are smaller than full tasks
+    //BEGIN TODO: this is not precise enough: launchers are smaller than full tasks
     Layout.preferredWidth: {
         if (shouldShrinkToZero) {
             return 0.01;
@@ -78,18 +79,18 @@ PlasmoidItem {
         if (vertical) {
             return Kirigami.Units.gridUnit * 10;
         }
-        return taskList.Layout.maximumWidth
+        return taskList.Layout.maximumWidth;
     }
     Layout.preferredHeight: {
         if (shouldShrinkToZero) {
             return 0.01;
         }
         if (vertical) {
-            return taskList.Layout.maximumHeight
+            return taskList.Layout.maximumHeight;
         }
         return Kirigami.Units.gridUnit * 2;
     }
-//END TODO
+    //END TODO
 
     property Item dragSource
 
@@ -111,8 +112,7 @@ PlasmoidItem {
             const task = taskItems[i];
 
             if (!task.model.IsLauncher && !task.model.IsStartup) {
-                tasksModel.requestPublishDelegateGeometry(tasksModel.makeModelIndex(task.index),
-                    backend.globalRect(task), task);
+                tasksModel.requestPublishDelegateGeometry(tasksModel.makeModelIndex(task.index), backend.globalRect(task), task);
             }
         }
     }
@@ -153,8 +153,7 @@ PlasmoidItem {
         sortMode: sortModeEnumValue(Plasmoid.configuration.sortingStrategy)
         launchInPlace: tasks.iconsOnly && Plasmoid.configuration.sortingStrategy === 1
         separateLaunchers: {
-            if (!tasks.iconsOnly && !Plasmoid.configuration.separateLaunchers
-                && Plasmoid.configuration.sortingStrategy === 1) {
+            if (!tasks.iconsOnly && !Plasmoid.configuration.separateLaunchers && Plasmoid.configuration.sortingStrategy === 1) {
                 return false;
             }
 
@@ -163,8 +162,7 @@ PlasmoidItem {
 
         groupMode: groupModeEnumValue(Plasmoid.configuration.groupingStrategy)
         groupInline: !Plasmoid.configuration.groupPopups && !tasks.iconsOnly
-        groupingWindowTasksThreshold: (Plasmoid.configuration.onlyGroupWhenFull && !tasks.iconsOnly
-            ? LayoutMetrics.optimumCapacity(width, height) + 1 : -1)
+        groupingWindowTasksThreshold: (Plasmoid.configuration.onlyGroupWhenFull && !tasks.iconsOnly ? LayoutMetrics.optimumCapacity(width, height) + 1 : -1)
 
         onLauncherListChanged: {
             Plasmoid.configuration.launchers = launcherList;
@@ -302,8 +300,7 @@ PlasmoidItem {
         Binding {
             target: Plasmoid
             property: "status"
-            value: (tasksModel.anyTaskDemandsAttention && Plasmoid.configuration.unhideOnAttention
-                ? PlasmaCore.Types.NeedsAttentionStatus : PlasmaCore.Types.PassiveStatus)
+            value: (tasksModel.anyTaskDemandsAttention && Plasmoid.configuration.unhideOnAttention ? PlasmaCore.Types.NeedsAttentionStatus : PlasmaCore.Types.PassiveStatus)
             restoreMode: Binding.RestoreBinding
         }
 
@@ -311,7 +308,7 @@ PlasmoidItem {
             target: Plasmoid.configuration
 
             function onLaunchersChanged(): void {
-                tasksModel.launcherList = Plasmoid.configuration.launchers
+                tasksModel.launcherList = Plasmoid.configuration.launchers;
             }
             function onGroupingAppIdBlacklistChanged(): void {
                 tasksModel.groupingAppIdBlacklist = Plasmoid.configuration.groupingAppIdBlacklist;
@@ -426,20 +423,20 @@ PlasmoidItem {
 
                 Layout.maximumWidth: {
                     const totalMaxWidth = children.reduce((accumulator, child) => {
-                            if (!isFinite(child.Layout.maximumWidth)) {
-                                return accumulator;
-                            }
-                            return accumulator + child.Layout.maximumWidth
-                        }, 0);
+                        if (!isFinite(child.Layout.maximumWidth)) {
+                            return accumulator;
+                        }
+                        return accumulator + child.Layout.maximumWidth;
+                    }, 0);
                     return Math.round(totalMaxWidth / widthOccupation);
                 }
                 Layout.maximumHeight: {
                     const totalMaxHeight = children.reduce((accumulator, child) => {
-                            if (!isFinite(child.Layout.maximumHeight)) {
-                                return accumulator;
-                            }
-                            return accumulator + child.Layout.maximumHeight
-                        }, 0);
+                        if (!isFinite(child.Layout.maximumHeight)) {
+                            return accumulator;
+                        }
+                        return accumulator + child.Layout.maximumHeight;
+                    }, 0);
                     return Math.round(totalMaxHeight / heightOccupation);
                 }
                 width: {
@@ -465,9 +462,9 @@ PlasmoidItem {
 
                 flow: {
                     if (tasks.vertical) {
-                        return Plasmoid.configuration.forceStripes ? Grid.LeftToRight : Grid.TopToBottom
+                        return Plasmoid.configuration.forceStripes ? Grid.LeftToRight : Grid.TopToBottom;
                     }
-                    return Plasmoid.configuration.forceStripes ? Grid.TopToBottom : Grid.LeftToRight
+                    return Plasmoid.configuration.forceStripes ? Grid.TopToBottom : Grid.LeftToRight;
                 }
 
                 onAnimatingChanged: {
@@ -483,9 +480,7 @@ PlasmoidItem {
                         tasksRoot: tasks
                     }
                     onItemRemoved: (index, item) => {
-                        if (tasks.containsMouse && index !== taskRepeater.count &&
-                            item.model.WinIdList.length > 0 &&
-                            taskClosedWithMouseMiddleButton.includes(item.winIdList[0])) {
+                        if (tasks.containsMouse && index !== taskRepeater.count && item.model.WinIdList.length > 0 && taskClosedWithMouseMiddleButton.includes(item.winIdList[0])) {
                             needLayoutRefresh = true;
                         }
                         taskClosedWithMouseMiddleButton = [];
@@ -534,7 +529,7 @@ PlasmoidItem {
             visualParent: rootTask,
             modelIndex,
             mpris2Source,
-            backend,
+            backend
         });
         return contextMenuComponent.createObject(rootTask, initialArgs);
     }

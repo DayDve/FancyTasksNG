@@ -19,6 +19,8 @@ KCMUtils.SimpleKCM {
     readonly property bool plasmoidVertical: Plasmoid.formFactor === PlasmaCore.Types.Vertical
     readonly property bool iconOnly: plasmoid.configuration.iconOnly
 
+    property alias cfg_iconZoomFactor: iconZoomFactor.value
+    property alias cfg_iconZoomDuration: iconZoomDuration.value
     property alias cfg_showToolTips: showToolTips.checked
     property alias cfg_highlightWindows: highlightWindows.checked
     property bool cfg_indicateAudioStreams
@@ -76,6 +78,37 @@ KCMUtils.SimpleKCM {
             visible: !iconSizeOverride.checked
         }
 
+        Item {
+            Kirigami.FormData.isSection: true
+            Kirigami.FormData.label: i18n("Icon Hover Effects")
+        }
+
+        SpinBox {
+            id: iconZoomFactor
+            Kirigami.FormData.label: i18n("Icon zoom factor (px):")
+            from: 0
+            to: 50
+            stepSize: 1
+            value: plasmoid.configuration.iconZoomFactor
+
+            ToolTip.delay: 1000
+            ToolTip.visible: hovered
+            ToolTip.text: i18n("How much the icon should grow when hovered (in pixels)")
+        }
+
+        SpinBox {
+            id: iconZoomDuration
+            Kirigami.FormData.label: i18n("Zoom animation duration (ms):")
+            from: 0
+            to: 1000
+            stepSize: 50
+            value: plasmoid.configuration.iconZoomDuration
+
+            ToolTip.delay: 1000
+            ToolTip.visible: hovered
+            ToolTip.text: i18n("Duration of the zoom animation in milliseconds")
+        }
+
         SpinBox {
             id: iconSizePx
             Kirigami.FormData.label: i18n("Icon Size (px):")
@@ -112,16 +145,16 @@ KCMUtils.SimpleKCM {
         }
 
         CheckBox {
-            enabled: buttonColorize.checked
             id: buttonColorizeDominant
+            enabled: buttonColorize.checked
             text: i18n("Use dominant icon color")
             visible: buttonColorize.checked
         }
 
         KQuickAddons.ColorButton {
+            id: buttonColorizeCustom
             Layout.leftMargin: Kirigami.Units.GridUnit
             enabled: buttonColorize.checked & !buttonColorizeDominant.checked
-            id: buttonColorizeCustom
             Kirigami.FormData.label: i18n("Custom Color:")
             showAlphaChannel: true
             visible: buttonColorize.checked && !buttonColorizeDominant.checked
@@ -163,12 +196,7 @@ KCMUtils.SimpleKCM {
         ComboBox {
             id: plasmaButtonDirection
             visible: overridePlasmaButtonDirection.checked
-            model: [
-                i18n("North"),
-                i18n("South"),
-                i18n("West"),
-                i18n("East")
-            ]
+            model: [i18n("North"), i18n("South"), i18n("West"), i18n("East")]
         }
 
         Item {
@@ -176,8 +204,8 @@ KCMUtils.SimpleKCM {
         }
 
         SpinBox {
-            visible: !plasmoidVertical && !iconOnly
             id: maxButtonLength
+            visible: !plasmoidVertical && !iconOnly
             Kirigami.FormData.label: i18n("Maximum button length (px):")
             from: 1
             to: 9999
@@ -189,7 +217,6 @@ KCMUtils.SimpleKCM {
             from: 0
             to: 99
         }
-
 
         CheckBox {
             id: showToolTips
@@ -226,11 +253,7 @@ KCMUtils.SimpleKCM {
 
             Kirigami.FormData.label: i18nc("@label:listbox", "Maximum task width:")
 
-            model: [
-                i18nc("@item:inlistbox how wide a task item should be", "Narrow"),
-                i18nc("@item:inlistbox how wide a task item should be", "Medium"),
-                i18nc("@item:inlistbox how wide a task item should be", "Wide")
-            ]
+            model: [i18nc("@item:inlistbox how wide a task item should be", "Narrow"), i18nc("@item:inlistbox how wide a task item should be", "Medium"), i18nc("@item:inlistbox how wide a task item should be", "Wide")]
         }
 
         Item {
@@ -239,12 +262,10 @@ KCMUtils.SimpleKCM {
 
         RadioButton {
             id: forbidStripes
-            Kirigami.FormData.label: plasmoidVertical
-                ? i18nc("@label for radio button group, completes sentence: … when panel is low on space etc.", "Use multi-column view:")
-                : i18nc("@label for radio button group, completes sentence: … when panel is low on space etc.", "Use multi-row view:")
+            Kirigami.FormData.label: plasmoidVertical ? i18nc("@label for radio button group, completes sentence: … when panel is low on space etc.", "Use multi-column view:") : i18nc("@label for radio button group, completes sentence: … when panel is low on space etc.", "Use multi-row view:")
             onToggled: {
                 if (checked) {
-                    maxStripes.value = 1
+                    maxStripes.value = 1;
                 }
             }
             text: i18nc("@option:radio Never use multi-column view for Task Manager", "Never")
@@ -254,7 +275,7 @@ KCMUtils.SimpleKCM {
             id: allowStripes
             onToggled: {
                 if (checked) {
-                    maxStripes.value = Math.max(2, maxStripes.value)
+                    maxStripes.value = Math.max(2, maxStripes.value);
                 }
             }
             text: i18nc("@option:radio completes sentence: Use multi-column/row view", "When panel is low on space and thick enough")
@@ -264,7 +285,7 @@ KCMUtils.SimpleKCM {
             id: forceStripes
             onToggled: {
                 if (checked) {
-                    maxStripes.value = Math.max(2, maxStripes.value)
+                    maxStripes.value = Math.max(2, maxStripes.value);
                 }
             }
             text: i18nc("@option:radio completes sentence: Use multi-column/row view", "Always when panel is thick enough")
@@ -273,9 +294,7 @@ KCMUtils.SimpleKCM {
         SpinBox {
             id: maxStripes
             enabled: maxStripes.value > 1
-            Kirigami.FormData.label: plasmoidVertical
-            ? i18nc("@label:spinbox maximum number of columns for tasks", "Maximum columns:")
-            : i18nc("@label:spinbox maximum number of rows for tasks", "Maximum rows:")
+            Kirigami.FormData.label: plasmoidVertical ? i18nc("@label:spinbox maximum number of columns for tasks", "Maximum columns:") : i18nc("@label:spinbox maximum number of rows for tasks", "Maximum rows:")
             from: 1
         }
 
@@ -311,9 +330,12 @@ KCMUtils.SimpleKCM {
                 }
 
                 switch (cfg_iconSpacing) {
-                    case 0: return 0; // Small
-                    case 1: return 1; // Normal
-                    case 3: return 2; // Large
+                case 0:
+                    return 0; // Small
+                case 1:
+                    return 1; // Normal
+                case 3:
+                    return 2; // Large
                 }
             }
             onActivated: index => {
