@@ -10,18 +10,23 @@ import org.kde.plasma.configuration
 
 ConfigModel {
     ConfigCategory {
-         name: i18n("Appearance")
-         icon: "preferences-desktop-color"
-         source: "ConfigAppearance.qml"
+        name: i18n("Appearance")
+        icon: "preferences-desktop-color"
+        source: "ConfigAppearance.qml"
     }
     ConfigCategory {
-         name: i18n("Behavior")
-         icon: "preferences-desktop"
-         source: "ConfigBehavior.qml"
+        name: i18n("Behavior")
+        icon: "preferences-desktop"
+        source: "ConfigBehavior.qml"
     }
     ConfigCategory {
         name: i18n("Indicators")
         icon: "preferences-desktop-navigation"
         source: "ConfigIndicators.qml"
+    }
+    ConfigCategory {
+        name: i18n("Pinned Applications")
+        icon: "window-pin"
+        source: "ConfigPinnedApps.qml"
     }
 }

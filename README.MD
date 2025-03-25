@@ -6,10 +6,13 @@ Currently I'm almost done with the overhauls of indicators which should finalize
 # Contact
 You can reach me at ideas@alexankitty.com, by putting an issue on this github, by commenting on the [AUR package](https://aur.archlinux.org/packages/fancytasks), by commenting on the kde-look page, or on the [FancyTasks KDE Reddit community](https://www.reddit.com/r/fancytaskskde/).
 
-# FancyTasks
+# FancyTasks+
 
 ![Fancy Tasks Icon](https://github.com/alexankitty/FancyTasks/blob/main/package/FancyTasks.png?raw=true)
-
+This is a fork of [FancyTasks](https://github.com//alexankitty/FancyTasks) and [Luis Bocanegra's plasma6,hover-zoom branch](https://github.com/luisbocanegra/FancyTasks) with additional features:
+- Configurable icon zoom on hover
+- With better padding on hover previews
+- With a option in configuration which allows you to choose apps to pin and rearrange them 
 ## Installing
 
 If your distro does not include kirigami2, install it now. It's required for the settings, and used for the dominant icon color effect. Python3 is required for installing.

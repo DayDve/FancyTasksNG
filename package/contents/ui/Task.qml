@@ -30,33 +30,23 @@ PlasmaCore.ToolTipArea {
     readonly property bool isCiliora: plasmoid.configuration.indicatorStyle === 1
     readonly property bool isDashes: plasmoid.configuration.indicatorStyle === 2
 
-    property string tintColor: Kirigami.ColorUtils.brightnessForColor(Kirigami.Theme.backgroundColor)
-        === Kirigami.ColorUtils.Dark
-        ? "#ffffff"
-        : "#000000"
+    property string tintColor: Kirigami.ColorUtils.brightnessForColor(Kirigami.Theme.backgroundColor) === Kirigami.ColorUtils.Dark ? "#ffffff" : "#000000"
 
     // To achieve a bottom to top layout, the task manager is rotated by 180 degrees(see main.qml).
     // This makes the tasks mirrored, so we mirror them again to fix that.
     rotation: Plasmoid.configuration.reverseMode && Plasmoid.formFactor === PlasmaCore.Types.Vertical ? 180 : 0
 
-    implicitHeight: inPopup
-                    ? LayoutMetrics.preferredHeightInPopup()
-                    : Math.max(tasksRoot.height / tasksRoot.plasmoid.configuration.maxStripes,
-                             LayoutMetrics.preferredMinHeight())
-    implicitWidth: tasksRoot.vertical
-        ? Math.max(LayoutMetrics.preferredMinWidth(), Math.min(LayoutMetrics.preferredMaxWidth(), tasksRoot.width / tasksRoot.plasmoid.configuration.maxStripes))
-        : 0
+    implicitHeight: inPopup ? LayoutMetrics.preferredHeightInPopup() : Math.max(tasksRoot.height / tasksRoot.plasmoid.configuration.maxStripes, LayoutMetrics.preferredMinHeight())
+    implicitWidth: tasksRoot.vertical ? Math.max(LayoutMetrics.preferredMinWidth(), Math.min(LayoutMetrics.preferredMaxWidth(), tasksRoot.width / tasksRoot.plasmoid.configuration.maxStripes)) : 0
 
     Layout.fillWidth: true
     Layout.fillHeight: !inPopup
-    Layout.maximumWidth: tasksRoot.vertical
-        ? -1
-        : ((model.IsLauncher && !tasks.iconsOnly) ? tasksRoot.height / taskList.rows : LayoutMetrics.preferredMaxWidth())
+    Layout.maximumWidth: tasksRoot.vertical ? -1 : ((model.IsLauncher && !tasks.iconsOnly) ? tasksRoot.height / taskList.rows : LayoutMetrics.preferredMaxWidth())
     Layout.maximumHeight: tasksRoot.vertical ? LayoutMetrics.preferredMaxHeight() : -1
 
     required property var model
     required property int index
-    required property /*main.qml*/ Item tasksRoot
+    required property /*main.qml*/  Item tasksRoot
 
     readonly property int pid: model.AppPid
     readonly property string appName: model.AppName
@@ -81,9 +71,7 @@ PlasmaCore.ToolTipArea {
     readonly property bool playingAudio: hasAudioStream && audioStreams.some(item => !item.corked)
     readonly property bool muted: hasAudioStream && audioStreams.every(item => item.muted)
 
-    readonly property bool highlighted: (inPopup && activeFocus) || (!inPopup && containsMouse)
-        || (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open)
-        || (!!tasksRoot.groupDialog && tasksRoot.groupDialog.visualParent === task)
+    readonly property bool highlighted: (inPopup && activeFocus) || (!inPopup && containsMouse) || (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open) || (!!tasksRoot.groupDialog && tasksRoot.groupDialog.visualParent === task)
 
     property int itemIndex: index // fancytasks
 
@@ -162,7 +150,7 @@ PlasmaCore.ToolTipArea {
         }
 
         if (model.IsLauncher) {
-            return i18nc("@info:usagetip %1 application name", "Launch %1", model.display)
+            return i18nc("@info:usagetip %1 application name", "Launch %1", model.display);
         }
 
         let smartLauncherDescription = "";
@@ -174,18 +162,20 @@ PlasmaCore.ToolTipArea {
             switch (Plasmoid.configuration.groupedTaskVisualization) {
             case 0:
                 break; // Use the default description
-            case 1: {
-                if (Plasmoid.configuration.showToolTips) {
-                    return `${i18nc("@info:usagetip %1 task name", "Show Task tooltip for %1", model.display)}; ${smartLauncherDescription}`;
+            case 1:
+                {
+                    if (Plasmoid.configuration.showToolTips) {
+                        return `${i18nc("@info:usagetip %1 task name", "Show Task tooltip for %1", model.display)}; ${smartLauncherDescription}`;
+                    }
+                    // fallthrough
                 }
-                // fallthrough
-            }
-            case 2: {
-                if (effectWatcher.registered) {
-                    return `${i18nc("@info:usagetip %1 task name", "Show windows side by side for %1", model.display)}; ${smartLauncherDescription}`;
+            case 2:
+                {
+                    if (effectWatcher.registered) {
+                        return `${i18nc("@info:usagetip %1 task name", "Show windows side by side for %1", model.display)}; ${smartLauncherDescription}`;
+                    }
+                    // fallthrough
                 }
-                // fallthrough
-            }
             default:
                 return `${i18nc("@info:usagetip %1 task name", "Open textual list of windows for %1", model.display)}; ${smartLauncherDescription}`;
             }
@@ -219,13 +209,19 @@ PlasmaCore.ToolTipArea {
         backend.cancelHighlightWindows();
     }
 
-    onPidChanged: updateAudioStreams({delay: false})
-    onAppNameChanged: updateAudioStreams({delay: false})
+    onPidChanged: updateAudioStreams({
+        delay: false
+    })
+    onAppNameChanged: updateAudioStreams({
+        delay: false
+    })
 
     onIsWindowChanged: {
         if (model.IsWindow) {
             taskInitComponent.createObject(task);
-            updateAudioStreams({delay: false});
+            updateAudioStreams({
+                delay: false
+            });
         }
     }
 
@@ -240,8 +236,7 @@ PlasmaCore.ToolTipArea {
     onIndexChanged: {
         hideToolTip();
 
-        if (!inPopup && !tasksRoot.vertical
-                && !Plasmoid.configuration.separateLaunchers) {
+        if (!inPopup && !tasksRoot.vertical && !Plasmoid.configuration.separateLaunchers) {
             tasksRoot.requestLayout();
         }
     }
@@ -277,8 +272,8 @@ PlasmaCore.ToolTipArea {
 
     Keys.onMenuPressed: event => contextMenuTimer.start()
     Keys.onReturnPressed: event => TaskTools.activateTask(modelIndex(), model, event.modifiers, task, Plasmoid, tasksRoot, effectWatcher.registered)
-    Keys.onEnterPressed: event => Keys.returnPressed(event);
-    Keys.onSpacePressed: event => Keys.returnPressed(event);
+    Keys.onEnterPressed: event => Keys.returnPressed(event)
+    Keys.onSpacePressed: event => Keys.returnPressed(event)
     Keys.onUpPressed: event => Keys.leftPressed(event)
     Keys.onDownPressed: event => Keys.rightPressed(event)
     Keys.onLeftPressed: event => {
@@ -297,9 +292,7 @@ PlasmaCore.ToolTipArea {
     }
 
     function modelIndex(): /*QModelIndex*/ var {
-        return inPopup
-            ? tasksModel.makeModelIndex(groupDialog.visualParent.index, index)
-            : tasksModel.makeModelIndex(index);
+        return inPopup ? tasksModel.makeModelIndex(groupDialog.visualParent.index, index) : tasksModel.makeModelIndex(index);
     }
 
     function showContextMenu(args: var): void {
@@ -353,9 +346,7 @@ PlasmaCore.ToolTipArea {
 
     // Will also be called in activateTaskAtIndex(index)
     function updateMainItemBindings(): void {
-        if ((mainItem.parentTask === this && mainItem.rootIndex.row === index)
-            || (tasksRoot.toolTipOpenedByClick === null && !active)
-            || (tasksRoot.toolTipOpenedByClick !== null && tasksRoot.toolTipOpenedByClick !== this)) {
+        if ((mainItem.parentTask === this && mainItem.rootIndex.row === index) || (tasksRoot.toolTipOpenedByClick === null && !active) || (tasksRoot.toolTipOpenedByClick !== null && tasksRoot.toolTipOpenedByClick !== this)) {
             return;
         }
 
@@ -389,7 +380,9 @@ PlasmaCore.ToolTipArea {
         target: pulseAudio.item
         ignoreUnknownSignals: true // Plasma-PA might not be available
         function onStreamsChanged(): void {
-            task.updateAudioStreams({delay: true})
+            task.updateAudioStreams({
+                delay: true
+            });
         }
     }
 
@@ -403,13 +396,19 @@ PlasmaCore.ToolTipArea {
         var h, s, l = (max + min) / 2;
         if (max == min) {
             h = s = 0; // achromatic
-        }else {
+        } else {
             var d = max - min;
             s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-            switch(max){
-                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                case g: h = (b - r) / d + 2; break;
-                case b: h = (r - g) / d + 4; break;
+            switch (max) {
+            case r:
+                h = (g - b) / d + (g < b ? 6 : 0);
+                break;
+            case g:
+                h = (b - r) / d + 2;
+                break;
+            case b:
+                h = (r - g) / d + 4;
+                break;
             }
             h /= 6;
         }
@@ -424,9 +423,7 @@ PlasmaCore.ToolTipArea {
         id: colorOverride
         anchors.fill: frame
         source: frame
-        color: plasmoid.configuration.buttonColorizeDominant ?
-                frame.indicatorColor :
-                plasmoid.configuration.buttonColorizeCustom
+        color: plasmoid.configuration.buttonColorizeDominant ? frame.indicatorColor : plasmoid.configuration.buttonColorizeCustom
         visible: plasmoid.configuration.buttonColorize ? true : false
     }
 
@@ -448,7 +445,7 @@ PlasmaCore.ToolTipArea {
     //     Repeater {
 
     //         model: {
-                
+
     //             if(!plasmoid.configuration.indicatorsEnabled)
     //             return 0;
     //             if(task.childCount < plasmoid.configuration.indicatorMinLimit)
@@ -461,7 +458,7 @@ PlasmaCore.ToolTipArea {
     //             return Math.min((task.childCount === 0) ? 1 : task.childCount, maxStates);
     //         }
     //         readonly property int maxStates: plasmoid.configuration.indicatorMaxLimit
-            
+
     //         Rectangle{
     //             id: stateRect
     //             Behavior on height { PropertyAnimation {duration: plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
@@ -541,7 +538,7 @@ PlasmaCore.ToolTipArea {
     //                     colorCalc = Qt.hsla(colorHSL.h, colorHSL.s*0.5, colorHSL.l*.8, 1)
     //                 }
     //                 else if(!isFirst && plasmoid.configuration.indicatorStyle ===  0 && task.state !== "minimized") {//Metro specific handling
-    //                     colorCalc = Qt.darker(colorEval, 1.2) 
+    //                     colorCalc = Qt.darker(colorEval, 1.2)
     //                 }
     //                 else {
     //                     colorCalc = colorEval
@@ -577,7 +574,7 @@ PlasmaCore.ToolTipArea {
     //             }
     //         }
     //     }
-        
+
     //     states:[
     //         State {
     //             name: "bottom"
@@ -681,7 +678,9 @@ PlasmaCore.ToolTipArea {
             // When we're a launcher, there's no window controls, so we can show all
             // places without the menu getting super huge.
             if (model.IsLauncher) {
-                showContextMenu({showAllPlaces: true})
+                showContextMenu({
+                    showAllPlaces: true
+                });
             } else {
                 showContextMenu();
             }
@@ -692,7 +691,8 @@ PlasmaCore.ToolTipArea {
         acceptedButtons: Qt.RightButton
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad | PointerDevice.Stylus
         gesturePolicy: TapHandler.WithinBounds // Release grab when menu appears
-        onPressedChanged: if (pressed) contextMenuTimer.start()
+        onPressedChanged: if (pressed)
+            contextMenuTimer.start()
     }
 
     Timer {
@@ -721,7 +721,7 @@ PlasmaCore.ToolTipArea {
                 if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.NewInstance) {
                     tasksModel.requestNewInstance(modelIndex());
                 } else if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.Close) {
-                    tasksRoot.taskClosedWithMouseMiddleButton = model.WinIdList.slice()
+                    tasksRoot.taskClosedWithMouseMiddleButton = model.WinIdList.slice();
                     tasksModel.requestClose(modelIndex());
                 } else if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.ToggleMinimized) {
                     tasksModel.requestToggleMinimized(modelIndex());
@@ -785,7 +785,7 @@ PlasmaCore.ToolTipArea {
                 while (item.parent) {
                     item = item.parent;
                     if (item.appletRequestsInhibitDnD !== undefined) {
-                        item.appletRequestsInhibitDnD = value
+                        item.appletRequestsInhibitDnD = value;
                     }
                 }
             }
@@ -803,7 +803,7 @@ PlasmaCore.ToolTipArea {
                         dragHelper.Drag.mimeData = {
                             "text/x-orgkdeplasmataskmanager_taskurl": backend.tryDecodeApplicationsUrl(model.LauncherUrlWithoutIcon).toString(),
                             [model.MimeType]: model.MimeData,
-                            "application/x-orgkdeplasmataskmanager_taskbuttonitem": model.MimeData,
+                            "application/x-orgkdeplasmataskmanager_taskbuttonitem": model.MimeData
                         };
                         dragHelper.Drag.active = dragHandler.active;
                     });
@@ -837,12 +837,10 @@ PlasmaCore.ToolTipArea {
         }
 
         width: task.inPopup ? Math.max(Kirigami.Units.iconSizes.sizeForLabels, Kirigami.Units.iconSizes.medium) : Math.min(task.parent?.minimumWidth ?? 0, task.height)
-        height: task.inPopup ? width : (parent.height - adjustMargin(false, parent.height, taskFrame.margins.top)
-                 - adjustMargin(false, parent.height, taskFrame.margins.bottom))
+        height: task.inPopup ? width : (parent.height - adjustMargin(false, parent.height, taskFrame.margins.top) - adjustMargin(false, parent.height, taskFrame.margins.bottom))
 
         asynchronous: true
-        active: height >= Kirigami.Units.iconSizes.small
-                && task.smartLauncherItem && task.smartLauncherItem.countVisible
+        active: height >= Kirigami.Units.iconSizes.small && task.smartLauncherItem && task.smartLauncherItem.countVisible
         source: "TaskBadgeOverlay.qml"
 
         function adjustMargin(isVertical: bool, size: real, margin: real): real {
@@ -861,14 +859,14 @@ PlasmaCore.ToolTipArea {
 
         Kirigami.Icon {
             id: icon
-            property int growSize: active ? 20 : 0
+            property int growSize: active ? plasmoid.configuration.iconZoomFactor : 0
             width: parent.width + growSize
             height: parent.height + growSize
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
             Behavior on growSize {
                 NumberAnimation {
-                    duration: 250
+                    duration: plasmoid.configuration.iconZoomDuration
                     easing.type: Easing.InOutQuad
                 }
             }
@@ -895,9 +893,7 @@ PlasmaCore.ToolTipArea {
                 PropertyChanges {
                     target: iconBox
                     anchors.leftMargin: 0
-                    width: Math.min(task.parent.minimumWidth, tasks.height)
-                        - adjustMargin(true, task.width, taskFrame.margins.left)
-                        - adjustMargin(true, task.width, taskFrame.margins.right)
+                    width: Math.min(task.parent.minimumWidth, tasks.height) - adjustMargin(true, task.width, taskFrame.margins.left) - adjustMargin(true, task.width, taskFrame.margins.right)
                 }
             }
         ]
@@ -914,8 +910,7 @@ PlasmaCore.ToolTipArea {
     PlasmaComponents3.Label {
         id: label
 
-        visible: (inPopup || !iconsOnly && !model.IsLauncher
-            && (parent.width - iconBox.height - Kirigami.Units.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText())
+        visible: (inPopup || !iconsOnly && !model.IsLauncher && (parent.width - iconBox.height - Kirigami.Units.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText())
 
         anchors {
             fill: parent
@@ -954,7 +949,7 @@ PlasmaCore.ToolTipArea {
                 target: frame
                 basePrefix: ""
             }
-            PropertyChanges { 
+            PropertyChanges {
                 target: colorOverride
                 visible: false
             }
@@ -968,7 +963,7 @@ PlasmaCore.ToolTipArea {
                 basePrefix: "attention"
                 visible: (plasmoid.configuration.buttonColorize && !frame.isHovered) || !plasmoid.configuration.buttonColorize
             }
-            PropertyChanges { 
+            PropertyChanges {
                 target: colorOverride
                 visible: (plasmoid.configuration.buttonColorize && frame.isHovered)
             }
@@ -982,11 +977,11 @@ PlasmaCore.ToolTipArea {
                 basePrefix: "minimized"
                 visible: (plasmoid.configuration.buttonColorize && plasmoid.configuration.buttonColorizeInactive) ? false : true
             }
-            PropertyChanges { 
+            PropertyChanges {
                 target: colorOverride
                 visible: (plasmoid.configuration.buttonColorize && plasmoid.configuration.buttonColorizeInactive) ? true : false
             }
-            PropertyChanges{
+            PropertyChanges {
                 target: indicator
                 visible: plasmoid.configuration.disableInactiveIndicators ? false : true
             }
@@ -1000,11 +995,11 @@ PlasmaCore.ToolTipArea {
                 basePrefix: "minimized"
                 visible: plasmoid.configuration.disableButtonInactiveSvg ? false : true
             }
-            PropertyChanges { 
+            PropertyChanges {
                 target: colorOverride
                 visible: plasmoid.configuration.disableButtonInactiveSvg ? false : true
             }
-            PropertyChanges{
+            PropertyChanges {
                 target: indicator
                 visible: plasmoid.configuration.disableInactiveIndicators ? false : true
             }
@@ -1017,11 +1012,11 @@ PlasmaCore.ToolTipArea {
                 target: frame
                 basePrefix: "focus"
             }
-            PropertyChanges { 
+            PropertyChanges {
                 target: colorOverride
                 visible: plasmoid.configuration.buttonColorize ? true : false
             }
-            PropertyChanges{
+            PropertyChanges {
                 target: indicator
                 visible: plasmoid.configuration.indicatorsEnabled ? true : false
             }
@@ -1029,15 +1024,15 @@ PlasmaCore.ToolTipArea {
         State {
             name: "inactive"
             when: model.IsActive === false && !frame.isHovered && !plasmoid.configuration.disableButtonInactiveSvg
-            PropertyChanges { 
+            PropertyChanges {
                 target: colorOverride
                 visible: plasmoid.configuration.buttonColorize && plasmoid.configuration.buttonColorizeInactive ? true : false
             }
-            PropertyChanges { 
+            PropertyChanges {
                 target: frame
                 visible: plasmoid.configuration.buttonColorize && plasmoid.configuration.buttonColorizeInactive ? false : true
             }
-            PropertyChanges{
+            PropertyChanges {
                 target: indicator
                 visible: plasmoid.configuration.disableInactiveIndicators ? false : true
             }
@@ -1045,15 +1040,15 @@ PlasmaCore.ToolTipArea {
         State {
             name: "inactiveNoDecoration"
             when: (model.IsActive === false && !frame.isHovered) && plasmoid.configuration.disableButtonInactiveSvg
-            PropertyChanges { 
+            PropertyChanges {
                 target: colorOverride
                 visible: plasmoid.configuration.disableButtonInactiveSvg ? false : true
             }
-            PropertyChanges { 
+            PropertyChanges {
                 target: frame
                 visible: plasmoid.configuration.disableButtonInactiveSvg ? false : true
             }
-            PropertyChanges{
+            PropertyChanges {
                 target: indicator
                 visible: plasmoid.configuration.disableInactiveIndicators ? false : true
             }
@@ -1061,15 +1056,15 @@ PlasmaCore.ToolTipArea {
         State {
             name: "hover"
             when: frame.isHovered
-            PropertyChanges { 
+            PropertyChanges {
                 target: colorOverride
                 visible: plasmoid.configuration.buttonColorize ? true : false
             }
-            PropertyChanges { 
+            PropertyChanges {
                 target: frame
                 visible: plasmoid.configuration.buttonColorize ? false : true
             }
-            PropertyChanges{
+            PropertyChanges {
                 target: indicator
                 visible: plasmoid.configuration.disableInactiveIndicators ? false : true
             }
@@ -1078,12 +1073,14 @@ PlasmaCore.ToolTipArea {
 
     Component.onCompleted: {
         if (!inPopup && model.IsWindow) {
-            if (plasmoid.configuration.groupIconEnabled){
+            if (plasmoid.configuration.groupIconEnabled) {
                 const component = Qt.createComponent("GroupExpanderOverlay.qml");
                 component.createObject(task);
                 component.destroy();
             }
-            updateAudioStreams({delay: false});
+            updateAudioStreams({
+                delay: false
+            });
         }
 
         if (!inPopup && !model.IsWindow) {
