@@ -9,6 +9,7 @@ You can reach me at ideas@alexankitty.com, by putting an issue on this github, b
 # FancyTasks+
 
 ![Fancy Tasks Icon](https://github.com/alexankitty/FancyTasks/blob/main/package/FancyTasks.png?raw=true)
+
 This is a fork of [FancyTasks](https://github.com//alexankitty/FancyTasks) and [Luis Bocanegra's plasma6,hover-zoom branch](https://github.com/luisbocanegra/FancyTasks) with additional features:
 - Configurable icon zoom on hover
 - With better padding on hover previews
