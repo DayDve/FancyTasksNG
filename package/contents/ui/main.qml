@@ -98,6 +98,24 @@ PlasmoidItem {
     signal windowsHovered(var winIds, bool hovered)
     signal activateWindowView(var winIds)
 
+    onWindowsHovered: (winIds, hovered) => {
+        if (!Plasmoid.configuration.highlightWindows) {
+            return;
+        }
+        DBus.SessionBus.asyncCall({
+            service: "org.kde.KWin.HighlightWindow",
+            path: "/org/kde/KWin/HighlightWindow",
+            iface: "org.kde.KWin.HighlightWindow",
+            member: "highlightWindows",
+            arguments: [hovered ? winIds : []],
+            signature: "(as)"
+        });
+    }
+
+    function cancelHighlightWindows(): DBus.DBusPendingReply {
+        return DBus.SessionBus.asyncCall({service: "org.kde.KWin.HighlightWindow", path: "/org/kde/KWin/HighlightWindow", iface: "org.kde.KWin.HighlightWindow", member: "highlightWindows", arguments: [[]], signature: "(as)"});
+    }
+
     onDragSourceChanged: {
         if (dragSource === null) {
             tasksModel.syncLaunchers();
@@ -214,7 +232,6 @@ PlasmoidItem {
 
     readonly property TaskManagerApplet.Backend backend: TaskManagerApplet.Backend {
         id: backend
-        highlightWindows: Plasmoid.configuration.highlightWindows
 
         onAddLauncher: {
             tasks.addLauncher(url);
@@ -549,7 +566,7 @@ PlasmoidItem {
     Component.onCompleted: {
         TaskTools.taskManagerInstanceCount += 1;
         requestLayout.connect(iconGeometryTimer.restart);
-        windowsHovered.connect(backend.windowsHovered);
+        windowsHovered.connect(tasks.windowsHovered);
         activateWindowView.connect(backend.activateWindowView);
     }
 
