@@ -45,8 +45,12 @@ echo "[build] Done building messages"
 
 if [ "$1" = "--restartplasma" ]; then
 	echo "[build] Restarting plasmashell"
-	killall plasmashell
-	kstart5 plasmashell
+	if systemctl --user is-active --quiet plasma-plasmashell.service; then
+		systemctl --user restart plasma-plasmashell.service
+	else
+		killall plasmashell
+		plasmashell > /dev/null 2>&1 &
+	fi
 	echo "[build] Done restarting plasmashell"
 else
 	echo "[build] (re)install the plasmoid and restart plasmashell to test."

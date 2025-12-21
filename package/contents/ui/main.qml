@@ -57,18 +57,23 @@ PlasmoidItem {
     }
 
     Layout.fillWidth: vertical ? true : Plasmoid.configuration.fill
-    Layout.fillHeight: !vertical ? true : Plasmoid.configuration.fill
+    Layout.fillHeight: !vertical ?
+        true : Plasmoid.configuration.fill
     Layout.minimumWidth: {
         if (shouldShrinkToZero) {
-            return Kirigami.Units.gridUnit; // For edit mode
+            return Kirigami.Units.gridUnit;
+            // For edit mode
         }
-        return vertical ? 0 : LayoutMetrics.preferredMinWidth();
+        return vertical ?
+            0 : LayoutMetrics.preferredMinWidth();
     }
     Layout.minimumHeight: {
         if (shouldShrinkToZero) {
-            return Kirigami.Units.gridUnit; // For edit mode
+            return Kirigami.Units.gridUnit;
+            // For edit mode
         }
-        return !vertical ? 0 : LayoutMetrics.preferredMinHeight();
+        return !vertical ?
+            0 : LayoutMetrics.preferredMinHeight();
     }
 
     //BEGIN TODO: this is not precise enough: launchers are smaller than full tasks
@@ -128,7 +133,6 @@ PlasmoidItem {
         }
         for (let i = 0; i < taskItems.length - 1; ++i) {
             const task = taskItems[i];
-
             if (!task.model.IsLauncher && !task.model.IsStartup) {
                 tasksModel.requestPublishDelegateGeometry(tasksModel.makeModelIndex(task.index), backend.globalRect(task), task);
             }
@@ -144,10 +148,8 @@ PlasmoidItem {
             }
 
             let startupsWithLaunchers = 0;
-
             for (let i = 0; i < taskRepeater.count; ++i) {
                 const item = taskRepeater.itemAt(i);
-
                 // During destruction required properties such as item.model can go null for a while,
                 // so in paths that can trigger on those moments, they need to be guarded
                 if (item?.model?.IsStartup && item.model.HasLauncher) {
@@ -167,7 +169,8 @@ PlasmoidItem {
         filterByActivity: Plasmoid.configuration.showOnlyCurrentActivity
         filterNotMinimized: Plasmoid.configuration.showOnlyMinimized
 
-        hideActivatedLaunchers: tasks.iconsOnly || Plasmoid.configuration.hideLauncherOnStart
+        hideActivatedLaunchers: tasks.iconsOnly ||
+            Plasmoid.configuration.hideLauncherOnStart
         sortMode: sortModeEnumValue(Plasmoid.configuration.sortingStrategy)
         launchInPlace: tasks.iconsOnly && Plasmoid.configuration.sortingStrategy === 1
         separateLaunchers: {
@@ -294,6 +297,7 @@ PlasmoidItem {
 
         TaskManager.ActivityInfo {
             id: activityInfo
+            
             readonly property string nullUuid: "00000000-0000-0000-0000-000000000000"
         }
 
@@ -345,7 +349,8 @@ PlasmoidItem {
             id: dragHelper
 
             Drag.dragType: Drag.Automatic
-            Drag.supportedActions: Qt.CopyAction | Qt.MoveAction | Qt.LinkAction
+            Drag.supportedActions: Qt.CopyAction | Qt.MoveAction |
+                Qt.LinkAction
             Drag.onDragFinished: dropAction => {
                 tasks.dragSource = null;
             }
@@ -479,9 +484,11 @@ PlasmoidItem {
 
                 flow: {
                     if (tasks.vertical) {
-                        return Plasmoid.configuration.forceStripes ? Grid.LeftToRight : Grid.TopToBottom;
+                        return Plasmoid.configuration.forceStripes ?
+                            Grid.LeftToRight : Grid.TopToBottom;
                     }
-                    return Plasmoid.configuration.forceStripes ? Grid.TopToBottom : Grid.LeftToRight;
+                    return Plasmoid.configuration.forceStripes ?
+                        Grid.TopToBottom : Grid.LeftToRight;
                 }
 
                 onAnimatingChanged: {
@@ -566,8 +573,6 @@ PlasmoidItem {
     Component.onCompleted: {
         TaskTools.taskManagerInstanceCount += 1;
         requestLayout.connect(iconGeometryTimer.restart);
-        windowsHovered.connect(tasks.windowsHovered);
-        activateWindowView.connect(backend.activateWindowView);
     }
 
     Component.onDestruction: {
