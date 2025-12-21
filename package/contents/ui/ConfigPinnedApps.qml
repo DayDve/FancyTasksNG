@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Dialogs
 
 import org.kde.kcmutils as KCMUtils
 import org.kde.kirigami as Kirigami

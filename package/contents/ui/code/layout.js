@@ -4,8 +4,8 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-.import org.kde.plasma.core 2.0 as PlasmaCore
-.import org.kde.kirigami 2.19 as Kirigami
+.import org.kde.plasma.core as PlasmaCore
+.import org.kde.kirigami as Kirigami
 
 const iconMargin = Math.round(Kirigami.Units.smallSpacing / 4);
 const labelMargin = Kirigami.Units.smallSpacing;

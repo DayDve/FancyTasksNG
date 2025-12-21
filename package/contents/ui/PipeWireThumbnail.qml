@@ -20,11 +20,12 @@ PipeWire.PipeWireSourceItem {
     width: parent.width
     height: {
         // If we have valid source dimensions, calculate proper height
-        if (sourceSize.width > 0 && sourceSize.height > 0) {
-            return Math.min(parent.height, parent.width * (sourceSize.height / sourceSize.width));
+        if (implicitWidth > 0 && implicitHeight > 0) {
+            return Math.min(parent.height, parent.width * (implicitHeight / implicitWidth));
         } else {
             // Fallback to a reasonable default
-            return Math.min(parent.height, parent.width * 0.75);  // 4:3 aspect ratio as fallback
+            return Math.min(parent.height, parent.width * 0.75);
+            // 4:3 aspect ratio as fallback
         }
     }
 
