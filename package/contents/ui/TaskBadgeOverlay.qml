@@ -12,6 +12,9 @@ import org.kde.plasma.plasmoid
 Item {
     id: root
 
+    // Fix: Anchor directly to the icon to sync scaling and position automatically
+    anchors.fill: icon
+
     readonly property int iconWidthDelta: (icon.width - icon.paintedWidth) / 2
     readonly property bool shiftBadgeDown: (Plasmoid.pluginName === "org.kde.plasma.icontasks") && task.audioStreamIcon !== null
 
@@ -24,7 +27,8 @@ Item {
 
             anchors.right: parent.right
             anchors.rightMargin: -offset
-            y: root.shiftBadgeDown ? (icon.height / 2) : 0
+            y: root.shiftBadgeDown ?
+                (icon.height / 2) : 0
 
             Behavior on y {
                 NumberAnimation { duration: Kirigami.Units.longDuration }

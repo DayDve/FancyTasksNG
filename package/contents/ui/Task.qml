@@ -664,13 +664,11 @@ ${smartLauncherDescription}`;
             property int growSize: active ?
                 plasmoid.configuration.iconZoomFactor : 0
             
-            // Fix: Use iconScale
             property real iconScale: plasmoid.configuration.iconScale / 100
             
             width: (parent.width * iconScale) + growSize
             height: (parent.height * iconScale) + growSize
         
-            
             anchors.centerIn: parent
 
             Behavior on growSize {
