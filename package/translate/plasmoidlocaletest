@@ -1,16 +1,11 @@
 #!/bin/bash
-# Version 9
-# Requires plasmoidviewer v5.13.0
+# Version 10
 
 function checkIfLangInstalled {
 	if [ -x "$(command -v dpkg)" ]; then
-		dpkg -l ${1} >/dev/null 2>&1 || ( \
-			echo -e "${1} not installed.\nInstalling now before continuing.\n" \
-			; sudo apt install ${1} \
-		) || ( \
-			echo -e "\nError trying to install ${1}\nPlease run 'sudo apt install ${1}'\n" \
-			; exit 1 \
-		)
+		dpkg -l ${1} >/dev/null 2>&1 || \
+		( echo -e "${1} not installed.\nInstalling now...\n"; sudo apt install ${1} ) || \
+		( echo -e "\nError trying to install ${1}\n"; exit 1 )
 	elif [ -x "$(command -v pacman)" ]; then
 		# TODO: run `locale -a` and check if the locale is enabled.
 		if false; then
@@ -137,7 +132,7 @@ declare -a langArr=(
 
 for i in "${langArr[@]}"; do
 	IFS=: read -r l1 l2 l3 <<< "$i"
-	if [ "$langInput" == "$l2" ]; then
+	if [ "$langInput" == "$l2" ] || [ "$langInput" == "$l1" ]; then
 		lang="${l1}:${l2}"
 		languagePack="language-pack-${l2}"
 	fi
@@ -147,13 +142,7 @@ if [ -z "$lang" ]; then
 	echo "plasmoidlocaletest doesn't recognize the language '$lang'"
 	echo "Eg:"
 	scriptcmd='sh ./plasmoidlocaletest'
-	for i in "${langArr[@]}"; do
-		IFS=: read -r l1 l2 l3 <<< "$i"
-		echo "    ${scriptcmd} ${l2}     | ${l3}"
-	done
-	echo ""
-	echo "Or use a the full locale code:"
-	echo "    ${scriptcmd} ar_EG:ar"
+	echo "    ${scriptcmd} ru_RU"
 	exit 1
 fi
 
@@ -162,20 +151,19 @@ l1="${l1}.UTF-8"
 
 # Check if language is installed
 if [ ! -z "$languagePack" ]; then
-	if [ "$lang" == "zh_CN:zh" ]; then languagePack="language-pack-zh-hans"
-	fi
+	if [ "$lang" == "zh_CN:zh" ]; then languagePack="language-pack-zh-hans"; fi
 
 	checkIfLangInstalled "$languagePack" || exit 1
 fi
 
-
 echo "LANGUAGE=\"${lang}\""
 echo "LANG=\"${l1}\""
 
-scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-packageDir="${scriptDir}/.."
+SCRIPT_DIR=$(dirname $(readlink -f "$0"))
+# Absolute path to package
+PACKAGE_DIR=$(readlink -f "$SCRIPT_DIR/..")
 
-# Build local translations for plasmoidviewer
-sh "${scriptDir}/build"
+# Build local translations
+bash "${SCRIPT_DIR}/build"
 
-LANGUAGE="${lang}" LANG="${l1}" LC_TIME="${l1}" QML_DISABLE_DISK_CACHE=true plasmoidviewer -a "$packageDir" -l topedge -f horizontal -x 0 -y 0
+LANGUAGE="${lang}" LANG="${l1}" LC_ALL="${l1}" QML_DISABLE_DISK_CACHE=true plasmawindowed "$PACKAGE_DIR"

@@ -1,5 +1,11 @@
-#!/bin/sh
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-sh $SCRIPT_DIR/build.sh
-kpackagetool6 -i $SCRIPT_DIR/release/FancyTasks.tar.gz
-sh ./iconinstall.sh
+#!/bin/bash
+SCRIPT_DIR=$(dirname $(readlink -f "$0"))
+
+echo "Compiling translations..."
+bash "$SCRIPT_DIR/package/translate/build"
+
+echo "Installing plasmoid ..."
+kpackagetool6 -t Plasma/Applet --install "$SCRIPT_DIR/package"
+
+bash "$SCRIPT_DIR/iconinstall.sh"
+echo "Install complete."

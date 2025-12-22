@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/alexankitty/FancyTasks\n"
-"POT-Creation-Date: 2023-09-13 22:51-0600\n"
+"POT-Creation-Date: 2025-12-22 13:42+0200\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -29,6 +29,30 @@ msgstr "Gedrag"
 msgid "Indicators"
 msgstr "Indicators"
 
+#: ../contents/config/config.qml
+msgid "Pinned Applications"
+msgstr ""
+
+#: ../contents/ui/AudioStream.qml
+msgctxt "@action:button"
+msgid "Unmute"
+msgstr ""
+
+#: ../contents/ui/AudioStream.qml
+msgctxt "@action:button"
+msgid "Mute"
+msgstr ""
+
+#: ../contents/ui/AudioStream.qml
+msgctxt "@info:tooltip %1 is the window title"
+msgid "Unmute %1"
+msgstr ""
+
+#: ../contents/ui/AudioStream.qml
+msgctxt "@info:tooltip %1 is the window title"
+msgid "Mute %1"
+msgstr ""
+
 #: ../contents/ui/Badge.qml
 msgctxt "Invalid number of new messages, overlay, keep short"
 msgid "—"
@@ -40,27 +64,31 @@ msgid "9,999+"
 msgstr "9,999+"
 
 #: ../contents/ui/ConfigAppearance.qml
-msgid "General:"
-msgstr "Algemeen:"
-
-#: ../contents/ui/ConfigAppearance.qml
-msgid "Show tooltips"
-msgstr "Vensterminiaturen tonen"
-
-#: ../contents/ui/ConfigAppearance.qml
-msgid "Highlight windows when hovering over task tooltips"
-msgstr "Vensters voorvertonen na aanwĳzen van vensterminiaturen"
-
-#: ../contents/ui/ConfigAppearance.qml
-msgid "Mark applications that play audio"
-msgstr "Programma's die audio afspelen markeren"
-
-#: ../contents/ui/ConfigAppearance.qml
 msgid "Use plasma borders"
 msgstr "Plasmakaders gebruiken"
 
 #: ../contents/ui/ConfigAppearance.qml
 msgid "Icon Scale"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgid "Icon Hover Effects"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgid "Icon zoom factor (px):"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgid "How much the icon should grow when hovered (in pixels)"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgid "Zoom animation duration (ms):"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgid "Duration of the zoom animation in milliseconds"
 msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
@@ -136,22 +164,6 @@ msgid "East"
 msgstr "Rechts"
 
 #: ../contents/ui/ConfigAppearance.qml
-msgid "Maximum columns:"
-msgstr "Maximaal aantal kolommen:"
-
-#: ../contents/ui/ConfigAppearance.qml
-msgid "Maximum rows:"
-msgstr "Maximaal aantal rĳen:"
-
-#: ../contents/ui/ConfigAppearance.qml
-msgid "Always arrange tasks in rows of as many columns"
-msgstr "Taken altĳd verdelen over zoveel mogelĳk kolommen"
-
-#: ../contents/ui/ConfigAppearance.qml
-msgid "Always arrange tasks in columns of as many rows"
-msgstr "Taken altĳd verdelen over zoveel mogelĳk rĳen"
-
-#: ../contents/ui/ConfigAppearance.qml
 msgid "Maximum button length (px):"
 msgstr "Maximale knopbreedte (in px):"
 
@@ -160,8 +172,89 @@ msgid "Space between taskbar items (px):"
 msgstr "Ruimte tussen taakbalkitems (in px):"
 
 #: ../contents/ui/ConfigAppearance.qml
+msgctxt "@label for several checkboxes"
+msgid "General:"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgctxt "@option:check section General"
+msgid "Show small window previews when hovering over tasks"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgctxt "@option:check section General"
+msgid "Hide other windows when hovering over previews"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgctxt "@option:check section General"
+msgid "Mark applications that play audio"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgctxt "@option:check section General"
+msgid "Fill free space on panel"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgctxt "@label:listbox"
+msgid "Maximum task width:"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgctxt "@item:inlistbox how wide a task item should be"
+msgid "Narrow"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgctxt "@item:inlistbox how wide a task item should be"
+msgid "Medium"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgctxt "@item:inlistbox how wide a task item should be"
+msgid "Wide"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgctxt "@label for radio button group, completes sentence: … when panel is low on space etc."
+msgid "Use multi-column view:"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgctxt "@label for radio button group, completes sentence: … when panel is low on space etc."
+msgid "Use multi-row view:"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgctxt "@option:radio Never use multi-column view for Task Manager"
+msgid "Never"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgctxt "@option:radio completes sentence: Use multi-column/row view"
+msgid "When panel is low on space and thick enough"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgctxt "@option:radio completes sentence: Use multi-column/row view"
+msgid "Always when panel is thick enough"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgctxt "@label:spinbox maximum number of columns for tasks"
+msgid "Maximum columns:"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgctxt "@label:spinbox maximum number of rows for tasks"
+msgid "Maximum rows:"
+msgstr ""
+
+#: ../contents/ui/ConfigAppearance.qml
+msgctxt "@label:listbox"
 msgid "Spacing between icons:"
-msgstr "Ruimte tussen pictogrammen:"
+msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
 msgctxt "@item:inlistbox Icon spacing"
@@ -180,8 +273,8 @@ msgstr "Groot"
 
 #: ../contents/ui/ConfigAppearance.qml
 msgctxt "@info:usagetip under a set of radio buttons when Touch Mode is on"
-msgid "Automatically set to Large when in Touch Mode"
-msgstr "Automatisch ingesteld op ‘Groot’ als de aanraakmodus is ingeschakeld"
+msgid "Automatically set to Large when in Touch mode"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
 msgid "Display:"
@@ -196,204 +289,219 @@ msgid "Show icons only"
 msgstr "Alleen pictogrammen"
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@label:listbox how to group tasks"
 msgid "Group:"
-msgstr "Groeperen:"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@item:inlistbox how to group tasks"
 msgid "Do not group"
-msgstr "Niet groeperen"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@item:inlistbox how to group tasks"
 msgid "By program name"
-msgstr "Op programmanaam"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@label:listbox completes sentence like: … cycles through tasks"
 msgid "Clicking grouped task:"
-msgstr "Actie na aanklikken van gegroepeerde taak:"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "Completes the sentence 'Clicking grouped task cycles through tasks' "
+msgctxt "@item:inlistbox Completes the sentence 'Clicking grouped task cycles through tasks' "
 msgid "Cycles through tasks"
-msgstr "Van taak wisselen"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt ""
-"Completes the sentence 'Clicking grouped task shows tooltip window "
-"thumbnails' "
-msgid "Shows tooltip window thumbnails"
-msgstr "Vensterminiaturen tonen"
+msgctxt "@item:inlistbox Completes the sentence 'Clicking grouped task shows small window previews' "
+msgid "Shows small window previews"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt ""
-"Completes the sentence 'Clicking grouped task shows windows side by side' "
-msgid "Shows windows side by side"
-msgstr "Vensters naast elkaar tonen"
+msgctxt "@item:inlistbox Completes the sentence 'Clicking grouped task shows large window previews' "
+msgid "Shows large window previews"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "Completes the sentence 'Clicking grouped task shows textual list' "
+msgctxt "@item:inlistbox Completes the sentence 'Clicking grouped task shows textual list' "
 msgid "Shows textual list"
-msgstr "Vensterlĳst tonen"
-
-#: ../contents/ui/ConfigBehavior.qml
-msgid ""
-"Tooltips are disabled, so the windows will be displayed side by side instead."
 msgstr ""
-"Vensterminiaturen zĳn uitgeschakeld; vensters worden naast elkaar getoond."
 
 #: ../contents/ui/ConfigBehavior.qml
-msgid ""
-"Tooltips are disabled, and the compositor does not support displaying "
-"windows side by side, so a textual list will be displayed instead"
+msgctxt "@info displayed as InlineMessage"
+msgid "The compositor does not support displaying windows side by side, so a textual list will be displayed instead."
 msgstr ""
-"Vensterminiaturen zĳn uitgeschakeld en de compositor heeft geen "
-"ondersteuning voor het tonen van vensters naast elkaar. Er wordt in plaats "
-"daarvan een lĳst getoond."
 
 #: ../contents/ui/ConfigBehavior.qml
-msgid ""
-"The compositor does not support displaying windows side by side, so a "
-"textual list will be displayed instead."
-msgstr ""
-"De compositor heeft geen ondersteuning voor het tonen van vensters naast "
-"elkaar; er wordt een lĳst getoond."
-
-#: ../contents/ui/ConfigBehavior.qml
+msgctxt "@option:check grouped task"
 msgid "Combine into single button"
-msgstr "Combineren tot één knop"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@option:check grouped task"
 msgid "Group only when the Task Manager is full"
-msgstr "Alleen groeperen als takenbeheer vol is"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@label:listbox sort tasks in grouped task"
 msgid "Sort:"
-msgstr "Rangschikken:"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@item:inlistbox sort tasks in grouped task"
 msgid "Do not sort"
-msgstr "Niet rangschikken"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@item:inlistbox sort tasks in grouped task"
 msgid "Manually"
-msgstr "Handmatig"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@item:inlistbox sort tasks in grouped task"
 msgid "Alphabetically"
-msgstr "Op alfabetische volgorde"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@item:inlistbox sort tasks in grouped task"
 msgid "By desktop"
-msgstr "Op bureaublad"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@item:inlistbox sort tasks in grouped task"
 msgid "By activity"
-msgstr "Op activiteit"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@option:check configure task sorting"
 msgid "Keep launchers separate"
-msgstr "Starters gescheiden houden"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "Part of a sentence: 'Clicking active task minimizes the task'"
+msgctxt "@option:check for icons-and-text task manager"
+msgid "Hide launchers after application startup"
+msgstr ""
+
+#: ../contents/ui/ConfigBehavior.qml
+msgctxt "@label for checkbox Part of a sentence: 'Clicking active task minimizes the task'"
 msgid "Clicking active task:"
-msgstr "Actie na aanklikken van actieve taak:"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "Part of a sentence: 'Clicking active task minimizes the task'"
+msgctxt "@option:check Part of a sentence: 'Clicking active task minimizes the task'"
 msgid "Minimizes the task"
-msgstr "Taak minimaliseren"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@label:listbox completes sentence like: … does nothing"
 msgid "Middle-clicking any task:"
-msgstr "Actie na middelklikken op een taak:"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "Part of a sentence: 'Middle-clicking any task does nothing'"
+msgctxt "@item:inlistbox Part of a sentence: 'Middle-clicking any task does nothing'"
 msgid "Does nothing"
-msgstr "Niets doen"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "Part of a sentence: 'Middle-clicking any task closes window or group'"
+msgctxt "@item:inlistbox Part of a sentence: 'Middle-clicking any task closes window or group'"
 msgid "Closes window or group"
-msgstr "Venster of groep sluiten"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "Part of a sentence: 'Middle-clicking any task opens a new window'"
+msgctxt "@item:inlistbox Part of a sentence: 'Middle-clicking any task opens a new window'"
 msgid "Opens a new window"
-msgstr "Nieuw venster openen"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt ""
-"Part of a sentence: 'Middle-clicking any task minimizes/restores window or "
-"group'"
+msgctxt "@item:inlistbox Part of a sentence: 'Middle-clicking any task minimizes/restores window or group'"
 msgid "Minimizes/Restores window or group"
-msgstr "Venster of groep minimaliseren/herstellen"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "Part of a sentence: 'Middle-clicking any task toggles grouping'"
+msgctxt "@item:inlistbox Part of a sentence: 'Middle-clicking any task toggles grouping'"
 msgid "Toggles grouping"
-msgstr "Groeperen in-/uitschakelen"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt ""
-"Part of a sentence: 'Middle-clicking any task brings it to the current "
-"virtual desktop'"
+msgctxt "@item:inlistbox Part of a sentence: 'Middle-clicking any task brings it to the current virtual desktop'"
 msgid "Brings it to the current virtual desktop"
-msgstr "Verplaatsen naar huidig virtueel bureaublad"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "Part of a sentence: 'Mouse wheel cycles through tasks'"
+msgctxt "@label for checkbox Part of a sentence: 'Mouse wheel cycles through tasks'"
 msgid "Mouse wheel:"
-msgstr "Muiswiel:"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "Part of a sentence: 'Mouse wheel cycles through tasks'"
+msgctxt "@option:check Part of a sentence: 'Mouse wheel cycles through tasks'"
 msgid "Cycles through tasks"
-msgstr "Van taak wisselen"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@option:check mouse wheel task cycling"
 msgid "Skip minimized tasks"
-msgstr "Geminimaliseerde taken overslaan"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@label for checkbox group, completes sentence like: … from current screen"
 msgid "Show only tasks:"
-msgstr "Alleen taken tonen van:"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@option:check completes sentence: show only tasks"
 msgid "From current screen"
-msgstr "Huidig scherm"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@option:check completes sentence: show only tasks"
 msgid "From current desktop"
-msgstr "Huidig bureaublad"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@option:check completes sentence: show only tasks"
 msgid "From current activity"
-msgstr "Huidige activiteit"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@option:check completes sentence: show only tasks"
 msgid "That are minimized"
-msgstr "Geminimaliseerde vensters"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@label for checkbox, completes sentence: … unhide if window wants attention"
 msgid "When panel is hidden:"
-msgstr "Als het paneel verborgen is:"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@option:check completes sentence: When panel is hidden"
 msgid "Unhide when a window wants attention"
-msgstr "Tonen als een venster om aandacht vraagt"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@label for radiobutton group completes sentence like: … on the bottom"
 msgid "New tasks appear:"
-msgstr "Nieuwe taken tonen aan:"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@option:check completes sentence: New tasks appear"
+msgid "On the bottom"
+msgstr ""
+
+#: ../contents/ui/ConfigBehavior.qml
+msgctxt "@option:check completes sentence: New tasks appear"
 msgid "To the right"
-msgstr "Rechterkant"
+msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
+msgctxt "@option:check completes sentence: New tasks appear"
 msgid "To the left"
-msgstr "Linkerkant"
+msgstr ""
+
+#: ../contents/ui/ConfigBehavior.qml
+msgctxt "@option:check completes sentence: New tasks appear"
+msgid "On the top"
+msgstr ""
 
 #: ../contents/ui/ConfigIndicators.qml
 msgid "Indicators:"
@@ -527,6 +635,50 @@ msgstr "Indicatorkleur:"
 msgid "Use plasma accent color"
 msgstr "Plasma-accentkleur"
 
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Add Application"
+msgstr ""
+
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Search applications..."
+msgstr ""
+
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Add"
+msgstr ""
+
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Default Web Browser"
+msgstr ""
+
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Default File Manager"
+msgstr ""
+
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Default Mail Client"
+msgstr ""
+
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Default Application"
+msgstr ""
+
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Add applications to pin to the taskbar. Drag items to reorder them."
+msgstr ""
+
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Remove"
+msgstr ""
+
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Add Application..."
+msgstr ""
+
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Add Special Launcher..."
+msgstr ""
+
 #: ../contents/ui/ContextMenu.qml
 msgid "Places"
 msgstr "Locaties"
@@ -593,11 +745,6 @@ msgstr "Verplaa&tsen naar huidig bureaublad"
 #: ../contents/ui/ContextMenu.qml
 msgid "&All Desktops"
 msgstr "&Alle bureaubladen"
-
-#: ../contents/ui/ContextMenu.qml
-msgctxt "1 = number of desktop, 2 = desktop name"
-msgid "&%1 %2"
-msgstr "&%1 %2"
 
 #: ../contents/ui/ContextMenu.qml
 msgid "&New Desktop"
@@ -676,8 +823,40 @@ msgid "Allow this program to be grouped"
 msgstr "Groeperen toestaan"
 
 #: ../contents/ui/ContextMenu.qml
+msgctxt "@item:inmenu"
+msgid "&Close All"
+msgstr ""
+
+#: ../contents/ui/ContextMenu.qml
 msgid "&Close"
 msgstr "&Sluiten"
+
+#: ../contents/ui/Task.qml
+msgctxt "@info:usagetip %1 application name"
+msgid "Launch %1"
+msgstr ""
+
+#: ../contents/ui/Task.qml
+msgctxt "@info:tooltip"
+msgid "There is %1 new message."
+msgid_plural "There are %1 new messages."
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../contents/ui/Task.qml
+msgctxt "@info:usagetip %1 task name"
+msgid "Show Task tooltip for %1"
+msgstr ""
+
+#: ../contents/ui/Task.qml
+msgctxt "@info:usagetip %1 task name"
+msgid "Show windows side by side for %1"
+msgstr ""
+
+#: ../contents/ui/Task.qml
+msgctxt "@info:usagetip %1 task name"
+msgid "Open textual list of windows for %1"
+msgstr ""
 
 #: ../contents/ui/Task.qml
 msgid "Activate %1"
@@ -732,6 +911,181 @@ msgstr "Ook actief op %1"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Actief op %1"
+
+#~ msgid "General:"
+#~ msgstr "Algemeen:"
+
+#~ msgid "Show tooltips"
+#~ msgstr "Vensterminiaturen tonen"
+
+#~ msgid "Highlight windows when hovering over task tooltips"
+#~ msgstr "Vensters voorvertonen na aanwĳzen van vensterminiaturen"
+
+#~ msgid "Mark applications that play audio"
+#~ msgstr "Programma's die audio afspelen markeren"
+
+#~ msgid "Maximum columns:"
+#~ msgstr "Maximaal aantal kolommen:"
+
+#~ msgid "Maximum rows:"
+#~ msgstr "Maximaal aantal rĳen:"
+
+#~ msgid "Always arrange tasks in rows of as many columns"
+#~ msgstr "Taken altĳd verdelen over zoveel mogelĳk kolommen"
+
+#~ msgid "Always arrange tasks in columns of as many rows"
+#~ msgstr "Taken altĳd verdelen over zoveel mogelĳk rĳen"
+
+#~ msgid "Spacing between icons:"
+#~ msgstr "Ruimte tussen pictogrammen:"
+
+#~ msgctxt "@info:usagetip under a set of radio buttons when Touch Mode is on"
+#~ msgid "Automatically set to Large when in Touch Mode"
+#~ msgstr "Automatisch ingesteld op ‘Groot’ als de aanraakmodus is ingeschakeld"
+
+#~ msgid "Group:"
+#~ msgstr "Groeperen:"
+
+#~ msgid "Do not group"
+#~ msgstr "Niet groeperen"
+
+#~ msgid "By program name"
+#~ msgstr "Op programmanaam"
+
+#~ msgid "Clicking grouped task:"
+#~ msgstr "Actie na aanklikken van gegroepeerde taak:"
+
+#~ msgctxt "Completes the sentence 'Clicking grouped task cycles through tasks' "
+#~ msgid "Cycles through tasks"
+#~ msgstr "Van taak wisselen"
+
+#~ msgctxt "Completes the sentence 'Clicking grouped task shows tooltip window thumbnails' "
+#~ msgid "Shows tooltip window thumbnails"
+#~ msgstr "Vensterminiaturen tonen"
+
+#~ msgctxt "Completes the sentence 'Clicking grouped task shows windows side by side' "
+#~ msgid "Shows windows side by side"
+#~ msgstr "Vensters naast elkaar tonen"
+
+#~ msgctxt "Completes the sentence 'Clicking grouped task shows textual list' "
+#~ msgid "Shows textual list"
+#~ msgstr "Vensterlĳst tonen"
+
+#~ msgid "Tooltips are disabled, so the windows will be displayed side by side instead."
+#~ msgstr "Vensterminiaturen zĳn uitgeschakeld; vensters worden naast elkaar getoond."
+
+#~ msgid "Tooltips are disabled, and the compositor does not support displaying windows side by side, so a textual list will be displayed instead"
+#~ msgstr "Vensterminiaturen zĳn uitgeschakeld en de compositor heeft geen ondersteuning voor het tonen van vensters naast elkaar. Er wordt in plaats daarvan een lĳst getoond."
+
+#~ msgid "The compositor does not support displaying windows side by side, so a textual list will be displayed instead."
+#~ msgstr "De compositor heeft geen ondersteuning voor het tonen van vensters naast elkaar; er wordt een lĳst getoond."
+
+#~ msgid "Combine into single button"
+#~ msgstr "Combineren tot één knop"
+
+#~ msgid "Group only when the Task Manager is full"
+#~ msgstr "Alleen groeperen als takenbeheer vol is"
+
+#~ msgid "Sort:"
+#~ msgstr "Rangschikken:"
+
+#~ msgid "Do not sort"
+#~ msgstr "Niet rangschikken"
+
+#~ msgid "Manually"
+#~ msgstr "Handmatig"
+
+#~ msgid "Alphabetically"
+#~ msgstr "Op alfabetische volgorde"
+
+#~ msgid "By desktop"
+#~ msgstr "Op bureaublad"
+
+#~ msgid "By activity"
+#~ msgstr "Op activiteit"
+
+#~ msgid "Keep launchers separate"
+#~ msgstr "Starters gescheiden houden"
+
+#~ msgctxt "Part of a sentence: 'Clicking active task minimizes the task'"
+#~ msgid "Clicking active task:"
+#~ msgstr "Actie na aanklikken van actieve taak:"
+
+#~ msgctxt "Part of a sentence: 'Clicking active task minimizes the task'"
+#~ msgid "Minimizes the task"
+#~ msgstr "Taak minimaliseren"
+
+#~ msgid "Middle-clicking any task:"
+#~ msgstr "Actie na middelklikken op een taak:"
+
+#~ msgctxt "Part of a sentence: 'Middle-clicking any task does nothing'"
+#~ msgid "Does nothing"
+#~ msgstr "Niets doen"
+
+#~ msgctxt "Part of a sentence: 'Middle-clicking any task closes window or group'"
+#~ msgid "Closes window or group"
+#~ msgstr "Venster of groep sluiten"
+
+#~ msgctxt "Part of a sentence: 'Middle-clicking any task opens a new window'"
+#~ msgid "Opens a new window"
+#~ msgstr "Nieuw venster openen"
+
+#~ msgctxt "Part of a sentence: 'Middle-clicking any task minimizes/restores window or group'"
+#~ msgid "Minimizes/Restores window or group"
+#~ msgstr "Venster of groep minimaliseren/herstellen"
+
+#~ msgctxt "Part of a sentence: 'Middle-clicking any task toggles grouping'"
+#~ msgid "Toggles grouping"
+#~ msgstr "Groeperen in-/uitschakelen"
+
+#~ msgctxt "Part of a sentence: 'Middle-clicking any task brings it to the current virtual desktop'"
+#~ msgid "Brings it to the current virtual desktop"
+#~ msgstr "Verplaatsen naar huidig virtueel bureaublad"
+
+#~ msgctxt "Part of a sentence: 'Mouse wheel cycles through tasks'"
+#~ msgid "Mouse wheel:"
+#~ msgstr "Muiswiel:"
+
+#~ msgctxt "Part of a sentence: 'Mouse wheel cycles through tasks'"
+#~ msgid "Cycles through tasks"
+#~ msgstr "Van taak wisselen"
+
+#~ msgid "Skip minimized tasks"
+#~ msgstr "Geminimaliseerde taken overslaan"
+
+#~ msgid "Show only tasks:"
+#~ msgstr "Alleen taken tonen van:"
+
+#~ msgid "From current screen"
+#~ msgstr "Huidig scherm"
+
+#~ msgid "From current desktop"
+#~ msgstr "Huidig bureaublad"
+
+#~ msgid "From current activity"
+#~ msgstr "Huidige activiteit"
+
+#~ msgid "That are minimized"
+#~ msgstr "Geminimaliseerde vensters"
+
+#~ msgid "When panel is hidden:"
+#~ msgstr "Als het paneel verborgen is:"
+
+#~ msgid "Unhide when a window wants attention"
+#~ msgstr "Tonen als een venster om aandacht vraagt"
+
+#~ msgid "New tasks appear:"
+#~ msgstr "Nieuwe taken tonen aan:"
+
+#~ msgid "To the right"
+#~ msgstr "Rechterkant"
+
+#~ msgid "To the left"
+#~ msgstr "Linkerkant"
+
+#~ msgctxt "1 = number of desktop, 2 = desktop name"
+#~ msgid "&%1 %2"
+#~ msgstr "&%1 %2"
 
 #~ msgid "Press OK to fix layout issues."
 #~ msgstr "Klik op oké om indelingsproblemen op te lossen."
