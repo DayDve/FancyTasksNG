@@ -71,9 +71,10 @@ KCMUtils.SimpleKCM {
 
         Slider {
             id: iconScale
+            Layout.fillWidth: true
             from: 0
             to: 300
-            stepSize: 25.0
+            stepSize: 1.0
             Kirigami.FormData.label: i18n("Icon Scale") + " " + iconScale.valueAt(iconScale.position) + "%"
             visible: !iconSizeOverride.checked
         }

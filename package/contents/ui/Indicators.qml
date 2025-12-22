@@ -66,6 +66,7 @@ Flow {
                     colorEval = plasmoid.configuration.indicatorCustomColor
                 }
                 if(isFirst){//compute the size
+        
                     var growFactor = plasmoid.configuration.indicatorGrowFactor / 100
                     if(plasmoid.configuration.indicatorGrow && task.state === "minimized") {
                         var mainSize = indicatorLength * growFactor;
@@ -86,6 +87,7 @@ Flow {
                         default:
                         break
                     }
+    
                 }
                 else {
                     indicatorComputedSize = indicatorLength
@@ -97,6 +99,7 @@ Flow {
                 else{
                     width = plasmoid.configuration.indicatorSize
                     height = indicatorComputedSize
+                
                 }
                 if(plasmoid.configuration.indicatorDesaturate && task.state === "minimized") {
                     var colorHSL = hexToHSL(colorEval)
@@ -113,7 +116,8 @@ Flow {
             width: computedVar.width
             height: computedVar.height
             color: computedVar.colorCalc
-            radius: (Math.max(width, height) / Math.min(width,  height)) * (plasmoid.configuration.indicatorRadius / 100)
+            radius: Math.min(width, height) * (plasmoid.configuration.indicatorRadius / 200)
+
             Rectangle{
                 Behavior on height { PropertyAnimation {duration: plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
                 Behavior on width { PropertyAnimation {duration: plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
@@ -158,6 +162,7 @@ Flow {
                 target: indicator
                 width: undefined
                 height: plasmoid.configuration.indicatorSize
+                
                 anchors.topMargin: 0;
                 anchors.bottomMargin: plasmoid.configuration.indicatorEdgeOffset;
                 anchors.leftMargin: 0;
