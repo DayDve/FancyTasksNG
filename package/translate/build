@@ -1,37 +1,28 @@
-#!/bin/sh
-# Version: 6
+#!/bin/bash
+# Version: 8 (Modular)
 
-# This script will convert the *.po files to *.mo files, rebuilding the package/contents/locale folder.
-# Feature discussion: https://phabricator.kde.org/D5209
-# Eg: contents/locale/fr_CA/LC_MESSAGES/plasma_applet_org.kde.plasma.eventcalendar.mo
+DIR=$(dirname $(readlink -f "$0"))
 
-DIR=`cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd`
-plasmoidName=`python3 $DIR/jsonParse.py $DIR/../metadata.json KPlugin.Id`
-website=`python3 $DIR/jsonParse.py $DIR/../metadata.json KPlugin.Website`
-bugAddress="$website"
-packageRoot=".." # Root of translatable sources
-projectName="plasma_applet_${plasmoidName}" # project name
+plasmoidName=$("$DIR/get_metadata.sh" "Id")
+projectName="plasma_applet_${plasmoidName}"
 
-#---
 if [ -z "$plasmoidName" ]; then
-	echo "[build] Error: Couldn't read plasmoidName."
-	exit
+	echo "[build] Error: Couldn't read 'Id' from metadata.json."
+	exit 1
 fi
 
 if [ -z "$(which msgfmt)" ]; then
 	echo "[build] Error: msgfmt command not found. Need to install gettext"
 	echo "[build] Running 'sudo apt install gettext'"
 	sudo apt install gettext
-	echo "[build] gettext installation should be finished. Going back to installing translations."
 fi
 
-#---
-echo "[build] Compiling messages"
+echo "[build] Compiling messages for $projectName"
 
-catalogs=`find . -name '*.po' | sort`
+catalogs=$(find . -name '*.po' | sort)
 for cat in $catalogs; do
 	echo "$cat"
-	catLocale=`basename ${cat%.*}`
+	catLocale=$(basename "${cat%.*}")
 	msgfmt -o "${catLocale}.mo" "$cat"
 
 	installPath="$DIR/../contents/locale/${catLocale}/LC_MESSAGES/${projectName}.mo"
@@ -42,16 +33,3 @@ for cat in $catalogs; do
 done
 
 echo "[build] Done building messages"
-
-if [ "$1" = "--restartplasma" ]; then
-	echo "[build] Restarting plasmashell"
-	if systemctl --user is-active --quiet plasma-plasmashell.service; then
-		systemctl --user restart plasma-plasmashell.service
-	else
-		killall plasmashell
-		plasmashell > /dev/null 2>&1 &
-	fi
-	echo "[build] Done restarting plasmashell"
-else
-	echo "[build] (re)install the plasmoid and restart plasmashell to test."
-fi
