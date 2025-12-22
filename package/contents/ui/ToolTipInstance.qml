@@ -48,7 +48,8 @@ ColumnLayout {
         }
 
         // Normally the window title will always have " — [app name]" at the end of
-        // the window-provided title. But if it doesn't, this is intentional 100%
+        // the window-provided title.
+        // But if it doesn't, this is intentional 100%
         // of the time because the developer or user has deliberately removed that
         // part, so just display it with no more fancy processing.
         if (!text.match(/\s+(—|-|–)/)) {
@@ -146,7 +147,9 @@ ColumnLayout {
             visible: toolTipDelegate.isWin
             icon.name: "window-close"
             onClicked: {
-                backend.cancelHighlightWindows();
+                if (toolTipDelegate.parentTask && toolTipDelegate.parentTask.tasksRoot) {
+                    toolTipDelegate.parentTask.tasksRoot.cancelHighlightWindows();
+                }
                 tasksModel.requestClose(root.submodelIndex);
             }
         }
@@ -402,7 +405,6 @@ ColumnLayout {
 
     function generateSubText(): string {
         const subTextEntries = [];
-
         if (!Plasmoid.configuration.showOnlyCurrentDesktop && virtualDesktopInfo.numberOfDesktops > 1) {
             if (!isOnAllVirtualDesktops && virtualDesktops.length > 0) {
                 const virtualDesktopNameList = virtualDesktops.map(virtualDesktop => {
@@ -420,7 +422,6 @@ ColumnLayout {
             subTextEntries.push(i18nc("Which virtual desktop a window is currently on", "Available on all activities"));
         } else if (activities.length > 0) {
             const activityNames = activities.filter(activity => activity !== activityInfo.currentActivity).map(activity => activityInfo.activityName(activity)).filter(activityName => activityName !== "");
-
             if (Plasmoid.configuration.showOnlyCurrentActivity) {
                 if (activityNames.length > 0) {
                     subTextEntries.push(i18nc("Activities a window is currently on (apart from the current one)", "Also available on %1", activityNames.join(", ")));
