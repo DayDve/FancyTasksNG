@@ -273,7 +273,7 @@ Kirigami.ScrollablePage {
 
         KQuickAddons.ColorButton {
             id: buttonColorizeCustom
-            Layout.leftMargin: Kirigami.Units.GridUnit
+            Layout.leftMargin: Kirigami.Units.gridUnit
             enabled: buttonColorize.checked & !buttonColorizeDominant.checked
             Kirigami.FormData.label: i18n("Custom Color:")
             showAlphaChannel: true
@@ -340,18 +340,18 @@ Kirigami.ScrollablePage {
 
         CheckBox {
             id: showToolTips
-            Kirigami.FormData.label: i18nc("@label for several checkboxes", "General:")
-            text: i18nc("@option:check section General", "Show small window previews when hovering over tasks")
+            Kirigami.FormData.label: i18n("General:")
+            text: i18n("Show small window previews when hovering over tasks")
         }
 
         CheckBox {
             id: highlightWindows
-            text: i18nc("@option:check section General", "Hide other windows when hovering over previews")
+            text: i18n("Hide other windows when hovering over previews")
         }
 
         CheckBox {
             id: indicateAudioStreams
-            text: i18nc("@option:check section General", "Mark applications that play audio")
+            text: i18n("Mark applications that play audio")
             checked: cfg_indicateAudioStreams && plasmaPaAvailable
             onToggled: cfg_indicateAudioStreams = checked
             enabled: plasmaPaAvailable
@@ -359,7 +359,7 @@ Kirigami.ScrollablePage {
 
         CheckBox {
             id: fill
-            text: i18nc("@option:check section General", "Fill free space on panel")
+            text: i18n("Fill free space on panel")
         }
 
         Item {
@@ -371,9 +371,9 @@ Kirigami.ScrollablePage {
             id: taskMaxWidth
             visible: !iconOnly && !plasmoidVertical
 
-            Kirigami.FormData.label: i18nc("@label:listbox", "Maximum task width:")
+            Kirigami.FormData.label: i18n("Maximum task width:")
 
-            model: [i18nc("@item:inlistbox how wide a task item should be", "Narrow"), i18nc("@item:inlistbox how wide a task item should be", "Medium"), i18nc("@item:inlistbox how wide a task item should be", "Wide")]
+            model: [i18n("Narrow"), i18n("Medium"), i18n("Wide")]
         }
 
         Item {
@@ -382,14 +382,13 @@ Kirigami.ScrollablePage {
 
         RadioButton {
             id: forbidStripes
-            Kirigami.FormData.label: plasmoidVertical ?
-i18nc("@label for radio button group, completes sentence: … when panel is low on space etc.", "Use multi-column view:") : i18nc("@label for radio button group, completes sentence: … when panel is low on space etc.", "Use multi-row view:")
+            Kirigami.FormData.label: plasmoidVertical ? i18n("Use multi-column view:") : i18n("Use multi-row view:")
             onToggled: {
                 if (checked) {
                     maxStripes.value = 1;
                 }
             }
-            text: i18nc("@option:radio Never use multi-column view for Task Manager", "Never")
+            text: i18n("Never")
         }
 
         RadioButton {
@@ -399,7 +398,7 @@ i18nc("@label for radio button group, completes sentence: … when panel is low 
                     maxStripes.value = Math.max(2, maxStripes.value);
                 }
             }
-            text: i18nc("@option:radio completes sentence: Use multi-column/row view", "When panel is low on space and thick enough")
+            text: i18n("When panel is low on space and thick enough")
         }
 
         RadioButton {
@@ -409,14 +408,13 @@ i18nc("@label for radio button group, completes sentence: … when panel is low 
                     maxStripes.value = Math.max(2, maxStripes.value);
                 }
             }
-            text: i18nc("@option:radio completes sentence: Use multi-column/row view", "Always when panel is thick enough")
+            text: i18n("Always when panel is thick enough")
         }
 
         SpinBox {
             id: maxStripes
             enabled: maxStripes.value > 1
-            Kirigami.FormData.label: plasmoidVertical ?
-i18nc("@label:spinbox maximum number of columns for tasks", "Maximum columns:") : i18nc("@label:spinbox maximum number of rows for tasks", "Maximum rows:")
+            Kirigami.FormData.label: plasmoidVertical ? i18n("Maximum columns:") : i18n("Maximum rows:")
             from: 1
         }
 
@@ -426,19 +424,19 @@ i18nc("@label:spinbox maximum number of columns for tasks", "Maximum columns:") 
 
         ComboBox {
             visible: iconOnly
-            Kirigami.FormData.label: i18nc("@label:listbox", "Spacing between icons:")
+            Kirigami.FormData.label: i18n("Spacing between icons:")
 
             model: [
                 {
-                    "label": i18nc("@item:inlistbox Icon spacing", "Small"),
+                    "label": i18n("Small"),
                     "spacing": 0
                 },
                 {
-                    "label": i18nc("@item:inlistbox Icon spacing", "Normal"),
+                    "label": i18n("Normal"),
                     "spacing": 1
                 },
                 {
-                    "label": i18nc("@item:inlistbox Icon spacing", "Large"),
+                    "label": i18n("Large"),
                     "spacing": 3
                 },
             ]
@@ -467,7 +465,7 @@ i18nc("@label:spinbox maximum number of columns for tasks", "Maximum columns:") 
 
         Label {
             visible: Kirigami.Settings.tabletMode
-            text: i18nc("@info:usagetip under a set of radio buttons when Touch Mode is on", "Automatically set to Large when in Touch mode")
+            text: i18n("Automatically set to Large when in Touch mode")
             font: Kirigami.Theme.smallFont
         }
     }
