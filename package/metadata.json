@@ -17,11 +17,13 @@
         ],
         "Category": "Windows and Tasks",
         "Description": "More modern taskbar-style window switcher displaying icons and text, with some improvments and customization options",
+        "Description[ru]": "Современный переключатель окон в стиле панели задач с иконками, текстом и расширенными настройками",
         "EnabledByDefault": true,
         "Icon": "FancyTasks.png",
         "Id": "alexankitty.fancytasks",
         "License": "GPL-2.0+",
         "Name": "Fancy Tasks",
+        "Name[ru]": "Fancy Tasks",
         "ServiceTypes": [
             "Plasma/Applet"
         ],
