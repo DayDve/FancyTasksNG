@@ -125,39 +125,43 @@ PlasmaCore.ToolTipArea {
             KSvg.FrameSvgItem {
                 id: bgFrame
                 imagePath: "widgets/tooltip"
-                
-                // Size depends on the loaded content + margins. 
-                // Ensure at least some size to avoid visual glitches.
-                width: Math.max(delegateLoader.item ? delegateLoader.item.implicitWidth : 0, Kirigami.Units.gridUnit * 2) + margins.left + margins.right
-                height: Math.max(delegateLoader.item ? delegateLoader.item.implicitHeight : 0, Kirigami.Units.gridUnit) + margins.top + margins.bottom
-                
+
+                readonly property int thumbBaseWidth: Kirigami.Units.gridUnit * 14
+                readonly property int thumbBaseHeight: thumbBaseWidth / (Screen.width / Screen.height)
+
+                width: Math.max(delegateLoader.item ? delegateLoader.item.implicitWidth : 0, model.IsWindow ? thumbBaseWidth : Kirigami.Units.gridUnit * 2) + margins.left + margins.right
+                height: Math.max(delegateLoader.item ? delegateLoader.item.implicitHeight : 0, model.IsWindow ? thumbBaseHeight : Kirigami.Units.gridUnit) + margins.top + margins.bottom
+
                 // Position logic: push away from the panel
-                anchors.top: (contentWrapper.loc === PlasmaCore.Types.BottomEdge) ? parent.top : undefined
-                anchors.bottom: (contentWrapper.loc === PlasmaCore.Types.TopEdge) ? parent.bottom : undefined
-                anchors.left: (contentWrapper.loc === PlasmaCore.Types.RightEdge) ? parent.left : undefined
-                anchors.right: (contentWrapper.loc === PlasmaCore.Types.LeftEdge) ? parent.right : undefined
-                
+                anchors.top: (contentWrapper.loc === PlasmaCore.Types.BottomEdge) ?
+                    parent.top : undefined
+                anchors.bottom: (contentWrapper.loc === PlasmaCore.Types.TopEdge) ?
+                    parent.bottom : undefined
+                anchors.left: (contentWrapper.loc === PlasmaCore.Types.RightEdge) ?
+                    parent.left : undefined
+                anchors.right: (contentWrapper.loc === PlasmaCore.Types.LeftEdge) ?
+                    parent.right : undefined
+
                 // Center on the other axis
-                anchors.horizontalCenter: (contentWrapper.loc === PlasmaCore.Types.TopEdge || contentWrapper.loc === PlasmaCore.Types.BottomEdge) ? parent.horizontalCenter : undefined
-                anchors.verticalCenter: (contentWrapper.loc === PlasmaCore.Types.LeftEdge || contentWrapper.loc === PlasmaCore.Types.RightEdge) ? parent.verticalCenter : undefined
+                anchors.horizontalCenter: (contentWrapper.loc === PlasmaCore.Types.TopEdge || contentWrapper.loc === PlasmaCore.Types.BottomEdge) ?
+                    parent.horizontalCenter : undefined
+                anchors.verticalCenter: (contentWrapper.loc === PlasmaCore.Types.LeftEdge || contentWrapper.loc === PlasmaCore.Types.RightEdge) ?
+                    parent.verticalCenter : undefined
 
                 // Loader switches between complex window delegate and simple text delegate
                 Loader {
                     id: delegateLoader
                     
-                    // FIXED: Removed anchors.fill to avoid constraining content size.
-                    // Instead, anchor only top/left and let content define the size.
-                    anchors.left: parent.left
-                    anchors.top: parent.top
+                    anchors.fill: parent
                     anchors.leftMargin: bgFrame.margins.left
+                    anchors.rightMargin: bgFrame.margins.right
                     anchors.topMargin: bgFrame.margins.top
-                    
-                    // Select component based on task type
+                    anchors.bottomMargin: bgFrame.margins.bottom
+
                     sourceComponent: model.IsWindow ? windowDelegate : pinnedAppDelegate
-                    asynchronous: false 
+                    asynchronous: false
 
                     onLoaded: {
-                        // Force update when loaded to ensure data is populated immediately
                         if (task.toolTipOpen) {
                             task.updateMainItemBindings()
                         }
@@ -368,7 +372,7 @@ PlasmaCore.ToolTipArea {
                 target: translateTransform
                 properties: "y"
          
-               from: moveAnim.y
+                from: moveAnim.y
                 to: 0
                 easing.type: Easing.OutQuad
                 duration: Kirigami.Units.longDuration
@@ -411,9 +415,9 @@ PlasmaCore.ToolTipArea {
             case 2:
                 {
                     if (effectWatcher.registered) {
-           
-                     return `${i18nc("@info:usagetip %1 task name", "Show windows side by side for %1", model.display)};
-                     ${smartLauncherDescription}`;
+            
+                      return `${i18nc("@info:usagetip %1 task name", "Show windows side by side for %1", model.display)};
+                      ${smartLauncherDescription}`;
                     }
                     // fallthrough
                 }
@@ -710,7 +714,7 @@ PlasmaCore.ToolTipArea {
 
     TapHandler {
         id: leftTapHandler
-       
+        
         acceptedButtons: Qt.LeftButton
         onTapped: (eventPoint, button) => leftClick()
 
@@ -811,7 +815,7 @@ PlasmaCore.ToolTipArea {
             onActiveChanged: {
                 if (active) {
                     icon.grabToImage(result => {
-                   
+                    
                         if (!dragHandler.active) {
                             // BUG 466675 grabToImage is async, so avoid updating dragSource when active is false
                             return;
@@ -850,7 +854,7 @@ PlasmaCore.ToolTipArea {
     }
 
     Loader {
-       
+        
         id: iconBox
 
         anchors {
@@ -951,7 +955,7 @@ PlasmaCore.ToolTipArea {
         visible: (inPopup || !iconsOnly && !model.IsLauncher && (parent.width - iconBox.height - Kirigami.Units.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText())
 
         anchors {
-           
+            
             fill: parent
             leftMargin: taskFrame.margins.left + iconBox.width + LayoutMetrics.labelMargin
             topMargin: taskFrame.margins.top
@@ -1016,7 +1020,7 @@ PlasmaCore.ToolTipArea {
             }
         },
         State {
-          
+           
             name: "minimized"
             when: model.IsMinimized === true && !frame.isHovered && !plasmoid.configuration.disableButtonInactiveSvg
 

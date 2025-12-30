@@ -75,27 +75,45 @@ ColumnLayout {
     // text labels + close button
     RowLayout {
         id: header
-        // match spacing of DefaultToolTip.qml in plasma-framework
+        // Отступ между текстом и кнопкой закрытия
         spacing: toolTipDelegate.isWin ? Kirigami.Units.smallSpacing : Kirigami.Units.gridUnit
 
-        // This number controls the overall size of the window tooltips
+        // Ограничиваем максимальную ширину
         Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
-        Layout.minimumWidth: toolTipDelegate.isWin ? Layout.maximumWidth : 0
+        
+        // Позволяем хедеру сжиматься (чтобы влезать в рамку 14 юнитов)
+        Layout.minimumWidth: 0 
+        
         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-        // match margins of DefaultToolTip.qml in plasma-framework
-        Layout.margins: toolTipDelegate.isWin ? 0 : Kirigami.Units.gridUnit / 2
+        
+        // ИСПРАВЛЕНИЕ: Добавляем отступы для окон (было 0, стало smallSpacing)
+        // Теперь текст и кнопка не будут прилипать к краям рамки.
+        Layout.margins: toolTipDelegate.isWin ? Kirigami.Units.smallSpacing : Kirigami.Units.gridUnit / 2
+        
+        // Чтобы контент занимал всю ширину (важно для правильной работы отступов)
+        Layout.fillWidth: true
 
         // all textlabels
         ColumnLayout {
             spacing: 0
+            
+            // ИСПРАВЛЕНИЕ: Заставляем колонку с текстом занимать все место, 
+            // но разрешаем ей сжиматься, чтобы она не выталкивала кнопку закрытия.
+            Layout.fillWidth: true
+            Layout.minimumWidth: 0 
+
             // app name
             Kirigami.Heading {
                 id: appNameHeading
                 level: 3
                 maximumLineCount: 1
                 lineHeight: toolTipDelegate.isWin ? 1 : appNameHeading.lineHeight
+                
+                // Свойства для правильного обрезания текста
                 Layout.fillWidth: true
+                Layout.minimumWidth: 0
                 elide: Text.ElideRight
+                
                 text: toolTipDelegate.appName
                 opacity: root.index === 0 ? 1 : 0
                 visible: text.length !== 0
@@ -105,8 +123,11 @@ ColumnLayout {
             PlasmaComponents3.Label {
                 id: winTitle
                 maximumLineCount: 1
+                
                 Layout.fillWidth: true
+                Layout.minimumWidth: 0
                 elide: Text.ElideRight
+                
                 text: root.titleIncludesTrack ? "" : root.title
                 opacity: 0.75
                 visible: root.title.length !== 0 && root.title !== appNameHeading.text
@@ -116,8 +137,11 @@ ColumnLayout {
             PlasmaComponents3.Label {
                 id: subtext
                 maximumLineCount: 2
+                
                 Layout.fillWidth: true
+                Layout.minimumWidth: 0
                 elide: Text.ElideRight
+                
                 text: toolTipDelegate.isWin ? root.generateSubText() : ""
                 opacity: 0.6
                 visible: text.length !== 0 && text !== appNameHeading.text
@@ -126,7 +150,6 @@ ColumnLayout {
         }
 
         // Count badge.
-        // The badge itself is inside an item to better center the text in the bubble
         Item {
             Layout.alignment: Qt.AlignRight | Qt.AlignTop
             Layout.preferredHeight: closeButton.height
@@ -159,21 +182,18 @@ ColumnLayout {
     Item {
         id: thumbnailSourceItem
 
-        Layout.fillWidth: true
-        Layout.preferredHeight: Math.min(Kirigami.Units.gridUnit * 12, Screen.desktopAvailableHeight * 0.4)
+        readonly property int targetWidth: Kirigami.Units.gridUnit * 14
+        readonly property int targetHeight: targetWidth / (Screen.width / Screen.height)
 
-        // Add maximum width constraint to help with portrait windows
-        Layout.maximumWidth: Math.min(Layout.preferredHeight * 1.77, Screen.desktopAvailableWidth * 0.3)
+        Layout.preferredWidth: targetWidth
+        Layout.preferredHeight: targetHeight
 
-        // Center in available space
         Layout.alignment: Qt.AlignCenter
-
         clip: true
         visible: toolTipDelegate.isWin
 
-        readonly property /*undefined|WId where WId = int|string*/  var winId: toolTipDelegate.isWin ? toolTipDelegate.windows[root.index] : undefined
+        readonly property var winId: toolTipDelegate.isWin ? toolTipDelegate.windows[root.index] : undefined
 
-        // There's no PlasmaComponents3 version
         PlasmaExtras.Highlight {
             anchors.fill: hoverHandler
             visible: (hoverHandler.item as MouseArea)?.containsMouse ?? false
@@ -183,42 +203,37 @@ ColumnLayout {
 
         Loader {
             id: thumbnailLoader
-            active: !toolTipDelegate.isLauncher && !albumArtImage.visible && (Number.isInteger(thumbnailSourceItem.winId) || pipeWireLoader.item && !pipeWireLoader.item.hasThumbnail) && root.index !== -1 // Avoid loading when the instance is going to be destroyed
+            active: !toolTipDelegate.isLauncher && !albumArtImage.visible && (Number.isInteger(thumbnailSourceItem.winId) || pipeWireLoader.item && !pipeWireLoader.item.hasThumbnail) && root.index !== -1
             asynchronous: true
             visible: active
+            
             anchors.fill: hoverHandler
-            // Indent a little bit so that neither the thumbnail nor the drop
-            // shadow can cover up the highlight
-            anchors.margins: Kirigami.Units.smallSpacing * 2
+            anchors.margins: 0
 
             sourceComponent: root.isMinimized || pipeWireLoader.active ? iconItem : x11Thumbnail
 
             Component {
                 id: x11Thumbnail
-
                 PlasmaCore.WindowThumbnail {
                     winId: thumbnailSourceItem.winId
                 }
             }
 
-            // when minimized, we don't have a preview on X11, so show the icon
             Component {
                 id: iconItem
-
                 Kirigami.Icon {
                     id: realIconItem
                     source: toolTipDelegate.icon
                     animated: false
                     visible: valid
                     opacity: pipeWireLoader.active ? 0 : 1
+                    
+                    anchors.fill: parent
+                    anchors.margins: Kirigami.Units.gridUnit 
 
                     SequentialAnimation {
                         running: true
-
-                        PauseAnimation {
-                            duration: Kirigami.Units.humanMoment
-                        }
-
+                        PauseAnimation { duration: Kirigami.Units.humanMoment }
                         NumberAnimation {
                             id: showAnimation
                             duration: Kirigami.Units.longDuration
