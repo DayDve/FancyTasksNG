@@ -47,27 +47,70 @@ ColumnLayout {
             return "";
         }
 
-        // Normally the window title will always have " — [app name]" at the end of
-        // the window-provided title.
-        // But if it doesn't, this is intentional 100%
-        // of the time because the developer or user has deliberately removed that
-        // part, so just display it with no more fancy processing.
-        if (!text.match(/\s+(—|-|–)/)) {
-            return text;
-        }
-
         // KWin appends increasing integers in between pointy brackets to otherwise equal window titles.
         // In this case save <#number> as counter and delete it at the end of text.
-        text = `${(text.match(/.*(?=\s+(—|-|–))/) || [""])[0]}${(text.match(/<\d+>/) || [""]).pop()}`;
+        let counter = "";
+        const counterMatch = text.match(/\s*<\d+>$/);
+        if (counterMatch) {
+            counter = counterMatch[0];
+            text = text.replace(/\s*<\d+>$/, "");
+        }
+
+        const appName = root.calculatedAppName;
+
+        if (appName && appName.length > 0) {
+            const escapedAppName = appName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            // Try to remove " - AppName" followed by any text (version, suffixes, etc)
+            const cleanupRegex = new RegExp(`\\s+(?:—|-|–)\\s+${escapedAppName}.*$`, "i");
+
+            if (text.match(cleanupRegex)) {
+                text = text.replace(cleanupRegex, "");
+            } else {
+                 // Fallback: strip everything after the last separator
+                 const greedyMatch = text.match(/.*(?=\s+(—|-|–))/);
+                 if (greedyMatch) {
+                     text = greedyMatch[0];
+                 }
+            }
+        } else {
+            const greedyMatch = text.match(/.*(?=\s+(—|-|–))/);
+            if (greedyMatch) {
+                text = greedyMatch[0];
+            }
+        }
 
         // In case the window title had only redundant information (i.e. appName), text is now empty.
         // Add a hyphen to indicate that and avoid empty space.
         if (text === "") {
             text = "—";
         }
-        return text;
+
+        return text + counter;
     }
 
+    readonly property string calculatedAppName: {
+        if (toolTipDelegate.appName && toolTipDelegate.appName.length > 0) {
+            return toolTipDelegate.appName;
+        }
+
+        const text = display;
+        
+        // Try to match " - AppName - Version" pattern (e.g. QOwnNotes)
+        const versionRegex = /\s+(?:—|-|–)\s+([^\s(—|-|–)]+)\s+(?:—|-|–)\s+v?\d+(?:\.\d+)+.*$/i;
+        const matchVersion = text.match(versionRegex);
+        if (matchVersion && matchVersion[1]) {
+            return matchVersion[1];
+        }
+
+        // Try to match standard " - AppName" pattern
+        const lastSepRegex = /.*(?:—|-|–)\s+(.*)$/;
+        const matchLast = text.match(lastSepRegex);
+        if (matchLast && matchLast[1]) {
+            return matchLast[1];
+        }
+
+        return "";
+    }    
     readonly property bool titleIncludesTrack: toolTipDelegate.playerData !== null && title.includes(toolTipDelegate.playerData.track)
 
     spacing: Kirigami.Units.smallSpacing
@@ -101,6 +144,7 @@ ColumnLayout {
             // но разрешаем ей сжиматься, чтобы она не выталкивала кнопку закрытия.
             Layout.fillWidth: true
             Layout.minimumWidth: 0 
+	    Layout.preferredWidth: 0
 
             // app name
             Kirigami.Heading {
@@ -109,12 +153,11 @@ ColumnLayout {
                 maximumLineCount: 1
                 lineHeight: toolTipDelegate.isWin ? 1 : appNameHeading.lineHeight
                 
-                // Свойства для правильного обрезания текста
                 Layout.fillWidth: true
                 Layout.minimumWidth: 0
                 elide: Text.ElideRight
                 
-                text: toolTipDelegate.appName
+                text: root.calculatedAppName
                 opacity: root.index === 0 ? 1 : 0
                 visible: text.length !== 0
                 textFormat: Text.PlainText
