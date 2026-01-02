@@ -13,7 +13,7 @@ import QtQuick
 MouseArea {
     required property var modelIndex
     required property var winId
-    required property var rootTask // Используем var вместо Task, чтобы избежать циклических зависимостей
+    required property var rootTask 
 
     acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
     hoverEnabled: true
@@ -23,8 +23,7 @@ MouseArea {
         switch (mouse.button) {
         case Qt.LeftButton:
             tasksModel.requestActivate(modelIndex);
-            rootTask.hideImmediately();
-            // Используем tasksRoot для доступа к корневому элементу
+            rootTask.closeTooltip();
             if (rootTask.tasksRoot) {
                 rootTask.tasksRoot.cancelHighlightWindows();
             }

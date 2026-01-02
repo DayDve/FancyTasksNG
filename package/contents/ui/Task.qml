@@ -526,9 +526,17 @@ PlasmaCore.ToolTipArea {
             tasksModel.makeModelIndex(groupDialog.visualParent.index, index) : tasksModel.makeModelIndex(index);
     }
 
-    function showContextMenu(args: var): void {
-        task.hideImmediately();
+    function closeTooltip(): void {
         tooltipDialog.visible = false;
+        task.toolTipOpen = false;
+        tasksRoot.toolTipOpenedByClick = null;
+        if (typeof task.hideImmediately === "function") {
+            task.hideImmediately();
+        }
+    }
+
+    function showContextMenu(args: var): void {
+        task.closeTooltip();
         
         contextMenu = tasksRoot.createContextMenu(task, modelIndex(), args);
         contextMenu.show();
