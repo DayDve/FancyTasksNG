@@ -13,7 +13,9 @@ import QtQuick
 MouseArea {
     required property var modelIndex
     required property var winId
-    required property var rootTask 
+    required property var rootTask
+
+    property bool globalHovered: false
 
     acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
     hoverEnabled: true
@@ -42,9 +44,14 @@ MouseArea {
         }
     }
 
-    onContainsMouseChanged: {
+    function updateHoverState() {
         if (rootTask.tasksRoot) {
-            rootTask.tasksRoot.windowsHovered([winId], containsMouse);
+            // Окно подсвечивается/скрывает другие, если мышь внутри этого MouseArea ИЛИ где-то еще в тултипе
+            const isHovered = containsMouse || globalHovered;
+            rootTask.tasksRoot.windowsHovered([winId], isHovered);
         }
     }
+
+    onContainsMouseChanged: updateHoverState()
+    onGlobalHoveredChanged: updateHoverState()
 }

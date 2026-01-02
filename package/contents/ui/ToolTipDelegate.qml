@@ -52,7 +52,7 @@ Loader {
 
     readonly property bool isVerticalPanel: Plasmoid.formFactor === PlasmaCore.Types.Vertical
     // This number controls the overall size of the window tooltips
-    readonly property int tooltipInstanceMaximumWidth: Kirigami.Units.gridUnit * 16
+    readonly property int tooltipInstanceMaximumWidth: Kirigami.Units.gridUnit * 14
 
     // These properties are required to make tooltip interactive when there is a player but no window is present.
     readonly property Mpris.PlayerContainer playerData: mpris2Source.playerForLauncherUrl(launcherUrl, pidParent)
@@ -86,14 +86,15 @@ Loader {
         PlasmaComponents3.ScrollView {
             // 2 * Kirigami.Units.smallSpacing is for the margin of tooltipDialog
             implicitWidth: leftPadding + rightPadding + Math.min(Screen.desktopAvailableWidth - 2 * Kirigami.Units.smallSpacing, Math.max(delegateModel.estimatedWidth, contentItem.contentItem.childrenRect.width))
-            implicitHeight: bottomPadding + Math.min(Screen.desktopAvailableHeight - 2 * Kirigami.Units.smallSpacing, Math.max(delegateModel.estimatedHeight, contentItem.contentItem.childrenRect.height))
+            implicitHeight: topPadding + bottomPadding + Math.min(Screen.desktopAvailableHeight - 2 * Kirigami.Units.smallSpacing, Math.max(delegateModel.estimatedHeight, contentItem.contentItem.childrenRect.height))
 
             ListView {
                 id: groupToolTipListView
 
                 model: delegateModel
 
-                orientation: isVerticalPanel ? ListView.Vertical : ListView.Horizontal
+                orientation: isVerticalPanel ?
+                    ListView.Vertical : ListView.Horizontal
                 reuseItems: true
                 spacing: Kirigami.Units.gridUnit
             }
