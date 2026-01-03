@@ -33,7 +33,8 @@ PlasmaCore.ToolTipArea {
     property string tintColor: Kirigami.ColorUtils.brightnessForColor(Kirigami.Theme.backgroundColor) === Kirigami.ColorUtils.Dark ?
         "#ffffff" : "#000000"
 
-    rotation: Plasmoid.configuration.reverseMode && Plasmoid.formFactor === PlasmaCore.Types.Vertical ? 180 : 0
+    rotation: Plasmoid.configuration.reverseMode && Plasmoid.formFactor === PlasmaCore.Types.Vertical ?
+        180 : 0
 
     implicitHeight: inPopup ?
         LayoutMetrics.preferredHeightInPopup() : Math.max(tasksRoot.height / tasksRoot.plasmoid.configuration.maxStripes, LayoutMetrics.preferredMinHeight())
@@ -71,7 +72,7 @@ PlasmaCore.ToolTipArea {
     property bool delayAudioStreamIndicator: false
     property bool completed: false
     readonly property 
-    bool audioIndicatorsEnabled: Plasmoid.configuration.indicateAudioStreams
+        bool audioIndicatorsEnabled: Plasmoid.configuration.indicateAudioStreams
     readonly property bool hasAudioStream: audioStreams.length > 0
     readonly property bool playingAudio: hasAudioStream && audioStreams.some(item => !item.corked)
     readonly property bool muted: hasAudioStream && audioStreams.every(item => item.muted)
@@ -92,7 +93,8 @@ PlasmaCore.ToolTipArea {
     property alias tooltipContent: delegateLoader.item
 
     // Check interaction capability (windows always interactive, others check playerData)
-    interactive: model.IsWindow || (tooltipContent && tooltipContent.playerData)
+    interactive: model.IsWindow ||
+        (tooltipContent && tooltipContent.playerData)
 
     // Custom Tooltip Dialog
     PlasmaCore.Dialog {
@@ -103,7 +105,8 @@ PlasmaCore.ToolTipArea {
         
         // We draw our own background to handle the gap
         backgroundHints: PlasmaCore.Types.NoBackground
-        flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
+        flags: Qt.ToolTip |
+            Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
         
         visible: false
 
@@ -114,12 +117,34 @@ PlasmaCore.ToolTipArea {
             HoverHandler { id: wrapperHover }
 
             // Gap configuration
-            readonly property int gapSize: Kirigami.Units.gridUnit / 2
+            readonly property int gapSize: {
+                const standardGap = Kirigami.Units.smallSpacing;
+
+                const zoom = plasmoid.configuration.iconZoomFactor;
+                const sizeOverride = plasmoid.configuration.iconSizeOverride;
+                const fixedSize = plasmoid.configuration.iconSizePx;
+                const iconScale = plasmoid.configuration.iconScale / 100;
+
+                const baseIconHeight = sizeOverride ? fixedSize : (iconBox.height * iconScale);
+                const zoomedIconHeight = baseIconHeight + zoom;
+                
+                const padding = (iconBox.height - baseIconHeight) / 2;
+                const overflow = zoom - padding;
+
+                if (overflow > 0 && zoomedIconHeight > (iconBox.height + standardGap)) {
+                    return overflow + 1; 
+                }
+                
+                return standardGap;
+            }
+
             readonly property int loc: Plasmoid.location
 
             // Calculate size: Background Frame + Gap
-            implicitWidth: (loc === PlasmaCore.Types.LeftEdge || loc === PlasmaCore.Types.RightEdge) ? (bgFrame.width + gapSize) : bgFrame.width
-            implicitHeight: (loc === PlasmaCore.Types.TopEdge || loc === PlasmaCore.Types.BottomEdge) ? (bgFrame.height + gapSize) : bgFrame.height
+            implicitWidth: (loc === PlasmaCore.Types.LeftEdge || loc === PlasmaCore.Types.RightEdge) ?
+                (bgFrame.width + gapSize) : bgFrame.width
+            implicitHeight: (loc === PlasmaCore.Types.TopEdge || loc === PlasmaCore.Types.BottomEdge) ?
+                (bgFrame.height + gapSize) : bgFrame.height
 
             // The visual bubble
             KSvg.FrameSvgItem {
@@ -158,7 +183,8 @@ PlasmaCore.ToolTipArea {
                     anchors.topMargin: bgFrame.margins.top
                     anchors.bottomMargin: bgFrame.margins.bottom
 
-                    sourceComponent: model.IsWindow ? windowDelegate : pinnedAppDelegate
+                    sourceComponent: model.IsWindow ?
+                        windowDelegate : pinnedAppDelegate
                     asynchronous: false
 
                     onLoaded: {
@@ -199,7 +225,8 @@ PlasmaCore.ToolTipArea {
             property bool blockingUpdates
             
             // Expose playerData from inner item up to here, so Task can see it for 'interactive' check
-            readonly property var playerData: item ? item.playerData : null
+            readonly property var playerData: item ?
+                item.playerData : null
             
             // Forward these properties to the inner ToolTipDelegate when it loads
             onLoaded: {
@@ -371,7 +398,6 @@ PlasmaCore.ToolTipArea {
             NumberAnimation {
                 target: translateTransform
                 properties: "y"
-         
                 from: moveAnim.y
                 to: 0
                 easing.type: Easing.OutQuad
@@ -381,7 +407,6 @@ PlasmaCore.ToolTipArea {
     }
     transform: Translate {
         id: translateTransform
-  
     }
 
     Accessible.name: model.display
@@ -403,32 +428,31 @@ PlasmaCore.ToolTipArea {
             switch (Plasmoid.configuration.groupedTaskVisualization) {
             case 0:
                 break;
-            // Use the default description
+                // Use the default description
             case 1:
                 {
                     if (Plasmoid.configuration.showToolTips) {
                         return `${i18nc("@info:usagetip %1 task name", "Show Task tooltip for %1", model.display)};
-                        ${smartLauncherDescription}`;
+${smartLauncherDescription}`;
                     }
                     // fallthrough
                 }
             case 2:
                 {
                     if (effectWatcher.registered) {
-            
-                      return `${i18nc("@info:usagetip %1 task name", "Show windows side by side for %1", model.display)};
-                      ${smartLauncherDescription}`;
+                        return `${i18nc("@info:usagetip %1 task name", "Show windows side by side for %1", model.display)};
+${smartLauncherDescription}`;
                     }
                     // fallthrough
                 }
             default:
                 return `${i18nc("@info:usagetip %1 task name", "Open textual list of windows for %1", model.display)};
-                ${smartLauncherDescription}`;
+${smartLauncherDescription}`;
             }
         }
 
         return `${i18n("Activate %1", model.display)};
-        ${smartLauncherDescription}`;
+${smartLauncherDescription}`;
     }
     Accessible.role: Accessible.Button
     Accessible.onPressAction: leftTapHandler.leftClick()
@@ -464,7 +488,6 @@ PlasmaCore.ToolTipArea {
 
     onIndexChanged: {
         tooltipDialog.visible = false;
-        
         if (!inPopup && !tasksRoot.vertical && !Plasmoid.configuration.separateLaunchers) {
             tasksRoot.requestLayout();
         }
@@ -507,8 +530,7 @@ PlasmaCore.ToolTipArea {
     Keys.onDownPressed: event => Keys.rightPressed(event)
     Keys.onLeftPressed: event => {
         if (!inPopup && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
-            tasksModel.move(task.index, task.index 
-                - 1);
+            tasksModel.move(task.index, task.index - 1);
         } else {
             event.accepted = false;
         }
@@ -537,7 +559,6 @@ PlasmaCore.ToolTipArea {
 
     function showContextMenu(args: var): void {
         task.closeTooltip();
-        
         contextMenu = tasksRoot.createContextMenu(task, modelIndex(), args);
         contextMenu.show();
     }
@@ -600,7 +621,6 @@ PlasmaCore.ToolTipArea {
 
         item.parentTask = this;
         item.rootIndex = tasksModel.makeModelIndex(index, -1);
-
         item.appName = Qt.binding(() => model.AppName);
         item.pidParent = Qt.binding(() => model.AppPid);
         item.windows = Qt.binding(() => model.WinIdList);
@@ -641,8 +661,7 @@ PlasmaCore.ToolTipArea {
         var max = Math.max(r, g, b), min = Math.min(r, g, b);
         var h, s, l = (max + min) / 2;
         if (max == min) {
-            h = s = 0;
-            // achromatic
+            h = s = 0; // achromatic
         } else {
             var d = max - min;
             s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
@@ -722,7 +741,6 @@ PlasmaCore.ToolTipArea {
 
     TapHandler {
         id: leftTapHandler
-        
         acceptedButtons: Qt.LeftButton
         onTapped: (eventPoint, button) => leftClick()
 
@@ -779,7 +797,6 @@ PlasmaCore.ToolTipArea {
         property color indicatorColor: Kirigami.ColorUtils.tintWithAlpha(frame.dominantColor, tintColor, .38)
 
         anchors {
-      
             fill: parent
 
             topMargin: (!tasksRoot.vertical && taskList.rows > 1) ?
@@ -808,7 +825,6 @@ PlasmaCore.ToolTipArea {
 
             function setRequestedInhibitDnd(value: bool): void {
                 // This is modifying the value in the panel containment that
-     
                 // inhibits accepting drag and drop, so that we don't accidentally
                 // drop the task on this panel.
                 let item = this;
@@ -823,21 +839,16 @@ PlasmaCore.ToolTipArea {
             onActiveChanged: {
                 if (active) {
                     icon.grabToImage(result => {
-                    
                         if (!dragHandler.active) {
                             // BUG 466675 grabToImage is async, so avoid updating dragSource when active is false
                             return;
-                        
                         }
                         setRequestedInhibitDnd(true);
                         tasksRoot.dragSource = task;
                         dragHelper.Drag.imageSource = result.url;
-                        
-                        
                         dragHelper.Drag.mimeData = {
                             "text/x-orgkdeplasmataskmanager_taskurl": backend.tryDecodeApplicationsUrl(model.LauncherUrlWithoutIcon).toString(),
                             [model.MimeType]: model.MimeData,
-                
                             "application/x-orgkdeplasmataskmanager_taskbuttonitem": model.MimeData
                         };
                         dragHelper.Drag.active = dragHandler.active;
@@ -862,7 +873,6 @@ PlasmaCore.ToolTipArea {
     }
 
     Loader {
-        
         id: iconBox
 
         anchors {
@@ -906,28 +916,25 @@ PlasmaCore.ToolTipArea {
             width: (sizeOverride ? fixedSize : (parent.width * iconScale)) + growSize
             height: (sizeOverride ? fixedSize : (parent.height * iconScale)) + growSize
 
-         
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-	    anchors.bottomMargin: (parent.height - (sizeOverride ? fixedSize : (parent.height * iconScale))) / 2
+            anchors.bottomMargin: (parent.height - (sizeOverride ? fixedSize : (parent.height * iconScale))) / 2
 
             Behavior on growSize {
                 NumberAnimation {
                     duration: plasmoid.configuration.iconZoomDuration
                     easing.type: Easing.InOutQuad
                 }
-      
             }
             roundToIconSize: growSize === 0
-            active: task.highlighted
+            active: task.highlighted || wrapperHover.hovered
             enabled: true
 
             source: model.decoration
         }
 
         states: [
-            // Using a state transition avoids a binding loop between label.visible 
-            // and
+            // Using a state transition avoids a binding loop between label.visible and
             // the text label margin, which derives from the icon width.
             State {
                 name: "standalone"
@@ -936,14 +943,12 @@ PlasmaCore.ToolTipArea {
                 AnchorChanges {
                     target: iconBox
                     anchors.left: undefined
-    
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
 
                 PropertyChanges {
                     target: iconBox
                     anchors.leftMargin: 0
-        
                     width: Math.min(task.parent.minimumWidth, tasks.height) - adjustMargin(true, task.width, taskFrame.margins.left) - adjustMargin(true, task.width, taskFrame.margins.right)
                 }
             }
@@ -952,7 +957,6 @@ PlasmaCore.ToolTipArea {
         Loader {
             anchors.centerIn: parent
             width: Math.min(parent.width, parent.height)
-      
             height: width
             active: model.IsStartup
             sourceComponent: busyIndicator
@@ -965,7 +969,6 @@ PlasmaCore.ToolTipArea {
         visible: (inPopup || !iconsOnly && !model.IsLauncher && (parent.width - iconBox.height - Kirigami.Units.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText())
 
         anchors {
-            
             fill: parent
             leftMargin: taskFrame.margins.left + iconBox.width + LayoutMetrics.labelMargin
             topMargin: taskFrame.margins.top
@@ -991,7 +994,6 @@ PlasmaCore.ToolTipArea {
 
             PropertyChanges {
                 target: label
-      
                 text: model.display
             }
         }
@@ -1003,7 +1005,6 @@ PlasmaCore.ToolTipArea {
             when: model.IsLauncher === true
 
             PropertyChanges {
-          
                 target: frame
                 basePrefix: ""
             }
@@ -1011,7 +1012,6 @@ PlasmaCore.ToolTipArea {
                 target: colorOverride
                 visible: false
             }
-     
         },
         State {
             name: "attention"
@@ -1030,7 +1030,6 @@ PlasmaCore.ToolTipArea {
             }
         },
         State {
-           
             name: "minimized"
             when: model.IsMinimized === true && !frame.isHovered && !plasmoid.configuration.disableButtonInactiveSvg
 
@@ -1057,7 +1056,6 @@ PlasmaCore.ToolTipArea {
 
             PropertyChanges {
                 target: frame
-       
                 basePrefix: "minimized"
                 visible: plasmoid.configuration.disableButtonInactiveSvg ?
                     false : true
@@ -1079,7 +1077,6 @@ PlasmaCore.ToolTipArea {
 
             PropertyChanges {
                 target: frame
-           
                 basePrefix: "focus"
             }
             PropertyChanges {
@@ -1098,7 +1095,6 @@ PlasmaCore.ToolTipArea {
             when: model.IsActive === false && !frame.isHovered && !plasmoid.configuration.disableButtonInactiveSvg
             PropertyChanges {
                 target: colorOverride
-       
                 visible: plasmoid.configuration.buttonColorize && plasmoid.configuration.buttonColorizeInactive ?
                     true : false
             }
@@ -1118,7 +1114,6 @@ PlasmaCore.ToolTipArea {
             when: (model.IsActive === false && !frame.isHovered) && plasmoid.configuration.disableButtonInactiveSvg
             PropertyChanges {
                 target: colorOverride
-       
                 visible: plasmoid.configuration.disableButtonInactiveSvg ?
                     false : true
             }
@@ -1138,8 +1133,8 @@ PlasmaCore.ToolTipArea {
             when: frame.isHovered
             PropertyChanges {
                 target: colorOverride
-             
-                visible: plasmoid.configuration.buttonColorize ? true : false
+                visible: plasmoid.configuration.buttonColorize ?
+                    true : false
             }
             PropertyChanges {
                 target: frame
