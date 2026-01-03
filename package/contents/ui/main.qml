@@ -317,6 +317,16 @@ PlasmoidItem {
                 tasks.publishIconGeometries(taskList.children, tasks);
             }
         }
+	Timer {
+            id: startupSortFixTimer
+            interval: 2000 
+            running: true
+            repeat: false
+            onTriggered: {
+                tasksModel.launcherList = Plasmoid.configuration.launchers;
+                tasksModel.syncLaunchers();
+            }
+        }
 
         Binding {
             target: Plasmoid
