@@ -907,7 +907,9 @@ PlasmaCore.ToolTipArea {
             height: (sizeOverride ? fixedSize : (parent.height * iconScale)) + growSize
 
          
-            anchors.centerIn: parent
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+	    anchors.bottomMargin: (parent.height - (sizeOverride ? fixedSize : (parent.height * iconScale))) / 2
 
             Behavior on growSize {
                 NumberAnimation {
