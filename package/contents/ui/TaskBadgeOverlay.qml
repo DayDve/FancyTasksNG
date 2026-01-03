@@ -30,9 +30,13 @@ Item {
             y: root.shiftBadgeDown ?
                 (icon.height / 2) : 0
 
-            Behavior on y {
-                NumberAnimation { duration: Kirigami.Units.longDuration }
+        Behavior on y {
+            NumberAnimation {
+                duration: task.smartLauncherItem && task.smartLauncherItem.countVisible 
+                          ? plasmoid.configuration.iconZoomDuration 
+                          : Kirigami.Units.longDuration
             }
+        }
 
             visible: task.smartLauncherItem.countVisible
             width: badgeRect.width + offset * 2
