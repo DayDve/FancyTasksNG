@@ -234,7 +234,6 @@ Kirigami.ScrollablePage {
 
         Item {
             Kirigami.FormData.isSection: true
-            visible: (Plasmoid.pluginName !== "org.kde.plasma.icontasks")
         }
 
         ComboBox {
