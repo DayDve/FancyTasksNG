@@ -12,8 +12,8 @@ import "code/layoutmetrics.js" as LayoutMetrics
 GridLayout {
     property bool animating: false
 
-    rowSpacing: 0
-    columnSpacing: 0
+    rowSpacing: tasks.plasmoid.configuration.taskSpacingSize
+    columnSpacing: tasks.plasmoid.configuration.taskSpacingSize
 
     property int animationsRunning: 0
     onAnimationsRunningChanged: {
