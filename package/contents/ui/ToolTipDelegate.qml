@@ -61,7 +61,8 @@ Loader {
     LayoutMirroring.childrenInherit: true
 
     active: !blockingUpdates && rootIndex !== undefined && ((parentTask && parentTask.containsMouse) || Window.visibility !== Window.Hidden)
-    asynchronous: true
+    // FIX: Disable asynchronous loading to ensure size is calculated before the tooltip dialog is shown
+    asynchronous: false
 
     sourceComponent: isGroup ? groupToolTip : singleTooltip
 
@@ -93,8 +94,7 @@ Loader {
 
                 model: delegateModel
 
-                orientation: isVerticalPanel ?
-                    ListView.Vertical : ListView.Horizontal
+                orientation: isVerticalPanel ? ListView.Vertical : ListView.Horizontal
                 reuseItems: true
                 spacing: Kirigami.Units.gridUnit
             }
@@ -102,9 +102,12 @@ Loader {
             DelegateModel {
                 id: delegateModel
 
+                // FIX: Use parentTask.childCount for immediate size estimation, as 'count' might lag for new groups
+                readonly property int safeCount: toolTipDelegate.parentTask ? toolTipDelegate.parentTask.childCount : count
+
                 // On Wayland, a tooltip has a significant resizing process, so estimate the size first.
-                readonly property real estimatedWidth: (toolTipDelegate.isVerticalPanel ? 1 : count) * (toolTipDelegate.tooltipInstanceMaximumWidth + Kirigami.Units.gridUnit) - Kirigami.Units.gridUnit
-                readonly property real estimatedHeight: (toolTipDelegate.isVerticalPanel ? count : 1) * (toolTipDelegate.tooltipInstanceMaximumWidth / 2 + Kirigami.Units.gridUnit) - Kirigami.Units.gridUnit
+                readonly property real estimatedWidth: (toolTipDelegate.isVerticalPanel ? 1 : safeCount) * (toolTipDelegate.tooltipInstanceMaximumWidth + Kirigami.Units.gridUnit) - Kirigami.Units.gridUnit
+                readonly property real estimatedHeight: (toolTipDelegate.isVerticalPanel ? safeCount : 1) * (toolTipDelegate.tooltipInstanceMaximumWidth / 2 + Kirigami.Units.gridUnit) - Kirigami.Units.gridUnit
 
                 model: tasksModel
 
