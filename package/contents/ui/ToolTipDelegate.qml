@@ -102,8 +102,9 @@ Loader {
             DelegateModel {
                 id: delegateModel
 
-                // FIX: Use parentTask.childCount for immediate size estimation, as 'count' might lag for new groups
-                readonly property int safeCount: toolTipDelegate.parentTask ? toolTipDelegate.parentTask.childCount : count
+                // FIX: Use windows.length for immediate size estimation. 'count' from delegateModel might lag, 
+                // and parentTask.childCount requires accessing the parent object. windows list is passed directly.
+                readonly property int safeCount: toolTipDelegate.windows.length > 0 ? toolTipDelegate.windows.length : count
 
                 // On Wayland, a tooltip has a significant resizing process, so estimate the size first.
                 readonly property real estimatedWidth: (toolTipDelegate.isVerticalPanel ? 1 : safeCount) * (toolTipDelegate.tooltipInstanceMaximumWidth + Kirigami.Units.gridUnit) - Kirigami.Units.gridUnit

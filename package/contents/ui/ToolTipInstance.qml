@@ -20,6 +20,8 @@ import org.kde.plasma.components as PlasmaComponents3
 import org.kde.plasma.extras as PlasmaExtras
 import org.kde.kirigami as Kirigami
 import org.kde.kwindowsystem
+// FIX: Добавлен импорт Mpris для доступа к Enums
+import org.kde.plasma.private.mpris as Mpris
 
 ColumnLayout {
     id: root
@@ -370,8 +372,15 @@ ColumnLayout {
     // Player controls row, load on demand so group tooltips could be loaded faster
     Loader {
         id: playerController
-        // FIX: Check canControl to hide when media is gone, sync load to fix layout
-        active: toolTipDelegate.playerData && toolTipDelegate.playerData.canControl && root.index !== -1 
+        // FIX: Показываем если: Играет ИЛИ Пауза ИЛИ (Остановлено НО есть трек).
+        // Это скрывает пустые контроллеры в браузере (где статус Stopped и нет трека),
+        // но оставляет контроллер, если вы нажали Стоп/Паузу на загруженном треке.
+        active: toolTipDelegate.playerData && 
+                toolTipDelegate.playerData.canControl && 
+                root.index !== -1 &&
+                (toolTipDelegate.playerData.playbackStatus === Mpris.PlaybackStatus.Playing || 
+                 toolTipDelegate.playerData.playbackStatus === Mpris.PlaybackStatus.Paused || 
+                 (toolTipDelegate.playerData.track && toolTipDelegate.playerData.track.length > 0))
         asynchronous: false 
         visible: active
         Layout.fillWidth: true
