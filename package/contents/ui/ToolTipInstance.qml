@@ -82,7 +82,6 @@ ColumnLayout {
         }
 
         const appName = root.calculatedAppName;
-
         if (appName && appName.length > 0) {
             const escapedAppName = appName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const cleanupRegex = new RegExp(`\\s+(?:—|-|–)\\s+${escapedAppName}.*$`, "i");
@@ -170,7 +169,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 Layout.minimumWidth: 0
                 elide: Text.ElideRight
-                
+  
                 text: toolTipDelegate.isWin ? root.generateSubText() : ""
                 opacity: 0.6
                 visible: text.length !== 0 && text !== appNameHeading.text
@@ -221,8 +220,7 @@ ColumnLayout {
         clip: true
         visible: toolTipDelegate.isWin
 
-        readonly property var winId: toolTipDelegate.isWin ?
-            toolTipDelegate.windows[root.index] : undefined
+        readonly property var winId: toolTipDelegate.isWin ? toolTipDelegate.windows[root.index] : undefined
 
         PlasmaExtras.Highlight {
             anchors.fill: hoverHandler // Anchor to the interaction area
@@ -238,13 +236,13 @@ ColumnLayout {
             id: thumbnailLoader
             active: !toolTipDelegate.isLauncher && !albumArtImage.visible && (Number.isInteger(thumbnailSourceItem.winId) || pipeWireLoader.item && !pipeWireLoader.item.hasThumbnail) && root.index !== -1
             asynchronous: true
+            
             visible: active
             
             anchors.fill: hoverHandler
             anchors.margins: Kirigami.Units.smallSpacing
 
-            sourceComponent: root.isMinimized ||
-                pipeWireLoader.active ? iconItem : x11Thumbnail
+            sourceComponent: root.isMinimized || pipeWireLoader.active ? iconItem : x11Thumbnail
 
             Component {
                 id: x11Thumbnail
@@ -260,8 +258,7 @@ ColumnLayout {
                     source: toolTipDelegate.icon
                     animated: false
                     visible: valid
-                    opacity: pipeWireLoader.active ?
-                        0 : 1
+                    opacity: pipeWireLoader.active ? 0 : 1
                     
                     anchors.fill: parent
                     anchors.margins: Kirigami.Units.gridUnit 
@@ -298,8 +295,7 @@ ColumnLayout {
                 (thumbnailLoader.status === Loader.Ready && !root.isMinimized)
             asynchronous: true
             visible: active
-            anchors.fill: pipeWireLoader.active ?
-                pipeWireLoader : thumbnailLoader
+            anchors.fill: pipeWireLoader.active ? pipeWireLoader : thumbnailLoader
 
             sourceComponent: GE.DropShadow {
                 horizontalOffset: 0
@@ -307,8 +303,7 @@ ColumnLayout {
                 radius: 8
                 samples: Math.round(radius * 1.5)
                 color: "Black"
-                source: pipeWireLoader.active ?
-                    pipeWireLoader.item : thumbnailLoader.item // source could be undefined when albumArt is available, so put it in a Loader.
+                source: pipeWireLoader.active ? pipeWireLoader.item : thumbnailLoader.item // source could be undefined when albumArt is available, so put it in a Loader.
             }
         }
 
@@ -343,8 +338,7 @@ ColumnLayout {
             // if this is a group tooltip, we check if window title and track match, to allow distinguishing the different windows
             // if this app is a browser, we also check the title, so album art is not shown when the user is on some other tab
             // in all other cases we can safely show the album art without checking the title
-            readonly property bool available: (status === Image.Ready ||
-                status === Image.Loading) && (!(toolTipDelegate.isGroup || backend.applicationCategories(launcherUrl).includes("WebBrowser")) || root.titleIncludesTrack)
+            readonly property bool available: (status === Image.Ready || status === Image.Loading) && (!(toolTipDelegate.isGroup || backend.applicationCategories(launcherUrl).includes("WebBrowser")) || root.titleIncludesTrack)
 
             anchors.fill: hoverHandler
             // Indent by one pixel to make sure we never cover up the entire highlight
@@ -376,8 +370,9 @@ ColumnLayout {
     // Player controls row, load on demand so group tooltips could be loaded faster
     Loader {
         id: playerController
-        active: toolTipDelegate.playerData && root.index !== -1 // Avoid loading when the instance is going to be destroyed
-        asynchronous: true
+        // FIX: Check canControl to hide when media is gone, sync load to fix layout
+        active: toolTipDelegate.playerData && toolTipDelegate.playerData.canControl && root.index !== -1 
+        asynchronous: false 
         visible: active
         Layout.fillWidth: true
         Layout.maximumWidth: header.Layout.maximumWidth
@@ -389,8 +384,9 @@ ColumnLayout {
 
     // Volume controls
     Loader {
-        active: toolTipDelegate.parentTask !== null && pulseAudio.item !== null && toolTipDelegate.parentTask.audioIndicatorsEnabled && toolTipDelegate.parentTask.hasAudioStream && root.index !== -1 // Avoid loading when the instance is going to be destroyed
-        asynchronous: true
+        // FIX: Sync load to prevent layout shifting
+        active: toolTipDelegate.parentTask !== null && pulseAudio.item !== null && toolTipDelegate.parentTask.audioIndicatorsEnabled && toolTipDelegate.parentTask.hasAudioStream && root.index !== -1 
+        asynchronous: false 
         visible: active
         Layout.fillWidth: true
         Layout.maximumWidth: header.Layout.maximumWidth
@@ -401,6 +397,7 @@ ColumnLayout {
                 // Mute button
                 icon.width: Kirigami.Units.iconSizes.small
                 icon.height: Kirigami.Units.iconSizes.small
+              
                 icon.name: if (checked) {
                     "audio-volume-muted";
                 } else if (slider.displayValue <= 25) {
@@ -415,7 +412,7 @@ ColumnLayout {
 
                 PlasmaComponents3.ToolTip {
                     text: parent.checked ?
-                        i18nc("button to unmute app", "Unmute %1", toolTipDelegate.parentTask.appName) : i18nc("button to mute app", "Mute %1", toolTipDelegate.parentTask.appName)
+                    i18nc("button to unmute app", "Unmute %1", toolTipDelegate.parentTask.appName) : i18nc("button to mute app", "Mute %1", toolTipDelegate.parentTask.appName)
                 }
             }
 
@@ -423,15 +420,16 @@ ColumnLayout {
                 id: slider
 
                 readonly property int displayValue: Math.round(value / to * 100)
+    
                 readonly property int loudestVolume: toolTipDelegate.parentTask.audioStreams.reduce((loudestVolume, stream) => Math.max(loudestVolume, stream.volume), 0)
 
                 Layout.fillWidth: true
                 from: pulseAudio.item.minimalVolume
                 to: pulseAudio.item.normalVolume
                 value: loudestVolume
+           
                 stepSize: to / 100
-                opacity: toolTipDelegate.parentTask.muted ?
-                    0.5 : 1
+                opacity: toolTipDelegate.parentTask.muted ? 0.5 : 1
 
                 Accessible.name: i18nc("Accessibility data on volume slider", "Adjust volume for %1", toolTipDelegate.parentTask.appName)
 
@@ -452,6 +450,7 @@ ColumnLayout {
                 Layout.minimumWidth: percentMetrics.advanceWidth
                 horizontalAlignment: Qt.AlignRight
                 text: i18nc("volume percentage", "%1%", slider.displayValue)
+               
                 textFormat: Text.PlainText
                 TextMetrics {
                     id: percentMetrics
