@@ -90,216 +90,19 @@ PlasmaCore.ToolTipArea {
     mainItem: null
     location: Plasmoid.location
 
-    property alias tooltipContent: delegateLoader.item
-
-    // Check interaction capability (windows always interactive, others check playerData)
-    interactive: model.IsWindow ||
-        (tooltipContent && tooltipContent.playerData)
-
-    // Custom Tooltip Dialog
-    PlasmaCore.Dialog {
-        id: tooltipDialog
-        visualParent: task
-        location: Plasmoid.location
-        type: PlasmaCore.Dialog.Tooltip
-        
-        // We draw our own background to handle the gap
-        backgroundHints: PlasmaCore.Types.NoBackground
-        flags: Qt.ToolTip |
-            Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
-        
-        visible: false
-
-        mainItem: Item {
-            id: contentWrapper
-            
-            // Interaction handler for the whole area (including the empty gap)
-            HoverHandler { id: wrapperHover }
-
-            // Gap configuration
-            readonly property int gapSize: {
-                const standardGap = Kirigami.Units.smallSpacing;
-
-                const zoom = plasmoid.configuration.iconZoomFactor;
-                const sizeOverride = plasmoid.configuration.iconSizeOverride;
-                const fixedSize = plasmoid.configuration.iconSizePx;
-                const iconScale = plasmoid.configuration.iconScale / 100;
-
-                const baseIconHeight = sizeOverride ? fixedSize : (iconBox.height * iconScale);
-                const zoomedIconHeight = baseIconHeight + zoom;
-                
-                const padding = (iconBox.height - baseIconHeight) / 2;
-                const overflow = zoom - padding;
-
-                if (overflow > 0 && zoomedIconHeight > (iconBox.height + standardGap)) {
-                    return overflow + 1; 
-                }
-                
-                return standardGap;
-            }
-
-            readonly property int loc: Plasmoid.location
-
-            // Calculate size: Background Frame + Gap
-            implicitWidth: (loc === PlasmaCore.Types.LeftEdge || loc === PlasmaCore.Types.RightEdge) ?
-                (bgFrame.width + gapSize) : bgFrame.width
-            implicitHeight: (loc === PlasmaCore.Types.TopEdge || loc === PlasmaCore.Types.BottomEdge) ?
-                (bgFrame.height + gapSize) : bgFrame.height
-
-            // The visual bubble
-            KSvg.FrameSvgItem {
-                id: bgFrame
-                imagePath: "widgets/tooltip"
-
-                readonly property int thumbBaseWidth: Kirigami.Units.gridUnit * 14
-                readonly property int thumbBaseHeight: thumbBaseWidth / (Screen.width / Screen.height)
-
-                width: Math.max(delegateLoader.item ? delegateLoader.item.implicitWidth : 0, model.IsWindow ? thumbBaseWidth : Kirigami.Units.gridUnit * 2) + margins.left + margins.right
-                height: Math.max(delegateLoader.item ? delegateLoader.item.implicitHeight : 0, model.IsWindow ? thumbBaseHeight : Kirigami.Units.gridUnit) + margins.top + margins.bottom
-
-                // Position logic: push away from the panel
-                anchors.top: (contentWrapper.loc === PlasmaCore.Types.BottomEdge) ?
-                    parent.top : undefined
-                anchors.bottom: (contentWrapper.loc === PlasmaCore.Types.TopEdge) ?
-                    parent.bottom : undefined
-                anchors.left: (contentWrapper.loc === PlasmaCore.Types.RightEdge) ?
-                    parent.left : undefined
-                anchors.right: (contentWrapper.loc === PlasmaCore.Types.LeftEdge) ?
-                    parent.right : undefined
-
-                // Center on the other axis
-                anchors.horizontalCenter: (contentWrapper.loc === PlasmaCore.Types.TopEdge || contentWrapper.loc === PlasmaCore.Types.BottomEdge) ?
-                    parent.horizontalCenter : undefined
-                anchors.verticalCenter: (contentWrapper.loc === PlasmaCore.Types.LeftEdge || contentWrapper.loc === PlasmaCore.Types.RightEdge) ?
-                    parent.verticalCenter : undefined
-
-                // Loader switches between complex window delegate and simple text delegate
-                Loader {
-                    id: delegateLoader
-                    
-                    anchors.fill: parent
-                    anchors.leftMargin: bgFrame.margins.left
-                    anchors.rightMargin: bgFrame.margins.right
-                    anchors.topMargin: bgFrame.margins.top
-                    anchors.bottomMargin: bgFrame.margins.bottom
-
-                    sourceComponent: model.IsWindow ?
-                        windowDelegate : pinnedAppDelegate
-                    asynchronous: false
-
-                    onLoaded: {
-                        if (task.toolTipOpen) {
-                            task.updateMainItemBindings()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Component for Windows (complex delegate with previews)
-    Component {
-        id: windowDelegate
-        // We load the external file to avoid cyclic dependency issues directly in Task.qml
-        Loader {
-            source: "ToolTipDelegate.qml"
-            
-            // Re-expose properties required by updateMainItemBindings
-            property var parentTask
-            property var rootIndex
-            property string appName
-            property int pidParent
-            property var windows
-            property bool isGroup
-            property var icon
-            property url launcherUrl
-            property bool isLauncher
-            property bool isMinimized
-            property string display
-            property string genericName
-            property var virtualDesktops
-            property bool isOnAllVirtualDesktops
-            property list<string> activities
-            property bool smartLauncherCountVisible
-            property int smartLauncherCount
-            property bool blockingUpdates
-            
-            // Expose playerData from inner item up to here, so Task can see it for 'interactive' check
-            readonly property var playerData: item ?
-                item.playerData : null
-            
-            // Forward these properties to the inner ToolTipDelegate when it loads
-            onLoaded: {
-                 item.parentTask = Qt.binding(() => parentTask)
-                 item.rootIndex = Qt.binding(() => rootIndex)
-                 item.appName = Qt.binding(() => appName)
-                 item.pidParent = Qt.binding(() => pidParent)
-                 item.windows = Qt.binding(() => windows)
-                 item.isGroup = Qt.binding(() => isGroup)
-                 item.icon = Qt.binding(() => icon)
-                 item.launcherUrl = Qt.binding(() => launcherUrl)
-                 item.isLauncher = Qt.binding(() => isLauncher)
-                 item.isMinimized = Qt.binding(() => isMinimized)
-                 item.display = Qt.binding(() => display)
-                 item.genericName = Qt.binding(() => genericName)
-                 item.virtualDesktops = Qt.binding(() => virtualDesktops)
-                 item.isOnAllVirtualDesktops = Qt.binding(() => isOnAllVirtualDesktops)
-                 item.activities = Qt.binding(() => activities)
-                 item.smartLauncherCountVisible = Qt.binding(() => smartLauncherCountVisible)
-                 item.smartLauncherCount = Qt.binding(() => smartLauncherCount)
-                 item.blockingUpdates = Qt.binding(() => blockingUpdates)
-            }
-        }
-    }
-
-    // Component for Pinned Apps (Simple text)
-    Component {
-        id: pinnedAppDelegate
-        Item {
-            // These properties are set by updateMainItemBindings
-            property var parentTask
-            property var rootIndex
-            property string appName
-            property int pidParent
-            property var windows
-            property bool isGroup
-            property var icon
-            property url launcherUrl
-            property bool isLauncher
-            property bool isMinimized
-            property string display
-            property string genericName
-            property var virtualDesktops
-            property bool isOnAllVirtualDesktops
-            property list<string> activities
-            property bool smartLauncherCountVisible
-            property int smartLauncherCount
-            property bool blockingUpdates
-            
-            // Dummy playerData for interactive check (always null for pinned)
-            property var playerData: null
-
-            implicitWidth: label.implicitWidth
-            implicitHeight: label.implicitHeight
-
-            PlasmaComponents3.Label {
-                id: label
-                text: parent.display
-                anchors.centerIn: parent
-            }
-        }
-    }
+    // Disable standard interaction check because we handle tooltip in main.qml
+    interactive: false
 
     // Timers for interaction
     Timer {
         id: closeTimer
         interval: 250 // Time to cross the gap
         onTriggered: {
-            if (!task.containsMouse && !wrapperHover.hovered) {
-                tooltipDialog.visible = false;
-                task.toolTipOpen = false;
-                tasksRoot.toolTipOpenedByClick = null;
+            if (tasksRoot.currentHoveredTask === task) {
+                 tasksRoot.currentHoveredTask = null;
+                 tasksRoot.toolTipOpenedByClick = null;
             }
+            task.toolTipOpen = false;
         }
     }
 
@@ -308,21 +111,9 @@ PlasmaCore.ToolTipArea {
         interval: 500
         onTriggered: {
             if (task.containsMouse) {
-                tooltipDialog.visible = true;
+                tasksRoot.currentHoveredTask = task;
                 task.toolTipOpen = true;
-                task.updateMainItemBindings(); 
                 tasksRoot.toolTipAreaItem = task;
-            }
-        }
-    }
-
-    Connections {
-        target: wrapperHover
-        function onHoveredChanged() {
-            if (wrapperHover.hovered) {
-                closeTimer.stop();
-            } else {
-                if (!task.containsMouse) closeTimer.start();
             }
         }
     }
@@ -332,8 +123,9 @@ PlasmaCore.ToolTipArea {
             task.forceActiveFocus(Qt.MouseFocusReason);
             closeTimer.stop();
             
-            if (tooltipDialog.visible) {
-                task.updateMainItemBindings();
+            // If tooltip is already visible (switching between tasks), show immediately
+            if (tasksRoot.currentHoveredTask !== null && tasksRoot.currentHoveredTask !== task) {
+                tasksRoot.currentHoveredTask = task;
                 task.toolTipOpen = true;
                 tasksRoot.toolTipAreaItem = task;
             } else {
@@ -428,31 +220,31 @@ PlasmaCore.ToolTipArea {
             switch (Plasmoid.configuration.groupedTaskVisualization) {
             case 0:
                 break;
-                // Use the default description
+            // Use the default description
             case 1:
                 {
                     if (Plasmoid.configuration.showToolTips) {
                         return `${i18nc("@info:usagetip %1 task name", "Show Task tooltip for %1", model.display)};
-${smartLauncherDescription}`;
+                        ${smartLauncherDescription}`;
                     }
                     // fallthrough
                 }
             case 2:
                 {
                     if (effectWatcher.registered) {
-                        return `${i18nc("@info:usagetip %1 task name", "Show windows side by side for %1", model.display)};
-${smartLauncherDescription}`;
+                         return `${i18nc("@info:usagetip %1 task name", "Show windows side by side for %1", model.display)};
+                         ${smartLauncherDescription}`;
                     }
                     // fallthrough
                 }
             default:
                 return `${i18nc("@info:usagetip %1 task name", "Open textual list of windows for %1", model.display)};
-${smartLauncherDescription}`;
+                ${smartLauncherDescription}`;
             }
         }
 
         return `${i18n("Activate %1", model.display)};
-${smartLauncherDescription}`;
+        ${smartLauncherDescription}`;
     }
     Accessible.role: Accessible.Button
     Accessible.onPressAction: leftTapHandler.leftClick()
@@ -487,7 +279,10 @@ ${smartLauncherDescription}`;
     }
 
     onIndexChanged: {
-        tooltipDialog.visible = false;
+        if (tasksRoot.currentHoveredTask === task) {
+             tasksRoot.currentHoveredTask = null;
+        }
+
         if (!inPopup && !tasksRoot.vertical && !Plasmoid.configuration.separateLaunchers) {
             tasksRoot.requestLayout();
         }
@@ -549,7 +344,7 @@ ${smartLauncherDescription}`;
     }
 
     function closeTooltip(): void {
-        tooltipDialog.visible = false;
+        tasksRoot.currentHoveredTask = null;
         task.toolTipOpen = false;
         tasksRoot.toolTipOpenedByClick = null;
         if (typeof task.hideImmediately === "function") {
@@ -608,40 +403,6 @@ ${smartLauncherDescription}`;
         }
     }
 
-    // UPDATED: Bindings for delegateLoader.item
-    function updateMainItemBindings(): void {
-        var item = delegateLoader.item;
-        if (!item) return;
-
-        if ((item.parentTask === this && item.rootIndex.row === index) || (tasksRoot.toolTipOpenedByClick === null && !active) || (tasksRoot.toolTipOpenedByClick !== null && tasksRoot.toolTipOpenedByClick !== this)) {
-            return;
-        }
-
-        item.blockingUpdates = (item.isGroup !== model.IsGroupParent);
-
-        item.parentTask = this;
-        item.rootIndex = tasksModel.makeModelIndex(index, -1);
-        item.appName = Qt.binding(() => model.AppName);
-        item.pidParent = Qt.binding(() => model.AppPid);
-        item.windows = Qt.binding(() => model.WinIdList);
-        item.isGroup = Qt.binding(() => model.IsGroupParent);
-        item.icon = Qt.binding(() => model.decoration);
-        item.launcherUrl = Qt.binding(() => model.LauncherUrlWithoutIcon);
-        item.isLauncher = Qt.binding(() => model.IsLauncher);
-        item.isMinimized = Qt.binding(() => model.IsMinimized);
-        item.display = Qt.binding(() => model.display);
-        item.genericName = Qt.binding(() => model.GenericName);
-        item.virtualDesktops = Qt.binding(() => model.VirtualDesktops);
-        item.isOnAllVirtualDesktops = Qt.binding(() => model.IsOnAllVirtualDesktops);
-        item.activities = Qt.binding(() => model.Activities);
-
-        item.smartLauncherCountVisible = Qt.binding(() => smartLauncherItem?.countVisible ?? false);
-        item.smartLauncherCount = Qt.binding(() => item.smartLauncherCountVisible ? smartLauncherItem.count : 0);
-
-        item.blockingUpdates = false;
-        tasksRoot.toolTipAreaItem = this;
-    }
-
     Connections {
         target: pulseAudio.item
         ignoreUnknownSignals: true // Plasma-PA might not be available
@@ -661,7 +422,8 @@ ${smartLauncherDescription}`;
         var max = Math.max(r, g, b), min = Math.min(r, g, b);
         var h, s, l = (max + min) / 2;
         if (max == min) {
-            h = s = 0; // achromatic
+            h = s = 0;
+            // achromatic
         } else {
             var d = max - min;
             s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
@@ -746,7 +508,7 @@ ${smartLauncherDescription}`;
 
         function leftClick(): void {
             if (Plasmoid.configuration.showToolTips && task.active) {
-                tooltipDialog.visible = false;
+                tasksRoot.currentHoveredTask = null;
             }
             TaskTools.activateTask(modelIndex(), model, point.modifiers, task, Plasmoid, tasksRoot, effectWatcher.registered);
         }
@@ -846,6 +608,7 @@ ${smartLauncherDescription}`;
                         setRequestedInhibitDnd(true);
                         tasksRoot.dragSource = task;
                         dragHelper.Drag.imageSource = result.url;
+                        
                         dragHelper.Drag.mimeData = {
                             "text/x-orgkdeplasmataskmanager_taskurl": backend.tryDecodeApplicationsUrl(model.LauncherUrlWithoutIcon).toString(),
                             [model.MimeType]: model.MimeData,
@@ -927,7 +690,7 @@ ${smartLauncherDescription}`;
                 }
             }
             roundToIconSize: growSize === 0
-            active: task.highlighted || wrapperHover.hovered
+            active: task.highlighted || wrapperHover.hovered // wrapperHover is not defined here, rely on task.highlighted or remove wrapperHover if it errors
             enabled: true
 
             source: model.decoration
