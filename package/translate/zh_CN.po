@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/alexankitty/FancyTasks\n"
-"POT-Creation-Date: 2025-12-22 13:42+0200\n"
+"POT-Creation-Date: 2026-01-08 16:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -172,107 +172,86 @@ msgid "Space between taskbar items (px):"
 msgstr "任务栏组件间距（px）"
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@label for several checkboxes"
 msgid "General:"
-msgstr ""
+msgstr "通用："
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@option:check section General"
 msgid "Show small window previews when hovering over tasks"
 msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@option:check section General"
 msgid "Hide other windows when hovering over previews"
 msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@option:check section General"
 msgid "Mark applications that play audio"
-msgstr ""
+msgstr "标记正在播放音频的应用"
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@option:check section General"
 msgid "Fill free space on panel"
 msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@label:listbox"
 msgid "Maximum task width:"
 msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@item:inlistbox how wide a task item should be"
 msgid "Narrow"
 msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@item:inlistbox how wide a task item should be"
 msgid "Medium"
 msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@item:inlistbox how wide a task item should be"
 msgid "Wide"
 msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@label for radio button group, completes sentence: … when panel is low on space etc."
 msgid "Use multi-column view:"
 msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@label for radio button group, completes sentence: … when panel is low on space etc."
 msgid "Use multi-row view:"
 msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@option:radio Never use multi-column view for Task Manager"
 msgid "Never"
 msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@option:radio completes sentence: Use multi-column/row view"
 msgid "When panel is low on space and thick enough"
 msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@option:radio completes sentence: Use multi-column/row view"
 msgid "Always when panel is thick enough"
 msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@label:spinbox maximum number of columns for tasks"
 msgid "Maximum columns:"
-msgstr ""
+msgstr "最大列数"
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@label:spinbox maximum number of rows for tasks"
 msgid "Maximum rows:"
-msgstr ""
+msgstr "最大行数"
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@label:listbox"
 msgid "Spacing between icons:"
+msgstr "图标间距："
+
+#: ../contents/ui/ConfigAppearance.qml
+msgid "Small"
 msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@item:inlistbox Icon spacing"
-msgid "Small"
-msgstr "小"
-
-#: ../contents/ui/ConfigAppearance.qml
-msgctxt "@item:inlistbox Icon spacing"
 msgid "Normal"
-msgstr "中"
+msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@item:inlistbox Icon spacing"
 msgid "Large"
-msgstr "大"
+msgstr ""
 
 #: ../contents/ui/ConfigAppearance.qml
-msgctxt "@info:usagetip under a set of radio buttons when Touch Mode is on"
 msgid "Automatically set to Large when in Touch mode"
 msgstr ""
 
@@ -289,217 +268,170 @@ msgid "Show icons only"
 msgstr "只显示图标"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@label:listbox how to group tasks"
 msgid "Group:"
-msgstr ""
+msgstr "分组："
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox how to group tasks"
 msgid "Do not group"
-msgstr ""
+msgstr "不分组："
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox how to group tasks"
 msgid "By program name"
-msgstr ""
+msgstr "以程序名分组"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@label:listbox completes sentence like: … cycles through tasks"
 msgid "Clicking grouped task:"
-msgstr ""
+msgstr "点击已分组任务时："
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox Completes the sentence 'Clicking grouped task cycles through tasks' "
 msgid "Cycles through tasks"
 msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox Completes the sentence 'Clicking grouped task shows small window previews' "
 msgid "Shows small window previews"
 msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox Completes the sentence 'Clicking grouped task shows large window previews' "
 msgid "Shows large window previews"
 msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox Completes the sentence 'Clicking grouped task shows textual list' "
 msgid "Shows textual list"
 msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@info displayed as InlineMessage"
 msgid "The compositor does not support displaying windows side by side, so a textual list will be displayed instead."
-msgstr ""
+msgstr "混成器不支持并列显示窗口，展示文字列表"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@option:check grouped task"
 msgid "Combine into single button"
-msgstr ""
+msgstr "组合到一个按钮中"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@option:check grouped task"
 msgid "Group only when the Task Manager is full"
-msgstr ""
+msgstr "仅在任务栏已满时组合"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@label:listbox sort tasks in grouped task"
 msgid "Sort:"
-msgstr ""
+msgstr "排序："
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox sort tasks in grouped task"
 msgid "Do not sort"
-msgstr ""
+msgstr "不排序"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox sort tasks in grouped task"
 msgid "Manually"
-msgstr ""
+msgstr "手动"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox sort tasks in grouped task"
 msgid "Alphabetically"
-msgstr ""
+msgstr "按字母"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox sort tasks in grouped task"
 msgid "By desktop"
-msgstr ""
+msgstr "按桌面"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox sort tasks in grouped task"
 msgid "By activity"
-msgstr ""
+msgstr "按活动"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@option:check configure task sorting"
 msgid "Keep launchers separate"
-msgstr ""
+msgstr "与启动器分开"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@option:check for icons-and-text task manager"
 msgid "Hide launchers after application startup"
 msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@label for checkbox Part of a sentence: 'Clicking active task minimizes the task'"
 msgid "Clicking active task:"
 msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@option:check Part of a sentence: 'Clicking active task minimizes the task'"
 msgid "Minimizes the task"
 msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@label:listbox completes sentence like: … does nothing"
 msgid "Middle-clicking any task:"
-msgstr ""
+msgstr "鼠标中键点击活动任务时："
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox Part of a sentence: 'Middle-clicking any task does nothing'"
 msgid "Does nothing"
 msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox Part of a sentence: 'Middle-clicking any task closes window or group'"
 msgid "Closes window or group"
 msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox Part of a sentence: 'Middle-clicking any task opens a new window'"
 msgid "Opens a new window"
 msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox Part of a sentence: 'Middle-clicking any task minimizes/restores window or group'"
 msgid "Minimizes/Restores window or group"
 msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox Part of a sentence: 'Middle-clicking any task toggles grouping'"
 msgid "Toggles grouping"
 msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@item:inlistbox Part of a sentence: 'Middle-clicking any task brings it to the current virtual desktop'"
 msgid "Brings it to the current virtual desktop"
 msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@label for checkbox Part of a sentence: 'Mouse wheel cycles through tasks'"
 msgid "Mouse wheel:"
 msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@option:check Part of a sentence: 'Mouse wheel cycles through tasks'"
-msgid "Cycles through tasks"
-msgstr ""
-
-#: ../contents/ui/ConfigBehavior.qml
-msgctxt "@option:check mouse wheel task cycling"
 msgid "Skip minimized tasks"
-msgstr ""
+msgstr "跳过最小化的任务"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@label for checkbox group, completes sentence like: … from current screen"
 msgid "Show only tasks:"
-msgstr ""
+msgstr "只展示任务"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@option:check completes sentence: show only tasks"
 msgid "From current screen"
-msgstr ""
+msgstr "从当前屏幕"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@option:check completes sentence: show only tasks"
 msgid "From current desktop"
-msgstr ""
+msgstr "从当前桌面"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@option:check completes sentence: show only tasks"
 msgid "From current activity"
-msgstr ""
+msgstr "从当前活动"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@option:check completes sentence: show only tasks"
 msgid "That are minimized"
-msgstr ""
+msgstr "最小化的任务"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@label for checkbox, completes sentence: … unhide if window wants attention"
 msgid "When panel is hidden:"
-msgstr ""
+msgstr "面板隐藏时："
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@option:check completes sentence: When panel is hidden"
 msgid "Unhide when a window wants attention"
-msgstr ""
+msgstr "当窗口提示时取消隐藏"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@label for radiobutton group completes sentence like: … on the bottom"
 msgid "New tasks appear:"
-msgstr ""
+msgstr "新任务出现在："
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@option:check completes sentence: New tasks appear"
 msgid "On the bottom"
 msgstr ""
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@option:check completes sentence: New tasks appear"
 msgid "To the right"
-msgstr ""
+msgstr "右边"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@option:check completes sentence: New tasks appear"
 msgid "To the left"
-msgstr ""
+msgstr "左边"
 
 #: ../contents/ui/ConfigBehavior.qml
-msgctxt "@option:check completes sentence: New tasks appear"
 msgid "On the top"
 msgstr ""
 
@@ -636,18 +568,6 @@ msgid "Use plasma accent color"
 msgstr "使用plasma预设"
 
 #: ../contents/ui/ConfigPinnedApps.qml
-msgid "Add Application"
-msgstr ""
-
-#: ../contents/ui/ConfigPinnedApps.qml
-msgid "Search applications..."
-msgstr ""
-
-#: ../contents/ui/ConfigPinnedApps.qml
-msgid "Add"
-msgstr ""
-
-#: ../contents/ui/ConfigPinnedApps.qml
 msgid "Default Web Browser"
 msgstr ""
 
@@ -661,6 +581,18 @@ msgstr ""
 
 #: ../contents/ui/ConfigPinnedApps.qml
 msgid "Default Application"
+msgstr ""
+
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Add Application"
+msgstr ""
+
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Search applications..."
+msgstr ""
+
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Add"
 msgstr ""
 
 #: ../contents/ui/ConfigPinnedApps.qml
@@ -912,8 +844,17 @@ msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "在 %1 上可用"
 
-#~ msgid "General:"
-#~ msgstr "通用："
+#~ msgctxt "@item:inlistbox Icon spacing"
+#~ msgid "Small"
+#~ msgstr "小"
+
+#~ msgctxt "@item:inlistbox Icon spacing"
+#~ msgid "Normal"
+#~ msgstr "中"
+
+#~ msgctxt "@item:inlistbox Icon spacing"
+#~ msgid "Large"
+#~ msgstr "大"
 
 #~ msgid "Show tooltips"
 #~ msgstr "显示窗口预览"
@@ -921,39 +862,15 @@ msgstr "在 %1 上可用"
 #~ msgid "Highlight windows when hovering over task tooltips"
 #~ msgstr "悬浮在预览上时高亮对应窗口"
 
-#~ msgid "Mark applications that play audio"
-#~ msgstr "标记正在播放音频的应用"
-
-#~ msgid "Maximum columns:"
-#~ msgstr "最大列数"
-
-#~ msgid "Maximum rows:"
-#~ msgstr "最大行数"
-
 #~ msgid "Always arrange tasks in rows of as many columns"
 #~ msgstr "始终将任务排列成多列"
 
 #~ msgid "Always arrange tasks in columns of as many rows"
 #~ msgstr "始终将任务排列成多行"
 
-#~ msgid "Spacing between icons:"
-#~ msgstr "图标间距："
-
 #~ msgctxt "@info:usagetip under a set of radio buttons when Touch Mode is on"
 #~ msgid "Automatically set to Large when in Touch Mode"
 #~ msgstr "触摸模式下自动设置为大"
-
-#~ msgid "Group:"
-#~ msgstr "分组："
-
-#~ msgid "Do not group"
-#~ msgstr "不分组："
-
-#~ msgid "By program name"
-#~ msgstr "以程序名分组"
-
-#~ msgid "Clicking grouped task:"
-#~ msgstr "点击已分组任务时："
 
 #~ msgctxt "Completes the sentence 'Clicking grouped task cycles through tasks' "
 #~ msgid "Cycles through tasks"
@@ -977,36 +894,6 @@ msgstr "在 %1 上可用"
 #~ msgid "Tooltips are disabled, and the compositor does not support displaying windows side by side, so a textual list will be displayed instead"
 #~ msgstr "窗口预览已关闭，混成器不支持并列显示窗口，展示文字列表"
 
-#~ msgid "The compositor does not support displaying windows side by side, so a textual list will be displayed instead."
-#~ msgstr "混成器不支持并列显示窗口，展示文字列表"
-
-#~ msgid "Combine into single button"
-#~ msgstr "组合到一个按钮中"
-
-#~ msgid "Group only when the Task Manager is full"
-#~ msgstr "仅在任务栏已满时组合"
-
-#~ msgid "Sort:"
-#~ msgstr "排序："
-
-#~ msgid "Do not sort"
-#~ msgstr "不排序"
-
-#~ msgid "Manually"
-#~ msgstr "手动"
-
-#~ msgid "Alphabetically"
-#~ msgstr "按字母"
-
-#~ msgid "By desktop"
-#~ msgstr "按桌面"
-
-#~ msgid "By activity"
-#~ msgstr "按活动"
-
-#~ msgid "Keep launchers separate"
-#~ msgstr "与启动器分开"
-
 #~ msgctxt "Part of a sentence: 'Clicking active task minimizes the task'"
 #~ msgid "Clicking active task:"
 #~ msgstr "点击活动任务时："
@@ -1014,9 +901,6 @@ msgstr "在 %1 上可用"
 #~ msgctxt "Part of a sentence: 'Clicking active task minimizes the task'"
 #~ msgid "Minimizes the task"
 #~ msgstr "最小化"
-
-#~ msgid "Middle-clicking any task:"
-#~ msgstr "鼠标中键点击活动任务时："
 
 #~ msgctxt "Part of a sentence: 'Middle-clicking any task does nothing'"
 #~ msgid "Does nothing"
@@ -1049,39 +933,6 @@ msgstr "在 %1 上可用"
 #~ msgctxt "Part of a sentence: 'Mouse wheel cycles through tasks'"
 #~ msgid "Cycles through tasks"
 #~ msgstr "在任务间切换"
-
-#~ msgid "Skip minimized tasks"
-#~ msgstr "跳过最小化的任务"
-
-#~ msgid "Show only tasks:"
-#~ msgstr "只展示任务"
-
-#~ msgid "From current screen"
-#~ msgstr "从当前屏幕"
-
-#~ msgid "From current desktop"
-#~ msgstr "从当前桌面"
-
-#~ msgid "From current activity"
-#~ msgstr "从当前活动"
-
-#~ msgid "That are minimized"
-#~ msgstr "最小化的任务"
-
-#~ msgid "When panel is hidden:"
-#~ msgstr "面板隐藏时："
-
-#~ msgid "Unhide when a window wants attention"
-#~ msgstr "当窗口提示时取消隐藏"
-
-#~ msgid "New tasks appear:"
-#~ msgstr "新任务出现在："
-
-#~ msgid "To the right"
-#~ msgstr "右边"
-
-#~ msgid "To the left"
-#~ msgstr "左边"
 
 #~ msgctxt "1 = number of desktop, 2 = desktop name"
 #~ msgid "&%1 %2"

@@ -23,45 +23,42 @@ import org.kde.plasma.plasmoid
 Loader {
     id: toolTipDelegate
 
-    property Task parentTask
-    property /*QModelIndex*/ var rootIndex
-
+    required property Task parentTask
+    required property var rootIndex
+    
+    // Data properties needed for the inner components
     property string appName
     property int pidParent
     property bool isGroup
-
-    property /*list<WId> where WId = int|string*/  var windows: []
+    property var windows: []
     readonly property bool isWin: windows.length > 0
-
-    property /*QIcon*/  var icon
+    property var icon
     property url launcherUrl
     property bool isLauncher
     property bool isMinimized
-
-    // Needed for generateSubtext()
     property string display
     property string genericName
-    property /*list<var>*/  var virtualDesktops: [] // Can't use list<var> because of QTBUG-127600
+    property var virtualDesktops: []
     property bool isOnAllVirtualDesktops
     property list<string> activities: []
-
     property bool smartLauncherCountVisible
     property int smartLauncherCount
 
-    property bool blockingUpdates: false
-
+    // Layout helper
     readonly property bool isVerticalPanel: Plasmoid.formFactor === PlasmaCore.Types.Vertical
-    // This number controls the overall size of the window tooltips
     readonly property int tooltipInstanceMaximumWidth: Kirigami.Units.gridUnit * 14
 
-    // These properties are required to make tooltip interactive when there is a player but no window is present.
+    // Mpris data
     readonly property Mpris.PlayerContainer playerData: mpris2Source.playerForLauncherUrl(launcherUrl, pidParent)
 
     LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
 
-    active: !blockingUpdates && rootIndex !== undefined && ((parentTask && parentTask.containsMouse) || Window.visibility !== Window.Hidden)
-    // FIX: Disable asynchronous loading to ensure size is calculated before the tooltip dialog is shown
+    // CLEANUP: Removed old logic checking for containsMouse/Window.visibility.
+    // This component is now managed strictly by the main Loader.
+    active: rootIndex !== undefined
+
+    // Disable asynchronous loading to prevent size flickering
     asynchronous: false
 
     sourceComponent: isGroup ? groupToolTip : singleTooltip
@@ -70,7 +67,7 @@ Loader {
         id: singleTooltip
 
         ToolTipInstance {
-            index: 0 // TODO: maybe set to -1, because that's what the component checks against?
+            index: 0 
             submodelIndex: toolTipDelegate.rootIndex
             appPid: toolTipDelegate.pidParent
             display: toolTipDelegate.display
@@ -85,7 +82,7 @@ Loader {
         id: groupToolTip
 
         PlasmaComponents3.ScrollView {
-            // 2 * Kirigami.Units.smallSpacing is for the margin of tooltipDialog
+            // Calculate implicit size based on content
             implicitWidth: leftPadding + rightPadding + Math.min(Screen.desktopAvailableWidth - 2 * Kirigami.Units.smallSpacing, Math.max(delegateModel.estimatedWidth, contentItem.contentItem.childrenRect.width))
             implicitHeight: topPadding + bottomPadding + Math.min(Screen.desktopAvailableHeight - 2 * Kirigami.Units.smallSpacing, Math.max(delegateModel.estimatedHeight, contentItem.contentItem.childrenRect.height))
 
@@ -93,7 +90,6 @@ Loader {
                 id: groupToolTipListView
 
                 model: delegateModel
-
                 orientation: isVerticalPanel ? ListView.Vertical : ListView.Horizontal
                 reuseItems: true
                 spacing: Kirigami.Units.gridUnit
@@ -102,25 +98,20 @@ Loader {
             DelegateModel {
                 id: delegateModel
 
-                // FIX: Use windows.length for immediate size estimation. 'count' from delegateModel might lag, 
-                // and parentTask.childCount requires accessing the parent object. windows list is passed directly.
                 readonly property int safeCount: toolTipDelegate.windows.length > 0 ? toolTipDelegate.windows.length : count
 
-                // On Wayland, a tooltip has a significant resizing process, so estimate the size first.
                 readonly property real estimatedWidth: (toolTipDelegate.isVerticalPanel ? 1 : safeCount) * (toolTipDelegate.tooltipInstanceMaximumWidth + Kirigami.Units.gridUnit) - Kirigami.Units.gridUnit
                 readonly property real estimatedHeight: (toolTipDelegate.isVerticalPanel ? safeCount : 1) * (toolTipDelegate.tooltipInstanceMaximumWidth / 2 + Kirigami.Units.gridUnit) - Kirigami.Units.gridUnit
 
                 model: tasksModel
-
                 rootIndex: toolTipDelegate.rootIndex
-                onRootIndexChanged: groupToolTipListView.positionViewAtBeginning() // Fix a visual glitch (when the mouse moves from a tooltip with a moved scrollbar to another tooltip without a scrollbar)
+                onRootIndexChanged: groupToolTipListView.positionViewAtBeginning()
 
                 delegate: ToolTipInstance {
                     required property var model
 
                     submodelIndex: tasksModel.makeModelIndex(toolTipDelegate.rootIndex.row, index)
                     appPid: model.AppPid
-                    // 'display' is required already
                     isMinimized: model.IsMinimized
                     isOnAllVirtualDesktops: model.IsOnAllVirtualDesktops
                     virtualDesktops: model.VirtualDesktops

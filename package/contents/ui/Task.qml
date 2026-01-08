@@ -78,7 +78,8 @@ PlasmaCore.ToolTipArea {
     readonly property bool muted: hasAudioStream && audioStreams.every(item => item.muted)
 
     readonly property bool highlighted: (inPopup && activeFocus) ||
-        (!inPopup && containsMouse) || (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open) ||
+        (!inPopup && containsMouse) || (tasksRoot.currentHoveredTask === task) || 
+        (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open) ||
         (!!tasksRoot.groupDialog && tasksRoot.groupDialog.visualParent === task)
 
     property int itemIndex: index // fancytasks
@@ -98,6 +99,10 @@ PlasmaCore.ToolTipArea {
         id: closeTimer
         interval: 250 // Time to cross the gap
         onTriggered: {
+            if (tasksRoot.isTooltipHovered) {
+                return;
+            }
+
             if (tasksRoot.currentHoveredTask === task) {
                  tasksRoot.currentHoveredTask = null;
                  tasksRoot.toolTipOpenedByClick = null;
@@ -507,9 +512,7 @@ PlasmaCore.ToolTipArea {
         onTapped: (eventPoint, button) => leftClick()
 
         function leftClick(): void {
-            if (Plasmoid.configuration.showToolTips && task.active) {
-                tasksRoot.currentHoveredTask = null;
-            }
+            tasksRoot.currentHoveredTask = null;
             TaskTools.activateTask(modelIndex(), model, point.modifiers, task, Plasmoid, tasksRoot, effectWatcher.registered);
         }
     }
@@ -690,7 +693,7 @@ PlasmaCore.ToolTipArea {
                 }
             }
             roundToIconSize: growSize === 0
-            active: task.highlighted || wrapperHover.hovered // wrapperHover is not defined here, rely on task.highlighted or remove wrapperHover if it errors
+            active: task.highlighted
             enabled: true
 
             source: model.decoration

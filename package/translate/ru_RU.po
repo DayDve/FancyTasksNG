@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/alexankitty/FancyTasks\n"
-"POT-Creation-Date: 2025-12-22 13:42+0200\n"
+"POT-Creation-Date: 2026-01-08 16:27+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -565,19 +565,6 @@ msgstr "Цвет индикатора:"
 msgid "Use plasma accent color"
 msgstr "Использовать цвет акцента Plasma"
 
-# --- ConfigPinnedApps.qml ---
-#: ../contents/ui/ConfigPinnedApps.qml
-msgid "Add Application"
-msgstr "Добавить приложение"
-
-#: ../contents/ui/ConfigPinnedApps.qml
-msgid "Search applications..."
-msgstr "Поиск приложений..."
-
-#: ../contents/ui/ConfigPinnedApps.qml
-msgid "Add"
-msgstr "Добавить"
-
 #: ../contents/ui/ConfigPinnedApps.qml
 msgid "Default Web Browser"
 msgstr "Браузер по умолчанию"
@@ -593,6 +580,19 @@ msgstr "Почтовый клиент"
 #: ../contents/ui/ConfigPinnedApps.qml
 msgid "Default Application"
 msgstr "Приложение по умолчанию"
+
+# --- ConfigPinnedApps.qml ---
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Add Application"
+msgstr "Добавить приложение"
+
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Search applications..."
+msgstr "Поиск приложений..."
+
+#: ../contents/ui/ConfigPinnedApps.qml
+msgid "Add"
+msgstr "Добавить"
 
 #: ../contents/ui/ConfigPinnedApps.qml
 msgid "Add applications to pin to the taskbar. Drag items to reorder them."
