@@ -29,7 +29,21 @@ Item {
     readonly property bool isMetro: plasmoid.configuration.indicatorStyle === 0
     readonly property bool isCiliora: plasmoid.configuration.indicatorStyle === 1
     readonly property bool isDashes: plasmoid.configuration.indicatorStyle === 2
+    readonly property int _cfgIconSize: plasmoid.configuration.iconSizeOverride ? plasmoid.configuration.iconSizePx : (Math.min(tasksRoot.width, tasksRoot.height) * plasmoid.configuration.iconScale / 100)
+    readonly property int _cfgZoom: plasmoid.configuration.iconZoomFactor
+    readonly property int _maxIconSize: _cfgIconSize + _cfgZoom
+    property alias taskIcon: icon
+    readonly property bool iconOverflows: tasksRoot.vertical ? 
+        (icon.width > tasksRoot.width) : (icon.height > tasksRoot.height)
 
+    Item {
+        id: tooltipAnchor
+        anchors.centerIn: parent
+        width: tasksRoot.vertical ? (Math.max(tasksRoot.width, _maxIconSize) + 16) : parent.width
+        height: !tasksRoot.vertical ? (Math.max(tasksRoot.height, _maxIconSize) + 16) : parent.height
+        visible: false
+    }
+    property alias tooltipAnchor: tooltipAnchor
     property string tintColor: Kirigami.ColorUtils.brightnessForColor(Kirigami.Theme.backgroundColor) === Kirigami.ColorUtils.Dark ?
         "#ffffff" : "#000000"
 

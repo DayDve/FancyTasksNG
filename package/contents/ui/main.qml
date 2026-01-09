@@ -376,7 +376,7 @@ PlasmoidItem {
     // 1. DIALOG FOR RUNNING WINDOWS
     PlasmaCore.Dialog {
         id: windowTooltipDialog
-        visualParent: tasks.currentHoveredTask
+        visualParent: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : null
         location: Plasmoid.location
         type: PlasmaCore.Dialog.Tooltip
 
