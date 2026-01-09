@@ -12,7 +12,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects as GE
 
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
@@ -20,13 +19,21 @@ import org.kde.plasma.components as PlasmaComponents3
 import org.kde.plasma.extras as PlasmaExtras
 import org.kde.kirigami as Kirigami
 import org.kde.kwindowsystem
-// FIX: Добавлен импорт Mpris для доступа к Enums
 import org.kde.plasma.private.mpris as Mpris
 
 ColumnLayout {
     id: root
+    
+    anchors.margins: Kirigami.Units.gridUnit
 
-    // ADDED: Tracks hover over the entire ColumnLayout (including headers, gaps)
+    readonly property alias isHovered: rootHover.hovered
+
+    required property var toolTipDelegate
+    required property var tasksModel
+    
+    // FIX: Свойство для приема явного ID окна из делегата
+    property var explicitWinId: undefined
+
     HoverHandler {
         id: rootHover
     }
@@ -39,10 +46,6 @@ ColumnLayout {
     required property bool isOnAllVirtualDesktops
     required property var virtualDesktops
     required property list<string> activities
-
-    // HACK: Avoid blank space in the tooltip after closing a window
-    ListView.onPooled: width = height = 0
-    ListView.onReused: width = height = undefined
 
     readonly property string calculatedAppName: {
         if (toolTipDelegate.appName && toolTipDelegate.appName.length > 0) {
@@ -114,18 +117,16 @@ ColumnLayout {
 
     spacing: Kirigami.Units.smallSpacing
 
-    // text labels + close button
     RowLayout {
         id: header
-        spacing: toolTipDelegate.isWin ? Kirigami.Units.smallSpacing : Kirigami.Units.gridUnit
+        spacing: Kirigami.Units.smallSpacing
 
         Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
-        Layout.minimumWidth: 0 
+        Layout.minimumWidth: Kirigami.Units.gridUnit * 12
         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-        Layout.margins: toolTipDelegate.isWin ? Kirigami.Units.smallSpacing : Kirigami.Units.gridUnit / 2
+        Layout.margins: 0
         Layout.fillWidth: true
 
-        // all textlabels
         ColumnLayout {
             spacing: 0
             
@@ -133,12 +134,11 @@ ColumnLayout {
             Layout.preferredWidth: 0 
             Layout.minimumWidth: 0 
 
-            // app name
             Kirigami.Heading {
                 id: appNameHeading
                 level: 3
                 maximumLineCount: 1
-                lineHeight: toolTipDelegate.isWin ? 1 : appNameHeading.lineHeight
+                lineHeight: 1
                 
                 Layout.fillWidth: true
                 Layout.minimumWidth: 0
@@ -149,7 +149,6 @@ ColumnLayout {
                 visible: text.length !== 0
                 textFormat: Text.PlainText
             }
-            // window title
             PlasmaComponents3.Label {
                 id: winTitle
                 maximumLineCount: 1
@@ -163,7 +162,6 @@ ColumnLayout {
                 visible: root.title.length !== 0 && root.title !== appNameHeading.text
                 textFormat: Text.PlainText
             }
-            // subtext
             PlasmaComponents3.Label {
                 id: subtext
                 maximumLineCount: 2
@@ -171,7 +169,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 Layout.minimumWidth: 0
                 elide: Text.ElideRight
-  
+                
                 text: toolTipDelegate.isWin ? root.generateSubText() : ""
                 opacity: 0.6
                 visible: text.length !== 0 && text !== appNameHeading.text
@@ -179,7 +177,6 @@ ColumnLayout {
             }
         }
 
-        // Count badge.
         Item {
             Layout.alignment: Qt.AlignRight | Qt.AlignTop
             Layout.preferredHeight: closeButton.height
@@ -193,7 +190,6 @@ ColumnLayout {
             }
         }
 
-        // close button
         PlasmaComponents3.ToolButton {
             id: closeButton
             Layout.alignment: Qt.AlignRight | Qt.AlignTop
@@ -208,7 +204,6 @@ ColumnLayout {
         }
     }
 
-    // thumbnail container
     Item {
         id: thumbnailSourceItem
 
@@ -220,16 +215,16 @@ ColumnLayout {
 
         Layout.alignment: Qt.AlignCenter
         clip: true
-        visible: toolTipDelegate.isWin
+        
+        visible: toolTipDelegate.isWin && Plasmoid.configuration.showToolTips
 
-        readonly property var winId: toolTipDelegate.isWin ? toolTipDelegate.windows[root.index] : undefined
+        // FIX: Использование явного ID если он передан, иначе fallback (хотя explicitWinId теперь будет всегда для групп)
+        readonly property var winId: explicitWinId !== undefined ?
+            explicitWinId : (toolTipDelegate.isWin ? toolTipDelegate.windows[root.index] : undefined)
 
         PlasmaExtras.Highlight {
-            anchors.fill: hoverHandler // Anchor to the interaction area
-            
-            // FIX: Highlight is visible when hovering ANYWHERE on the tooltip (rootHover)
+            anchors.fill: hoverHandler 
             visible: rootHover.hovered
-            
             pressed: (hoverHandler.item as MouseArea)?.containsPress ?? false
             hovered: true
         }
@@ -288,62 +283,26 @@ ColumnLayout {
 
             active: !toolTipDelegate.isLauncher && !albumArtImage.visible && KWindowSystem.isPlatformWayland && root.index !== -1
             asynchronous: true
-            //In a loader since we might not have PipeWire available yet (WITH_PIPEWIRE could be undefined in plasma-workspace/libtaskmanager/declarative/taskmanagerplugin.cpp)
             source: "PipeWireThumbnail.qml"
         }
 
         Loader {
-            active: (pipeWireLoader.item?.hasThumbnail ?? false) ||
-                (thumbnailLoader.status === Loader.Ready && !root.isMinimized)
-            asynchronous: true
-            visible: active
-            anchors.fill: pipeWireLoader.active ? pipeWireLoader : thumbnailLoader
-
-            sourceComponent: GE.DropShadow {
-                horizontalOffset: 0
-                verticalOffset: 3
-                radius: 8
-                samples: Math.round(radius * 1.5)
-                color: "Black"
-                source: pipeWireLoader.active ? pipeWireLoader.item : thumbnailLoader.item // source could be undefined when albumArt is available, so put it in a Loader.
-            }
-        }
-
-        Loader {
-            active: albumArtImage.visible && albumArtImage.status === Image.Ready && root.index !== -1 // Avoid loading when the instance is going to be destroyed
+            active: albumArtImage.visible && albumArtImage.status === Image.Ready && root.index !== -1 
             asynchronous: true
             visible: active
             anchors.centerIn: hoverHandler
 
-            sourceComponent: ShaderEffect {
-                id: albumArtBackground
-                readonly property Image source: albumArtImage
-
-                // Manual implementation of Image.PreserveAspectCrop
-                readonly property real scaleFactor: Math.max(hoverHandler.width / source.paintedWidth, hoverHandler.height / source.paintedHeight)
-                
-                width: Math.round(source.paintedWidth * scaleFactor)
-                height: Math.round(source.paintedHeight * scaleFactor)
-                layer.enabled: true
-                opacity: 0.25
-                layer.effect: GE.FastBlur {
-                    source: albumArtBackground
-                    anchors.fill: source
-                    radius: 30
-                }
+            sourceComponent: Item { 
+                 id: albumArtBackground
+                 readonly property Image source: albumArtImage
             }
         }
 
         Image {
             id: albumArtImage
-            // also Image.Loading to prevent loading thumbnails just because the album art takes a split second to load
-            // if this is a group tooltip, we check if window title and track match, to allow distinguishing the different windows
-            // if this app is a browser, we also check the title, so album art is not shown when the user is on some other tab
-            // in all other cases we can safely show the album art without checking the title
             readonly property bool available: (status === Image.Ready || status === Image.Loading) && (!(toolTipDelegate.isGroup || backend.applicationCategories(launcherUrl).includes("WebBrowser")) || root.titleIncludesTrack)
 
             anchors.fill: hoverHandler
-            // Indent by one pixel to make sure we never cover up the entire highlight
             anchors.margins: 1
             sourceSize: Qt.size(parent.width, parent.height)
 
@@ -353,7 +312,6 @@ ColumnLayout {
             visible: available
         }
 
-        // RESTORED: Loader for MouseArea to handle recycling correctly.
         Loader {
             id: hoverHandler
             active: root.index !== -1
@@ -362,19 +320,13 @@ ColumnLayout {
                 rootTask: toolTipDelegate.parentTask
                 modelIndex: root.submodelIndex
                 winId: thumbnailSourceItem.winId
-                
-                // FIX: Pass global hover state to the mouse area logic
                 globalHovered: rootHover.hovered
             }
         }
     }
 
-    // Player controls row, load on demand so group tooltips could be loaded faster
     Loader {
         id: playerController
-        // FIX: Показываем если: Играет ИЛИ Пауза ИЛИ (Остановлено НО есть трек).
-        // Это скрывает пустые контроллеры в браузере (где статус Stopped и нет трека),
-        // но оставляет контроллер, если вы нажали Стоп/Паузу на загруженном треке.
         active: toolTipDelegate.playerData && 
                 toolTipDelegate.playerData.canControl && 
                 root.index !== -1 &&
@@ -391,10 +343,9 @@ ColumnLayout {
         source: "PlayerController.qml"
     }
 
-    // Volume controls
     Loader {
-        // FIX: Sync load to prevent layout shifting
-        active: toolTipDelegate.parentTask !== null && pulseAudio.item !== null && toolTipDelegate.parentTask.audioIndicatorsEnabled && toolTipDelegate.parentTask.hasAudioStream && root.index !== -1 
+        active: toolTipDelegate.parentTask !== null && 
+            pulseAudio.item !== null && toolTipDelegate.parentTask.audioIndicatorsEnabled && toolTipDelegate.parentTask.hasAudioStream && root.index !== -1 
         asynchronous: false 
         visible: active
         Layout.fillWidth: true
@@ -403,7 +354,6 @@ ColumnLayout {
         Layout.rightMargin: header.Layout.margins
         sourceComponent: RowLayout {
             PlasmaComponents3.ToolButton {
-                // Mute button
                 icon.width: Kirigami.Units.iconSizes.small
                 icon.height: Kirigami.Units.iconSizes.small
               
@@ -420,23 +370,19 @@ ColumnLayout {
                 checked: toolTipDelegate.parentTask.muted
 
                 PlasmaComponents3.ToolTip {
-                    text: parent.checked ?
-                    i18nc("button to unmute app", "Unmute %1", toolTipDelegate.parentTask.appName) : i18nc("button to mute app", "Mute %1", toolTipDelegate.parentTask.appName)
+                    text: parent.checked ? i18nc("button to unmute app", "Unmute %1", toolTipDelegate.parentTask.appName) : i18nc("button to mute app", "Mute %1", toolTipDelegate.parentTask.appName)
                 }
             }
 
             PlasmaComponents3.Slider {
                 id: slider
-
                 readonly property int displayValue: Math.round(value / to * 100)
-    
                 readonly property int loudestVolume: toolTipDelegate.parentTask.audioStreams.reduce((loudestVolume, stream) => Math.max(loudestVolume, stream.volume), 0)
 
                 Layout.fillWidth: true
                 from: pulseAudio.item.minimalVolume
                 to: pulseAudio.item.normalVolume
                 value: loudestVolume
-           
                 stepSize: to / 100
                 opacity: toolTipDelegate.parentTask.muted ? 0.5 : 1
 
@@ -445,8 +391,6 @@ ColumnLayout {
                 onMoved: toolTipDelegate.parentTask.audioStreams.forEach(stream => {
                     let v = Math.max(from, value);
                     if (v > 0 && loudestVolume > 0) {
-                        // prevent divide by 0
-                        // adjust volume relative to the loudest stream
                         v = Math.min(Math.round(stream.volume / loudestVolume * v), to);
                     }
                     stream.model.Volume = v;
@@ -454,10 +398,10 @@ ColumnLayout {
                 })
             }
             PlasmaComponents3.Label {
-                // percent label
                 Layout.alignment: Qt.AlignHCenter
                 Layout.minimumWidth: percentMetrics.advanceWidth
                 horizontalAlignment: Qt.AlignRight
+            
                 text: i18nc("volume percentage", "%1%", slider.displayValue)
                
                 textFormat: Text.PlainText

@@ -21,7 +21,7 @@ import Qt5Compat.GraphicalEffects
 import "code/layoutmetrics.js" as LayoutMetrics
 import "code/tools.js" as TaskTools
 
-PlasmaCore.ToolTipArea {
+Item {
     id: task
 
     activeFocusOnTab: true
@@ -82,19 +82,14 @@ PlasmaCore.ToolTipArea {
         (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open) ||
         (!!tasksRoot.groupDialog && tasksRoot.groupDialog.visualParent === task)
 
-    property int itemIndex: index // fancytasks
+    property int itemIndex: index 
 
-    // --- MODIFICATION START ---
-    
-    // Disable standard tooltip (mainItem: null) but keep active for events
-    active: (Plasmoid.configuration.showToolTips || tasksRoot.toolTipOpenedByClick === task) && !inPopup && !tasksRoot.groupDialog
-    mainItem: null
-    location: Plasmoid.location
+    readonly property bool containsMouse: hoverHandler.hovered
 
-    // Disable standard interaction check because we handle tooltip in main.qml
-    interactive: false
+    HoverHandler {
+        id: hoverHandler
+    }
 
-    // Timers for interaction
     Timer {
         id: closeTimer
         interval: 250 // Time to cross the gap
@@ -141,7 +136,6 @@ PlasmaCore.ToolTipArea {
             closeTimer.start();
         }
     }
-    // --- MODIFICATION END ---
 
     onXChanged: {
         if (!completed) {
@@ -230,26 +224,26 @@ PlasmaCore.ToolTipArea {
                 {
                     if (Plasmoid.configuration.showToolTips) {
                         return `${i18nc("@info:usagetip %1 task name", "Show Task tooltip for %1", model.display)};
-                        ${smartLauncherDescription}`;
+                                ${smartLauncherDescription}`;
                     }
                     // fallthrough
                 }
             case 2:
                 {
                     if (effectWatcher.registered) {
-                         return `${i18nc("@info:usagetip %1 task name", "Show windows side by side for %1", model.display)};
-                         ${smartLauncherDescription}`;
+                        return `${i18nc("@info:usagetip %1 task name", "Show windows side by side for %1", model.display)};
+                                ${smartLauncherDescription}`;
                     }
                     // fallthrough
                 }
             default:
                 return `${i18nc("@info:usagetip %1 task name", "Open textual list of windows for %1", model.display)};
-                ${smartLauncherDescription}`;
+                        ${smartLauncherDescription}`;
             }
         }
 
         return `${i18n("Activate %1", model.display)};
-        ${smartLauncherDescription}`;
+                ${smartLauncherDescription}`;
     }
     Accessible.role: Accessible.Button
     Accessible.onPressAction: leftTapHandler.leftClick()
@@ -330,7 +324,8 @@ PlasmaCore.ToolTipArea {
     Keys.onDownPressed: event => Keys.rightPressed(event)
     Keys.onLeftPressed: event => {
         if (!inPopup && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
-            tasksModel.move(task.index, task.index - 1);
+            tasksModel.move(task.index, task.index 
+                - 1);
         } else {
             event.accepted = false;
         }

@@ -25,8 +25,10 @@ Loader {
 
     required property Task parentTask
     required property var rootIndex
+    property var tasksModel
     
-    // Data properties needed for the inner components
+    readonly property bool containsMouse: item && item.isHovered
+
     property string appName
     property int pidParent
     property bool isGroup
@@ -44,21 +46,17 @@ Loader {
     property bool smartLauncherCountVisible
     property int smartLauncherCount
 
-    // Layout helper
     readonly property bool isVerticalPanel: Plasmoid.formFactor === PlasmaCore.Types.Vertical
     readonly property int tooltipInstanceMaximumWidth: Kirigami.Units.gridUnit * 14
-
-    // Mpris data
     readonly property Mpris.PlayerContainer playerData: mpris2Source.playerForLauncherUrl(launcherUrl, pidParent)
+    
+    // Using showToolTips as the toggle for "Show Thumbnails"
+    readonly property bool showThumbnails: Plasmoid.configuration.showToolTips
 
     LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
 
-    // CLEANUP: Removed old logic checking for containsMouse/Window.visibility.
-    // This component is now managed strictly by the main Loader.
     active: rootIndex !== undefined
-
-    // Disable asynchronous loading to prevent size flickering
     asynchronous: false
 
     sourceComponent: isGroup ? groupToolTip : singleTooltip
@@ -75,6 +73,9 @@ Loader {
             isOnAllVirtualDesktops: toolTipDelegate.isOnAllVirtualDesktops
             virtualDesktops: toolTipDelegate.virtualDesktops
             activities: toolTipDelegate.activities
+            
+            tasksModel: toolTipDelegate.tasksModel
+            toolTipDelegate: toolTipDelegate
         }
     }
 
@@ -82,17 +83,32 @@ Loader {
         id: groupToolTip
 
         PlasmaComponents3.ScrollView {
-            // Calculate implicit size based on content
-            implicitWidth: leftPadding + rightPadding + Math.min(Screen.desktopAvailableWidth - 2 * Kirigami.Units.smallSpacing, Math.max(delegateModel.estimatedWidth, contentItem.contentItem.childrenRect.width))
-            implicitHeight: topPadding + bottomPadding + Math.min(Screen.desktopAvailableHeight - 2 * Kirigami.Units.smallSpacing, Math.max(delegateModel.estimatedHeight, contentItem.contentItem.childrenRect.height))
+            id: scrollView
+            readonly property alias isHovered: groupHover.hovered
+
+            HoverHandler {
+                id: groupHover
+            }
+
+            contentWidth: groupToolTipListView.width
+            contentHeight: groupToolTipListView.height
 
             ListView {
                 id: groupToolTipListView
 
+                width: delegateModel.estimatedWidth
+                height: delegateModel.estimatedHeight
+
                 model: delegateModel
-                orientation: isVerticalPanel ? ListView.Vertical : ListView.Horizontal
+                
+                // FORCE VERTICAL LIST if thumbnails are disabled
+                orientation: (!toolTipDelegate.showThumbnails || isVerticalPanel) ?
+                    ListView.Vertical : ListView.Horizontal
+                    
                 reuseItems: true
                 spacing: Kirigami.Units.gridUnit
+                
+                clip: true
             }
 
             DelegateModel {
@@ -100,22 +116,45 @@ Loader {
 
                 readonly property int safeCount: toolTipDelegate.windows.length > 0 ? toolTipDelegate.windows.length : count
 
-                readonly property real estimatedWidth: (toolTipDelegate.isVerticalPanel ? 1 : safeCount) * (toolTipDelegate.tooltipInstanceMaximumWidth + Kirigami.Units.gridUnit) - Kirigami.Units.gridUnit
-                readonly property real estimatedHeight: (toolTipDelegate.isVerticalPanel ? safeCount : 1) * (toolTipDelegate.tooltipInstanceMaximumWidth / 2 + Kirigami.Units.gridUnit) - Kirigami.Units.gridUnit
+                // CORRECT HEIGHT CALCULATION
+                readonly property real screenRatio: Screen.width / Screen.height
+                
+                // If thumbnails disabled -> height is 0
+                readonly property real instanceThumbHeight: toolTipDelegate.showThumbnails ? 
+                    (toolTipDelegate.tooltipInstanceMaximumWidth / screenRatio) : 0
+                
+                readonly property real singleItemHeight: instanceThumbHeight + (Kirigami.Units.gridUnit * 3)
 
-                model: tasksModel
+                readonly property real estimatedWidth: ((!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ? 1 : safeCount) * (toolTipDelegate.tooltipInstanceMaximumWidth + Kirigami.Units.gridUnit) - Kirigami.Units.gridUnit
+                
+                readonly property real estimatedHeight: ((!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ? safeCount : 1) * singleItemHeight - Kirigami.Units.gridUnit
+
+                model: toolTipDelegate.tasksModel
                 rootIndex: toolTipDelegate.rootIndex
                 onRootIndexChanged: groupToolTipListView.positionViewAtBeginning()
 
                 delegate: ToolTipInstance {
+                    // FIX: Объявляем model как required property, чтобы Qt знал о ней
                     required property var model
+                    
+                    width: toolTipDelegate.tooltipInstanceMaximumWidth
+                    
+                    // PASSING DATA
+                    index: index 
+                    
+                    // FIX: Берем ID окна из модели текущей задачи
+                    explicitWinId: (model.WinIdList !== undefined && model.WinIdList.length > 0) ? model.WinIdList[0] : undefined
 
+                    display: model.display !== undefined ? model.display : ""
+                    appPid: model.AppPid !== undefined ? model.AppPid : 0
+                    isMinimized: model.IsMinimized !== undefined ? model.IsMinimized : false
+                    isOnAllVirtualDesktops: model.IsOnAllVirtualDesktops !== undefined ? model.IsOnAllVirtualDesktops : false
+                    virtualDesktops: model.VirtualDesktops !== undefined ? model.VirtualDesktops : []
+                    activities: model.Activities !== undefined ? model.Activities : []
+                    
                     submodelIndex: tasksModel.makeModelIndex(toolTipDelegate.rootIndex.row, index)
-                    appPid: model.AppPid
-                    isMinimized: model.IsMinimized
-                    isOnAllVirtualDesktops: model.IsOnAllVirtualDesktops
-                    virtualDesktops: model.VirtualDesktops
-                    activities: model.Activities
+                    tasksModel: toolTipDelegate.tasksModel
+                    toolTipDelegate: toolTipDelegate
                 }
             }
         }
