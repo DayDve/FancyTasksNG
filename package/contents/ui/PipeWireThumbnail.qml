@@ -11,6 +11,8 @@ import org.kde.taskmanager as TaskManager
 PipeWire.PipeWireSourceItem {
     id: pipeWireSourceItem
 
+    property var winId
+
     readonly property alias hasThumbnail: pipeWireSourceItem.ready
 
     // Center it in the parent
@@ -33,6 +35,6 @@ PipeWire.PipeWireSourceItem {
 
     TaskManager.ScreencastingRequest {
         id: waylandItem
-        uuid: thumbnailSourceItem.winId
+        uuid: pipeWireSourceItem.winId
     }
 }

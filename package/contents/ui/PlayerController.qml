@@ -19,15 +19,19 @@ import org.kde.kirigami as Kirigami
 import org.kde.plasma.private.mpris as Mpris
 
 RowLayout {
-    enabled: toolTipDelegate.playerData.canControl
+    id: playerControllerRoot
+    required property var playerData
+    required property bool isWin
 
-    readonly property bool isPlaying: toolTipDelegate.playerData.playbackStatus === Mpris.PlaybackStatus.Playing
+    enabled: playerData.canControl
+
+    readonly property bool isPlaying: playerData.playbackStatus === Mpris.PlaybackStatus.Playing
 
     ColumnLayout {
         Layout.fillWidth: true
         Layout.topMargin: Kirigami.Units.smallSpacing
         Layout.bottomMargin: Kirigami.Units.smallSpacing
-        Layout.rightMargin: isWin ? Kirigami.Units.smallSpacing : Kirigami.Units.gridUnit
+        Layout.rightMargin: playerControllerRoot.isWin ? Kirigami.Units.smallSpacing : Kirigami.Units.gridUnit
         spacing: 0
 
         ScrollableTextWrapper {
@@ -42,7 +46,7 @@ RowLayout {
                 maximumLineCount: artistText.visible ? 1 : 2
                 wrapMode: Text.NoWrap
                 elide: parent.state ? Text.ElideNone : Text.ElideRight
-                text: toolTipDelegate.playerData.track
+                text: playerControllerRoot.playerData.track
                 textFormat: Text.PlainText
             }
         }
@@ -59,7 +63,7 @@ RowLayout {
                 id: artistText
                 wrapMode: Text.NoWrap
                 elide: parent.state ? Text.ElideNone : Text.ElideRight
-                text: toolTipDelegate.playerData.artist
+                text: playerControllerRoot.playerData.artist
                 font: Kirigami.Theme.smallFont
                 textFormat: Text.PlainText
             }
@@ -67,26 +71,26 @@ RowLayout {
     }
 
     PlasmaComponents3.ToolButton {
-        enabled: toolTipDelegate.playerData.canGoPrevious
+        enabled: playerControllerRoot.playerData.canGoPrevious
         icon.name: mirrored ? "media-skip-forward" : "media-skip-backward"
-        onClicked: toolTipDelegate.playerData.Previous()
+        onClicked: playerControllerRoot.playerData.Previous()
     }
 
     PlasmaComponents3.ToolButton {
-        enabled: isPlaying ? toolTipDelegate.playerData.canPause : toolTipDelegate.playerData.canPlay
-        icon.name: isPlaying ? "media-playback-pause" : "media-playback-start"
+        enabled: playerControllerRoot.isPlaying ? playerControllerRoot.playerData.canPause : playerControllerRoot.playerData.canPlay
+        icon.name: playerControllerRoot.isPlaying ? "media-playback-pause" : "media-playback-start"
         onClicked: {
-            if (!isPlaying) {
-                toolTipDelegate.playerData.Play();
+            if (!playerControllerRoot.isPlaying) {
+                playerControllerRoot.playerData.Play();
             } else {
-                toolTipDelegate.playerData.Pause();
+                playerControllerRoot.playerData.Pause();
             }
         }
     }
 
     PlasmaComponents3.ToolButton {
-        enabled: toolTipDelegate.playerData.canGoNext
+        enabled: playerControllerRoot.playerData.canGoNext
         icon.name: mirrored ? "media-skip-backward" : "media-skip-forward"
-        onClicked: toolTipDelegate.playerData.Next()
+        onClicked: playerControllerRoot.playerData.Next()
     }
 }

@@ -10,16 +10,22 @@ import org.kde.plasma.extras as PlasmaExtras
 import org.kde.kirigami as Kirigami
 import org.kde.ksvg as KSvg
 
+import "code/singletones"
+
 Item {
     id: audioStreamIconBox
 
-    width: Math.min(Math.min(iconBox.width, iconBox.height) * 0.4, Kirigami.Units.iconSizes.smallMedium)
+    required property Item iconBox
+    required property var task
+    required property Item frame
+
+    width: Math.min(Math.min(audioStreamIconBox.iconBox.width, audioStreamIconBox.iconBox.height) * 0.4, Kirigami.Units.iconSizes.smallMedium)
     height: width
     anchors {
-        top: frame.top
-        right: frame.right
-        rightMargin: taskFrame.margins.right
-        topMargin: Math.round(taskFrame.margins.top * indicatorScale)
+        top: audioStreamIconBox.frame.top
+        right: audioStreamIconBox.frame.right
+        rightMargin: audioStreamIconBox.task.tasksRoot.taskFrame.margins.right
+        topMargin: Math.round(audioStreamIconBox.task.tasksRoot.taskFrame.margins.top * indicatorScale)
     }
 
     readonly property real indicatorScale: 1.2
@@ -31,7 +37,7 @@ Item {
     states: [
         State {
             name: "playing"
-            when: task.playingAudio && !task.muted
+            when: audioStreamIconBox.task.playingAudio && !audioStreamIconBox.task.muted
             PropertyChanges {
                 target: audioStreamIconBox
                 opacity: 1
@@ -43,7 +49,7 @@ Item {
         },
         State {
             name: "muted"
-            when: task.muted
+            when: audioStreamIconBox.task.muted
             PropertyChanges {
                 target: audioStreamIconBox
                 opacity: 1
@@ -62,7 +68,7 @@ Item {
              SequentialAnimation {
                  // Delay showing the play indicator so we don't flash it for brief sounds.
                  PauseAnimation {
-                     duration: !task.delayAudioStreamIndicator || inPopup ? 0 : 2000
+                     duration: !audioStreamIconBox.task.delayAudioStreamIndicator || audioStreamIconBox.task.inPopup ? 0 : 2000
                  }
                  NumberAnimation {
                      property: "opacity"
@@ -92,14 +98,14 @@ Item {
     opacity: 0
     visible: opacity > 0
 
-    Keys.onReturnPressed: event => toggleMuted()
+    Keys.onReturnPressed: event => audioStreamIconBox.task.toggleMuted()
     Keys.onEnterPressed: event => Keys.returnPressed(event);
     Keys.onSpacePressed: event => Keys.returnPressed(event);
 
     Accessible.checkable: true
-    Accessible.checked: task.muted
-    Accessible.name: task.muted ? i18nc("@action:button", "Unmute") : i18nc("@action:button", "Mute")
-    Accessible.description: task.muted ? i18nc("@info:tooltip %1 is the window title", "Unmute %1", model.display) : i18nc("@info:tooltip %1 is the window title", "Mute %1", model.display)
+    Accessible.checked: audioStreamIconBox.task.muted
+    Accessible.name: audioStreamIconBox.task.muted ? Wrappers.i18nc("@action:button", "Unmute") : Wrappers.i18nc("@action:button", "Mute")
+    Accessible.description: audioStreamIconBox.task.muted ? Wrappers.i18nc("@info:tooltip %1 is the window title", "Unmute %1", audioStreamIconBox.task.model.display) : Wrappers.i18nc("@info:tooltip %1 is the window title", "Mute %1", audioStreamIconBox.task.model.display)
     Accessible.role: Accessible.Button
 
     HoverHandler {
@@ -109,7 +115,7 @@ Item {
     TapHandler {
         id: tapHandler
         gesturePolicy: TapHandler.ReleaseWithinBounds // Exclusive grab
-        onTapped: (eventPoint, button) => toggleMuted()
+        onTapped: (eventPoint, button) => audioStreamIconBox.task.toggleMuted()
     }
 
     PlasmaExtras.Highlight {
@@ -122,13 +128,13 @@ Item {
         id: audioStreamIcon
 
         // Need audio indicator twice, to keep iconBox in the center.
-        readonly property real requiredSpace: Math.min(iconBox.width, iconBox.height)
-            + Math.min(Math.min(iconBox.width, iconBox.height), Kirigami.Units.iconSizes.smallMedium) * 2
+        readonly property real requiredSpace: Math.min(audioStreamIconBox.iconBox.width, audioStreamIconBox.iconBox.height)
+            + Math.min(Math.min(audioStreamIconBox.iconBox.width, audioStreamIconBox.iconBox.height), Kirigami.Units.iconSizes.smallMedium) * 2
 
         source: "audio-volume-high-symbolic"
         selected: tapHandler.pressed
 
-        height: Math.round(Math.min(parent.height * indicatorScale, Kirigami.Units.iconSizes.smallMedium))
+        height: Math.round(Math.min(parent.height * audioStreamIconBox.indicatorScale, Kirigami.Units.iconSizes.smallMedium))
         width: height
 
         anchors {
@@ -139,28 +145,28 @@ Item {
         states: [
             State {
                 name: "verticalIconsOnly"
-                when: tasks.vertical && frame.width < audioStreamIcon.requiredSpace
+                when: audioStreamIconBox.task.tasksRoot.vertical && audioStreamIconBox.frame.width < audioStreamIcon.requiredSpace
 
                 PropertyChanges {
                     target: audioStreamIconBox
-                    anchors.rightMargin: Math.round(taskFrame.margins.right * indicatorScale)
+                    anchors.rightMargin: Math.round(audioStreamIconBox.task.tasksRoot.taskFrame.margins.right * indicatorScale)
                 }
             },
 
             State {
                 name: "horizontal"
-                when: frame.width > audioStreamIcon.requiredSpace
+                when: audioStreamIconBox.frame.width > audioStreamIcon.requiredSpace
 
                 AnchorChanges {
                     target: audioStreamIconBox
 
                     anchors.top: undefined
-                    anchors.verticalCenter: frame.verticalCenter
+                    anchors.verticalCenter: audioStreamIconBox.frame.verticalCenter
                 }
 
                 PropertyChanges {
                     target: audioStreamIconBox
-                    width: Kirigami.Units.iconSizes.roundedIconSize(Math.min(Math.min(iconBox.width, iconBox.height), Kirigami.Units.iconSizes.smallMedium))
+                    width: Kirigami.Units.iconSizes.roundedIconSize(Math.min(Math.min(audioStreamIconBox.iconBox.width, audioStreamIconBox.iconBox.height), Kirigami.Units.iconSizes.smallMedium))
                 }
 
                 PropertyChanges {
@@ -173,20 +179,20 @@ Item {
 
             State {
                 name: "vertical"
-                when: frame.height > audioStreamIcon.requiredSpace
+                when: audioStreamIconBox.frame.height > audioStreamIcon.requiredSpace
 
                 AnchorChanges {
                     target: audioStreamIconBox
 
                     anchors.right: undefined
-                    anchors.horizontalCenter: frame.horizontalCenter
+                    anchors.horizontalCenter: audioStreamIconBox.frame.horizontalCenter
                 }
 
                 PropertyChanges {
                     target: audioStreamIconBox
 
-                    anchors.topMargin: taskFrame.margins.top
-                    width: Kirigami.Units.iconSizes.roundedIconSize(Math.min(Math.min(iconBox.width, iconBox.height), Kirigami.Units.iconSizes.smallMedium))
+                    anchors.topMargin: audioStreamIconBox.task.tasksRoot.taskFrame.margins.top
+                    width: Kirigami.Units.iconSizes.roundedIconSize(Math.min(Math.min(audioStreamIconBox.iconBox.width, audioStreamIconBox.iconBox.height), Kirigami.Units.iconSizes.smallMedium))
                 }
 
                 PropertyChanges {

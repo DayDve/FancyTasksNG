@@ -15,13 +15,16 @@ DropArea {
     id: dropArea
     signal urlsDropped(var urls)
 
-    property Item target
+    property var target
     property Item ignoredItem
-    property Item hoveredItem
+    property var hoveredItem
     property bool isGroupDialog: false
     property bool moved: false
 
     property alias handleWheelEvents: wheelHandler.handleWheelEvents
+
+    required property var tasks
+    required property var tasksModel
 
     //ignore anything that is neither internal to TaskManager or a URL list
     onEntered: event => {
@@ -61,34 +64,34 @@ DropArea {
         // the movement direction has reversed, establishing user intent to
         // move back.
         if (!Plasmoid.configuration.separateLaunchers
-                && tasks.dragSource?.model.IsLauncher
+                && dropArea.tasks.dragSource?.model.IsLauncher
                 && !above.model.IsLauncher
-                && above === ignoredItem) {
+                && above === dropArea.ignoredItem) {
             return;
         } else {
-            ignoredItem = null;
+            dropArea.ignoredItem = null;
         }
 
-        if (tasksModel.sortMode === TaskManager.TasksModel.SortManual && tasks.dragSource) {
+        if (dropArea.tasksModel.sortMode === TaskManager.TasksModel.SortManual && dropArea.tasks.dragSource) {
             // Reject drags between different TaskList instances.
-            if (tasks.dragSource.parent !== above.parent) {
+            if (dropArea.tasks.dragSource.parent !== above.parent) {
                 return;
             }
 
             const insertAt = above.index;
 
-            if (tasks.dragSource !== above && tasks.dragSource.index !== insertAt) {
-                if (tasks.groupDialog) {
-                    tasksModel.move(tasks.dragSource.index, insertAt,
-                        tasksModel.makeModelIndex(tasks.groupDialog.visualParent.index));
+            if (dropArea.tasks.dragSource !== above && dropArea.tasks.dragSource.index !== insertAt) {
+                if (dropArea.tasks.groupDialog) {
+                    dropArea.tasksModel.move(dropArea.tasks.dragSource.index, insertAt,
+                        dropArea.tasksModel.makeModelIndex(dropArea.tasks.groupDialog.visualParent.index));
                 } else {
-                    tasksModel.move(tasks.dragSource.index, insertAt);
+                    dropArea.tasksModel.move(dropArea.tasks.dragSource.index, insertAt);
                 }
 
-                ignoredItem = above;
+                dropArea.ignoredItem = above;
                 ignoreItemTimer.restart();
             }
-        } else if (!tasks.dragSource && hoveredItem !== above) {
+        } else if (!dropArea.tasks.dragSource && hoveredItem !== above) {
             hoveredItem = above;
             activationTimer.restart();
         }
@@ -119,11 +122,11 @@ DropArea {
     }
 
     Connections {
-        target: tasks
+        target: dropArea.tasks
 
         function onDragSourceChanged(): void {
-            if (!dragSource) {
-                ignoredItem = null;
+            if (!dropArea.tasks.dragSource) {
+                dropArea.ignoredItem = null;
                 ignoreItemTimer.stop();
             }
         }
@@ -136,7 +139,7 @@ DropArea {
         interval: 750
 
         onTriggered: {
-            ignoredItem = null;
+            dropArea.ignoredItem = null;
         }
     }
 
@@ -148,9 +151,9 @@ DropArea {
 
         onTriggered: {
             if (parent.hoveredItem.model.IsGroupParent) {
-                TaskTools.createGroupDialog(parent.hoveredItem, tasks);
+                TaskTools.createGroupDialog(parent.hoveredItem, dropArea.tasks);
             } else if (!parent.hoveredItem.model.IsLauncher) {
-                tasksModel.requestActivate(parent.hoveredItem.modelIndex());
+                dropArea.tasksModel.requestActivate(parent.hoveredItem.modelIndex());
             }
         }
     }
@@ -178,7 +181,7 @@ DropArea {
             }
             const anchor = dropArea.target.childAt(event.x, event.y);
             while (increment !== 0) {
-                TaskTools.activateNextPrevTask(anchor, increment < 0, Plasmoid.configuration.wheelSkipMinimized, tasks);
+                TaskTools.activateNextPrevTask(anchor, increment < 0, Plasmoid.configuration.wheelSkipMinimized, dropArea.tasks);
                 increment += (increment < 0) ? 1 : -1;
             }
         }

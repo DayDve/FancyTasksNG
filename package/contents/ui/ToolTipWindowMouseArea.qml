@@ -15,6 +15,7 @@ MouseArea {
     required property var modelIndex
     required property var winId
     required property var rootTask
+    required property var tasksModel
 
     property bool globalHovered: false
 
@@ -79,7 +80,6 @@ MouseArea {
 
     function updateHoverState() {
         if (rootTask.tasksRoot) {
-            // Окно подсвечивается/скрывает другие, если мышь внутри этого MouseArea ИЛИ где-то еще в тултипе
             const isHovered = containsMouse || globalHovered;
             rootTask.tasksRoot.windowsHovered([winId], isHovered);
         }

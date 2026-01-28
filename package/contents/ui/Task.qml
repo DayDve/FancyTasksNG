@@ -20,17 +20,18 @@ import Qt5Compat.GraphicalEffects
 
 import "code/layoutmetrics.js" as LayoutMetrics
 import "code/tools.js" as TaskTools
+import "code/singletones"
 
 Item {
     id: task
 
     activeFocusOnTab: true
 
-    readonly property bool isMetro: plasmoid.configuration.indicatorStyle === 0
-    readonly property bool isCiliora: plasmoid.configuration.indicatorStyle === 1
-    readonly property bool isDashes: plasmoid.configuration.indicatorStyle === 2
-    readonly property int _cfgIconSize: plasmoid.configuration.iconSizeOverride ? plasmoid.configuration.iconSizePx : (Math.min(tasksRoot.width, tasksRoot.height) * plasmoid.configuration.iconScale / 100)
-    readonly property int _cfgZoom: plasmoid.configuration.iconZoomFactor
+    readonly property bool isMetro: Plasmoid.configuration.indicatorStyle === 0
+    readonly property bool isCiliora: Plasmoid.configuration.indicatorStyle === 1
+    readonly property bool isDashes: Plasmoid.configuration.indicatorStyle === 2
+    readonly property int _cfgIconSize: Plasmoid.configuration.iconSizeOverride ? Plasmoid.configuration.iconSizePx : (Math.min(tasksRoot.width, tasksRoot.height) * Plasmoid.configuration.iconScale / 100)
+    readonly property int _cfgZoom: Plasmoid.configuration.iconZoomFactor
     readonly property int _maxIconSize: _cfgIconSize + _cfgZoom
     property alias taskIcon: icon
     readonly property bool iconOverflows: tasksRoot.vertical ? 
@@ -39,8 +40,8 @@ Item {
     Item {
         id: tooltipAnchor
         anchors.centerIn: parent
-        width: tasksRoot.vertical ? (Math.max(tasksRoot.width, _maxIconSize) + 16) : parent.width
-        height: !tasksRoot.vertical ? (Math.max(tasksRoot.height, _maxIconSize) + 16) : parent.height
+        width: task.tasksRoot.vertical ? (Math.max(task.tasksRoot.width, task._maxIconSize) + 16) : parent.width
+        height: !task.tasksRoot.vertical ? (Math.max(task.tasksRoot.height, task._maxIconSize) + 16) : parent.height
         visible: false
     }
     property alias tooltipAnchor: tooltipAnchor
@@ -50,36 +51,36 @@ Item {
     rotation: Plasmoid.configuration.reverseMode && Plasmoid.formFactor === PlasmaCore.Types.Vertical ?
         180 : 0
 
-    implicitHeight: inPopup ?
-        LayoutMetrics.preferredHeightInPopup() : Math.max(tasksRoot.height / tasksRoot.plasmoid.configuration.maxStripes, LayoutMetrics.preferredMinHeight())
+    implicitHeight: task.inPopup ?
+        LayoutMetrics.preferredHeightInPopup() : Math.max(tasksRoot.height / Plasmoid.configuration.maxStripes, LayoutMetrics.preferredMinHeight())
     implicitWidth: tasksRoot.vertical ?
-        Math.max(LayoutMetrics.preferredMinWidth(), Math.min(LayoutMetrics.preferredMaxWidth(), tasksRoot.width / tasksRoot.plasmoid.configuration.maxStripes)) : 0
+        Math.max(LayoutMetrics.preferredMinWidth(), Math.min(LayoutMetrics.preferredMaxWidth(), tasksRoot.width / Plasmoid.configuration.maxStripes)) : 0
 
     Layout.fillWidth: true
-    Layout.fillHeight: !inPopup
+    Layout.fillHeight: !task.inPopup
     Layout.maximumWidth: tasksRoot.vertical ?
-        -1 : ((model.IsLauncher && !tasks.iconsOnly) ? tasksRoot.height / taskList.rows : LayoutMetrics.preferredMaxWidth())
+        -1 : ((task.model.IsLauncher && !tasksRoot.iconsOnly) ? tasksRoot.height / tasksRoot.taskList.rows : LayoutMetrics.preferredMaxWidth())
     Layout.maximumHeight: tasksRoot.vertical ?
         LayoutMetrics.preferredMaxHeight() : -1
 
     required property var model
     required property int index
-    required property /*main.qml*/  Item tasksRoot
+    required property /*main.qml*/  var tasksRoot
 
-    readonly property int pid: model.AppPid
-    readonly property string appName: model.AppName
-    readonly property string appId: model.AppId.replace(/\.desktop/, '')
+    readonly property int pid: task.model.AppPid
+    readonly property string appName: task.model.AppName
+    readonly property string appId: task.model.AppId.replace(/\.desktop/, '')
     readonly property bool isIcon: tasksRoot.iconsOnly ||
-        model.IsLauncher
+        task.model.IsLauncher
     property bool toolTipOpen: false
     property bool inPopup: false
-    property bool isWindow: model.IsWindow
-    property int childCount: model.ChildCount
+    property bool isWindow: task.model.IsWindow
+    property int childCount: task.model.ChildCount
     property int previousChildCount: 0
     property alias labelText: label.text
-    property QtObject contextMenu: null
-    readonly property bool smartLauncherEnabled: !inPopup && !model.IsStartup
-    property QtObject smartLauncherItem: null
+    property var contextMenu: null
+    readonly property bool smartLauncherEnabled: !task.inPopup && !task.model.IsStartup
+    property var smartLauncherItem: null
 
     property Item audioStreamIcon: null
     property var audioStreams: []
@@ -87,16 +88,16 @@ Item {
     property bool completed: false
     readonly property 
         bool audioIndicatorsEnabled: Plasmoid.configuration.indicateAudioStreams
-    readonly property bool hasAudioStream: audioStreams.length > 0
-    readonly property bool playingAudio: hasAudioStream && audioStreams.some(item => !item.corked)
-    readonly property bool muted: hasAudioStream && audioStreams.every(item => item.muted)
+    readonly property bool hasAudioStream: task.audioStreams.length > 0
+    readonly property bool playingAudio: task.hasAudioStream && task.audioStreams.some(item => !item.corked)
+    readonly property bool muted: task.hasAudioStream && task.audioStreams.every(item => item.muted)
 
-    readonly property bool highlighted: (inPopup && activeFocus) ||
-        (!inPopup && containsMouse) || (tasksRoot.currentHoveredTask === task) || 
+    readonly property bool highlighted: (task.inPopup && activeFocus) ||
+        (!task.inPopup && containsMouse) || (tasksRoot.currentHoveredTask === task) || 
         (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open) ||
         (!!tasksRoot.groupDialog && tasksRoot.groupDialog.visualParent === task)
 
-    property int itemIndex: index 
+    property int itemIndex: task.index 
 
     readonly property bool containsMouse: hoverHandler.hovered
 
@@ -108,13 +109,13 @@ Item {
         id: closeTimer
         interval: 250 // Time to cross the gap
         onTriggered: {
-            if (tasksRoot.isTooltipHovered) {
+            if (task.tasksRoot.isTooltipHovered) {
                 return;
             }
 
-            if (tasksRoot.currentHoveredTask === task) {
-                 tasksRoot.currentHoveredTask = null;
-                 tasksRoot.toolTipOpenedByClick = null;
+            if (task.tasksRoot.currentHoveredTask === task) {
+                 task.tasksRoot.currentHoveredTask = null;
+                 task.tasksRoot.toolTipOpenedByClick = null;
             }
             task.toolTipOpen = false;
         }
@@ -125,9 +126,9 @@ Item {
         interval: 500
         onTriggered: {
             if (task.containsMouse) {
-                tasksRoot.currentHoveredTask = task;
+                task.tasksRoot.currentHoveredTask = task;
                 task.toolTipOpen = true;
-                tasksRoot.toolTipAreaItem = task;
+                task.tasksRoot.toolTipAreaItem = task;
             }
         }
     }
@@ -152,7 +153,7 @@ Item {
     }
 
     onXChanged: {
-        if (!completed) {
+        if (!task.completed) {
             return;
         }
         if (oldX < 0) {
@@ -165,7 +166,7 @@ Item {
         moveAnim.restart();
     }
     onYChanged: {
-        if (!completed) {
+        if (!task.completed) {
             return;
         }
         if (oldY < 0) {
@@ -186,9 +187,9 @@ Item {
         property real y
         onRunningChanged: {
             if (running) {
-                ++task.parent.animationsRunning;
+                ++task.tasksRoot.taskList.animationsRunning;
             } else {
-                --task.parent.animationsRunning;
+                --task.tasksRoot.taskList.animationsRunning;
             }
         }
         ParallelAnimation {
@@ -214,49 +215,48 @@ Item {
         id: translateTransform
     }
 
-    Accessible.name: model.display
+    Accessible.name: task.model.display
     Accessible.description: {
-        if (!model.display) {
+        if (!task.model.display) {
             return "";
         }
 
-        if (model.IsLauncher) {
-            return i18nc("@info:usagetip %1 application name", "Launch %1", model.display);
+        if (task.model.IsLauncher) {
+            return Wrappers.i18nc("@info:usagetip %1 application name", "Launch %1", task.model.display);
         }
 
         let smartLauncherDescription = "";
         if (iconBox.active) {
-            smartLauncherDescription += i18ncp("@info:tooltip", "There is %1 new message.", "There are %1 new messages.", task.smartLauncherItem.count);
+            smartLauncherDescription += Wrappers.i18ncp("@info:tooltip", "There is %1 new message.", "There are %1 new messages.", task.smartLauncherItem.count);
         }
 
-        if (model.IsGroupParent) {
+        if (task.model.IsGroupParent) {
             switch (Plasmoid.configuration.groupedTaskVisualization) {
             case 0:
                 break;
-            // Use the default description
             case 1:
                 {
                     if (Plasmoid.configuration.showToolTips) {
-                        return `${i18nc("@info:usagetip %1 task name", "Show Task tooltip for %1", model.display)};
+                        return `${Wrappers.i18nc("@info:usagetip %1 task name", "Show Task tooltip for %1", task.model.display)};
                                 ${smartLauncherDescription}`;
                     }
-                    // fallthrough
                 }
+                break;
             case 2:
                 {
-                    if (effectWatcher.registered) {
-                        return `${i18nc("@info:usagetip %1 task name", "Show windows side by side for %1", model.display)};
+                    if (tasksRoot.effectWatcher.registered) {
+                        return `${Wrappers.i18nc("@info:usagetip %1 task name", "Show windows side by side for %1", task.model.display)};
                                 ${smartLauncherDescription}`;
                     }
-                    // fallthrough
                 }
+                break;
             default:
-                return `${i18nc("@info:usagetip %1 task name", "Open textual list of windows for %1", model.display)};
+                return `${Wrappers.i18nc("@info:usagetip %1 task name", "Open textual list of windows for %1", task.model.display)};
                         ${smartLauncherDescription}`;
             }
         }
 
-        return `${i18n("Activate %1", model.display)};
+        return `${Wrappers.i18n("Activate %1", task.model.display)};
                 ${smartLauncherDescription}`;
     }
     Accessible.role: Accessible.Button
@@ -267,28 +267,28 @@ Item {
         tasksRoot.cancelHighlightWindows();
     }
 
-    onPidChanged: updateAudioStreams({
+    onPidChanged: task.updateAudioStreams({
         delay: false
     })
-    onAppNameChanged: updateAudioStreams({
+    onAppNameChanged: task.updateAudioStreams({
         delay: false
     })
 
     onIsWindowChanged: {
-        if (model.IsWindow) {
-            taskInitComponent.createObject(task);
-            updateAudioStreams({
+        if (task.model.IsWindow) {
+            tasksRoot.taskInitComponent.createObject(task);
+            task.updateAudioStreams({
                 delay: false
             });
         }
     }
 
     onChildCountChanged: {
-        if (TaskTools.taskManagerInstanceCount < 2 && childCount > previousChildCount) {
-            tasksModel.requestPublishDelegateGeometry(modelIndex(), backend.globalRect(task), task);
+        if (TaskTools.taskManagerInstanceCount < 2 && task.childCount > task.previousChildCount) {
+            tasksRoot.tasksModel.requestPublishDelegateGeometry(task.modelIndex(), tasksRoot.backend.globalRect(task), task);
         }
 
-        previousChildCount = childCount;
+        task.previousChildCount = task.childCount;
     }
 
     onIndexChanged: {
@@ -296,25 +296,25 @@ Item {
              tasksRoot.currentHoveredTask = null;
         }
 
-        if (!inPopup && !tasksRoot.vertical && !Plasmoid.configuration.separateLaunchers) {
+        if (!task.inPopup && !tasksRoot.vertical && !Plasmoid.configuration.separateLaunchers) {
             tasksRoot.requestLayout();
         }
     }
 
     onSmartLauncherEnabledChanged: {
-        if (smartLauncherEnabled && !smartLauncherItem) {
+        if (task.smartLauncherEnabled && !task.smartLauncherItem) {
             const component = Qt.createComponent("org.kde.plasma.private.taskmanager", "SmartLauncherItem");
             const smartLauncher = component.createObject(task);
             component.destroy();
 
-            smartLauncher.launcherUrl = Qt.binding(() => model.LauncherUrlWithoutIcon);
+            smartLauncher.launcherUrl = Qt.binding(() => task.model.LauncherUrlWithoutIcon);
 
-            smartLauncherItem = smartLauncher;
+            task.smartLauncherItem = smartLauncher;
         }
     }
 
     onHasAudioStreamChanged: {
-        const audioStreamIconActive = hasAudioStream && audioIndicatorsEnabled;
+        const audioStreamIconActive = task.hasAudioStream && audioIndicatorsEnabled;
         if (!audioStreamIconActive) {
             if (audioStreamIcon !== null) {
                 audioStreamIcon.destroy();
@@ -325,50 +325,56 @@ Item {
         // Create item on demand instead of using Loader to reduce memory consumption,
         // because only a few applications have audio streams.
         const component = Qt.createComponent("AudioStream.qml");
-        audioStreamIcon = component.createObject(task);
+        audioStreamIcon = component.createObject(task, {
+            "iconBox": iconBox,
+            "task": task,
+            "frame": frame
+        });
         component.destroy();
     }
     onAudioIndicatorsEnabledChanged: task.hasAudioStreamChanged()
 
     Keys.onMenuPressed: event => contextMenuTimer.start()
-    Keys.onReturnPressed: event => TaskTools.activateTask(modelIndex(), model, event.modifiers, task, Plasmoid, tasksRoot, effectWatcher.registered)
+    Keys.onReturnPressed: event => TaskTools.activateTask(task.modelIndex(), task.model, event.modifiers, task, Plasmoid, tasksRoot, tasksRoot.effectWatcher.registered)
     Keys.onEnterPressed: event => Keys.returnPressed(event)
     Keys.onSpacePressed: event => Keys.returnPressed(event)
     Keys.onUpPressed: event => Keys.leftPressed(event)
     Keys.onDownPressed: event => Keys.rightPressed(event)
     Keys.onLeftPressed: event => {
-        if (!inPopup && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
-            tasksModel.move(task.index, task.index 
+        if (!task.inPopup && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
+            tasksRoot.tasksModel.move(task.index, task.index 
                 - 1);
         } else {
             event.accepted = false;
         }
     }
     Keys.onRightPressed: event => {
-        if (!inPopup && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
-            tasksModel.move(task.index, task.index + 1);
+        if (!task.inPopup && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
+            tasksRoot.tasksModel.move(task.index, task.index + 1);
         } else {
             event.accepted = false;
         }
     }
 
     function modelIndex(): /*QModelIndex*/ var {
-        return inPopup ?
-            tasksModel.makeModelIndex(groupDialog.visualParent.index, index) : tasksModel.makeModelIndex(index);
+        return task.inPopup ?
+            tasksRoot.tasksModel.makeModelIndex(tasksRoot.groupDialog.visualParent.index, task.index) : tasksRoot.tasksModel.makeModelIndex(task.index);
     }
 
     function closeTooltip(): void {
         tasksRoot.currentHoveredTask = null;
         task.toolTipOpen = false;
         tasksRoot.toolTipOpenedByClick = null;
+        // qmllint disable missing-property
         if (typeof task.hideImmediately === "function") {
             task.hideImmediately();
         }
+        // qmllint enable missing-property
     }
 
     function showContextMenu(args: var): void {
         task.closeTooltip();
-        contextMenu = tasksRoot.createContextMenu(task, modelIndex(), args);
+        contextMenu = tasksRoot.createContextMenu(task, task.modelIndex(), args);
         contextMenu.show();
     }
 
@@ -378,10 +384,10 @@ Item {
             // right away.
             // Only when audio streams change during the lifetime of this task, delay
             // showing that to avoid distraction.
-            delayAudioStreamIndicator = !!args.delay;
+            task.delayAudioStreamIndicator = !!args.delay;
         }
 
-        var pa = pulseAudio.item;
+        var pa = task.tasksRoot.pulseAudio.item;
         if (!pa || !task.isWindow) {
             task.audioStreams = [];
             return;
@@ -391,17 +397,17 @@ Item {
         // https://docs.pipewire.org/page_portal.html
         var streams = pa.streamsForAppId(task.appId);
         if (!streams.length) {
-            streams = pa.streamsForPid(model.AppPid);
+            streams = pa.streamsForPid(task.model.AppPid);
             if (streams.length) {
-                pa.registerPidMatch(model.AppName);
+                pa.registerPidMatch(task.model.AppName);
             } else {
                 // We only want to fall back to appName matching if we never managed to map
                 // a PID to an audio stream window.
                 // Otherwise if you have two instances of
                 // an application, one playing and the other not, it will look up appName
                 // for the non-playing instance and erroneously show an indicator on both.
-                if (!pa.hasPidMatch(model.AppName)) {
-                    streams = pa.streamsForAppName(model.AppName);
+                if (!pa.hasPidMatch(task.model.AppName)) {
+                    streams = pa.streamsForAppName(task.model.AppName);
                 }
             }
         }
@@ -410,7 +416,7 @@ Item {
     }
 
     function toggleMuted(): void {
-        if (muted) {
+        if (task.muted) {
             task.audioStreams.forEach(item => item.unmute());
         } else {
             task.audioStreams.forEach(item => item.mute());
@@ -418,7 +424,7 @@ Item {
     }
 
     Connections {
-        target: pulseAudio.item
+        target: task.tasksRoot.pulseAudio.item
         ignoreUnknownSignals: true // Plasma-PA might not be available
         function onStreamsChanged(): void {
             task.updateAudioStreams({
@@ -432,7 +438,9 @@ Item {
         let r = parseInt(result[1], 16);
         let g = parseInt(result[2], 16);
         let b = parseInt(result[3], 16);
-        r /= 255, g /= 255, b /= 255;
+        r /= 255;
+        g /= 255;
+        b /= 255;
         var max = Math.max(r, g, b), min = Math.min(r, g, b);
         var h, s, l = (max + min) / 2;
         if (max == min) {
@@ -465,16 +473,18 @@ Item {
         id: colorOverride
         anchors.fill: frame
         source: frame
-        color: plasmoid.configuration.buttonColorizeDominant ?
-            frame.indicatorColor : plasmoid.configuration.buttonColorizeCustom
-        visible: plasmoid.configuration.buttonColorize ?
+        color: Plasmoid.configuration.buttonColorizeDominant ?
+            frame.indicatorColor : Plasmoid.configuration.buttonColorizeCustom
+        visible: Plasmoid.configuration.buttonColorize ?
             true : false
     }
 
     Indicators {
         id: indicator
         taskCount: task.childCount
-        visible: plasmoid.configuration.indicatorsEnabled ?
+        task: task
+        frame: frame
+        visible: Plasmoid.configuration.indicatorsEnabled ?
             true : false
         flow: Flow.LeftToRight
         spacing: Kirigami.Units.smallSpacing
@@ -490,12 +500,12 @@ Item {
         onLongPressed: {
             // When we're a launcher, there's no window controls, so we can show all
             // places without the menu getting super huge.
-            if (model.IsLauncher) {
-                showContextMenu({
+            if (task.model.IsLauncher) {
+                task.showContextMenu({
                     showAllPlaces: true
                 });
             } else {
-                showContextMenu();
+                task.showContextMenu();
             }
         }
     }
@@ -521,8 +531,8 @@ Item {
         onTapped: (eventPoint, button) => leftClick()
 
         function leftClick(): void {
-            tasksRoot.currentHoveredTask = null;
-            TaskTools.activateTask(modelIndex(), model, point.modifiers, task, Plasmoid, tasksRoot, effectWatcher.registered);
+            task.tasksRoot.currentHoveredTask = null;
+            TaskTools.activateTask(task.modelIndex(), task.model, point.modifiers, task, Plasmoid, task.tasksRoot, task.tasksRoot.effectWatcher.registered);
         }
     }
 
@@ -532,19 +542,19 @@ Item {
         onTapped: (eventPoint, button) => {
             if (button === Qt.MiddleButton) {
                 if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.NewInstance) {
-                    tasksModel.requestNewInstance(modelIndex());
+                    task.tasksRoot.tasksModel.requestNewInstance(task.modelIndex());
                 } else if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.Close) {
-                    tasksRoot.taskClosedWithMouseMiddleButton = model.WinIdList.slice();
-                    tasksModel.requestClose(modelIndex());
+                    task.tasksRoot.taskClosedWithMouseMiddleButton = task.model.WinIdList.slice();
+                    task.tasksRoot.tasksModel.requestClose(task.modelIndex());
                 } else if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.ToggleMinimized) {
-                    tasksModel.requestToggleMinimized(modelIndex());
+                    task.tasksRoot.tasksModel.requestToggleMinimized(task.modelIndex());
                 } else if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.ToggleGrouping) {
-                    tasksModel.requestToggleGrouping(modelIndex());
+                    task.tasksRoot.tasksModel.requestToggleGrouping(task.modelIndex());
                 } else if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.BringToCurrentDesktop) {
-                    tasksModel.requestVirtualDesktops(modelIndex(), [virtualDesktopInfo.currentDesktop]);
+                    task.tasksRoot.tasksModel.requestVirtualDesktops(task.modelIndex(), [task.tasksRoot.virtualDesktopInfo.currentDesktop]);
                 }
             } else if (button === Qt.BackButton || button === Qt.ForwardButton) {
-                const playerData = mpris2Source.playerForLauncherUrl(model.LauncherUrlWithoutIcon, model.AppPid);
+                const playerData = task.tasksRoot.mpris2Source.playerForLauncherUrl(task.model.LauncherUrlWithoutIcon, task.model.AppPid);
                 if (playerData) {
                     if (button === Qt.BackButton) {
                         playerData.Previous();
@@ -556,7 +566,7 @@ Item {
                 }
             }
 
-            backend.cancelHighlightWindows();
+            task.tasksRoot.backend.cancelHighlightWindows();
         }
     }
 
@@ -565,27 +575,27 @@ Item {
 
         Kirigami.ImageColors {
             id: imageColors
-            source: model.decoration
+            source: task.model.decoration
         }
         property color dominantColor: imageColors.dominant
-        property color indicatorColor: Kirigami.ColorUtils.tintWithAlpha(frame.dominantColor, tintColor, .38)
+        property color indicatorColor: Kirigami.ColorUtils.tintWithAlpha(dominantColor, task.tintColor, .38)
 
         anchors {
             fill: parent
 
-            topMargin: (!tasksRoot.vertical && taskList.rows > 1) ?
+            topMargin: (!task.tasksRoot.vertical && task.tasksRoot.taskList.rows > 1) ?
                 LayoutMetrics.iconMargin : 0
-            bottomMargin: (!tasksRoot.vertical && taskList.rows > 1) ?
+            bottomMargin: (!task.tasksRoot.vertical && task.tasksRoot.taskList.rows > 1) ?
                 LayoutMetrics.iconMargin : 0
-            leftMargin: ((inPopup || tasksRoot.vertical) && taskList.columns > 1) ?
+            leftMargin: ((task.inPopup || task.tasksRoot.vertical) && task.tasksRoot.taskList.columns > 1) ?
                 LayoutMetrics.iconMargin : 0
-            rightMargin: ((inPopup || tasksRoot.vertical) && taskList.columns > 1) ?
+            rightMargin: ((task.inPopup || task.tasksRoot.vertical) && task.tasksRoot.taskList.columns > 1) ?
                 LayoutMetrics.iconMargin : 0
         }
 
-        imagePath: plasmoid.configuration.disableButtonSvg ?
+        imagePath: Plasmoid.configuration.disableButtonSvg ?
             "" : "widgets/tasks"
-        enabledBorders: plasmoid.configuration.useBorders ? 1 | 2 | 4 |
+        enabledBorders: Plasmoid.configuration.useBorders ? 1 | 2 | 4 |
             8 : 0
         property bool isHovered: task.highlighted && Plasmoid.configuration.taskHoverEffect
         property string basePrefix: "normal"
@@ -618,20 +628,20 @@ Item {
                             return;
                         }
                         setRequestedInhibitDnd(true);
-                        tasksRoot.dragSource = task;
-                        dragHelper.Drag.imageSource = result.url;
+                        task.tasksRoot.dragSource = task;
+                        task.tasksRoot.dragHelper.Drag.imageSource = result.url;
                         
-                        dragHelper.Drag.mimeData = {
-                            "text/x-orgkdeplasmataskmanager_taskurl": backend.tryDecodeApplicationsUrl(model.LauncherUrlWithoutIcon).toString(),
-                            [model.MimeType]: model.MimeData,
-                            "application/x-orgkdeplasmataskmanager_taskbuttonitem": model.MimeData
+                        task.tasksRoot.dragHelper.Drag.mimeData = {
+                            "text/x-orgkdeplasmataskmanager_taskurl": task.tasksRoot.backend.tryDecodeApplicationsUrl(task.model.LauncherUrlWithoutIcon).toString(),
+                            [task.model.MimeType]: task.model.MimeData,
+                            "application/x-orgkdeplasmataskmanager_taskbuttonitem": task.model.MimeData
                         };
-                        dragHelper.Drag.active = dragHandler.active;
+                        task.tasksRoot.dragHelper.Drag.active = dragHandler.active;
                     });
                 } else {
                     setRequestedInhibitDnd(false);
-                    dragHelper.Drag.active = false;
-                    dragHelper.Drag.imageSource = "";
+                    task.tasksRoot.dragHelper.Drag.active = false;
+                    task.tasksRoot.dragHelper.Drag.imageSource = "";
                 }
             }
         }
@@ -642,9 +652,10 @@ Item {
 
         anchors.fill: frame
         asynchronous: true
-        active: model.IsWindow && task.smartLauncherItem && task.smartLauncherItem.progressVisible
+        active: task.model.IsWindow && task.smartLauncherItem && task.smartLauncherItem.progressVisible
 
         source: "TaskProgressOverlay.qml"
+        onLoaded: item.task = task
     }
 
     Loader {
@@ -652,18 +663,18 @@ Item {
 
         anchors {
             left: parent.left
-            leftMargin: adjustMargin(true, parent.width, taskFrame.margins.left)
+            leftMargin: adjustMargin(true, parent.width, task.tasksRoot.taskFrame.margins.left)
             top: parent.top
-            topMargin: adjustMargin(false, parent.height, taskFrame.margins.top)
+            topMargin: adjustMargin(false, parent.height, task.tasksRoot.taskFrame.margins.top)
         }
 
         width: task.inPopup ?
-            Math.max(Kirigami.Units.iconSizes.sizeForLabels, Kirigami.Units.iconSizes.medium) : Math.min(task.parent?.minimumWidth ?? 0, task.height)
+            Math.max(Kirigami.Units.iconSizes.sizeForLabels, Kirigami.Units.iconSizes.medium) : Math.min((task.parent as TaskList)?.minimumWidth ?? 0, task.height)
         height: task.inPopup ?
-            width : (parent.height - adjustMargin(false, parent.height, taskFrame.margins.top) - adjustMargin(false, parent.height, taskFrame.margins.bottom))
+            width : (parent.height - adjustMargin(false, parent.height, task.tasksRoot.taskFrame.margins.top) - adjustMargin(false, parent.height, task.tasksRoot.taskFrame.margins.bottom))
 
         asynchronous: true
-        active: height >= Kirigami.Units.iconSizes.small && task.smartLauncherItem && task.smartLauncherItem.countVisible
+        active: height >= Kirigami.Units.iconSizes.small && task.smartLauncherItem && task.smartLauncherItem["countVisible"]
         source: "TaskBadgeOverlay.qml"
 
         function adjustMargin(isVertical: bool, size: real, margin: real): real {
@@ -682,11 +693,11 @@ Item {
         Kirigami.Icon {
             id: icon
             property int growSize: active ?
-                plasmoid.configuration.iconZoomFactor : 0
+                Plasmoid.configuration.iconZoomFactor : 0
 
-            property bool sizeOverride: plasmoid.configuration.iconSizeOverride
-            property int fixedSize: plasmoid.configuration.iconSizePx
-            property real iconScale: plasmoid.configuration.iconScale / 100
+            property bool sizeOverride: Plasmoid.configuration.iconSizeOverride
+            property int fixedSize: Plasmoid.configuration.iconSizePx
+            property real iconScale: Plasmoid.configuration.iconScale / 100
 
             width: (sizeOverride ? fixedSize : (parent.width * iconScale)) + growSize
             height: (sizeOverride ? fixedSize : (parent.height * iconScale)) + growSize
@@ -697,7 +708,7 @@ Item {
 
             Behavior on growSize {
                 NumberAnimation {
-                    duration: plasmoid.configuration.iconZoomDuration
+                    duration: Plasmoid.configuration.iconZoomDuration
                     easing.type: Easing.InOutQuad
                 }
             }
@@ -705,7 +716,7 @@ Item {
             active: task.highlighted
             enabled: true
 
-            source: model.decoration
+            source: task.model.decoration
         }
 
         states: [
@@ -724,7 +735,7 @@ Item {
                 PropertyChanges {
                     target: iconBox
                     anchors.leftMargin: 0
-                    width: Math.min(task.parent.minimumWidth, tasks.height) - adjustMargin(true, task.width, taskFrame.margins.left) - adjustMargin(true, task.width, taskFrame.margins.right)
+                    width: Math.min((task.parent as TaskList).minimumWidth, task.tasksRoot.height) - adjustMargin(true, task.width, task.tasksRoot.taskFrame.margins.left) - adjustMargin(true, task.width, task.tasksRoot.taskFrame.margins.right)
                 }
             }
         ]
@@ -733,23 +744,23 @@ Item {
             anchors.centerIn: parent
             width: Math.min(parent.width, parent.height)
             height: width
-            active: model.IsStartup
-            sourceComponent: busyIndicator
+            active: task.model.IsStartup
+            sourceComponent: task.tasksRoot.busyIndicator
         }
     }
 
     PlasmaComponents3.Label {
         id: label
 
-        visible: (inPopup || !iconsOnly && !model.IsLauncher && (parent.width - iconBox.height - Kirigami.Units.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText())
+        visible: (task.inPopup || !task.tasksRoot.iconsOnly && !task.model.IsLauncher && (parent.width - iconBox.height - Kirigami.Units.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText())
 
         anchors {
             fill: parent
-            leftMargin: taskFrame.margins.left + iconBox.width + LayoutMetrics.labelMargin
-            topMargin: taskFrame.margins.top
-            rightMargin: taskFrame.margins.right + (audioStreamIcon !== null && audioStreamIcon.visible ?
-                (audioStreamIcon.width + LayoutMetrics.labelMargin) : 0)
-            bottomMargin: taskFrame.margins.bottom
+            leftMargin: task.tasksRoot.taskFrame.margins.left + iconBox.width + LayoutMetrics.labelMargin
+            topMargin: task.tasksRoot.taskFrame.margins.top
+            rightMargin: task.tasksRoot.taskFrame.margins.right + (task.audioStreamIcon !== null && task.audioStreamIcon.visible ?
+                (task.audioStreamIcon.width + LayoutMetrics.labelMargin) : 0)
+            bottomMargin: task.tasksRoot.taskFrame.margins.bottom
         }
 
         wrapMode: (maximumLineCount === 1) ?
@@ -769,7 +780,7 @@ Item {
 
             PropertyChanges {
                 target: label
-                text: model.display
+                text: task.model.display
             }
         }
     }
@@ -777,7 +788,7 @@ Item {
     states: [
         State {
             name: "launcher"
-            when: model.IsLauncher === true
+            when: task.model.IsLauncher === true
 
             PropertyChanges {
                 target: frame
@@ -790,65 +801,65 @@ Item {
         },
         State {
             name: "attention"
-            when: model.IsDemandingAttention === true ||
-                (task.smartLauncherItem && task.smartLauncherItem.urgent)
+            when: task.model.IsDemandingAttention === true ||
+                (task.smartLauncherItem && task.smartLauncherItem["urgent"])
 
             PropertyChanges {
                 target: frame
                 basePrefix: "attention"
-                visible: (plasmoid.configuration.buttonColorize && !frame.isHovered) ||
-                    !plasmoid.configuration.buttonColorize
+                visible: (Plasmoid.configuration.buttonColorize && !frame.isHovered) ||
+                    !Plasmoid.configuration.buttonColorize
             }
             PropertyChanges {
                 target: colorOverride
-                visible: (plasmoid.configuration.buttonColorize && frame.isHovered)
+                visible: (Plasmoid.configuration.buttonColorize && frame.isHovered)
             }
         },
         State {
             name: "minimized"
-            when: model.IsMinimized === true && !frame.isHovered && !plasmoid.configuration.disableButtonInactiveSvg
+            when: task.model.IsMinimized === true && !frame.isHovered && !Plasmoid.configuration.disableButtonInactiveSvg
 
             PropertyChanges {
                 target: frame
                 basePrefix: "minimized"
-                visible: (plasmoid.configuration.buttonColorize && plasmoid.configuration.buttonColorizeInactive) ?
+                visible: (Plasmoid.configuration.buttonColorize && Plasmoid.configuration.buttonColorizeInactive) ?
                     false : true
             }
             PropertyChanges {
                 target: colorOverride
-                visible: (plasmoid.configuration.buttonColorize && plasmoid.configuration.buttonColorizeInactive) ?
+                visible: (Plasmoid.configuration.buttonColorize && Plasmoid.configuration.buttonColorizeInactive) ?
                     true : false
             }
             PropertyChanges {
                 target: indicator
-                visible: plasmoid.configuration.disableInactiveIndicators ?
+                visible: Plasmoid.configuration.disableInactiveIndicators ?
                     false : true
             }
         },
         State {
             name: "minimizedNodecoration"
-            when: (model.IsMinimized === true && !frame.isHovered) && plasmoid.configuration.disableButtonInactiveSvg
+            when: (task.model.IsMinimized === true && !frame.isHovered) && Plasmoid.configuration.disableButtonInactiveSvg
 
             PropertyChanges {
                 target: frame
                 basePrefix: "minimized"
-                visible: plasmoid.configuration.disableButtonInactiveSvg ?
+                visible: Plasmoid.configuration.disableButtonInactiveSvg ?
                     false : true
             }
             PropertyChanges {
                 target: colorOverride
-                visible: plasmoid.configuration.disableButtonInactiveSvg ?
+                visible: Plasmoid.configuration.disableButtonInactiveSvg ?
                     false : true
             }
             PropertyChanges {
                 target: indicator
-                visible: plasmoid.configuration.disableInactiveIndicators ?
+                visible: Plasmoid.configuration.disableInactiveIndicators ?
                     false : true
             }
         },
         State {
             name: "active"
-            when: model.IsActive === true
+            when: task.model.IsActive === true
 
             PropertyChanges {
                 target: frame
@@ -856,50 +867,50 @@ Item {
             }
             PropertyChanges {
                 target: colorOverride
-                visible: plasmoid.configuration.buttonColorize ?
+                visible: Plasmoid.configuration.buttonColorize ?
                     true : false
             }
             PropertyChanges {
                 target: indicator
-                visible: plasmoid.configuration.indicatorsEnabled ?
+                visible: Plasmoid.configuration.indicatorsEnabled ?
                     true : false
             }
         },
         State {
             name: "inactive"
-            when: model.IsActive === false && !frame.isHovered && !plasmoid.configuration.disableButtonInactiveSvg
+            when: task.model.IsActive === false && !frame.isHovered && !Plasmoid.configuration.disableButtonInactiveSvg
             PropertyChanges {
                 target: colorOverride
-                visible: plasmoid.configuration.buttonColorize && plasmoid.configuration.buttonColorizeInactive ?
+                visible: Plasmoid.configuration.buttonColorize && Plasmoid.configuration.buttonColorizeInactive ?
                     true : false
             }
             PropertyChanges {
                 target: frame
-                visible: plasmoid.configuration.buttonColorize && plasmoid.configuration.buttonColorizeInactive ?
+                visible: Plasmoid.configuration.buttonColorize && Plasmoid.configuration.buttonColorizeInactive ?
                     false : true
             }
             PropertyChanges {
                 target: indicator
-                visible: plasmoid.configuration.disableInactiveIndicators ?
+                visible: Plasmoid.configuration.disableInactiveIndicators ?
                     false : true
             }
         },
         State {
             name: "inactiveNoDecoration"
-            when: (model.IsActive === false && !frame.isHovered) && plasmoid.configuration.disableButtonInactiveSvg
+            when: (task.model.IsActive === false && !frame.isHovered) && Plasmoid.configuration.disableButtonInactiveSvg
             PropertyChanges {
                 target: colorOverride
-                visible: plasmoid.configuration.disableButtonInactiveSvg ?
+                visible: Plasmoid.configuration.disableButtonInactiveSvg ?
                     false : true
             }
             PropertyChanges {
                 target: frame
-                visible: plasmoid.configuration.disableButtonInactiveSvg ?
+                visible: Plasmoid.configuration.disableButtonInactiveSvg ?
                     false : true
             }
             PropertyChanges {
                 target: indicator
-                visible: plasmoid.configuration.disableInactiveIndicators ?
+                visible: Plasmoid.configuration.disableInactiveIndicators ?
                     false : true
             }
         },
@@ -908,38 +919,41 @@ Item {
             when: frame.isHovered
             PropertyChanges {
                 target: colorOverride
-                visible: plasmoid.configuration.buttonColorize ?
+                visible: Plasmoid.configuration.buttonColorize ?
                     true : false
             }
             PropertyChanges {
                 target: frame
-                visible: plasmoid.configuration.buttonColorize ?
+                visible: Plasmoid.configuration.buttonColorize ?
                     false : true
             }
             PropertyChanges {
                 target: indicator
-                visible: plasmoid.configuration.disableInactiveIndicators ?
+                visible: Plasmoid.configuration.disableInactiveIndicators ?
                     false : true
             }
         }
     ]
 
     Component.onCompleted: {
-        if (!inPopup && model.IsWindow) {
-            if (plasmoid.configuration.groupIconEnabled) {
+        if (!task.inPopup && task.model.IsWindow) {
+            if (Plasmoid.configuration.groupIconEnabled) {
                 const component = Qt.createComponent("GroupExpanderOverlay.qml");
-                component.createObject(task);
+                component.createObject(task, {
+                    "iconBox": iconBox,
+                    "taskModel": task.model
+                });
                 component.destroy();
             }
-            updateAudioStreams({
+            task.updateAudioStreams({
                 delay: false
             });
         }
 
-        if (!inPopup && !model.IsWindow) {
-            taskInitComponent.createObject(task);
+        if (!task.inPopup && !task.model.IsWindow) {
+            tasksRoot.taskInitComponent.createObject(task);
         }
-        completed = true;
+        task.completed = true;
     }
     Component.onDestruction: {
         if (moveAnim.running) {

@@ -1,22 +1,57 @@
 #!/bin/bash
+
+# Stop execution on error
+set -e
+
 SCRIPT_DIR=$(dirname $(readlink -f "$0"))
 
-cd "$SCRIPT_DIR/package/translate/"
-bash ./merge
-bash ./build
-cd "$SCRIPT_DIR"
+# Configuration
+PACKAGE_NAME="FancyTasks"
+ICON_NAME="${PACKAGE_NAME}" # Defaults to package name
 
-rm -rf "$SCRIPT_DIR/release"
-mkdir -p "$SCRIPT_DIR/build"
-mkdir -p "$SCRIPT_DIR/release"
+BUILD_DIR="$SCRIPT_DIR/build"
+RELEASE_DIR="$SCRIPT_DIR/release"
 
-cp -r "$SCRIPT_DIR/package/contents" "$SCRIPT_DIR/build"
-cp "$SCRIPT_DIR/package/metadata.json" "$SCRIPT_DIR/build"
-cp "$SCRIPT_DIR/package/FancyTasks.png" "$SCRIPT_DIR/build"
+# ANSI Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
 
-cd "$SCRIPT_DIR/build"
-tar cf "$SCRIPT_DIR/release/FancyTasks.tar.gz" .
-cd "$SCRIPT_DIR"
+# Error handler function
+handle_error() {
+  local line_num="$1"
+  echo -e "${RED}Error: Build failed at line ${line_num}!${NC}"
+}
 
-rm -rf "$SCRIPT_DIR/build"
-echo "Build complete: $SCRIPT_DIR/release/FancyTasks.tar.gz"
+# Cleanup function
+cleanup() {
+  rm -rf "$BUILD_DIR"
+}
+
+# Set up traps
+# ERR trap fires when a command fails (because of set -e)
+trap 'handle_error $LINENO' ERR
+# EXIT trap fires when script finishes (successfully or after error)
+trap cleanup EXIT
+
+# ---------------------------------------------------------
+
+# Run translation scripts in a subshell
+(
+  cd "$SCRIPT_DIR/package/translate/"
+  bash ./merge
+  bash ./build
+)
+
+# Prepare directories
+rm -rf "$RELEASE_DIR"
+mkdir -p "$BUILD_DIR"
+mkdir -p "$RELEASE_DIR"
+
+# Copy package files
+cp -r "$SCRIPT_DIR/package"/{contents,metadata.json,"${ICON_NAME}.png"} "$BUILD_DIR"
+
+# Create archive
+tar -C "$BUILD_DIR" -czf "$RELEASE_DIR/${PACKAGE_NAME}.tar.gz" .
+
+echo -e "${GREEN}Build complete: $RELEASE_DIR/${PACKAGE_NAME}.tar.gz${NC}"

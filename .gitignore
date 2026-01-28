@@ -1,2 +1,6 @@
 release/
 iconinstaller.tar.gz
+.qmlls.ini
+.qtcreator/project.qmlproject.user
+package/project.qmlproject
+package/.qtcreator/project.qmlproject.user

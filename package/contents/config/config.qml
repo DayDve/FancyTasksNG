@@ -9,24 +9,26 @@ import QtQuick
 import org.kde.plasma.configuration
 
 ConfigModel {
+    // qmllint disable unqualified
     ConfigCategory {
         name: i18n("Appearance")
         icon: "preferences-desktop-color"
-        source: "ConfigAppearance.qml"
+        source: "config/ConfigAppearance.qml"
     }
     ConfigCategory {
         name: i18n("Behavior")
         icon: "preferences-desktop"
-        source: "ConfigBehavior.qml"
+        source: "config/ConfigBehavior.qml"
     }
     ConfigCategory {
         name: i18n("Indicators")
         icon: "preferences-desktop-navigation"
-        source: "ConfigIndicators.qml"
+        source: "config/ConfigIndicators.qml"
     }
     ConfigCategory {
         name: i18n("Pinned Applications")
         icon: "window-pin"
-        source: "ConfigPinnedApps.qml"
+        source: "config/ConfigPinnedApps.qml"
     }
+    // qmllint enable unqualified
 }

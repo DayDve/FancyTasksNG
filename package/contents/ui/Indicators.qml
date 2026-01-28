@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 
@@ -6,42 +8,46 @@ import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
 
 Flow {
+    id: indicatorsFlow
     anchors.margins: 4
     spacing: 10
     property int taskCount: 1
+    required property var task
+    required property var frame
     Repeater {
         model: {
-            if(!plasmoid.configuration.indicatorsEnabled)
+            if(!Plasmoid.configuration.indicatorsEnabled)
             return 0;
-            if(taskCount < plasmoid.configuration.indicatorMinLimit)
+            if(indicatorsFlow.taskCount < Plasmoid.configuration.indicatorMinLimit)
             return 0;
-            if(task.isSubTask)//Target only the main task items.
+            if(indicatorsFlow.task.isSubTask)//Target only the main task items.
             return 0;
-            if(task.state === 'launcher') {
+            if(indicatorsFlow.task.state === 'launcher') {
                 return 0;
             }
-            return Math.min((taskCount === 0) ? 1 : taskCount, maxStates);
+            return Math.min((indicatorsFlow.taskCount === 0) ? 1 : indicatorsFlow.taskCount, maxStates);
         }
-        readonly property int maxStates: plasmoid.configuration.indicatorMaxLimit
+        readonly property int maxStates: Plasmoid.configuration.indicatorMaxLimit
         
         Rectangle{
             id: stateRect
-            Behavior on height { PropertyAnimation {duration: plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-            Behavior on width { PropertyAnimation {duration: plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-            Behavior on color { PropertyAnimation {duration: plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-            Behavior on radius { PropertyAnimation {duration: plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-            readonly property color decoColor: frame.indicatorColor
-            readonly property int maxStates: plasmoid.configuration.indicatorMaxLimit
+            required property int index
+            Behavior on height { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+            Behavior on width { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+            Behavior on color { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+            Behavior on radius { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+            readonly property color decoColor: indicatorsFlow.frame.indicatorColor
+            readonly property int maxStates: Plasmoid.configuration.indicatorMaxLimit
             readonly property bool isFirst: index === 0
-            readonly property int adjust: plasmoid.configuration.indicatorShrink
-            readonly property int indicatorLength: plasmoid.configuration.indicatorLength
+            readonly property int adjust: Plasmoid.configuration.indicatorShrink
+            readonly property int indicatorLength: Plasmoid.configuration.indicatorLength
             readonly property int spacing: Kirigami.Units.smallSpacing
             readonly property bool isVertical: {
-                if(plasmoid.formFactor === PlasmaCore.Types.Vertical && !plasmoid.configuration.indicatorOverride)
+                if(Plasmoid.formFactor === PlasmaCore.Types.Vertical && !Plasmoid.configuration.indicatorOverride)
                 return true;
-                if(plasmoid.formFactor == PlasmaCore.Types.Floating && plasmoid.configuration.indicatorOverride && (plasmoid.configuration.indicatorLocation === 1 || plasmoid.configuration.indicatorLocation === 2))
+                if(Plasmoid.formFactor == PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorOverride && (Plasmoid.configuration.indicatorLocation === 1 || Plasmoid.configuration.indicatorLocation === 2))
                 return  true;
-                if(plasmoid.configuration.indicatorOverride && (plasmoid.configuration.indicatorLocation === 1 || plasmoid.configuration.indicatorLocation === 2))
+                if(Plasmoid.configuration.indicatorOverride && (Plasmoid.configuration.indicatorLocation === 1 || Plasmoid.configuration.indicatorLocation === 2))
                 return  true;
                 else{
                     return false;
@@ -52,37 +58,37 @@ Flow {
                 var width;
                 var colorCalc;
                 var colorEval = '#FFFFFF';
-                var parentSize = !isVertical ? frame.width : frame.height;
+                var parentSize = !isVertical ? indicatorsFlow.frame.width : indicatorsFlow.frame.height;
                 var indicatorComputedSize;
                 var adjustment = isFirst ? adjust : 0
-                var parentSpacingAdjust = taskCount >= 1 && maxStates >= 2 ? (spacing * 2.5) : 0 //Spacing fix for multiple items
-                if(plasmoid.configuration.indicatorDominantColor){
+                var parentSpacingAdjust = indicatorsFlow.taskCount >= 1 && maxStates >= 2 ? (spacing * 2.5) : 0 //Spacing fix for multiple items
+                if(Plasmoid.configuration.indicatorDominantColor){
                     colorEval = decoColor
                 }
-                if(plasmoid.configuration.indicatorAccentColor){
+                if(Plasmoid.configuration.indicatorAccentColor){
                     colorEval = Kirigami.Theme.highlightColor
                 }
-                else if(!plasmoid.configuration.indicatorDominantColor && !plasmoid.configuration.indicatorAccentColor){
-                    colorEval = plasmoid.configuration.indicatorCustomColor
+                else if(!Plasmoid.configuration.indicatorDominantColor && !Plasmoid.configuration.indicatorAccentColor){
+                    colorEval = Plasmoid.configuration.indicatorCustomColor
                 }
                 if(isFirst){//compute the size
         
-                    var growFactor = plasmoid.configuration.indicatorGrowFactor / 100
-                    if(plasmoid.configuration.indicatorGrow && task.state === "minimized") {
+                    var growFactor = Plasmoid.configuration.indicatorGrowFactor / 100
+                    if(Plasmoid.configuration.indicatorGrow && indicatorsFlow.task.state === "minimized") {
                         var mainSize = indicatorLength * growFactor;
                     }
                     else{
                         var mainSize = (parentSize + parentSpacingAdjust);
                     }
-                    switch(plasmoid.configuration.indicatorStyle){
+                    switch(Plasmoid.configuration.indicatorStyle){
                         case 0:
-                        indicatorComputedSize = mainSize - (Math.min(taskCount, maxStates === 1 ? 0 : maxStates)  * (spacing + indicatorLength)) - adjust
+                        indicatorComputedSize = mainSize - (Math.min(indicatorsFlow.taskCount, maxStates === 1 ? 0 : maxStates)  * (spacing + indicatorLength)) - adjust
                         break
                         case 1:
-                        indicatorComputedSize = mainSize - (Math.min(taskCount, maxStates === 1 ? 0 : maxStates)  * (spacing + indicatorLength)) - adjust
+                        indicatorComputedSize = mainSize - (Math.min(indicatorsFlow.taskCount, maxStates === 1 ? 0 : maxStates)  * (spacing + indicatorLength)) - adjust
                         break
                         case 2:
-                        indicatorComputedSize = plasmoid.configuration.indicatorGrow && task.state !== "minimized" ? indicatorLength * growFactor : indicatorLength
+                        indicatorComputedSize = Plasmoid.configuration.indicatorGrow && indicatorsFlow.task.state !== "minimized" ? indicatorLength * growFactor : indicatorLength
                         break
                         default:
                         break
@@ -94,18 +100,18 @@ Flow {
                 }
                 if(!isVertical){
                     width = indicatorComputedSize;
-                    height = plasmoid.configuration.indicatorSize
+                    height = Plasmoid.configuration.indicatorSize
                 }
                 else{
-                    width = plasmoid.configuration.indicatorSize
+                    width = Plasmoid.configuration.indicatorSize
                     height = indicatorComputedSize
                 
                 }
-                if(plasmoid.configuration.indicatorDesaturate && task.state === "minimized") {
-                    var colorHSL = hexToHSL(colorEval)
+                if(Plasmoid.configuration.indicatorDesaturate && indicatorsFlow.task.state === "minimized") {
+                    var colorHSL = hexToHSL(colorEval)  // qmllint disable unqualified
                     colorCalc = Qt.hsla(colorHSL.h, colorHSL.s*0.5, colorHSL.l*.8, 1)
                 }
-                else if(!isFirst && plasmoid.configuration.indicatorStyle ===  0 && task.state !== "minimized") {//Metro specific handling
+                else if(!isFirst && Plasmoid.configuration.indicatorStyle ===  0 && indicatorsFlow.task.state !== "minimized") {//Metro specific handling
                     colorCalc = Qt.darker(colorEval, 1.2) 
                 }
                 else {
@@ -116,30 +122,30 @@ Flow {
             width: computedVar.width
             height: computedVar.height
             color: computedVar.colorCalc
-            radius: Math.min(width, height) * (plasmoid.configuration.indicatorRadius / 200)
+            radius: Math.min(width, height) * (Plasmoid.configuration.indicatorRadius / 200)
 
             Rectangle{
-                Behavior on height { PropertyAnimation {duration: plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-                Behavior on width { PropertyAnimation {duration: plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-                Behavior on color { PropertyAnimation {duration: plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-                Behavior on radius { PropertyAnimation {duration: plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-                visible:  task.isWindow && task.smartLauncherItem && task.smartLauncherItem.progressVisible && isFirst && plasmoid.configuration.indicatorProgress
+                Behavior on height { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+                Behavior on width { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+                Behavior on color { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+                Behavior on radius { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+                visible:  indicatorsFlow.task.isWindow && indicatorsFlow.task.smartLauncherItem && indicatorsFlow.task.smartLauncherItem.progressVisible && stateRect.isFirst && Plasmoid.configuration.indicatorProgress
                 anchors{
-                    top: isVertical ? undefined : parent.top
-                    bottom: isVertical ? undefined : parent.bottom
-                    left: isVertical ? parent.left : undefined
-                    right: isVertical ? parent.right : undefined
+                    top: stateRect.isVertical ? undefined : parent.top
+                    bottom: stateRect.isVertical ? undefined : parent.bottom
+                    left: stateRect.isVertical ? parent.left : undefined
+                    right: stateRect.isVertical ? parent.right : undefined
                 }
                 readonly property var progress: {
-                    if(task.smartLauncherItem && task.smartLauncherItem.progressVisible && task.smartLauncherItem.progress){
-                        return task.smartLauncherItem.progress / 100
+                    if(indicatorsFlow.task.smartLauncherItem && indicatorsFlow.task.smartLauncherItem.progressVisible && indicatorsFlow.task.smartLauncherItem.progress){
+                        return indicatorsFlow.task.smartLauncherItem.progress / 100
                     }
                     return 0
                 }
-                width: isVertical ? parent.width : parent.width * progress
-                height: isVertical ? parent.height * progress : parent.height
+                width: stateRect.isVertical ? parent.width : parent.width * progress
+                height: stateRect.isVertical ? parent.height * progress : parent.height
                 radius: parent.radius
-                color: plasmoid.configuration.indicatorProgressColor
+                color: Plasmoid.configuration.indicatorProgressColor
             }
         }
     }
@@ -147,90 +153,90 @@ Flow {
     states:[
         State {
             name: "bottom"
-            when: (plasmoid.configuration.indicatorOverride && plasmoid.configuration.indicatorLocation === 0)
-                || (!plasmoid.configuration.indicatorOverride && plasmoid.location === PlasmaCore.Types.BottomEdge && !plasmoid.configuration.indicatorReverse)
-                || (!plasmoid.configuration.indicatorOverride && plasmoid.location === PlasmaCore.Types.TopEdge && plasmoid.configuration.indicatorReverse)
-                || (plasmoid.location === PlasmaCore.Types.Floating && plasmoid.configuration.indicatorLocation === 0)
-                || (plasmoid.location === PlasmaCore.Types.Floating && !plasmoid.configuration.indicatorOverride && !plasmoid.configuration.indicatorReverse)
+            when: (Plasmoid.configuration.indicatorOverride && Plasmoid.configuration.indicatorLocation === 0)
+                || (!Plasmoid.configuration.indicatorOverride && Plasmoid.location === PlasmaCore.Types.BottomEdge && !Plasmoid.configuration.indicatorReverse)
+                || (!Plasmoid.configuration.indicatorOverride && Plasmoid.location === PlasmaCore.Types.TopEdge && Plasmoid.configuration.indicatorReverse)
+                || (Plasmoid.location === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorLocation === 0)
+                || (Plasmoid.location === PlasmaCore.Types.Floating && !Plasmoid.configuration.indicatorOverride && !Plasmoid.configuration.indicatorReverse)
 
             AnchorChanges {
-                target: indicator
+                target: indicatorsFlow
                 anchors{ top:undefined; bottom:parent.bottom; left:undefined; right:undefined;
                     horizontalCenter:parent.horizontalCenter; verticalCenter:undefined}
                 }
             PropertyChanges {
-                target: indicator
+                target: indicatorsFlow
                 width: undefined
-                height: plasmoid.configuration.indicatorSize
+                height: Plasmoid.configuration.indicatorSize
                 
                 anchors.topMargin: 0;
-                anchors.bottomMargin: plasmoid.configuration.indicatorEdgeOffset;
+                anchors.bottomMargin: Plasmoid.configuration.indicatorEdgeOffset;
                 anchors.leftMargin: 0;
                 anchors.rightMargin: 0;
             }
         },
         State {
             name: "left"
-            when: (plasmoid.configuration.indicatorOverride && plasmoid.configuration.indicatorLocation === 1)
-                || (!plasmoid.configuration.indicatorOverride && plasmoid.location === PlasmaCore.Types.LeftEdge && !plasmoid.configuration.indicatorReverse)
-                || (!plasmoid.configuration.indicatorOverride && plasmoid.location === PlasmaCore.Types.RightEdge && plasmoid.configuration.indicatorReverse)
-                || (plasmoid.location === PlasmaCore.Types.Floating && plasmoid.configuration.indicatorLocation === 1 && plasmoid.configuration.indicatorOverride)
+            when: (Plasmoid.configuration.indicatorOverride && Plasmoid.configuration.indicatorLocation === 1)
+                || (!Plasmoid.configuration.indicatorOverride && Plasmoid.location === PlasmaCore.Types.LeftEdge && !Plasmoid.configuration.indicatorReverse)
+                || (!Plasmoid.configuration.indicatorOverride && Plasmoid.location === PlasmaCore.Types.RightEdge && Plasmoid.configuration.indicatorReverse)
+                || (Plasmoid.location === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorLocation === 1 && Plasmoid.configuration.indicatorOverride)
 
             AnchorChanges {
-                target: indicator
+                target: indicatorsFlow
                 anchors{ top:undefined; bottom:undefined; left:parent.left; right:undefined;
                     horizontalCenter:undefined; verticalCenter:parent.verticalCenter}
             }
             PropertyChanges {
-                target: indicator
+                target: indicatorsFlow
                 height: undefined
-                width: plasmoid.configuration.indicatorSize
+                width: Plasmoid.configuration.indicatorSize
                 anchors.topMargin: 0;
                 anchors.bottomMargin: 0;
-                anchors.leftMargin: plasmoid.configuration.indicatorEdgeOffset;
+                anchors.leftMargin: Plasmoid.configuration.indicatorEdgeOffset;
                 anchors.rightMargin: 0;
             }
         },
         State {
             name: "right"
-            when: (plasmoid.configuration.indicatorOverride && plasmoid.configuration.indicatorLocation === 2)
-                || (!plasmoid.configuration.indicatorOverride && plasmoid.location === PlasmaCore.Types.RightEdge && !plasmoid.configuration.indicatorReverse)
-                || (!plasmoid.configuration.indicatorOverride && plasmoid.location === PlasmaCore.Types.LeftEdge && plasmoid.configuration.indicatorReverse)
-                || (plasmoid.location === PlasmaCore.Types.Floating && plasmoid.configuration.indicatorLocation === 2 && plasmoid.configuration.indicatorOverride)
+            when: (Plasmoid.configuration.indicatorOverride && Plasmoid.configuration.indicatorLocation === 2)
+                || (!Plasmoid.configuration.indicatorOverride && Plasmoid.location === PlasmaCore.Types.RightEdge && !Plasmoid.configuration.indicatorReverse)
+                || (!Plasmoid.configuration.indicatorOverride && Plasmoid.location === PlasmaCore.Types.LeftEdge && Plasmoid.configuration.indicatorReverse)
+                || (Plasmoid.location === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorLocation === 2 && Plasmoid.configuration.indicatorOverride)
 
             AnchorChanges {
-                target: indicator
+                target: indicatorsFlow
                 anchors{ top:undefined; bottom:undefined; left:undefined; right:parent.right;
                     horizontalCenter:undefined; verticalCenter:parent.verticalCenter}
             }
             PropertyChanges {
-                target: indicator
+                target: indicatorsFlow
                 height: undefined
-                width: plasmoid.configuration.indicatorSize
+                width: Plasmoid.configuration.indicatorSize
                 anchors.topMargin: 0;
                 anchors.bottomMargin: 0;
                 anchors.leftMargin: 0;
-                anchors.rightMargin: plasmoid.configuration.indicatorEdgeOffset;
+                anchors.rightMargin: Plasmoid.configuration.indicatorEdgeOffset;
             }
         },
         State {
             name: "top"
-            when: (plasmoid.configuration.indicatorOverride && plasmoid.configuration.indicatorLocation === 3)
-                || (!plasmoid.configuration.indicatorOverride && plasmoid.location === PlasmaCore.Types.TopEdge && !plasmoid.configuration.indicatorReverse)
-                || (!plasmoid.configuration.indicatorOverride && plasmoid.location === PlasmaCore.Types.BottomEdge && plasmoid.configuration.indicatorReverse)
-                || (plasmoid.location === PlasmaCore.Types.Floating && plasmoid.configuration.indicatorLocation === 3 && plasmoid.configuration.indicatorOverride)
-                || (plasmoid.location === PlasmaCore.Types.Floating && plasmoid.configuration.indicatorReverse && !plasmoid.configuration.indicatorOverride)
+            when: (Plasmoid.configuration.indicatorOverride && Plasmoid.configuration.indicatorLocation === 3)
+                || (!Plasmoid.configuration.indicatorOverride && Plasmoid.location === PlasmaCore.Types.TopEdge && !Plasmoid.configuration.indicatorReverse)
+                || (!Plasmoid.configuration.indicatorOverride && Plasmoid.location === PlasmaCore.Types.BottomEdge && Plasmoid.configuration.indicatorReverse)
+                || (Plasmoid.location === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorLocation === 3 && Plasmoid.configuration.indicatorOverride)
+                || (Plasmoid.location === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorReverse && !Plasmoid.configuration.indicatorOverride)
 
             AnchorChanges {
-                target: indicator
+                target: indicatorsFlow
                 anchors{ top:parent.top; bottom:undefined; left:undefined; right:undefined;
                     horizontalCenter:parent.horizontalCenter; verticalCenter:undefined}
             }
             PropertyChanges {
-                target: indicator
+                target: indicatorsFlow
                 width: undefined
-                height: plasmoid.configuration.indicatorSize
-                anchors.topMargin: plasmoid.configuration.indicatorEdgeOffset;
+                height: Plasmoid.configuration.indicatorSize
+                anchors.topMargin: Plasmoid.configuration.indicatorEdgeOffset;
                 anchors.bottomMargin: 0;
                 anchors.leftMargin: 0;
                 anchors.rightMargin: 0;

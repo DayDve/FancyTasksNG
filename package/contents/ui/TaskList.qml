@@ -6,10 +6,12 @@
 
 import QtQuick
 import QtQuick.Layouts
-import org.kde.plasma.plasmoid
 import "code/layoutmetrics.js" as LayoutMetrics
 
 GridLayout {
+    required property var tasks
+    required property var tasksModel
+
     property bool animating: false
 
     rowSpacing: tasks.plasmoid.configuration.taskSpacingSize

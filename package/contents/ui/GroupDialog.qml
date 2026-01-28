@@ -5,6 +5,8 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQml.Models
 
@@ -27,15 +29,20 @@ PlasmaCore.Dialog {
     readonly property real preferredWidth: Screen.width / 3
     readonly property real preferredHeight: Screen.height / 2
     readonly property real contentWidth: mainItem.width // No padding here to avoid text elide.
+    readonly property var visualParentItem: visualParent // Workaround for qmllint: visualParent is typed as QQuickItem which doesn't have "index"
 
     property /*PlasmaCore.ItemStatus*/int _oldAppletStatus: PlasmaCore.Types.UnknownStatus
 
+    required property var tasksModel
+    required property var backend
+    required property var tasks
+
     function findActiveTaskIndex(): void {
-        if (!tasksModel.activeTask) {
+        if (!groupDialog.tasksModel.activeTask) {
             return;
         }
         for (let i = 0; i < groupListView.count; i++) {
-            if (tasksModel.makeModelIndex(visualParent.index, i) === tasksModel.activeTask) {
+            if (groupDialog.tasksModel.makeModelIndex(groupDialog.visualParentItem.index, i) === groupDialog.tasksModel.activeTask) {
                 groupListView.positionViewAtIndex(i, ListView.Contain); // Prevent visual glitches
                 groupListView.currentIndex = i;
                 return;
@@ -49,6 +56,8 @@ PlasmaCore.Dialog {
         height: Math.min(groupDialog.preferredHeight, groupListView.maxHeight)
 
         target: groupListView
+        tasks: groupDialog.tasks
+        tasksModel: groupDialog.tasksModel
         handleWheelEvents: !scrollView.overflowing
         isGroupDialog: true
 
@@ -64,8 +73,8 @@ PlasmaCore.Dialog {
                 return;
             }
 
-            const parentModelIndex = tasksModel.makeModelIndex(groupDialog.visualParent.index);
-            const status = tasksModel.move(groupListView.currentIndex, insertAt, parentModelIndex);
+            const parentModelIndex = groupDialog.tasksModel.makeModelIndex(groupDialog.visualParentItem.index);
+            const status = groupDialog.tasksModel.move(groupListView.currentIndex, insertAt, parentModelIndex);
             if (!status) {
                 return;
             }
@@ -95,18 +104,19 @@ PlasmaCore.Dialog {
                     readonly property TextMetrics textMetrics: TextMetrics {}
                     property real maxTextWidth: 0
 
-                    model: tasksModel
-                    rootIndex: tasksModel.makeModelIndex(groupDialog.visualParent.index)
+                    model: groupDialog.tasksModel
+                    rootIndex: groupDialog.tasksModel.makeModelIndex(groupDialog.visualParentItem.index)
                     delegate: Task {
+                        id: taskDelegate
                         width: groupListView.width
                         visible: true
                         inPopup: true
-                        tasksRoot: tasks
+                        tasksRoot: groupDialog.tasks
                         readonly property bool isSubTask: true // TODO: check if is needed
 
                         ListView.onRemove: Qt.callLater(groupFilter.updateMaxTextWidth)
                         Connections {
-                            enabled: index < 20 // 20 is based on performance considerations.
+                            enabled: (taskDelegate.index < 20) // 20 is based on performance considerations.
 
                             function onLabelTextChanged(): void { // ListView.onAdd included
                                 if (groupFilter.maxTextWidth === 0) {
@@ -139,7 +149,7 @@ PlasmaCore.Dialog {
 
                 onCountChanged: {
                     if (count > 0) {
-                        backend.cancelHighlightWindows()
+                        groupDialog.backend.cancelHighlightWindows()
                     } else {
                         groupDialog.visible = false;
                     }

@@ -21,6 +21,8 @@ import org.kde.kirigami as Kirigami
 import org.kde.kwindowsystem
 import org.kde.plasma.private.mpris as Mpris
 
+import "code/singletones"
+
 ColumnLayout {
     id: root
     
@@ -30,9 +32,11 @@ ColumnLayout {
 
     required property var toolTipDelegate
     required property var tasksModel
-    
+    property var mpris2Model
+
     // FIX: Свойство для приема явного ID окна из делегата
     property var explicitWinId: undefined
+    property var pulseAudio
 
     HoverHandler {
         id: rootHover
@@ -41,6 +45,7 @@ ColumnLayout {
     required property int index
     required property var submodelIndex
     required property int appPid
+    property string appId: ""
     required property string display
     required property bool isMinimized
     required property bool isOnAllVirtualDesktops
@@ -48,6 +53,7 @@ ColumnLayout {
     required property list<string> activities
 
     readonly property string calculatedAppName: {
+        console.log("ToolTipInstance (" + index + ") Pid: " + appPid + " AppId: " + appId + " Url: " + toolTipDelegate.launcherUrl)
         if (toolTipDelegate.appName && toolTipDelegate.appName.length > 0) {
             return toolTipDelegate.appName;
         }
@@ -113,7 +119,64 @@ ColumnLayout {
         return text + counter;
     }
 
-    readonly property bool titleIncludesTrack: toolTipDelegate.playerData !== null && title.includes(toolTipDelegate.playerData.track)
+    // Media Player Data
+    readonly property var playerData: mpris2Model && mpris2Model.playerForLauncherUrl ? mpris2Model.playerForLauncherUrl(toolTipDelegate.launcherUrl, appPid) : null
+    readonly property bool titleIncludesTrack: playerData !== null && title.includes(playerData.track)
+
+    // Audio Streams
+    property var audioStreams: []
+    property bool delayAudioStreamIndicator: false
+    readonly property bool audioIndicatorsEnabled: Plasmoid.configuration.indicateAudioStreams
+    readonly property bool hasAudioStream: audioStreams.length > 0
+    readonly property bool muted: hasAudioStream && audioStreams.every(item => item.muted)
+
+    function updateAudioStreams(args) {
+        if (args && args.delay) {
+             delayAudioStreamIndicator = true;
+        }
+        var pa = root.pulseAudio.item;
+        if (!pa) {
+            audioStreams = [];
+            return;
+        }
+
+        // Check appid first for app using portal
+        // https://docs.pipewire.org/page_portal.html
+        // Check appid first for app using portal
+        // https://docs.pipewire.org/page_portal.html
+        var streams = pa.streamsForAppId(appId.replace(/\.desktop/, '')); 
+        if (!streams.length) {
+            streams = pa.streamsForPid(appPid);
+            if (streams.length) {
+                // pa.registerPidMatch(calculatedAppName); 
+            } else {
+                 if (!pa.hasPidMatch(calculatedAppName)) {
+                     streams = pa.streamsForAppName(calculatedAppName);
+                 }
+            }
+        }
+        audioStreams = streams;
+    }
+
+    function toggleMuted() {
+        if (muted) {
+            audioStreams.forEach(item => item.unmute());
+        } else {
+            audioStreams.forEach(item => item.mute());
+        }
+    }
+
+    Connections {
+        target: root.pulseAudio.item
+        ignoreUnknownSignals: true
+        function onStreamsChanged() {
+             root.updateAudioStreams({delay: true});
+        }
+    }
+
+    onAppPidChanged: updateAudioStreams({delay: false})
+    onAppIdChanged: updateAudioStreams({delay: false})
+    Component.onCompleted: updateAudioStreams({delay: false})
 
     spacing: Kirigami.Units.smallSpacing
 
@@ -284,6 +347,12 @@ ColumnLayout {
             active: !toolTipDelegate.isLauncher && !albumArtImage.visible && KWindowSystem.isPlatformWayland && root.index !== -1
             asynchronous: true
             source: "PipeWireThumbnail.qml"
+
+            Binding {
+                target: pipeWireLoader.item
+                property: "winId"
+                value: thumbnailSourceItem.winId
+            }
         }
 
         Loader {
@@ -321,18 +390,19 @@ ColumnLayout {
                 modelIndex: root.submodelIndex
                 winId: thumbnailSourceItem.winId
                 globalHovered: rootHover.hovered
+                tasksModel: root.tasksModel
             }
         }
     }
 
     Loader {
         id: playerController
-        active: toolTipDelegate.playerData && 
-                toolTipDelegate.playerData.canControl && 
+        active: root.playerData && 
+                root.playerData.canControl && 
                 root.index !== -1 &&
-                (toolTipDelegate.playerData.playbackStatus === Mpris.PlaybackStatus.Playing || 
-                 toolTipDelegate.playerData.playbackStatus === Mpris.PlaybackStatus.Paused || 
-                 (toolTipDelegate.playerData.track && toolTipDelegate.playerData.track.length > 0))
+                (root.playerData.playbackStatus === Mpris.PlaybackStatus.Playing || 
+                 root.playerData.playbackStatus === Mpris.PlaybackStatus.Paused || 
+                 (root.playerData.track && root.playerData.track.length > 0))
         asynchronous: false 
         visible: active
         Layout.fillWidth: true
@@ -340,12 +410,14 @@ ColumnLayout {
         Layout.leftMargin: header.Layout.margins
         Layout.rightMargin: header.Layout.margins
 
-        source: "PlayerController.qml"
-    }
+        sourceComponent: PlayerController {
+            playerData: root.playerData
+            isWin: toolTipDelegate.isWin
+        }
+    }    
 
     Loader {
-        active: toolTipDelegate.parentTask !== null && 
-            pulseAudio.item !== null && toolTipDelegate.parentTask.audioIndicatorsEnabled && toolTipDelegate.parentTask.hasAudioStream && root.index !== -1 
+        active: root.pulseAudio.item !== null && root.audioIndicatorsEnabled && root.hasAudioStream && root.index !== -1 
         asynchronous: false 
         visible: active
         Layout.fillWidth: true
@@ -366,29 +438,29 @@ ColumnLayout {
                 } else {
                     "audio-volume-high";
                 }
-                onClicked: toolTipDelegate.parentTask.toggleMuted()
-                checked: toolTipDelegate.parentTask.muted
+                onClicked: root.toggleMuted()
+                checked: root.muted
 
                 PlasmaComponents3.ToolTip {
-                    text: parent.checked ? i18nc("button to unmute app", "Unmute %1", toolTipDelegate.parentTask.appName) : i18nc("button to mute app", "Mute %1", toolTipDelegate.parentTask.appName)
+                    text: parent.checked ? Wrappers.i18nc("button to unmute app", "Unmute %1", root.calculatedAppName) : Wrappers.i18nc("button to mute app", "Mute %1", root.calculatedAppName)
                 }
             }
 
             PlasmaComponents3.Slider {
                 id: slider
                 readonly property int displayValue: Math.round(value / to * 100)
-                readonly property int loudestVolume: toolTipDelegate.parentTask.audioStreams.reduce((loudestVolume, stream) => Math.max(loudestVolume, stream.volume), 0)
+                readonly property int loudestVolume: root.audioStreams.reduce((loudestVolume, stream) => Math.max(loudestVolume, stream.volume), 0)
 
                 Layout.fillWidth: true
-                from: pulseAudio.item.minimalVolume
-                to: pulseAudio.item.normalVolume
+                from: root.pulseAudio.item.minimalVolume
+                to: root.pulseAudio.item.normalVolume
                 value: loudestVolume
                 stepSize: to / 100
-                opacity: toolTipDelegate.parentTask.muted ? 0.5 : 1
+                opacity: root.audioStreams.every(stream => stream.muted) ? 0.5 : 1
 
-                Accessible.name: i18nc("Accessibility data on volume slider", "Adjust volume for %1", toolTipDelegate.parentTask.appName)
+                Accessible.name: Wrappers.i18nc("Accessibility data on volume slider", "Adjust volume for %1", root.calculatedAppName)
 
-                onMoved: toolTipDelegate.parentTask.audioStreams.forEach(stream => {
+                onMoved: root.audioStreams.forEach(stream => {
                     let v = Math.max(from, value);
                     if (v > 0 && loudestVolume > 0) {
                         v = Math.min(Math.round(stream.volume / loudestVolume * v), to);
@@ -402,12 +474,12 @@ ColumnLayout {
                 Layout.minimumWidth: percentMetrics.advanceWidth
                 horizontalAlignment: Qt.AlignRight
             
-                text: i18nc("volume percentage", "%1%", slider.displayValue)
+                text: Wrappers.i18nc("volume percentage", "%1%", slider.displayValue)
                
                 textFormat: Text.PlainText
                 TextMetrics {
                     id: percentMetrics
-                    text: i18nc("only used for sizing, should be widest possible string", "100%")
+                    text: Wrappers.i18nc("only used for sizing, should be widest possible string", "100%")
                 }
             }
         }
@@ -422,22 +494,22 @@ ColumnLayout {
                     return virtualDesktopInfo.desktopNames[index];
                 });
 
-                subTextEntries.push(i18nc("Comma-separated list of desktops", "On %1", virtualDesktopNameList.join(", ")));
+                subTextEntries.push(Wrappers.i18nc("Comma-separated list of desktops", "On %1", virtualDesktopNameList.join(", ")));
             } else if (isOnAllVirtualDesktops) {
-                subTextEntries.push(i18nc("Comma-separated list of desktops", "Pinned to all desktops"));
+                subTextEntries.push(Wrappers.i18nc("Comma-separated list of desktops", "Pinned to all desktops"));
             }
         }
 
         if (activities.length === 0 && activityInfo.numberOfRunningActivities > 1) {
-            subTextEntries.push(i18nc("Which virtual desktop a window is currently on", "Available on all activities"));
+            subTextEntries.push(Wrappers.i18nc("Which virtual desktop a window is currently on", "Available on all activities"));
         } else if (activities.length > 0) {
             const activityNames = activities.filter(activity => activity !== activityInfo.currentActivity).map(activity => activityInfo.activityName(activity)).filter(activityName => activityName !== "");
             if (Plasmoid.configuration.showOnlyCurrentActivity) {
                 if (activityNames.length > 0) {
-                    subTextEntries.push(i18nc("Activities a window is currently on (apart from the current one)", "Also available on %1", activityNames.join(", ")));
+                    subTextEntries.push(Wrappers.i18nc("Activities a window is currently on (apart from the current one)", "Also available on %1", activityNames.join(", ")));
                 }
             } else if (activityNames.length > 0) {
-                subTextEntries.push(i18nc("Which activities a window is currently on", "Available on %1", activityNames.join(", ")));
+                subTextEntries.push(Wrappers.i18nc("Which activities a window is currently on", "Available on %1", activityNames.join(", ")));
             }
         }
 

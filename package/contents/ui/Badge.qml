@@ -8,6 +8,7 @@ import QtQuick
 
 import org.kde.plasma.components as PlasmaComponents3
 import org.kde.kirigami as Kirigami
+import "code/singletones"
 
 // This top-level item is an opaque background that goes behind the colored
 // background, for contrast. It's not an Item since that it would be square,
@@ -49,9 +50,9 @@ Rectangle {
         minimumPointSize: 5
         text: {
             if (badgeRect.number < 0) {
-                return i18nc("Invalid number of new messages, overlay, keep short", "—");
+                return Wrappers.i18nc("Invalid number of new messages, overlay, keep short", "—");
             } else if (badgeRect.number > 9999) {
-                return i18nc("Over 9999 new messages, overlay, keep short", "9,999+");
+                return Wrappers.i18nc("Over 9999 new messages, overlay, keep short", "9,999+");
             } else {
                 return badgeRect.number.toLocaleString(Qt.locale(), 'f', 0);
             }

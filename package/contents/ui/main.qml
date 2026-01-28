@@ -4,9 +4,11 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
+
 
 import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PlasmaComponents3
@@ -31,12 +33,12 @@ PlasmoidItem {
 
     readonly property bool shouldShrinkToZero: tasksModel.count === 0
     readonly property bool vertical: Plasmoid.formFactor === PlasmaCore.Types.Vertical
-    readonly property bool iconsOnly: plasmoid.configuration.iconOnly
+    readonly property bool iconsOnly: Plasmoid.configuration.iconOnly
 
     property Task toolTipOpenedByClick
     property Task toolTipAreaItem
 
-    property Item currentHoveredTask: null
+    property Task currentHoveredTask: null
     property bool isTooltipHovered: false
 
     Timer {
@@ -56,6 +58,12 @@ PlasmoidItem {
     property bool needLayoutRefresh: false
     property var taskClosedWithMouseMiddleButton: []
     property alias taskList: taskList
+    property alias effectWatcher: effectWatcher
+    property alias pulseAudio: pulseAudio
+    property alias mpris2Source: mpris2Source
+    property alias dragHelper: dragHelper
+    property alias taskFrame: taskFrame
+    property alias busyIndicator: busyIndicator
 
     preferredRepresentation: fullRepresentation
     Plasmoid.constraintHints: Plasmoid.CanFillArea
@@ -129,9 +137,10 @@ PlasmoidItem {
         readonly property int logicalLauncherCount: {
             if (Plasmoid.configuration.separateLaunchers) return launcherCount;
             let startupsWithLaunchers = 0;
+            const isStartup = (item) => item && item["isStartup"] && item["hasLauncher"];
             for (let i = 0; i < taskRepeater.count; ++i) {
                 const item = taskRepeater.itemAt(i);
-                if (item?.model?.IsStartup && item.model.HasLauncher) ++startupsWithLaunchers;
+                if (isStartup(item)) ++startupsWithLaunchers;
             }
             return launcherCount + startupsWithLaunchers;
         }
@@ -149,7 +158,7 @@ PlasmoidItem {
         separateLaunchers: !tasks.iconsOnly && !Plasmoid.configuration.separateLaunchers && Plasmoid.configuration.sortingStrategy === 1 ? false : true
         groupMode: groupModeEnumValue(Plasmoid.configuration.groupingStrategy)
         groupInline: !Plasmoid.configuration.groupPopups && !tasks.iconsOnly
-        groupingWindowTasksThreshold: (Plasmoid.configuration.onlyGroupWhenFull && !tasks.iconsOnly ? LayoutMetrics.optimumCapacity(width, height) + 1 : -1)
+        groupingWindowTasksThreshold: (Plasmoid.configuration.onlyGroupWhenFull && !tasks.iconsOnly ? LayoutMetrics.optimumCapacity(tasks.width, tasks.height) + 1 : -1)
 
         onLauncherListChanged: Plasmoid.configuration.launchers = launcherList;
         onGroupingAppIdBlacklistChanged: Plasmoid.configuration.groupingAppIdBlacklist = groupingAppIdBlacklist;
@@ -183,7 +192,7 @@ PlasmoidItem {
 
     readonly property TaskManagerApplet.Backend backend: TaskManagerApplet.Backend {
         id: backend
-        onAddLauncher: tasks.addLauncher(url);
+        onAddLauncher: (url) => tasks.addLauncher(url);
     }
 
     DBus.DBusServiceWatcher {
@@ -198,7 +207,7 @@ PlasmoidItem {
             running: true
             onTriggered: {
                 const task = parent as Task;
-                if (task) tasksModel.requestPublishDelegateGeometry(task.modelIndex(), backend.globalRect(task), task);
+                if (task) tasks.tasksModel.requestPublishDelegateGeometry(task.modelIndex(), backend.globalRect(task), task);
                 destroy();
             }
         }
@@ -223,6 +232,10 @@ PlasmoidItem {
 
     Item {
         anchors.fill: parent
+
+        HoverHandler {
+            id: rootHoverHandler
+        }
         TaskManager.VirtualDesktopInfo { id: virtualDesktopInfo }
         TaskManager.ActivityInfo {
             id: activityInfo
@@ -231,8 +244,8 @@ PlasmoidItem {
 
         Loader {
             id: pulseAudio
-            sourceComponent: pulseAudioComponent
-            active: pulseAudioComponent.status === Component.Ready
+            sourceComponent: tasks.pulseAudioComponent
+            active: tasks.pulseAudioComponent.status === Component.Ready
         }
 
         Timer {
@@ -286,14 +299,17 @@ PlasmoidItem {
             id: mouseHandler
             anchors.fill: parent
             target: taskList
+            tasks: tasks
+            tasksModel: tasksModel
             onUrlsDropped: urls => {
                 const createLaunchers = urls.every(item => backend.isApplication(item));
                 if (createLaunchers) {
-                    urls.forEach(item => addLauncher(item));
+                    urls.forEach(item => tasks.addLauncher(item));
                     return;
                 }
                 if (!hoveredItem) return;
-                tasksModel.requestOpenUrls(hoveredItem.modelIndex(), urls);
+                const task = hoveredItem as Task;
+                tasksModel.requestOpenUrls(task.modelIndex(), urls);
             }
         }
 
@@ -311,14 +327,16 @@ PlasmoidItem {
                 default: return Qt.TopEdge;
                 }
             }
-            LayoutMirroring.enabled: tasks.shouldBeMirrored(Plasmoid.configuration.reverseMode, Qt.application.layoutDirection, vertical)
+            LayoutMirroring.enabled: tasks.shouldBeMirrored(Plasmoid.configuration.reverseMode, Qt.locale().textDirection, tasks.vertical)
             anchors { left: parent.left; top: parent.top }
             height: taskList.childrenRect.height
             width: taskList.childrenRect.width
 
             TaskList {
                 id: taskList
-                LayoutMirroring.enabled: tasks.shouldBeMirrored(Plasmoid.configuration.reverseMode, Qt.application.layoutDirection, vertical)
+                tasks: tasks
+                tasksModel: tasksModel
+                LayoutMirroring.enabled: tasks.shouldBeMirrored(Plasmoid.configuration.reverseMode, Qt.locale().textDirection, tasks.vertical)
                 anchors { left: parent.left; top: parent.top }
                 readonly property real widthOccupation: taskRepeater.count / columns
                 readonly property real heightOccupation: taskRepeater.count / rows
@@ -333,10 +351,11 @@ PlasmoidItem {
                     id: taskRepeater
                     delegate: Task { tasksRoot: tasks }
                     onItemRemoved: (index, item) => {
-                        if (tasks.containsMouse && index !== taskRepeater.count && item.model.WinIdList.length > 0 && taskClosedWithMouseMiddleButton.includes(item.winIdList[0])) {
-                            needLayoutRefresh = true;
+                        const task = item as Task;
+                        if (rootHoverHandler.hovered && index !== taskRepeater.count && task.model.WinIdList.length > 0 && tasks.taskClosedWithMouseMiddleButton.includes(task.model.WinIdList[0])) {
+                            tasks.needLayoutRefresh = true;
                         }
-                        taskClosedWithMouseMiddleButton = [];
+                        tasks.taskClosedWithMouseMiddleButton = [];
                     }
                 }
             }
@@ -352,11 +371,19 @@ PlasmoidItem {
     function removeLauncher(url: url): void { if (Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable) tasksModel.requestRemoveLauncher(url); }
     function activateTaskAtIndex(index: var): void {
         if (typeof index !== "number") return;
-        const task = taskRepeater.itemAt(index);
+        const task = taskRepeater.itemAt(index) as Task;
         if (task) TaskTools.activateTask(task.modelIndex(), task.model, null, task, Plasmoid, this, effectWatcher.registered);
     }
     function createContextMenu(rootTask, modelIndex, args = {}) {
-        const initialArgs = Object.assign(args, { visualParent: rootTask, modelIndex, mpris2Source, backend });
+        const initialArgs = Object.assign(args, {
+            visualParent: rootTask,
+            modelIndex,
+            mpris2Source,
+            backend,
+            tasksModel,
+            virtualDesktopInfo,
+            activityInfo
+        });
         return contextMenuComponent.createObject(rootTask, initialArgs);
     }
     function shouldBeMirrored(reverseMode, layoutDirection, vertical): bool {
@@ -401,6 +428,8 @@ PlasmoidItem {
 
                 parentTask: tasks.currentHoveredTask
                 tasksModel: tasks.tasksModel
+                mpris2Model: mpris2Source
+                pulseAudio: pulseAudio
                 
                 readonly property var taskModel: parentTask ? parentTask.model : null
                 
@@ -418,8 +447,8 @@ PlasmoidItem {
                 virtualDesktops: taskModel ? taskModel.VirtualDesktops : []
                 isOnAllVirtualDesktops: taskModel ? taskModel.IsOnAllVirtualDesktops : false
                 activities: taskModel ? taskModel.Activities : []
-                smartLauncherCountVisible: parentTask && parentTask.smartLauncherItem ? parentTask.smartLauncherItem.countVisible : false
-                smartLauncherCount: smartLauncherCountVisible ? parentTask.smartLauncherItem.count : 0
+                smartLauncherCountVisible: parentTask && parentTask.smartLauncherItem ? parentTask.smartLauncherItem["countVisible"] : false
+                smartLauncherCount: smartLauncherCountVisible ? parentTask.smartLauncherItem["count"] : 0
             }
         }
     }

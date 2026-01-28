@@ -13,12 +13,15 @@ import org.kde.plasma.plasmoid
 KSvg.SvgItem {
     id: arrow
 
+    required property var taskModel
+    required property Item iconBox
+
     anchors {
         bottom: arrow.parent.bottom
         horizontalCenter: iconBox.horizontalCenter
     }
 
-    visible: parent.model.IsGroupParent
+    visible: taskModel.IsGroupParent
 
     states: [
         State {

@@ -15,6 +15,8 @@ import "code/tools.js" as TaskTools
 T.ProgressBar {
     id: control
 
+    property var task
+
     implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset,
                             implicitContentWidth + leftPadding + rightPadding)
     implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset,
@@ -25,14 +27,14 @@ T.ProgressBar {
 
     from: 0
     to: 100
-    value: task.smartLauncherItem.progress
+    value: task?.smartLauncherItem?.progress ?? 0
 
     contentItem: Item {
         clip: true
 
         KSvg.FrameSvgItem {
             id: progressFrame
-            enabledBorders: plasmoid.configuration.useBorders ? 1 | 2 | 4 | 8 : 0
+            enabledBorders: Plasmoid.configuration.useBorders ? 1 | 2 | 4 | 8 : 0
             anchors.left: parent.left
             width: parent.width * control.position
             height: parent.height

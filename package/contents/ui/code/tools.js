@@ -212,5 +212,10 @@ function createGroupDialog(visualParent, tasks) {
         return;
     }
 
-    tasks.groupDialog = tasks.groupDialogComponent.createObject(tasks, { visualParent });
+    tasks.groupDialog = tasks.groupDialogComponent.createObject(tasks, {
+        visualParent,
+        tasksModel: tasks.tasksModel,
+        backend: tasks.backend,
+        tasks: tasks
+    });
 }

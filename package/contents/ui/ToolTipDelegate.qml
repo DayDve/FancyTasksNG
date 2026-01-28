@@ -26,8 +26,13 @@ Loader {
     required property Task parentTask
     required property var rootIndex
     property var tasksModel
+    property var mpris2Model
+    property var pulseAudio
     
-    readonly property bool containsMouse: item && item.isHovered
+    function getHovered(target) {
+        return target && target.isHovered;
+    }
+    readonly property bool containsMouse: getHovered(item)
 
     property string appName
     property int pidParent
@@ -48,12 +53,16 @@ Loader {
 
     readonly property bool isVerticalPanel: Plasmoid.formFactor === PlasmaCore.Types.Vertical
     readonly property int tooltipInstanceMaximumWidth: Kirigami.Units.gridUnit * 14
-    readonly property Mpris.PlayerContainer playerData: mpris2Source.playerForLauncherUrl(launcherUrl, pidParent)
+
+    readonly property Mpris.PlayerContainer playerData: mpris2Model && mpris2Model.playerForLauncherUrl ? mpris2Model.playerForLauncherUrl(launcherUrl, pidParent) : null
     
     // Using showToolTips as the toggle for "Show Thumbnails"
     readonly property bool showThumbnails: Plasmoid.configuration.showToolTips
 
-    LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
+    function getAppLayoutDirection(app) {
+        return app.layoutDirection;
+    }
+    LayoutMirroring.enabled: getAppLayoutDirection(Qt.application) === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
 
     active: rootIndex !== undefined
@@ -68,6 +77,7 @@ Loader {
             index: 0 
             submodelIndex: toolTipDelegate.rootIndex
             appPid: toolTipDelegate.pidParent
+            appId: (toolTipDelegate.parentTask && toolTipDelegate.parentTask.appId) ? toolTipDelegate.parentTask.appId : "" // Fallback
             display: toolTipDelegate.display
             isMinimized: toolTipDelegate.isMinimized
             isOnAllVirtualDesktops: toolTipDelegate.isOnAllVirtualDesktops
@@ -76,6 +86,9 @@ Loader {
             
             tasksModel: toolTipDelegate.tasksModel
             toolTipDelegate: toolTipDelegate
+
+            mpris2Model: toolTipDelegate.mpris2Model
+            pulseAudio: toolTipDelegate.pulseAudio
         }
     }
 
@@ -92,17 +105,19 @@ Loader {
 
             contentWidth: groupToolTipListView.width
             contentHeight: groupToolTipListView.height
+            implicitHeight: groupToolTipListView.height
+            implicitWidth: groupToolTipListView.width
 
             ListView {
                 id: groupToolTipListView
 
                 width: delegateModel.estimatedWidth
-                height: delegateModel.estimatedHeight
+                height: Math.max(delegateModel.estimatedHeight, contentHeight) // Allow growing but keep min size
 
                 model: delegateModel
                 
                 // FORCE VERTICAL LIST if thumbnails are disabled
-                orientation: (!toolTipDelegate.showThumbnails || isVerticalPanel) ?
+                orientation: (!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ?
                     ListView.Vertical : ListView.Horizontal
                     
                 reuseItems: true
@@ -147,6 +162,7 @@ Loader {
 
                     display: model.display !== undefined ? model.display : ""
                     appPid: model.AppPid !== undefined ? model.AppPid : 0
+                    appId: model.AppId !== undefined ? model.AppId : ""
                     isMinimized: model.IsMinimized !== undefined ? model.IsMinimized : false
                     isOnAllVirtualDesktops: model.IsOnAllVirtualDesktops !== undefined ? model.IsOnAllVirtualDesktops : false
                     virtualDesktops: model.VirtualDesktops !== undefined ? model.VirtualDesktops : []
@@ -155,6 +171,9 @@ Loader {
                     submodelIndex: tasksModel.makeModelIndex(toolTipDelegate.rootIndex.row, index)
                     tasksModel: toolTipDelegate.tasksModel
                     toolTipDelegate: toolTipDelegate
+
+                    mpris2Model: toolTipDelegate.mpris2Model
+                    pulseAudio: toolTipDelegate.pulseAudio
                 }
             }
         }
