@@ -456,7 +456,7 @@ PlasmoidItem {
     // 2. DIALOG FOR PINNED APPS
     PlasmaCore.Dialog {
         id: pinnedTooltipDialog
-        visualParent: tasks.currentHoveredTask
+        visualParent: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : null
         location: Plasmoid.location
         type: PlasmaCore.Dialog.Tooltip
 
