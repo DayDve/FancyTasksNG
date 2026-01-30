@@ -246,6 +246,7 @@ PlasmoidItem {
             id: pulseAudio
             sourceComponent: tasks.pulseAudioComponent
             active: tasks.pulseAudioComponent.status === Component.Ready
+            onLoaded: item.backend = backend
         }
 
         Timer {
@@ -449,6 +450,9 @@ PlasmoidItem {
                 activities: taskModel ? taskModel.Activities : []
                 smartLauncherCountVisible: parentTask && parentTask.smartLauncherItem ? parentTask.smartLauncherItem["countVisible"] : false
                 smartLauncherCount: smartLauncherCountVisible ? parentTask.smartLauncherItem["count"] : 0
+                
+                isPlayingAudio: taskModel ? (taskModel.IsPlayingAudio === true) : false
+                isMuted: taskModel ? (taskModel.IsMuted === true) : false
             }
         }
     }

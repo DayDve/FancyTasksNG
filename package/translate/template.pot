@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/alexankitty/FancyTasks\n"
-"POT-Creation-Date: 2026-01-28 12:01+0200\n"
+"POT-Creation-Date: 2026-01-29 13:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -659,7 +659,7 @@ msgctxt "Open or bring to the front window of media player app"
 msgid "Restore"
 msgstr ""
 
-#: ../contents/ui/ContextMenu.qml
+#: ../contents/ui/ContextMenu.qml ../contents/ui/ToolTipInstance.qml
 msgid "Mute"
 msgstr ""
 
@@ -793,31 +793,6 @@ msgstr ""
 
 #: ../contents/ui/Task.qml
 msgid "Activate %1"
-msgstr ""
-
-#: ../contents/ui/ToolTipInstance.qml
-msgctxt "button to unmute app"
-msgid "Unmute %1"
-msgstr ""
-
-#: ../contents/ui/ToolTipInstance.qml
-msgctxt "button to mute app"
-msgid "Mute %1"
-msgstr ""
-
-#: ../contents/ui/ToolTipInstance.qml
-msgctxt "Accessibility data on volume slider"
-msgid "Adjust volume for %1"
-msgstr ""
-
-#: ../contents/ui/ToolTipInstance.qml
-msgctxt "volume percentage"
-msgid "%1%"
-msgstr ""
-
-#: ../contents/ui/ToolTipInstance.qml
-msgctxt "only used for sizing, should be widest possible string"
-msgid "100%"
 msgstr ""
 
 #: ../contents/ui/ToolTipInstance.qml

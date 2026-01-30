@@ -11,7 +11,6 @@ pragma ComponentBehavior: Bound
 
 import QtQml.Models
 import QtQuick
-import QtQuick.Layouts
 
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents3
@@ -50,6 +49,8 @@ Loader {
     property list<string> activities: []
     property bool smartLauncherCountVisible
     property int smartLauncherCount
+    property bool isPlayingAudio
+    property bool isMuted
 
     readonly property bool isVerticalPanel: Plasmoid.formFactor === PlasmaCore.Types.Vertical
     readonly property int tooltipInstanceMaximumWidth: Kirigami.Units.gridUnit * 14
@@ -89,6 +90,9 @@ Loader {
 
             mpris2Model: toolTipDelegate.mpris2Model
             pulseAudio: toolTipDelegate.pulseAudio
+            
+            isPlayingAudio: toolTipDelegate.isPlayingAudio
+            isMuted: toolTipDelegate.isMuted
         }
     }
 
@@ -98,6 +102,9 @@ Loader {
         PlasmaComponents3.ScrollView {
             id: scrollView
             readonly property alias isHovered: groupHover.hovered
+            
+            // Disable clipping to allow media controls to overflow if height calc is slightly off
+            clip: false
 
             HoverHandler {
                 id: groupHover
@@ -113,7 +120,7 @@ Loader {
 
                 width: delegateModel.estimatedWidth
                 height: Math.max(delegateModel.estimatedHeight, contentHeight) // Allow growing but keep min size
-
+ 
                 model: delegateModel
                 
                 // FORCE VERTICAL LIST if thumbnails are disabled
@@ -123,7 +130,7 @@ Loader {
                 reuseItems: true
                 spacing: Kirigami.Units.gridUnit
                 
-                clip: true
+                clip: false
             }
 
             DelegateModel {
@@ -135,8 +142,8 @@ Loader {
                 readonly property real screenRatio: Screen.width / Screen.height
                 
                 // If thumbnails disabled -> height is 0
-                readonly property real instanceThumbHeight: toolTipDelegate.showThumbnails ? 
-                    (toolTipDelegate.tooltipInstanceMaximumWidth / screenRatio) : 0
+                readonly property int instanceThumbHeight: toolTipDelegate.showThumbnails ? 
+                    Math.round(toolTipDelegate.tooltipInstanceMaximumWidth / screenRatio) : 0
                 
                 readonly property real singleItemHeight: instanceThumbHeight + (Kirigami.Units.gridUnit * 3)
 
@@ -149,12 +156,10 @@ Loader {
                 onRootIndexChanged: groupToolTipListView.positionViewAtBeginning()
 
                 delegate: ToolTipInstance {
-                    // FIX: Объявляем model как required property, чтобы Qt знал о ней
                     required property var model
                     
                     width: toolTipDelegate.tooltipInstanceMaximumWidth
                     
-                    // PASSING DATA
                     index: index 
                     
                     // FIX: Берем ID окна из модели текущей задачи
@@ -168,6 +173,9 @@ Loader {
                     virtualDesktops: model.VirtualDesktops !== undefined ? model.VirtualDesktops : []
                     activities: model.Activities !== undefined ? model.Activities : []
                     
+                    isPlayingAudio: model.IsPlayingAudio !== undefined ? model.IsPlayingAudio : false
+                    isMuted: model.IsMuted !== undefined ? model.IsMuted : false
+
                     submodelIndex: tasksModel.makeModelIndex(toolTipDelegate.rootIndex.row, index)
                     tasksModel: toolTipDelegate.tasksModel
                     toolTipDelegate: toolTipDelegate

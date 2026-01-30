@@ -34,9 +34,9 @@ ColumnLayout {
     required property var tasksModel
     property var mpris2Model
 
-    // FIX: Свойство для приема явного ID окна из делегата
     property var explicitWinId: undefined
     property var pulseAudio
+    
 
     HoverHandler {
         id: rootHover
@@ -53,7 +53,7 @@ ColumnLayout {
     required property list<string> activities
 
     readonly property string calculatedAppName: {
-        console.log("ToolTipInstance (" + index + ") Pid: " + appPid + " AppId: " + appId + " Url: " + toolTipDelegate.launcherUrl)
+        // console.log("ToolTipInstance (" + index + ") Pid: " + appPid + " AppId: " + appId + " Url: " + toolTipDelegate.launcherUrl)
         if (toolTipDelegate.appName && toolTipDelegate.appName.length > 0) {
             return toolTipDelegate.appName;
         }
@@ -120,15 +120,33 @@ ColumnLayout {
     }
 
     // Media Player Data
-    readonly property var playerData: mpris2Model && mpris2Model.playerForLauncherUrl ? mpris2Model.playerForLauncherUrl(toolTipDelegate.launcherUrl, appPid) : null
-    readonly property bool titleIncludesTrack: playerData !== null && title.includes(playerData.track)
+    readonly property var playerData: {
+        if (!mpris2Model) return null;
+        if (!mpris2Model.playerForLauncherUrl) return null;
+        const player = mpris2Model.playerForLauncherUrl(toolTipDelegate.launcherUrl, appPid);
+        return player;
+    }
+    readonly property bool titleIncludesTrack: playerData && playerData.track && title.includes(playerData.track)
+
+    required property bool isPlayingAudio
+    required property bool isMuted
 
     // Audio Streams
     property var audioStreams: []
     property bool delayAudioStreamIndicator: false
     readonly property bool audioIndicatorsEnabled: Plasmoid.configuration.indicateAudioStreams
     readonly property bool hasAudioStream: audioStreams.length > 0
-    readonly property bool muted: hasAudioStream && audioStreams.every(item => item.muted)
+    // Use the model's IsMuted role as the primary source of truth for the initial state,
+    // but check the stream's state for live updates.
+    readonly property bool muted: isMuted || (hasAudioStream && audioStreams.every(item => item.muted))
+    readonly property bool playingAudio: hasAudioStream && audioStreams.some(item => !item.corked)
+
+    Timer {
+        id: streamClearTimer
+        interval: 1000
+        repeat: false
+        onTriggered: root.audioStreams = []
+    }
 
     function updateAudioStreams(args) {
         if (args && args.delay) {
@@ -136,26 +154,37 @@ ColumnLayout {
         }
         var pa = root.pulseAudio.item;
         if (!pa) {
+            streamClearTimer.stop();
             audioStreams = [];
             return;
         }
 
         // Check appid first for app using portal
-        // https://docs.pipewire.org/page_portal.html
-        // Check appid first for app using portal
-        // https://docs.pipewire.org/page_portal.html
         var streams = pa.streamsForAppId(appId.replace(/\.desktop/, '')); 
         if (!streams.length) {
             streams = pa.streamsForPid(appPid);
-            if (streams.length) {
-                // pa.registerPidMatch(calculatedAppName); 
+        }
+        
+        if (streams.length > 0) {
+            var activeKey = appPid;
+            var savedVol = pa.getCachedVolume(activeKey);
+            
+            var currentMax = streams.reduce((max, s) => Math.max(max, s.volume), 0);
+            var seemsReset = (currentMax > 60000 && savedVol > 0 && Math.abs(currentMax - savedVol) > 2000);
+
+            if ((streamClearTimer.running || seemsReset) && savedVol > 0) {
+                 streams.forEach(s => s.setVolume(savedVol));
+            }
+
+            streamClearTimer.stop();
+            audioStreams = streams;
+        } else {
+            if (audioStreams.length > 0) {
+                streamClearTimer.restart();
             } else {
-                 if (!pa.hasPidMatch(calculatedAppName)) {
-                     streams = pa.streamsForAppName(calculatedAppName);
-                 }
+                audioStreams = []; 
             }
         }
-        audioStreams = streams;
     }
 
     function toggleMuted() {
@@ -271,23 +300,22 @@ ColumnLayout {
         id: thumbnailSourceItem
 
         readonly property int targetWidth: Kirigami.Units.gridUnit * 14
-        readonly property int targetHeight: targetWidth / (Screen.width / Screen.height)
+        readonly property int targetHeight: Math.round(targetWidth / (Screen.width / Screen.height))
 
         Layout.preferredWidth: targetWidth
         Layout.preferredHeight: targetHeight
 
         Layout.alignment: Qt.AlignCenter
-        clip: true
+        clip: false
         
         visible: toolTipDelegate.isWin && Plasmoid.configuration.showToolTips
 
-        // FIX: Использование явного ID если он передан, иначе fallback (хотя explicitWinId теперь будет всегда для групп)
         readonly property var winId: explicitWinId !== undefined ?
             explicitWinId : (toolTipDelegate.isWin ? toolTipDelegate.windows[root.index] : undefined)
 
         PlasmaExtras.Highlight {
             anchors.fill: hoverHandler 
-            visible: rootHover.hovered
+            visible: rootHover.hovered || controlsHoverArea.containsMouse || (overlayControlsLoader.item && overlayControlsLoader.item.isHovered)
             pressed: (hoverHandler.item as MouseArea)?.containsPress ?? false
             hovered: true
         }
@@ -393,96 +421,181 @@ ColumnLayout {
                 tasksModel: root.tasksModel
             }
         }
+
+        MouseArea {
+            id: controlsHoverArea
+            anchors.fill: parent
+            hoverEnabled: true
+            preventStealing: false
+            propagateComposedEvents: true
+            acceptedButtons: Qt.NoButton
+            z: 2000
+        }
+
+        // Overlay Media Controls
+        Loader {
+            id: overlayControlsLoader
+            active: toolTipDelegate.showThumbnails && root.delayedControlsActive
+            visible: active
+            
+            z: 2002 
+            
+            anchors.bottom: hoverHandler.bottom
+            anchors.horizontalCenter: hoverHandler.horizontalCenter
+            anchors.margins: Kirigami.Units.smallSpacing
+            width: hoverHandler.width - (anchors.margins * 2)
+            
+            opacity: (controlsHoverArea.containsMouse || (item && item.isHovered)) ? 1.0 : 0.0
+            Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
+            
+            sourceComponent: Item { 
+                 
+                 readonly property Image source: albumArtImage
+                 width: overlayControlsLoader.width
+                 height: controlsColumn.height + (Kirigami.Units.smallSpacing * 2)
+                
+                readonly property bool isHovered: overlayHover.hovered
+                readonly property bool childrenVisible: controlsColumn.children.some(child => child.visible)
+
+                HoverHandler {
+                    id: overlayHover
+                }
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: Qt.rgba(0, 0, 0, 0.6)
+                    radius: Kirigami.Units.smallSpacing
+                }
+                
+                ColumnLayout {
+                    id: controlsColumn
+                    anchors.centerIn: parent
+                    width: parent.width - (Kirigami.Units.smallSpacing * 2)
+                    
+                    Loader {
+                        sourceComponent: mediaControlsComponent
+                        Layout.fillWidth: true
+                    }
+                }
+            }
+        }
+    }
+    
+    readonly property bool showPlayerControls: index !== -1 && playerData && playerData.canControl && 
+        (toolTipDelegate.windows.length === 1 || titleIncludesTrack) &&
+        (playerData.playbackStatus === Mpris.PlaybackStatus.Playing || 
+         playerData.playbackStatus === Mpris.PlaybackStatus.Paused || 
+         (playerData.track && playerData.track.length > 0))
+
+    readonly property bool showVolumeControls: index !== -1 && pulseAudio.item !== null && audioIndicatorsEnabled && (isPlayingAudio || hasAudioStream)
+    
+    property bool controlsAreEffective: showPlayerControls || showVolumeControls
+    property bool delayedControlsActive: false
+    
+    onControlsAreEffectiveChanged: {
+        if (controlsAreEffective) {
+            controlsHideTimer.stop();
+            delayedControlsActive = true;
+        } else {
+            controlsHideTimer.restart();
+        }
+    }
+    
+    Timer {
+        id: controlsHideTimer
+        interval: 1000
+        repeat: false
+        onTriggered: delayedControlsActive = false
     }
 
-    Loader {
-        id: playerController
-        active: root.playerData && 
-                root.playerData.canControl && 
-                root.index !== -1 &&
-                (root.playerData.playbackStatus === Mpris.PlaybackStatus.Playing || 
-                 root.playerData.playbackStatus === Mpris.PlaybackStatus.Paused || 
-                 (root.playerData.track && root.playerData.track.length > 0))
-        asynchronous: false 
-        visible: active
-        Layout.fillWidth: true
-        Layout.maximumWidth: header.Layout.maximumWidth
-        Layout.leftMargin: header.Layout.margins
-        Layout.rightMargin: header.Layout.margins
-
-        sourceComponent: PlayerController {
-            playerData: root.playerData
-            isWin: toolTipDelegate.isWin
-        }
-    }    
-
-    Loader {
-        active: root.pulseAudio.item !== null && root.audioIndicatorsEnabled && root.hasAudioStream && root.index !== -1 
-        asynchronous: false 
-        visible: active
-        Layout.fillWidth: true
-        Layout.maximumWidth: header.Layout.maximumWidth
-        Layout.leftMargin: header.Layout.margins
-        Layout.rightMargin: header.Layout.margins
-        sourceComponent: RowLayout {
-            PlasmaComponents3.ToolButton {
-                icon.width: Kirigami.Units.iconSizes.small
-                icon.height: Kirigami.Units.iconSizes.small
-              
-                icon.name: if (checked) {
-                    "audio-volume-muted";
-                } else if (slider.displayValue <= 25) {
-                    "audio-volume-low";
-                } else if (slider.displayValue <= 75) {
-                    "audio-volume-medium";
-                } else {
-                    "audio-volume-high";
-                }
-                onClicked: root.toggleMuted()
-                checked: root.muted
-
-                PlasmaComponents3.ToolTip {
-                    text: parent.checked ? Wrappers.i18nc("button to unmute app", "Unmute %1", root.calculatedAppName) : Wrappers.i18nc("button to mute app", "Mute %1", root.calculatedAppName)
-                }
-            }
-
-            PlasmaComponents3.Slider {
-                id: slider
-                readonly property int displayValue: Math.round(value / to * 100)
-                readonly property int loudestVolume: root.audioStreams.reduce((loudestVolume, stream) => Math.max(loudestVolume, stream.volume), 0)
-
-                Layout.fillWidth: true
-                from: root.pulseAudio.item.minimalVolume
-                to: root.pulseAudio.item.normalVolume
-                value: loudestVolume
-                stepSize: to / 100
-                opacity: root.audioStreams.every(stream => stream.muted) ? 0.5 : 1
-
-                Accessible.name: Wrappers.i18nc("Accessibility data on volume slider", "Adjust volume for %1", root.calculatedAppName)
-
-                onMoved: root.audioStreams.forEach(stream => {
-                    let v = Math.max(from, value);
-                    if (v > 0 && loudestVolume > 0) {
-                        v = Math.min(Math.round(stream.volume / loudestVolume * v), to);
-                    }
-                    stream.model.Volume = v;
-                    stream.model.Muted = v === 0;
-                })
-            }
-            PlasmaComponents3.Label {
-                Layout.alignment: Qt.AlignHCenter
-                Layout.minimumWidth: percentMetrics.advanceWidth
-                horizontalAlignment: Qt.AlignRight
+    // Reusable Media Controls Component
+    Component {
+        id: mediaControlsComponent
+        
+        ColumnLayout {
+            spacing: Kirigami.Units.smallSpacing
             
-                text: Wrappers.i18nc("volume percentage", "%1%", slider.displayValue)
-               
-                textFormat: Text.PlainText
-                TextMetrics {
-                    id: percentMetrics
-                    text: Wrappers.i18nc("only used for sizing, should be widest possible string", "100%")
+            // MPRIS Controls
+            Loader {
+                id: playerController
+                active: root.showPlayerControls
+                asynchronous: false 
+                visible: active
+                Layout.fillWidth: true
+                
+                sourceComponent: PlayerController {
+                    playerData: root.playerData
+                    isWin: toolTipDelegate.isWin
+                }
+            }    
+
+            // Volume Controls
+            Loader {
+                id: volumeControlsLoader
+                active: root.showVolumeControls || (root.delayedControlsActive && root.hasAudioStream) // Keep visible during debounce if we had stream
+                asynchronous: false 
+                visible: active
+                Layout.fillWidth: true
+
+                sourceComponent: RowLayout {
+                    PlasmaComponents3.ToolButton {
+                        icon.width: Kirigami.Units.iconSizes.small
+                        icon.height: Kirigami.Units.iconSizes.small
+                      
+                        icon.name: if (checked) {
+                            "audio-volume-muted";
+                        } else if (Math.round(slider.value / slider.to * 100) <= 25) {
+                            "audio-volume-low";
+                        } else if (Math.round(slider.value / slider.to * 100) <= 75) {
+                            "audio-volume-medium";
+                        } else {
+                            "audio-volume-high";
+                        }
+                        
+                        text: i18n("Mute")
+                        display: PlasmaComponents3.AbstractButton.IconOnly
+                        checkable: true
+                        checked: root.muted
+                        onClicked: root.toggleMuted()
+                    }
+
+                    PlasmaComponents3.Slider {
+                        id: slider
+                        Layout.fillWidth: true
+                        
+                        from: root.pulseAudio.item.minimalVolume
+                        to: root.pulseAudio.item.normalVolume
+                        
+                        // Use max volume of all streams
+                        value: root.hasAudioStream && root.audioStreams.length > 0 ? 
+                               root.audioStreams.reduce((max, s) => Math.max(max, s.volume), 0) : 0
+                        
+                        onMoved: {
+                            root.audioStreams.forEach(item => {
+                                // Scale relative to original volume if needed, or just set absolute?
+                                // Simple approach: Set all streams to this volume
+                                item.setVolume(value);
+                                if (value > 0 && item.muted) item.unmute();
+                            });
+                        }
+                    }
+                    
+                    PlasmaComponents3.Label {
+                        text: Math.round(slider.value / slider.to * 100) + "%"
+                        Layout.minimumWidth: 3 * Kirigami.Units.gridUnit 
+                        horizontalAlignment: Text.AlignRight
+                    }
                 }
             }
         }
+    }
+
+    // Classic Mode Loader (Fallback if thumbnails disabled)
+    Loader {
+        active: !toolTipDelegate.showThumbnails && (root.showPlayerControls || root.showVolumeControls)
+        visible: active
+        Layout.fillWidth: true
+        sourceComponent: mediaControlsComponent
     }
 
     function generateSubText(): string {

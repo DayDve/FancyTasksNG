@@ -398,17 +398,12 @@ Item {
         var streams = pa.streamsForAppId(task.appId);
         if (!streams.length) {
             streams = pa.streamsForPid(task.model.AppPid);
-            if (streams.length) {
-                pa.registerPidMatch(task.model.AppName);
-            } else {
-                // We only want to fall back to appName matching if we never managed to map
-                // a PID to an audio stream window.
-                // Otherwise if you have two instances of
-                // an application, one playing and the other not, it will look up appName
-                // for the non-playing instance and erroneously show an indicator on both.
-                if (!pa.hasPidMatch(task.model.AppName)) {
-                    streams = pa.streamsForAppName(task.model.AppName);
-                }
+            
+            if (!streams.length) {
+                 // Fallback to appName if no PID match found
+                 // Note: This might cause issues with multiple instances if they don't support PID matching,
+                 // but without the complex caching logic (which was unreliable), this is the best effort.
+                 streams = pa.streamsForAppName(task.model.AppName);
             }
         }
 

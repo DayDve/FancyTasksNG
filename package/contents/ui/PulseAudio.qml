@@ -1,85 +1,23 @@
 /*
     SPDX-FileCopyrightText: 2017 Kai Uwe Broulik <kde@privat.broulik.de>
-
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
 pragma ComponentBehavior: Bound
 
 import QtQuick
-
 import org.kde.plasma.private.volume
 
 QtObject {
     id: pulseAudio
+    property var backend
 
     signal streamsChanged()
-
-    // It's a JS object so we can do key lookup and don't need to take care of filtering duplicates.
-    property var pidMatches: new Set()
-
-    // TODO Evict cache at some point, preferably if all instances of an application closed.
-    function registerPidMatch(appName: string) {
-        if (!hasPidMatch(appName)) {
-            pidMatches.add(appName);
-
-            // In case this match is new, notify that streams might have changed.
-            // This way we also catch the case when the non-playing instance
-            // shows up first.
-            // Only notify if we changed to avoid infinite recursion.
-            streamsChanged();
-        }
+    
+    Component.onCompleted: {
+        console.log("PulseAudio: Initialized. Backend:", backend);
     }
-
-    function hasPidMatch(appName: string): bool {
-        return pidMatches.has(appName);
-    }
-
-    function findStreams(key: string, value: var): /*[QtObject]*/ var {
-        return findStreamsFn(stream => stream[key] === value);
-    }
-
-    function findStreamsFn(fn: var): var {
-        const streams = [];
-        for (let i = 0, count = instantiator.count; i < count; ++i) {
-            const stream = instantiator.objectAt(i);
-            if (fn(stream)) {
-                streams.push(stream);
-            }
-        }
-        return streams;
-    }
-
-    function streamsForAppId(appId: string): /*[QtObject]*/ var {
-        return findStreams("portalAppId", appId);
-    }
-
-    function streamsForAppName(appName: string): /*[QtObject]*/ var {
-        return findStreams("appName", appName);
-    }
-
-    function streamsForPid(pid: int): /*[QtObject]*/ var {
-        // skip stream that has portalAppId
-        // app using portal may have a sandbox pid
-        const streams = findStreamsFn(stream => stream.pid === pid && !stream.portalAppId);
-
-        if (streams.length === 0) {
-            for (let i = 0, length = instantiator.count; i < length; ++i) {
-                const stream = instantiator.objectAt(i);
-
-                if (stream.parentPid === -1) {
-                    stream.parentPid = backend.parentPid(stream.pid);
-                }
-
-                if (stream.parentPid === pid) {
-                    streams.push(stream);
-                }
-            }
-        }
-
-        return streams;
-    }
-
+    
     // QtObject has no default property, hence adding the Instantiator to one explicitly.
     readonly property Instantiator instantiator: Instantiator {
         model: PulseObjectFilterModel {
@@ -90,21 +28,41 @@ QtObject {
         delegate: QtObject {
             id: delegate
             required property var model
+            
             readonly property int pid: model.Client?.properties["application.process.id"] ?? 0
-            // Determined on demand.
-            property int parentPid: -1
             readonly property string appName: model.Client?.properties["application.name"] ?? ""
             readonly property string portalAppId: model.Client?.properties["pipewire.access.portal.app_id"] ?? ""
             readonly property bool muted: model.Muted
-            // whether there is nothing actually going on on that stream
+            // whether there is actually nothing going on on that stream
             readonly property bool corked: model.Corked
             readonly property int volume: model.Volume
-
+            
+            // Allow setting volume/mute
             function mute(): void {
                 model.Muted = true;
             }
-            function unmute(): void {
-                model.Muted = false;
+            function setVolume(vol): void {
+                model.Volume = vol;
+            }
+            Component.onCompleted: {
+                if (pid > 0) restoreVolume();
+            }
+            
+            onPidChanged: {
+                if (pid > 0) restoreVolume();
+            }
+            
+            function restoreVolume() {
+                var cached = pulseAudio.getCachedVolume(pid);
+                if (cached > 0) { 
+                    setVolume(cached);
+                }
+            }
+            
+            onVolumeChanged: {
+                if (pid > 0) {
+                     pulseAudio.saveVolume(pid, volume);
+                }
             }
         }
 
@@ -112,6 +70,67 @@ QtObject {
         onObjectRemoved: (index, object) => pulseAudio.streamsChanged()
     }
 
-    readonly property int minimalVolume: PulseAudio.MinimalVolume
-    readonly property int normalVolume: PulseAudio.NormalVolume
+    function streamsForAppId(appId: string): var {
+        if (!appId) return [];
+        return findStreams(stream => stream.portalAppId === appId);
+    }
+
+    function streamsForAppName(appName: string): var {
+        if (!appName) return [];
+        return findStreams(stream => stream.appName === appName);
+    }
+
+    function streamsForPid(pid: int): var {
+        if (pid <= 0) return [];
+        
+        // 1. Try direct PID match
+        let streams = findStreams(stream => stream.pid === pid && !stream.portalAppId);
+        
+        // 2. If no streams found, try checking parent PID (legacy/complex apps)
+        // DISABLED: Causes anomaly where file managers (Dolphin) claim streams of launched apps (VLC).
+        /*
+        if (streams.length === 0) {
+             streams = findStreams(stream => {
+                // If the stream has no PID or we can't find it, try to resolve parent PID via backend
+                // Note: Calling backend.parentPid might be expensive if done repeatedly, but we only do it on miss.
+                let parentPid = backend.parentPid(stream.pid);
+                return parentPid === pid;
+             });
+        }
+        */
+        
+        return streams;
+    }
+
+    function findStreams(predicate): var {
+        const results = [];
+        for (let i = 0, count = instantiator.count; i < count; ++i) {
+            const stream = instantiator.objectAt(i);
+            if (stream && predicate(stream)) {
+                results.push(stream);
+            }
+        }
+
+        return results;
+    }
+
+    // Expose volume constants if valid, otherwise fallback
+    readonly property int minimalVolume: PulseAudio.MinimalVolume ?? 0
+    readonly property int normalVolume: PulseAudio.NormalVolume ?? 65536
+
+    // Persistent Volume Cache (Key: WinID or PID)
+    property var volumeCache: ({})
+
+    function saveVolume(key, vol: int) {
+        if (key) {
+            volumeCache[key] = vol;
+        }
+    }
+
+    function getCachedVolume(key): int {
+        if (key && volumeCache[key] !== undefined) {
+            return volumeCache[key];
+        }
+        return -1;
+    }
 }

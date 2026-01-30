@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/alexankitty/FancyTasks\n"
-"POT-Creation-Date: 2026-01-28 12:01+0200\n"
+"POT-Creation-Date: 2026-01-29 13:42+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -658,7 +658,7 @@ msgctxt "Open or bring to the front window of media player app"
 msgid "Restore"
 msgstr "Восстановить"
 
-#: ../contents/ui/ContextMenu.qml
+#: ../contents/ui/ContextMenu.qml ../contents/ui/ToolTipInstance.qml
 msgid "Mute"
 msgstr "Выключить звук"
 
@@ -796,31 +796,6 @@ msgid "Activate %1"
 msgstr "Активировать %1"
 
 #: ../contents/ui/ToolTipInstance.qml
-msgctxt "button to unmute app"
-msgid "Unmute %1"
-msgstr "Включить звук %1"
-
-#: ../contents/ui/ToolTipInstance.qml
-msgctxt "button to mute app"
-msgid "Mute %1"
-msgstr "Выключить звук %1"
-
-#: ../contents/ui/ToolTipInstance.qml
-msgctxt "Accessibility data on volume slider"
-msgid "Adjust volume for %1"
-msgstr "Регулировка громкости для %1"
-
-#: ../contents/ui/ToolTipInstance.qml
-msgctxt "volume percentage"
-msgid "%1%"
-msgstr "%1%"
-
-#: ../contents/ui/ToolTipInstance.qml
-msgctxt "only used for sizing, should be widest possible string"
-msgid "100%"
-msgstr "100%"
-
-#: ../contents/ui/ToolTipInstance.qml
 msgctxt "Comma-separated list of desktops"
 msgid "On %1"
 msgstr "На %1"
@@ -844,3 +819,23 @@ msgstr "Также доступно в %1"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Доступно в %1"
+
+#~ msgctxt "button to unmute app"
+#~ msgid "Unmute %1"
+#~ msgstr "Включить звук %1"
+
+#~ msgctxt "button to mute app"
+#~ msgid "Mute %1"
+#~ msgstr "Выключить звук %1"
+
+#~ msgctxt "Accessibility data on volume slider"
+#~ msgid "Adjust volume for %1"
+#~ msgstr "Регулировка громкости для %1"
+
+#~ msgctxt "volume percentage"
+#~ msgid "%1%"
+#~ msgstr "%1%"
+
+#~ msgctxt "only used for sizing, should be widest possible string"
+#~ msgid "100%"
+#~ msgstr "100%"
