@@ -152,6 +152,8 @@ ColumnLayout {
         if (args && args.delay) {
              delayAudioStreamIndicator = true;
         }
+        var currentForce = (args && args.force);
+
         var pa = root.pulseAudio.item;
         if (!pa) {
             streamClearTimer.stop();
@@ -179,9 +181,10 @@ ColumnLayout {
             streamClearTimer.stop();
             audioStreams = streams;
         } else {
-            if (audioStreams.length > 0) {
+            if (audioStreams.length > 0 && !currentForce) {
                 streamClearTimer.restart();
             } else {
+                streamClearTimer.stop();
                 audioStreams = []; 
             }
         }
@@ -203,9 +206,9 @@ ColumnLayout {
         }
     }
 
-    onAppPidChanged: updateAudioStreams({delay: false})
-    onAppIdChanged: updateAudioStreams({delay: false})
-    Component.onCompleted: updateAudioStreams({delay: false})
+    onAppPidChanged: updateAudioStreams({delay: false, force: true})
+    onAppIdChanged: updateAudioStreams({delay: false, force: true})
+    Component.onCompleted: updateAudioStreams({delay: false, force: true})
 
     spacing: Kirigami.Units.smallSpacing
 
@@ -432,10 +435,10 @@ ColumnLayout {
             z: 2000
         }
 
-        // Overlay Media Controls
+        // Overlay Media Controls (Ghost Controls)
         Loader {
             id: overlayControlsLoader
-            active: toolTipDelegate.showThumbnails && root.delayedControlsActive
+            active: toolTipDelegate.showThumbnails && root.controlsAreEffective
             visible: active
             
             z: 2002 
@@ -445,15 +448,13 @@ ColumnLayout {
             anchors.margins: Kirigami.Units.smallSpacing
             width: hoverHandler.width - (anchors.margins * 2)
             
-            opacity: (controlsHoverArea.containsMouse || (item && item.isHovered)) ? 1.0 : 0.0
-            Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
-            
             sourceComponent: Item { 
                  
                  readonly property Image source: albumArtImage
                  width: overlayControlsLoader.width
                  height: controlsColumn.height + (Kirigami.Units.smallSpacing * 2)
                 
+                readonly property bool hoveredState: controlsHoverArea.containsMouse || overlayHover.hovered
                 readonly property bool isHovered: overlayHover.hovered
                 readonly property bool childrenVisible: controlsColumn.children.some(child => child.visible)
 
@@ -465,6 +466,9 @@ ColumnLayout {
                     anchors.fill: parent
                     color: Qt.rgba(0, 0, 0, 0.6)
                     radius: Kirigami.Units.smallSpacing
+                    
+                    opacity: parent.hoveredState ? 1.0 : 0.0
+                    Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
                 }
                 
                 ColumnLayout {
@@ -472,6 +476,9 @@ ColumnLayout {
                     anchors.centerIn: parent
                     width: parent.width - (Kirigami.Units.smallSpacing * 2)
                     
+                    opacity: parent.hoveredState ? 1.0 : 0.4
+                    Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
+
                     Loader {
                         sourceComponent: mediaControlsComponent
                         Layout.fillWidth: true
