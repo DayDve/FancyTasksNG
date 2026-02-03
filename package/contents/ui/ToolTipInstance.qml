@@ -316,9 +316,21 @@ ColumnLayout {
         readonly property var winId: explicitWinId !== undefined ?
             explicitWinId : (toolTipDelegate.isWin ? toolTipDelegate.windows[root.index] : undefined)
 
+        readonly property bool thumbnailAreaHovered: thumbnailHoverHandler.hovered
+
+        HoverHandler {
+            id: thumbnailHoverHandler
+        }
+
         PlasmaExtras.Highlight {
             anchors.fill: hoverHandler 
-            visible: rootHover.hovered || controlsHoverArea.containsMouse || (overlayControlsLoader.item && overlayControlsLoader.item.isHovered)
+            
+            // Use opacity for smooth transition matching the player controls
+            opacity: thumbnailSourceItem.thumbnailAreaHovered ? 1.0 : 0.0
+            Behavior on opacity { NumberAnimation { duration: Kirigami.Units.longDuration } }
+            
+            visible: opacity > 0 // Optimization
+            
             pressed: (hoverHandler.item as MouseArea)?.containsPress ?? false
             hovered: true
         }
@@ -426,16 +438,6 @@ ColumnLayout {
             }
         }
 
-        MouseArea {
-            id: controlsHoverArea
-            anchors.fill: parent
-            hoverEnabled: true
-            preventStealing: false
-            propagateComposedEvents: true
-            acceptedButtons: Qt.NoButton
-            z: 2000
-        }
-
         // Overlay Media Controls (Ghost Controls)
         Loader {
             id: overlayControlsLoader
@@ -455,7 +457,7 @@ ColumnLayout {
                  width: overlayControlsLoader.width
                  height: controlsColumn.height + (Kirigami.Units.smallSpacing * 2)
                 
-                readonly property bool hoveredState: controlsHoverArea.containsMouse || overlayHover.hovered
+                readonly property bool hoveredState: thumbnailSourceItem.thumbnailAreaHovered
                 readonly property bool isHovered: overlayHover.hovered
                 readonly property bool childrenVisible: controlsColumn.children.some(child => child.visible)
 
@@ -469,7 +471,7 @@ ColumnLayout {
                     radius: Kirigami.Units.smallSpacing
                     
                     opacity: parent.hoveredState ? 1.0 : 0.0
-                    Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
+                    Behavior on opacity { NumberAnimation { duration: Kirigami.Units.longDuration } }
                 }
                 
                 ColumnLayout {
@@ -478,7 +480,7 @@ ColumnLayout {
                     width: parent.width - (Kirigami.Units.smallSpacing * 2)
                     
                     opacity: parent.hoveredState ? 1.0 : 0.4
-                    Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
+                    Behavior on opacity { NumberAnimation { duration: Kirigami.Units.longDuration } }
 
                     Loader {
                         sourceComponent: mediaControlsComponent
