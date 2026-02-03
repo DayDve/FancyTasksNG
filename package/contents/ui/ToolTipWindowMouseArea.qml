@@ -78,10 +78,20 @@ MouseArea {
         return modelIndex;
     }
 
+    property var toolTipDelegate
+
     function updateHoverState() {
         if (rootTask.tasksRoot) {
             const isHovered = containsMouse || globalHovered;
-            rootTask.tasksRoot.windowsHovered([winId], isHovered);
+            
+            if (isHovered) {
+                rootTask.tasksRoot.windowsHovered([winId], true);
+            } else if (toolTipDelegate && toolTipDelegate.containsMouse && toolTipDelegate.isGroup) {
+                // Do not clear. The delegate will handle clearing when the mouse leaves the group,
+                // or the next item will take over the highlight.
+            } else {
+                 rootTask.tasksRoot.windowsHovered([winId], false);
+            }
         }
     }
 

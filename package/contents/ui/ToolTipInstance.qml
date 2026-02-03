@@ -422,6 +422,7 @@ ColumnLayout {
                 winId: thumbnailSourceItem.winId
                 globalHovered: rootHover.hovered
                 tasksModel: root.tasksModel
+                toolTipDelegate: root.toolTipDelegate
             }
         }
 

@@ -32,6 +32,11 @@ Loader {
         return target && target.isHovered;
     }
     readonly property bool containsMouse: getHovered(item)
+    onContainsMouseChanged: {
+        if (!containsMouse && parentTask && parentTask.tasksRoot) {
+             parentTask.tasksRoot.cancelHighlightWindows();
+        }
+    }
 
     property string appName
     property int pidParent
