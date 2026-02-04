@@ -274,6 +274,8 @@ Item {
         delay: false
     })
 
+
+
     onIsWindowChanged: {
         if (task.model.IsWindow) {
             tasksRoot.taskInitComponent.createObject(task);

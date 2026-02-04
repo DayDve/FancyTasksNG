@@ -266,6 +266,8 @@ PlasmoidItem {
             }
         }
 
+
+
         Binding {
             target: Plasmoid
             property: "status"

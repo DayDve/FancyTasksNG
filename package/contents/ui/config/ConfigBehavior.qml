@@ -109,6 +109,8 @@ ConfigPage {
             Kirigami.FormData.isSection: true
         }
 
+
+
         ComboBox {
             id: sortingStrategy
             Kirigami.FormData.label: Wrappers.i18n("Sort:")

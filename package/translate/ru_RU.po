@@ -107,7 +107,7 @@ msgstr "Использовать стиль Plasma/Акцент"
 
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Using Color Overlay"
-msgstr "Использовать наложение цвета"
+msgstr "Использовать оверлей цвета"
 
 #: ../contents/ui/config/ConfigAppearance.qml ../contents/ui/config/ConfigIndicators.qml
 msgid "Use dominant icon color"
@@ -439,11 +439,11 @@ msgstr "Индикаторы:"
 
 #: ../contents/ui/config/ConfigIndicators.qml
 msgid "Disabled"
-msgstr "Отключены"
+msgstr "Выкл."
 
 #: ../contents/ui/config/ConfigIndicators.qml
 msgid "Enabled"
-msgstr "Включены"
+msgstr "Вкл."
 
 #: ../contents/ui/config/ConfigIndicators.qml
 msgid "Display Progress on Indicator"
@@ -459,7 +459,7 @@ msgstr "Отключить для неактивных окон"
 
 #: ../contents/ui/config/ConfigIndicators.qml
 msgid "Group Overlay:"
-msgstr "Наложение группы:"
+msgstr "Оверлей группы:"
 
 #: ../contents/ui/config/ConfigIndicators.qml
 msgid "Takes effect on next time plasma groups tasks."
@@ -515,7 +515,7 @@ msgstr "Ciliora"
 
 #: ../contents/ui/config/ConfigIndicators.qml
 msgid "Dashes"
-msgstr "Тире"
+msgstr "Dashes"
 
 #: ../contents/ui/config/ConfigIndicators.qml
 msgid "Indicator Min Limit:"
