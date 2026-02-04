@@ -141,6 +141,16 @@ ColumnLayout {
     // but check the stream's state for live updates.
     readonly property bool muted: isMuted || (hasAudioStream && audioStreams.every(item => item.muted))
     readonly property bool playingAudio: hasAudioStream && audioStreams.some(item => !item.corked)
+    
+    function hasWindowSpecificStream(winId) {
+        if (!winId || !hasAudioStream) return false;
+        
+        // Exact Match
+        const exactMatch = audioStreams.some(stream => stream.windowId === winId);
+        if (exactMatch) return true;
+        
+        return false;
+    }
 
     Timer {
         id: streamClearTimer
@@ -494,7 +504,14 @@ ColumnLayout {
     }
     
     readonly property bool showPlayerControls: index !== -1 && playerData && playerData.canControl && 
-        (toolTipDelegate.windows.length === 1 || titleIncludesTrack) &&
+        (
+            hasWindowSpecificStream(thumbnailSourceItem.winId) || 
+            titleIncludesTrack || 
+            isPlayingAudio || 
+            // Allow single-window apps to show if they have a stream (e.g. Spotify).
+            // This also covers background tabs in parent processes (where WinID is missing).
+            hasAudioStream
+        ) &&
         (playerData.playbackStatus === Mpris.PlaybackStatus.Playing || 
          playerData.playbackStatus === Mpris.PlaybackStatus.Paused || 
          (playerData.track && playerData.track.length > 0))

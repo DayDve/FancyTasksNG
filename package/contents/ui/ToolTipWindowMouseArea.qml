@@ -87,8 +87,7 @@ MouseArea {
             if (isHovered) {
                 rootTask.tasksRoot.windowsHovered([winId], true);
             } else if (toolTipDelegate && toolTipDelegate.containsMouse && toolTipDelegate.isGroup) {
-                // Do not clear. The delegate will handle clearing when the mouse leaves the group,
-                // or the next item will take over the highlight.
+                // Delegate handles clearing when mouse leaves the group, or next item takes over.
             } else {
                  rootTask.tasksRoot.windowsHovered([winId], false);
             }

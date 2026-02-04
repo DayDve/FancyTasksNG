@@ -32,6 +32,10 @@ QtObject {
             readonly property int pid: model.Client?.properties["application.process.id"] ?? 0
             readonly property string appName: model.Client?.properties["application.name"] ?? ""
             readonly property string portalAppId: model.Client?.properties["pipewire.access.portal.app_id"] ?? ""
+            
+            // Expose Window IDs for matching
+            readonly property int x11Xid: parseInt(model.Client?.properties["window.x11.xid"] ?? "0")
+            readonly property int windowId: x11Xid > 0 ? x11Xid : 0
             readonly property bool muted: model.Muted
             // whether there is actually nothing going on on that stream
             readonly property bool corked: model.Corked
