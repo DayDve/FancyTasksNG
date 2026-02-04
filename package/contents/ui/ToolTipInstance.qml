@@ -10,6 +10,7 @@
 
 pragma ComponentBehavior: Bound
 
+import QtQuick.Effects 
 import QtQuick
 import QtQuick.Layouts
 
@@ -38,6 +39,8 @@ ColumnLayout {
     property var explicitWinId: undefined
     property var pulseAudio
     
+
+    readonly property bool useOverlayStyle: toolTipDelegate && toolTipDelegate.showThumbnails
 
     HoverHandler {
         id: rootHover
@@ -223,8 +226,27 @@ ColumnLayout {
 
     spacing: Kirigami.Units.smallSpacing
 
+    // Use padding instead of anchors.margins for Layout compatibility
+    // Padding is supported in QtQuick.Layouts 1.x (Qt 5.6+) if it inherits from Item? 
+    // ColumnLayout inherits Item.
+    Layout.margins: 0 // Reset any default
+    
+    // Internal margins for the content
+    Item {
+        Layout.fillWidth: true
+        Layout.preferredHeight: Kirigami.Units.gridUnit
+        visible: !root.useOverlayStyle // Top margin spacer only if NOT overlay style? 
+                                       // Or just keep padding?
+                                       // The user wants Overlay style to be "tight"? 
+                                       // Actually, let's just use `Item` spacer or nothing if we want 0 margins for overlay.
+    }
+    
+    // Actually, simple padding is safer.
+    // But ColumnLayout checks `padding` property.
+    
     RowLayout {
         id: header
+        visible: !root.useOverlayStyle
         spacing: Kirigami.Units.smallSpacing
 
         Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
@@ -499,6 +521,121 @@ ColumnLayout {
                         Layout.fillWidth: true
                     }
                 }
+            }
+        }
+
+        // Title Overlay (Top-Left)
+
+        // Title Overlay (Top-Left)
+        Item {
+            z: 9999
+            visible: root.useOverlayStyle && toolTipDelegate.isWin && titleOverlayLabel.text.length > 0
+            
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.margins: Kirigami.Units.smallSpacing
+            
+            // Dynamic Sizing Logic
+            readonly property int maxOverlayWidth: parent.width - (closeButtonOverlay.visible ? closeButtonOverlay.width : 0) - Kirigami.Units.largeSpacing
+            
+            // Padding Constants
+            readonly property int hPadding: Kirigami.Units.largeSpacing
+            readonly property int vPadding: Kirigami.Units.smallSpacing
+            
+            // Calculate width based on text content + padding, capped at max
+            width: Math.min(titleOverlayLabel.implicitWidth + hPadding * 2, maxOverlayWidth)
+            height: titleOverlayLabel.implicitHeight + vPadding * 2
+            
+            // Background Layer (Blurred Edges)
+            Rectangle {
+                anchors.fill: parent
+                color: Qt.rgba(0, 0, 0, 0.45) 
+                radius: Kirigami.Units.smallSpacing
+                
+                layer.enabled: true
+                layer.effect: MultiEffect {
+                    blurEnabled: true
+                    blurMax: 8
+                    blur: 0.5 
+                }
+            }
+            
+            // Text Layer
+            PlasmaComponents3.Label {
+                id: titleOverlayLabel
+                anchors.centerIn: parent
+                // Ensure text wraps/elides within the container minus padding
+                width: parent.width - parent.hPadding * 2
+                
+                text: {
+                    if (root.titleIncludesTrack) return ""; 
+
+                    let titleText = root.title;
+                    
+                    // Strip shortcuts like "{Meta+1}"
+                    // Regex: Space (optional) + { + anything + } + End
+                    titleText = titleText.replace(/\s*\{[^\}]*\}\s*$/, "");
+                    
+                    // Check redundancy
+                    let appName = root.calculatedAppName;
+                    if (appName && titleText.toLowerCase() === appName.toLowerCase()) {
+                        return ""; // Hide if redundant
+                    }
+                    
+                    if (!titleText && root.display !== appName) {
+                         // Fallback to display only if it's not also redundant
+                         titleText = root.display;
+                         if (titleText && titleText.toLowerCase() === appName.toLowerCase()) return "";
+                    }
+
+                    return titleText || ""; 
+                }
+                
+                elide: Text.ElideRight
+                color: "white" 
+                font.bold: false
+                opacity: 0.85 
+            }
+        }
+
+        // Close Button Overlay (Top-Right)
+        PlasmaComponents3.ToolButton {
+            id: closeButtonOverlay
+            z: 2003
+            visible: root.useOverlayStyle && toolTipDelegate.isWin
+            
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.margins: Kirigami.Units.smallSpacing
+            
+            icon.name: "window-close"
+            display: PlasmaComponents3.AbstractButton.IconOnly
+            
+            width: Kirigami.Units.iconSizes.smallMedium
+            height: Kirigami.Units.iconSizes.smallMedium
+
+            background: Item {
+                Rectangle {
+                    anchors.fill: parent
+                    color: Qt.rgba(0, 0, 0, 0.45)
+                    radius: Kirigami.Units.smallSpacing
+                }
+                
+                PlasmaExtras.Highlight {
+                    anchors.fill: parent
+                    visible: closeButtonOverlay.hovered
+                    opacity: 0.8
+                    hovered: true
+                    pressed: closeButtonOverlay.pressed
+                }
+            }
+
+            onClicked: {
+                if (toolTipDelegate.parentTask && toolTipDelegate.parentTask.tasksRoot) {
+                    toolTipDelegate.parentTask.tasksRoot.cancelHighlightWindows();
+                }
+                const targetIndex = root.findMatchingTaskIndex();
+                tasksModel.requestClose(targetIndex);
             }
         }
     }

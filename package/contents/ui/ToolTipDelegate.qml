@@ -11,6 +11,7 @@ pragma ComponentBehavior: Bound
 
 import QtQml.Models
 import QtQuick
+import QtQuick.Layouts
 
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents3
@@ -18,6 +19,8 @@ import org.kde.plasma.private.mpris as Mpris
 import org.kde.kirigami as Kirigami
 
 import org.kde.plasma.plasmoid
+
+import "code/singletones"
 
 Loader {
     id: toolTipDelegate
@@ -38,6 +41,39 @@ Loader {
         }
     }
 
+    // Shared Helper for Subtext
+    function generateSubText(): string {
+        const subTextEntries = [];
+        // Use global singletons virtualDesktopInfo and activityInfo
+        if (!Plasmoid.configuration.showOnlyCurrentDesktop && virtualDesktopInfo.numberOfDesktops > 1) {
+            if (!isOnAllVirtualDesktops && virtualDesktops.length > 0) {
+                const virtualDesktopNameList = virtualDesktops.map(virtualDesktop => {
+                    const index = virtualDesktopInfo.desktopIds.indexOf(virtualDesktop);
+                    return virtualDesktopInfo.desktopNames[index];
+                });
+
+                subTextEntries.push(Wrappers.i18nc("Comma-separated list of desktops", "On %1", virtualDesktopNameList.join(", ")));
+            } else if (isOnAllVirtualDesktops) {
+                subTextEntries.push(Wrappers.i18nc("Comma-separated list of desktops", "Pinned to all desktops"));
+            }
+        }
+
+        if (activities.length === 0 && activityInfo.numberOfRunningActivities > 1) {
+            subTextEntries.push(Wrappers.i18nc("Which virtual desktop a window is currently on", "Available on all activities"));
+        } else if (activities.length > 0) {
+            const activityNames = activities.filter(activity => activity !== activityInfo.currentActivity).map(activity => activityInfo.activityName(activity)).filter(activityName => activityName !== "");
+            if (Plasmoid.configuration.showOnlyCurrentActivity) {
+                if (activityNames.length > 0) {
+                    subTextEntries.push(Wrappers.i18nc("Activities a window is currently on (apart from the current one)", "Also available on %1", activityNames.join(", ")));
+                }
+            } else if (activityNames.length > 0) {
+                subTextEntries.push(Wrappers.i18nc("Which activities a window is currently on", "Available on %1", activityNames.join(", ")));
+            }
+        }
+
+        return subTextEntries.join("\n");
+    }
+
     property string appName
     property int pidParent
     property bool isGroup
@@ -56,6 +92,27 @@ Loader {
     property int smartLauncherCount
     property bool isPlayingAudio
     property bool isMuted
+
+    readonly property string calculatedAppName: {
+        if (appName && appName.length > 0) return appName;
+
+        const text = display;
+        if (!text) return "";
+        
+        const versionRegex = /\s+(?:—|-|–)\s+([^\s(—|-|–)]+)\s+(?:—|-|–)\s+v?\d+(?:\.\d+)+.*$/i;
+        const matchVersion = text.match(versionRegex);
+        if (matchVersion && matchVersion[1]) {
+            return matchVersion[1];
+        }
+
+        const lastSepRegex = /.*(?:—|-|–)\s+(.*)$/;
+        const matchLast = text.match(lastSepRegex);
+        if (matchLast && matchLast[1]) {
+            return matchLast[1];
+        }
+
+        return "";
+    }
 
     readonly property bool isVerticalPanel: Plasmoid.formFactor === PlasmaCore.Types.Vertical
     readonly property int tooltipInstanceMaximumWidth: Kirigami.Units.gridUnit * 14
@@ -79,114 +136,181 @@ Loader {
     Component {
         id: singleTooltip
 
-        ToolTipInstance {
-            index: 0 
-            submodelIndex: toolTipDelegate.rootIndex
-            appPid: toolTipDelegate.pidParent
-            appId: (toolTipDelegate.parentTask && toolTipDelegate.parentTask.appId) ? toolTipDelegate.parentTask.appId : "" // Fallback
-            display: toolTipDelegate.display
-            isMinimized: toolTipDelegate.isMinimized
-            isOnAllVirtualDesktops: toolTipDelegate.isOnAllVirtualDesktops
-            virtualDesktops: toolTipDelegate.virtualDesktops
-            activities: toolTipDelegate.activities
+        ColumnLayout {
+            spacing: 0
             
-            tasksModel: toolTipDelegate.tasksModel
-            toolTipDelegate: toolTipDelegate
+            property alias isHovered: singleHover.hovered
+            
+            HoverHandler {
+                id: singleHover
+            }
 
-            mpris2Model: toolTipDelegate.mpris2Model
-            pulseAudio: toolTipDelegate.pulseAudio
-            
-            isPlayingAudio: toolTipDelegate.isPlayingAudio
-            isMuted: toolTipDelegate.isMuted
+            PlasmaComponents3.Label {
+                Layout.alignment: Qt.AlignHCenter
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                
+                text: toolTipDelegate.calculatedAppName
+                font.bold: true
+                elide: Text.ElideRight
+                visible: toolTipDelegate.showThumbnails && text.length > 0
+                opacity: 0.8
+            }
+
+            PlasmaComponents3.Label {
+                Layout.alignment: Qt.AlignHCenter
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                
+                text: toolTipDelegate.generateSubText()
+                font: Kirigami.Theme.smallFont
+                elide: Text.ElideRight
+                visible: toolTipDelegate.showThumbnails && text.length > 0
+                opacity: 0.6
+                textFormat: Text.PlainText
+            }
+
+            ToolTipInstance {
+                index: 0 
+                submodelIndex: toolTipDelegate.rootIndex
+                appPid: toolTipDelegate.pidParent
+                appId: (toolTipDelegate.parentTask && toolTipDelegate.parentTask.appId) ? toolTipDelegate.parentTask.appId : "" // Fallback
+                display: toolTipDelegate.display
+                isMinimized: toolTipDelegate.isMinimized
+                isOnAllVirtualDesktops: toolTipDelegate.isOnAllVirtualDesktops
+                virtualDesktops: toolTipDelegate.virtualDesktops
+                activities: toolTipDelegate.activities
+                
+                tasksModel: toolTipDelegate.tasksModel
+                toolTipDelegate: toolTipDelegate
+
+                mpris2Model: toolTipDelegate.mpris2Model
+                pulseAudio: toolTipDelegate.pulseAudio
+                
+                isPlayingAudio: toolTipDelegate.isPlayingAudio
+                isMuted: toolTipDelegate.isMuted
+            }
         }
     }
 
     Component {
         id: groupToolTip
 
-        PlasmaComponents3.ScrollView {
-            id: scrollView
-            readonly property alias isHovered: groupHover.hovered
-            
-            // Disable clipping to allow media controls to overflow if height calc is slightly off
-            clip: false
+        ColumnLayout {
+            spacing: Kirigami.Units.smallSpacing
+
+            property alias isHovered: groupHover.hovered
 
             HoverHandler {
                 id: groupHover
             }
 
-            contentWidth: groupToolTipListView.width
-            contentHeight: groupToolTipListView.height
-            implicitHeight: groupToolTipListView.height
-            implicitWidth: groupToolTipListView.width
-
-            ListView {
-                id: groupToolTipListView
-
-                width: delegateModel.estimatedWidth
-                height: Math.max(delegateModel.estimatedHeight, contentHeight) // Allow growing but keep min size
- 
-                model: delegateModel
+            PlasmaComponents3.Label {
+                Layout.alignment: Qt.AlignHCenter
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
                 
-                // FORCE VERTICAL LIST if thumbnails are disabled
-                orientation: (!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ?
-                    ListView.Vertical : ListView.Horizontal
-                    
-                reuseItems: true
-                spacing: Kirigami.Units.gridUnit
-                
-                clip: false
+                text: toolTipDelegate.calculatedAppName
+                font.bold: true
+                elide: Text.ElideRight
+                visible: toolTipDelegate.showThumbnails && text.length > 0
+                opacity: 0.8
             }
 
-            DelegateModel {
-                id: delegateModel
-
-                readonly property int safeCount: toolTipDelegate.windows.length > 0 ? toolTipDelegate.windows.length : count
-
-                // CORRECT HEIGHT CALCULATION
-                readonly property real screenRatio: Screen.width / Screen.height
+            PlasmaComponents3.Label {
+                Layout.alignment: Qt.AlignHCenter
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
                 
-                // If thumbnails disabled -> height is 0
-                readonly property int instanceThumbHeight: toolTipDelegate.showThumbnails ? 
-                    Math.round(toolTipDelegate.tooltipInstanceMaximumWidth / screenRatio) : 0
+                text: toolTipDelegate.generateSubText()
+                font: Kirigami.Theme.smallFont
+                elide: Text.ElideRight
+                visible: toolTipDelegate.showThumbnails && text.length > 0
+                opacity: 0.6
+                textFormat: Text.PlainText
+            }
+
+            PlasmaComponents3.ScrollView {
+                id: scrollView
+                // hovered is now handled by groupHover on the parent ColumnLayout
                 
-                readonly property real singleItemHeight: instanceThumbHeight + (Kirigami.Units.gridUnit * 3)
+                // Disable clipping to allow media controls to overflow if height calc is slightly off
+                clip: false
 
-                readonly property real estimatedWidth: ((!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ? 1 : safeCount) * (toolTipDelegate.tooltipInstanceMaximumWidth + Kirigami.Units.gridUnit) - Kirigami.Units.gridUnit
-                
-                readonly property real estimatedHeight: ((!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ? safeCount : 1) * singleItemHeight - Kirigami.Units.gridUnit
+                contentWidth: groupToolTipListView.width
+                contentHeight: groupToolTipListView.height
+                implicitHeight: groupToolTipListView.height
+                implicitWidth: groupToolTipListView.width
 
-                model: toolTipDelegate.tasksModel
-                rootIndex: toolTipDelegate.rootIndex
-                onRootIndexChanged: groupToolTipListView.positionViewAtBeginning()
+                ListView {
+                    id: groupToolTipListView
 
-                delegate: ToolTipInstance {
-                    required property var model
+                    width: delegateModel.estimatedWidth
+                    height: Math.max(delegateModel.estimatedHeight, contentHeight) // Allow growing but keep min size
+     
+                    model: delegateModel
                     
-                    width: toolTipDelegate.tooltipInstanceMaximumWidth
+                    // FORCE VERTICAL LIST if thumbnails are disabled
+                    orientation: (!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ?
+                        ListView.Vertical : ListView.Horizontal
+                        
+                    reuseItems: true
+                    spacing: Kirigami.Units.gridUnit
                     
-                    index: index 
+                    clip: false
+                }
+
+                DelegateModel {
+                    id: delegateModel
+
+                    readonly property int safeCount: toolTipDelegate.windows.length > 0 ? toolTipDelegate.windows.length : count
+
+                    // CORRECT HEIGHT CALCULATION
+                    readonly property real screenRatio: Screen.width / Screen.height
                     
-                    // FIX: Берем ID окна из модели текущей задачи
-                    explicitWinId: (model.WinIdList !== undefined && model.WinIdList.length > 0) ? model.WinIdList[0] : undefined
-
-                    display: model.display !== undefined ? model.display : ""
-                    appPid: model.AppPid !== undefined ? model.AppPid : 0
-                    appId: model.AppId !== undefined ? model.AppId : ""
-                    isMinimized: model.IsMinimized !== undefined ? model.IsMinimized : false
-                    isOnAllVirtualDesktops: model.IsOnAllVirtualDesktops !== undefined ? model.IsOnAllVirtualDesktops : false
-                    virtualDesktops: model.VirtualDesktops !== undefined ? model.VirtualDesktops : []
-                    activities: model.Activities !== undefined ? model.Activities : []
+                    // If thumbnails disabled -> height is 0
+                    readonly property int instanceThumbHeight: toolTipDelegate.showThumbnails ? 
+                        Math.round(toolTipDelegate.tooltipInstanceMaximumWidth / screenRatio) : 0
                     
-                    isPlayingAudio: model.IsPlayingAudio !== undefined ? model.IsPlayingAudio : false
-                    isMuted: model.IsMuted !== undefined ? model.IsMuted : false
+                    // Reduced padding for overlay style (was * 3)
+                    readonly property real singleItemHeight: instanceThumbHeight + (Kirigami.Units.gridUnit * 1)
 
-                    submodelIndex: tasksModel.makeModelIndex(toolTipDelegate.rootIndex.row, index)
-                    tasksModel: toolTipDelegate.tasksModel
-                    toolTipDelegate: toolTipDelegate
+                    readonly property real estimatedWidth: ((!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ? 1 : safeCount) * (toolTipDelegate.tooltipInstanceMaximumWidth + Kirigami.Units.gridUnit) - Kirigami.Units.gridUnit
+                    
+                    readonly property real estimatedHeight: ((!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ? safeCount : 1) * singleItemHeight - Kirigami.Units.gridUnit
 
-                    mpris2Model: toolTipDelegate.mpris2Model
-                    pulseAudio: toolTipDelegate.pulseAudio
+                    model: toolTipDelegate.tasksModel
+                    rootIndex: toolTipDelegate.rootIndex
+                    onRootIndexChanged: groupToolTipListView.positionViewAtBeginning()
+
+                    delegate: ToolTipInstance {
+                        required property var model
+                        
+                        width: toolTipDelegate.tooltipInstanceMaximumWidth
+                        
+                        index: index 
+                        
+                        // FIX: Берем ID окна из модели текущей задачи
+                        explicitWinId: (model.WinIdList !== undefined && model.WinIdList.length > 0) ? model.WinIdList[0] : undefined
+
+                        display: model.display !== undefined ? model.display : ""
+                        appPid: model.AppPid !== undefined ? model.AppPid : 0
+                        appId: model.AppId !== undefined ? model.AppId : ""
+                        isMinimized: model.IsMinimized !== undefined ? model.IsMinimized : false
+                        isOnAllVirtualDesktops: model.IsOnAllVirtualDesktops !== undefined ? model.IsOnAllVirtualDesktops : false
+                        virtualDesktops: model.VirtualDesktops !== undefined ? model.VirtualDesktops : []
+                        activities: model.Activities !== undefined ? model.Activities : []
+                        
+                        isPlayingAudio: model.IsPlayingAudio !== undefined ? model.IsPlayingAudio : false
+                        isMuted: model.IsMuted !== undefined ? model.IsMuted : false
+
+                        submodelIndex: tasksModel.makeModelIndex(toolTipDelegate.rootIndex.row, index)
+                        tasksModel: toolTipDelegate.tasksModel
+                        toolTipDelegate: toolTipDelegate
+
+                        mpris2Model: toolTipDelegate.mpris2Model
+                        pulseAudio: toolTipDelegate.pulseAudio
+                    }
                 }
             }
         }
