@@ -12,6 +12,7 @@ pragma ComponentBehavior: Bound
 import QtQml.Models
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents3
@@ -148,6 +149,7 @@ Loader {
             PlasmaComponents3.Label {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
+                Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
                 horizontalAlignment: Text.AlignHCenter
                 
                 text: toolTipDelegate.calculatedAppName
@@ -160,6 +162,7 @@ Loader {
             PlasmaComponents3.Label {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
+                Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
                 horizontalAlignment: Text.AlignHCenter
                 
                 text: toolTipDelegate.generateSubText()
@@ -200,6 +203,16 @@ Loader {
             spacing: Kirigami.Units.smallSpacing
 
             property alias isHovered: groupHover.hovered
+            
+            // Shared Width Calculation Logic
+            readonly property int safeCount: toolTipDelegate.windows.length > 0 ? toolTipDelegate.windows.length : 1
+            readonly property int maxTooltipWidth: Screen.width - Kirigami.Units.gridUnit * 2
+            readonly property int maxTooltipHeight: Screen.height - Kirigami.Units.gridUnit * 2
+            readonly property real contentTargetWidth: {
+                 // Use same logic as DelegateModel
+                 const count = (!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ? 1 : safeCount;
+                 return Math.ceil(count * toolTipDelegate.tooltipInstanceMaximumWidth + Math.max(0, count - 1) * Kirigami.Units.smallSpacing);
+            }
 
             HoverHandler {
                 id: groupHover
@@ -208,6 +221,7 @@ Loader {
             PlasmaComponents3.Label {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
+                Layout.maximumWidth: parent.contentTargetWidth
                 horizontalAlignment: Text.AlignHCenter
                 
                 text: toolTipDelegate.calculatedAppName
@@ -220,6 +234,7 @@ Loader {
             PlasmaComponents3.Label {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
+                Layout.maximumWidth: parent.contentTargetWidth
                 horizontalAlignment: Text.AlignHCenter
                 
                 text: toolTipDelegate.generateSubText()
@@ -234,19 +249,36 @@ Loader {
                 id: scrollView
                 // hovered is now handled by groupHover on the parent ColumnLayout
                 
-                // Disable clipping to allow media controls to overflow if height calc is slightly off
-                clip: false
 
-                contentWidth: groupToolTipListView.width
-                contentHeight: groupToolTipListView.height
-                implicitHeight: groupToolTipListView.height
-                implicitWidth: groupToolTipListView.width
+                
+                // Remove default padding/background to prevent size mismatch
+                padding: 0
+                background: null
+                
+                // Hide scrollbars unless content strictly exceeds screen limits (prevents resize flickering)
+                ScrollBar.horizontal.policy: (parent.contentTargetWidth > parent.maxTooltipWidth) ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff
+                ScrollBar.vertical.policy: (groupToolTipListView.contentHeight > parent.maxTooltipHeight) ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff
+
+                // Explicitly bind ListView as the scrollable content item for native wheel/touch handling
+                contentItem: groupToolTipListView
+
+                // Enable clipping to ensure scrollbars render correctly within bounds
+                clip: true
+                
+                // Match content size strictly, but cap at screen limits
+                Layout.preferredWidth: Math.min(parent.contentTargetWidth, parent.maxTooltipWidth)
+                Layout.preferredHeight: Math.min(Math.max(groupToolTipListView.contentHeight, delegateModel.estimatedHeight), parent.maxTooltipHeight)
+                Layout.fillWidth: false 
+                
+                implicitHeight: Math.min(Math.max(groupToolTipListView.contentHeight, delegateModel.estimatedHeight), parent.maxTooltipHeight)
+                implicitWidth: Math.min(groupToolTipListView.width, parent.maxTooltipWidth)
 
                 ListView {
                     id: groupToolTipListView
 
-                    width: delegateModel.estimatedWidth
-                    height: Math.max(delegateModel.estimatedHeight, contentHeight) // Allow growing but keep min size
+                    // Content Width Logic
+                    width: parent.contentTargetWidth
+                    // Height is managed by ScrollView (fills viewport)
      
                     model: delegateModel
                     
@@ -255,7 +287,7 @@ Loader {
                         ListView.Vertical : ListView.Horizontal
                         
                     reuseItems: true
-                    spacing: Kirigami.Units.gridUnit
+                    spacing: Kirigami.Units.smallSpacing
                     
                     clip: false
                 }
@@ -273,11 +305,14 @@ Loader {
                         Math.round(toolTipDelegate.tooltipInstanceMaximumWidth / screenRatio) : 0
                     
                     // Reduced padding for overlay style (was * 3)
-                    readonly property real singleItemHeight: instanceThumbHeight + (Kirigami.Units.gridUnit * 1)
+                    readonly property real singleItemHeight: instanceThumbHeight
 
-                    readonly property real estimatedWidth: ((!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ? 1 : safeCount) * (toolTipDelegate.tooltipInstanceMaximumWidth + Kirigami.Units.gridUnit) - Kirigami.Units.gridUnit
+
                     
-                    readonly property real estimatedHeight: ((!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ? safeCount : 1) * singleItemHeight - Kirigami.Units.gridUnit
+                    readonly property real estimatedHeight: {
+                        const count = (!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ? safeCount : 1;
+                        return count * singleItemHeight + Math.max(0, count - 1) * Kirigami.Units.smallSpacing;
+                    }
 
                     model: toolTipDelegate.tasksModel
                     rootIndex: toolTipDelegate.rootIndex

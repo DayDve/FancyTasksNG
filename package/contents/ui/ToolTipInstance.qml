@@ -27,8 +27,6 @@ import "code/singletones"
 
 ColumnLayout {
     id: root
-    
-    anchors.margins: Kirigami.Units.gridUnit
 
     readonly property alias isHovered: rootHover.hovered
 
