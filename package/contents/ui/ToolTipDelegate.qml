@@ -45,10 +45,14 @@ Loader {
         }
     }
 
-    // Shared Helper for Subtext
     function generateSubText(): string {
         const subTextEntries = [];
-        // Use global singletons virtualDesktopInfo and activityInfo
+        
+        // Include Generic Name (Description) for Pinned Apps (no windows) or if relevant
+        if (!isWin && genericName.length > 0 && genericName !== calculatedAppName) {
+            subTextEntries.push(genericName);
+        }
+
         if (!Plasmoid.configuration.showOnlyCurrentDesktop && virtualDesktopInfo.numberOfDesktops > 1) {
             if (!isOnAllVirtualDesktops && virtualDesktops.length > 0) {
                 const virtualDesktopNameList = virtualDesktops.map(virtualDesktop => {
@@ -141,7 +145,9 @@ Loader {
         id: singleTooltip
 
         ColumnLayout {
-            spacing: 0
+            spacing: Kirigami.Units.smallSpacing
+            
+            Layout.margins: Kirigami.Units.mediumSpacing
             
             property alias isHovered: singleHover.hovered
             
@@ -169,14 +175,15 @@ Loader {
                 horizontalAlignment: Text.AlignHCenter
                 
                 text: toolTipDelegate.generateSubText()
-                font: Kirigami.Theme.smallFont
-                elide: Text.ElideRight
+                wrapMode: Text.Wrap
                 visible: toolTipDelegate.showThumbnails && text.length > 0
                 opacity: 0.6
                 textFormat: Text.PlainText
             }
 
             ToolTipInstance {
+                visible: toolTipDelegate.windows.length > 0
+                
                 index: 0 
                 submodelIndex: toolTipDelegate.rootIndex
                 appPid: toolTipDelegate.pidParent
@@ -207,7 +214,6 @@ Loader {
 
             property alias isHovered: groupHover.hovered
             
-            // Shared Width Calculation Logic
             readonly property int safeCount: toolTipDelegate.windows.length > 0 ? toolTipDelegate.windows.length : 1
             readonly property int maxTooltipWidth: Screen.width - Kirigami.Units.gridUnit * 2
             readonly property int maxTooltipHeight: Screen.height - Kirigami.Units.gridUnit * 2
@@ -300,7 +306,6 @@ Loader {
 
                     readonly property int safeCount: toolTipDelegate.windows.length > 0 ? toolTipDelegate.windows.length : count
 
-                    // CORRECT HEIGHT CALCULATION
                     readonly property real screenRatio: Screen.width / Screen.height
                     
                     // If thumbnails disabled -> height is 0
@@ -328,7 +333,7 @@ Loader {
                         
                         index: index 
                         
-                        // FIX: Берем ID окна из модели текущей задачи
+                        // FIX: Get Window ID from current task model
                         explicitWinId: (model.WinIdList !== undefined && model.WinIdList.length > 0) ? model.WinIdList[0] : undefined
 
                         display: model.display !== undefined ? model.display : ""

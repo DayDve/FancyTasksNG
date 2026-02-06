@@ -10,6 +10,7 @@ import QtQuick
 import QtQuick.Layouts
 
 
+
 import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PlasmaComponents3
 import org.kde.plasma.core as PlasmaCore
@@ -248,6 +249,8 @@ PlasmoidItem {
         HoverHandler {
             id: rootHoverHandler
         }
+
+
         TaskManager.VirtualDesktopInfo { id: virtualDesktopInfo }
         TaskManager.ActivityInfo {
             id: activityInfo
@@ -413,14 +416,10 @@ PlasmoidItem {
     }
     Component.onDestruction: TaskTools.taskManagerInstanceCount -= 1;
 
-    // --- SHARED TOOLTIP IMPLEMENTATION ---
-
-    // 1. DIALOG FOR RUNNING WINDOWS
     PlasmaCore.Dialog {
         id: windowTooltipDialog
         
-        // Use lastTooltipParent to keep position during FadeOut
-        visualParent: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : tasks.lastTooltipParent
+        // Use lastTooltipParent to keep position during FadeOut (Fallback, overridden by visualParent binding below)
         
         location: Plasmoid.location
         type: PlasmaCore.Dialog.Tooltip
@@ -428,23 +427,34 @@ PlasmoidItem {
         backgroundHints: PlasmaCore.Types.NoBackground
         flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
         
-        // LOGIC: Show if condition met OR if we are currently fading out (opacity > 0)
-        readonly property bool shouldShow: tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup && !tasks.groupDialog && tasks.currentHoveredTask.isWindow
+        readonly property bool shouldShow: tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup && !tasks.groupDialog
         visible: shouldShow || winContainer.opacity > 0
+
+        // Removed explicit latch for Unified Dialog as it prevents moving to new tasks.
+        visualParent: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : tasks.lastTooltipParent
 
         mainItem: Item {
             id: winContainer
             
-            // TARGET DIMENSIONS (What the content wants to be)
             readonly property real targetWidth: toolTipInstance.implicitWidth + winBgFrame.margins.left + winBgFrame.margins.right
             readonly property real targetHeight: toolTipInstance.implicitHeight + winBgFrame.margins.top + winBgFrame.margins.bottom
+            
+            readonly property int gapSize: 6
+            
+            readonly property bool isBottom: Plasmoid.location === PlasmaCore.Types.BottomEdge
+            readonly property bool isTop: Plasmoid.location === PlasmaCore.Types.TopEdge
+            readonly property bool isLeft: Plasmoid.location === PlasmaCore.Types.LeftEdge
+            readonly property bool isRight: Plasmoid.location === PlasmaCore.Types.RightEdge
+            
+            // Uniform small gap
+            readonly property int marginTop: gapSize
+            readonly property int marginBottom: gapSize
+            readonly property int marginLeft: gapSize
+            readonly property int marginRight: gapSize
+            
+            width: Math.max(winBgFrame.width, targetWidth) + marginLeft + marginRight
+            height: Math.max(winBgFrame.height, targetHeight) + marginTop + marginBottom
 
-            // Container dimensions are max of current animated size and target size
-            // This ensures stable centering during resize animation
-            width: Math.max(winBgFrame.width, targetWidth)
-            height: Math.max(winBgFrame.height, targetHeight)
-
-            // FADE ANIMATION
             opacity: windowTooltipDialog.shouldShow ? 1 : 0
             Behavior on opacity {
                 NumberAnimation {
@@ -453,16 +463,36 @@ PlasmoidItem {
                 }
             }
 
-            KSvg.FrameSvgItem {
+            Kirigami.ShadowedRectangle {
                 id: winBgFrame
-                imagePath: "widgets/tooltip"
+                
+                Kirigami.Theme.colorSet: Kirigami.Theme.Tooltip
+                Kirigami.Theme.inherit: false
 
-                // Frame animates to the TARGET size
                 width: winContainer.targetWidth
                 height: winContainer.targetHeight
                 
-                anchors.centerIn: parent
-                clip: true
+                color: Kirigami.Theme.backgroundColor
+                radius: 4
+                
+                shadow.size: 20
+                shadow.color: Qt.rgba(0,0,0,0.3)
+                shadow.xOffset: 4
+                shadow.yOffset: 4
+
+                anchors.horizontalCenter: (winContainer.isBottom || winContainer.isTop) ? parent.horizontalCenter : undefined
+                anchors.verticalCenter: (winContainer.isLeft || winContainer.isRight) ? parent.verticalCenter : undefined
+                
+                anchors.bottom: winContainer.isBottom ? parent.bottom : undefined
+                anchors.top: winContainer.isTop ? parent.top : undefined
+                anchors.left: winContainer.isLeft ? parent.left : undefined
+                anchors.right: winContainer.isRight ? parent.right : undefined
+                
+                // Emulate SVG margins for layout logic
+                readonly property int tooltipFramePadding: 6
+                readonly property var margins: ({
+                    left: tooltipFramePadding, top: tooltipFramePadding, right: tooltipFramePadding, bottom: tooltipFramePadding
+                })
 
                 Behavior on width {
                     NumberAnimation {
@@ -481,7 +511,6 @@ PlasmoidItem {
                     id: toolTipInstance
                     anchors.centerIn: parent
 
-                    // BINDING TO UPDATE GLOBAL HOVER STATE
                     onContainsMouseChanged: tasks.isTooltipHovered = containsMouse
 
                     parentTask: tasks.currentHoveredTask
@@ -510,71 +539,6 @@ PlasmoidItem {
                     
                     isPlayingAudio: taskModel ? (taskModel.IsPlayingAudio === true) : false
                     isMuted: taskModel ? (taskModel.IsMuted === true) : false
-                }
-            }
-        }
-    }
-
-    // 2. DIALOG FOR PINNED APPS
-    PlasmaCore.Dialog {
-        id: pinnedTooltipDialog
-        visualParent: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : tasks.lastTooltipParent
-        location: Plasmoid.location
-        type: PlasmaCore.Dialog.Tooltip
-
-        backgroundHints: PlasmaCore.Types.NoBackground
-        flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
-        
-        readonly property bool shouldShow: tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup && !tasks.groupDialog && !tasks.currentHoveredTask.isWindow
-        visible: shouldShow || pinnedContainer.opacity > 0
-
-        mainItem: Item {
-            id: pinnedContainer
-
-            readonly property real targetWidth: pinnedLabel.implicitWidth + pinnedBgFrame.margins.left + pinnedBgFrame.margins.right
-            readonly property real targetHeight: pinnedLabel.implicitHeight + pinnedBgFrame.margins.top + pinnedBgFrame.margins.bottom
-
-            width: Math.max(pinnedBgFrame.width, targetWidth)
-            height: Math.max(pinnedBgFrame.height, targetHeight)
-
-            // FADE ANIMATION
-            opacity: pinnedTooltipDialog.shouldShow ? 1 : 0
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: Kirigami.Units.longDuration
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-            KSvg.FrameSvgItem {
-                id: pinnedBgFrame
-                imagePath: "widgets/tooltip"
-
-                width: pinnedContainer.targetWidth
-                height: pinnedContainer.targetHeight
-                anchors.centerIn: parent
-                
-                clip: true
-
-                Behavior on width {
-                    NumberAnimation {
-                        duration: Kirigami.Units.longDuration
-                        easing.type: Easing.OutExpo
-                    }
-                }
-                Behavior on height {
-                    NumberAnimation {
-                        duration: Kirigami.Units.longDuration
-                        easing.type: Easing.OutExpo
-                    }
-                }
-
-                PlasmaComponents3.Label {
-                    id: pinnedLabel
-                    text: tasks.currentHoveredTask ? tasks.currentHoveredTask.model.display : ""
-                    anchors.centerIn: parent
-                    Layout.maximumWidth: Kirigami.Units.gridUnit * 20
-                    elide: Text.ElideRight
                 }
             }
         }

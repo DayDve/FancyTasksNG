@@ -375,7 +375,7 @@ ColumnLayout {
             visible: active
             
             anchors.fill: hoverHandler
-            anchors.margins: Kirigami.Units.smallSpacing
+            anchors.margins: 1
 
             sourceComponent: root.isMinimized || pipeWireLoader.active ? iconItem : x11Thumbnail
 
