@@ -393,10 +393,22 @@ ColumnLayout {
                     source: toolTipDelegate.icon
                     animated: false
                     visible: valid
-                    opacity: pipeWireLoader.active ? 0 : 1
+                    
+                    // FIX: Hide ONLY when PipeWire thumbnail is ACTUALLY READY.
+                    // If loader is active but item is null or not ready, keep icon visible.
+                    property bool thumbnailReady: pipeWireLoader.active && pipeWireLoader.item && pipeWireLoader.item.hasThumbnail
+                    opacity: thumbnailReady ? 0 : 1
                     
                     anchors.fill: parent
                     anchors.margins: Kirigami.Units.gridUnit 
+
+                    // Smooth fade out when thumbnail appears
+                    Behavior on opacity {
+                        NumberAnimation {
+                            duration: Kirigami.Units.longDuration
+                            easing.type: Easing.OutCubic
+                        }
+                    }
 
                     SequentialAnimation {
                         running: true
@@ -428,6 +440,47 @@ ColumnLayout {
                 property: "winId"
                 value: thumbnailSourceItem.winId
             }
+
+            Timer {
+                id: captureTimer
+                interval: 400 
+                repeat: false
+                running: pipeWireLoader.status === Loader.Ready 
+                         && pipeWireLoader.item 
+                         && pipeWireLoader.item.hasThumbnail
+                         && thumbnailSourceItem.winId !== undefined
+                
+                onTriggered: {
+                    if (pipeWireLoader.item) {
+                        pipeWireLoader.item.grabToImage(function(result) {
+                            if (result && thumbnailSourceItem.winId) {
+                                // Store full result object to prevent garbage collection of the URL
+                                toolTipDelegate.thumbnailCache[thumbnailSourceItem.winId] = result;
+                            }
+                        });
+                    }
+                }
+            }
+        }
+        
+        // Placeholder image showing the cached thumbnail while the live stream initializes
+        Image {
+             id: cachedThumbnail
+             anchors.fill: hoverHandler
+             anchors.margins: thumbnailLoader.anchors.margins
+             
+             // Access .url from the stored ItemGrabResult object
+             source: (thumbnailSourceItem.winId && toolTipDelegate.thumbnailCache[thumbnailSourceItem.winId]) 
+                     ? toolTipDelegate.thumbnailCache[thumbnailSourceItem.winId].url 
+                     : ""
+             
+             readonly property bool liveThumbnailReady: pipeWireLoader.active && pipeWireLoader.item && pipeWireLoader.item.hasThumbnail
+             
+             visible: !liveThumbnailReady && status === Image.Ready
+             
+             asynchronous: false
+             fillMode: Image.PreserveAspectFit
+             cache: false
         }
 
         Loader {

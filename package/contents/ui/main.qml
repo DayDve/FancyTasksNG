@@ -41,6 +41,18 @@ PlasmoidItem {
     property Task currentHoveredTask: null
     property bool isTooltipHovered: false
 
+    // PERSIST PARENT FOR FADE-OUT ANIMATION
+    property Item lastTooltipParent: null
+    
+    // Key: WinId, Value: ItemGrabResult
+    property var thumbnailCache: ({})
+
+    onCurrentHoveredTaskChanged: {
+        if (currentHoveredTask) {
+            lastTooltipParent = currentHoveredTask.tooltipAnchor;
+        }
+    }
+
     Timer {
         id: tooltipCloseTimer
         interval: 250
@@ -406,55 +418,99 @@ PlasmoidItem {
     // 1. DIALOG FOR RUNNING WINDOWS
     PlasmaCore.Dialog {
         id: windowTooltipDialog
-        visualParent: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : null
+        
+        // Use lastTooltipParent to keep position during FadeOut
+        visualParent: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : tasks.lastTooltipParent
+        
         location: Plasmoid.location
         type: PlasmaCore.Dialog.Tooltip
 
         backgroundHints: PlasmaCore.Types.NoBackground
         flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
-        visible: tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup && !tasks.groupDialog && tasks.currentHoveredTask.isWindow
+        
+        // LOGIC: Show if condition met OR if we are currently fading out (opacity > 0)
+        readonly property bool shouldShow: tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup && !tasks.groupDialog && tasks.currentHoveredTask.isWindow
+        visible: shouldShow || winContainer.opacity > 0
 
-        mainItem: KSvg.FrameSvgItem {
-            id: winBgFrame
-            imagePath: "widgets/tooltip"
+        mainItem: Item {
+            id: winContainer
+            
+            // TARGET DIMENSIONS (What the content wants to be)
+            readonly property real targetWidth: toolTipInstance.implicitWidth + winBgFrame.margins.left + winBgFrame.margins.right
+            readonly property real targetHeight: toolTipInstance.implicitHeight + winBgFrame.margins.top + winBgFrame.margins.bottom
 
-            width: toolTipInstance.implicitWidth + margins.left + margins.right
-            height: toolTipInstance.implicitHeight + margins.top + margins.bottom
+            // Container dimensions are max of current animated size and target size
+            // This ensures stable centering during resize animation
+            width: Math.max(winBgFrame.width, targetWidth)
+            height: Math.max(winBgFrame.height, targetHeight)
 
-            ToolTipDelegate {
-                id: toolTipInstance
-                x: winBgFrame.margins.left
-                y: winBgFrame.margins.top
+            // FADE ANIMATION
+            opacity: windowTooltipDialog.shouldShow ? 1 : 0
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: Kirigami.Units.longDuration
+                    easing.type: Easing.OutCubic
+                }
+            }
 
-                // BINDING TO UPDATE GLOBAL HOVER STATE
-                onContainsMouseChanged: tasks.isTooltipHovered = containsMouse
+            KSvg.FrameSvgItem {
+                id: winBgFrame
+                imagePath: "widgets/tooltip"
 
-                parentTask: tasks.currentHoveredTask
-                tasksModel: tasks.tasksModel
-                mpris2Model: mpris2Source
-                pulseAudio: pulseAudio
+                // Frame animates to the TARGET size
+                width: winContainer.targetWidth
+                height: winContainer.targetHeight
                 
-                readonly property var taskModel: parentTask ? parentTask.model : null
-                
-                rootIndex: tasksModel.makeModelIndex(parentTask ? parentTask.index : 0, -1)
-                appName: taskModel ? taskModel.AppName : ""
-                pidParent: taskModel ? taskModel.AppPid : 0
-                windows: taskModel ? taskModel.WinIdList : []
-                isGroup: taskModel ? taskModel.IsGroupParent : false
-                icon: taskModel ? taskModel.decoration : ""
-                launcherUrl: taskModel ? taskModel.LauncherUrlWithoutIcon : ""
-                isLauncher: taskModel ? taskModel.IsLauncher : false
-                isMinimized: taskModel ? taskModel.IsMinimized : false
-                display: taskModel ? taskModel.display : ""
-                genericName: taskModel ? taskModel.GenericName : ""
-                virtualDesktops: taskModel ? taskModel.VirtualDesktops : []
-                isOnAllVirtualDesktops: taskModel ? taskModel.IsOnAllVirtualDesktops : false
-                activities: taskModel ? taskModel.Activities : []
-                smartLauncherCountVisible: parentTask && parentTask.smartLauncherItem ? parentTask.smartLauncherItem["countVisible"] : false
-                smartLauncherCount: smartLauncherCountVisible ? parentTask.smartLauncherItem["count"] : 0
-                
-                isPlayingAudio: taskModel ? (taskModel.IsPlayingAudio === true) : false
-                isMuted: taskModel ? (taskModel.IsMuted === true) : false
+                anchors.centerIn: parent
+                clip: true
+
+                Behavior on width {
+                    NumberAnimation {
+                        duration: Kirigami.Units.longDuration
+                        easing.type: Easing.OutExpo
+                    }
+                }
+                Behavior on height {
+                    NumberAnimation {
+                        duration: Kirigami.Units.longDuration
+                        easing.type: Easing.OutExpo
+                    }
+                }
+
+                ToolTipDelegate {
+                    id: toolTipInstance
+                    anchors.centerIn: parent
+
+                    // BINDING TO UPDATE GLOBAL HOVER STATE
+                    onContainsMouseChanged: tasks.isTooltipHovered = containsMouse
+
+                    parentTask: tasks.currentHoveredTask
+                    tasksModel: tasks.tasksModel
+                    mpris2Model: mpris2Source
+                    pulseAudio: pulseAudio
+                    
+                    readonly property var taskModel: parentTask ? parentTask.model : null
+                    
+                    rootIndex: tasksModel.makeModelIndex(parentTask ? parentTask.index : 0, -1)
+                    appName: taskModel ? taskModel.AppName : ""
+                    pidParent: taskModel ? taskModel.AppPid : 0
+                    windows: taskModel ? taskModel.WinIdList : []
+                    isGroup: taskModel ? taskModel.IsGroupParent : false
+                    icon: taskModel ? taskModel.decoration : ""
+                    launcherUrl: taskModel ? taskModel.LauncherUrlWithoutIcon : ""
+                    isLauncher: taskModel ? taskModel.IsLauncher : false
+                    isMinimized: taskModel ? taskModel.IsMinimized : false
+                    display: taskModel ? taskModel.display : ""
+                    genericName: taskModel ? taskModel.GenericName : ""
+                    virtualDesktops: taskModel ? taskModel.VirtualDesktops : []
+                    isOnAllVirtualDesktops: taskModel ? taskModel.IsOnAllVirtualDesktops : false
+                    activities: taskModel ? taskModel.Activities : []
+                    smartLauncherCountVisible: parentTask && parentTask.smartLauncherItem ? parentTask.smartLauncherItem["countVisible"] : false
+                    smartLauncherCount: smartLauncherCountVisible ? parentTask.smartLauncherItem["count"] : 0
+                    
+                    isPlayingAudio: taskModel ? (taskModel.IsPlayingAudio === true) : false
+                    isMuted: taskModel ? (taskModel.IsMuted === true) : false
+                }
             }
         }
     }
@@ -462,27 +518,64 @@ PlasmoidItem {
     // 2. DIALOG FOR PINNED APPS
     PlasmaCore.Dialog {
         id: pinnedTooltipDialog
-        visualParent: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : null
+        visualParent: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : tasks.lastTooltipParent
         location: Plasmoid.location
         type: PlasmaCore.Dialog.Tooltip
 
         backgroundHints: PlasmaCore.Types.NoBackground
         flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
-        visible: tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup && !tasks.groupDialog && !tasks.currentHoveredTask.isWindow
+        
+        readonly property bool shouldShow: tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup && !tasks.groupDialog && !tasks.currentHoveredTask.isWindow
+        visible: shouldShow || pinnedContainer.opacity > 0
 
-        mainItem: KSvg.FrameSvgItem {
-            id: pinnedBgFrame
-            imagePath: "widgets/tooltip"
+        mainItem: Item {
+            id: pinnedContainer
 
-            width: pinnedLabel.implicitWidth + margins.left + margins.right
-            height: pinnedLabel.implicitHeight + margins.top + margins.bottom
+            readonly property real targetWidth: pinnedLabel.implicitWidth + pinnedBgFrame.margins.left + pinnedBgFrame.margins.right
+            readonly property real targetHeight: pinnedLabel.implicitHeight + pinnedBgFrame.margins.top + pinnedBgFrame.margins.bottom
 
-            PlasmaComponents3.Label {
-                id: pinnedLabel
-                text: tasks.currentHoveredTask ? tasks.currentHoveredTask.model.display : ""
+            width: Math.max(pinnedBgFrame.width, targetWidth)
+            height: Math.max(pinnedBgFrame.height, targetHeight)
+
+            // FADE ANIMATION
+            opacity: pinnedTooltipDialog.shouldShow ? 1 : 0
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: Kirigami.Units.longDuration
+                    easing.type: Easing.OutCubic
+                }
+            }
+
+            KSvg.FrameSvgItem {
+                id: pinnedBgFrame
+                imagePath: "widgets/tooltip"
+
+                width: pinnedContainer.targetWidth
+                height: pinnedContainer.targetHeight
                 anchors.centerIn: parent
-                Layout.maximumWidth: Kirigami.Units.gridUnit * 20
-                elide: Text.ElideRight
+                
+                clip: true
+
+                Behavior on width {
+                    NumberAnimation {
+                        duration: Kirigami.Units.longDuration
+                        easing.type: Easing.OutExpo
+                    }
+                }
+                Behavior on height {
+                    NumberAnimation {
+                        duration: Kirigami.Units.longDuration
+                        easing.type: Easing.OutExpo
+                    }
+                }
+
+                PlasmaComponents3.Label {
+                    id: pinnedLabel
+                    text: tasks.currentHoveredTask ? tasks.currentHoveredTask.model.display : ""
+                    anchors.centerIn: parent
+                    Layout.maximumWidth: Kirigami.Units.gridUnit * 20
+                    elide: Text.ElideRight
+                }
             }
         }
     }

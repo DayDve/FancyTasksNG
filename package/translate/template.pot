@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/alexankitty/FancyTasks\n"
-"POT-Creation-Date: 2026-01-29 13:42+0200\n"
+"POT-Creation-Date: 2026-02-06 13:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -795,27 +795,27 @@ msgstr ""
 msgid "Activate %1"
 msgstr ""
 
-#: ../contents/ui/ToolTipInstance.qml
+#: ../contents/ui/ToolTipDelegate.qml ../contents/ui/ToolTipInstance.qml
 msgctxt "Comma-separated list of desktops"
 msgid "On %1"
 msgstr ""
 
-#: ../contents/ui/ToolTipInstance.qml
+#: ../contents/ui/ToolTipDelegate.qml ../contents/ui/ToolTipInstance.qml
 msgctxt "Comma-separated list of desktops"
 msgid "Pinned to all desktops"
 msgstr ""
 
-#: ../contents/ui/ToolTipInstance.qml
+#: ../contents/ui/ToolTipDelegate.qml ../contents/ui/ToolTipInstance.qml
 msgctxt "Which virtual desktop a window is currently on"
 msgid "Available on all activities"
 msgstr ""
 
-#: ../contents/ui/ToolTipInstance.qml
+#: ../contents/ui/ToolTipDelegate.qml ../contents/ui/ToolTipInstance.qml
 msgctxt "Activities a window is currently on (apart from the current one)"
 msgid "Also available on %1"
 msgstr ""
 
-#: ../contents/ui/ToolTipInstance.qml
+#: ../contents/ui/ToolTipDelegate.qml ../contents/ui/ToolTipInstance.qml
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr ""

@@ -30,7 +30,10 @@ Loader {
     required property var rootIndex
     property var tasksModel
     property var mpris2Model
-    property var pulseAudio
+    property var pulseAudio: null
+    
+    // Pass Cache from Root (tasks) down to Instances
+    property var thumbnailCache: tasks.thumbnailCache
     
     function getHovered(target) {
         return target && target.isHovered;
