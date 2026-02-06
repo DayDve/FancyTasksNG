@@ -16,10 +16,12 @@ import QtQuick.Controls
 
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents3
+import org.kde.plasma.extras as PlasmaExtras
 import org.kde.plasma.private.mpris as Mpris
 import org.kde.kirigami as Kirigami
 
 import org.kde.plasma.plasmoid
+import org.kde.taskmanager as TaskManager
 
 import "code/singletones"
 
@@ -34,6 +36,8 @@ Loader {
     
     // Pass Cache from Root (tasks) down to Instances
     property var thumbnailCache: tasks.thumbnailCache
+
+    readonly property bool isActive: (tasksModel && rootIndex.valid) ? tasksModel.data(rootIndex, TaskManager.AbstractTasksModel.IsActive) === true : false
     
     function getHovered(target) {
         return target && target.isHovered;
@@ -164,7 +168,9 @@ Loader {
                 text: toolTipDelegate.calculatedAppName
                 font.bold: true
                 elide: Text.ElideRight
-                visible: toolTipDelegate.showThumbnails && text.length > 0
+                // Show if Pinned OR if in Thumbnail Mode.
+                // If Running + TextMode, ToolTipInstance handles the header (with Close Button).
+                visible: text.length > 0 && (!toolTipDelegate.isWin || toolTipDelegate.showThumbnails)
                 opacity: 0.8
             }
 
@@ -176,7 +182,7 @@ Loader {
                 
                 text: toolTipDelegate.generateSubText()
                 wrapMode: Text.Wrap
-                visible: toolTipDelegate.showThumbnails && text.length > 0
+                visible: text.length > 0 && (!toolTipDelegate.isWin || toolTipDelegate.showThumbnails)
                 opacity: 0.6
                 textFormat: Text.PlainText
             }
@@ -193,6 +199,8 @@ Loader {
                 isOnAllVirtualDesktops: toolTipDelegate.isOnAllVirtualDesktops
                 virtualDesktops: toolTipDelegate.virtualDesktops
                 activities: toolTipDelegate.activities
+                
+                isWindowActive: toolTipDelegate.isActive
                 
                 tasksModel: toolTipDelegate.tasksModel
                 toolTipDelegate: toolTipDelegate
@@ -236,7 +244,7 @@ Loader {
                 text: toolTipDelegate.calculatedAppName
                 font.bold: true
                 elide: Text.ElideRight
-                visible: toolTipDelegate.showThumbnails && text.length > 0
+                visible: text.length > 0
                 opacity: 0.8
             }
 
@@ -313,7 +321,8 @@ Loader {
                         Math.round(toolTipDelegate.tooltipInstanceMaximumWidth / screenRatio) : 0
                     
                     // Reduced padding for overlay style (was * 3)
-                    readonly property real singleItemHeight: instanceThumbHeight
+                    // Fallback to 2 grid units for Text Mode items
+                    readonly property real singleItemHeight: instanceThumbHeight > 0 ? instanceThumbHeight : Kirigami.Units.gridUnit * 2.5
 
 
                     
@@ -346,6 +355,7 @@ Loader {
                         
                         isPlayingAudio: model.IsPlayingAudio !== undefined ? model.IsPlayingAudio : false
                         isMuted: model.IsMuted !== undefined ? model.IsMuted : false
+                        isWindowActive: model.IsActive !== undefined ? model.IsActive : false
 
                         submodelIndex: tasksModel.makeModelIndex(toolTipDelegate.rootIndex.row, index)
                         tasksModel: toolTipDelegate.tasksModel

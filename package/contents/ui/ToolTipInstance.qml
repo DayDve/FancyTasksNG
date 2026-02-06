@@ -25,8 +25,10 @@ import org.kde.taskmanager as TaskManager
 
 import "code/singletones"
 
-ColumnLayout {
+Item {
     id: root
+    implicitWidth: mainLayout.implicitWidth
+    implicitHeight: mainLayout.implicitHeight
 
     readonly property alias isHovered: rootHover.hovered
 
@@ -44,18 +46,40 @@ ColumnLayout {
         id: rootHover
     }
 
+    PlasmaExtras.Highlight {
+        anchors.fill: parent
+        anchors.margins: -Kirigami.Units.smallSpacing / 2
+        visible: toolTipDelegate.isGroup && (root.isHovered || isWindowActive) && !toolTipDelegate.showThumbnails
+        opacity: root.isHovered ? 1.0 : (isWindowActive ? 0.3 : 0.0)
+        pressed: (rootHover.item as MouseArea)?.containsPress ?? false
+        hovered: true
+        z: -1
+    }
+
+    Kirigami.Separator {
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: Kirigami.Units.gridUnit
+        anchors.rightMargin: Kirigami.Units.gridUnit
+        
+        // Show only in Text Mode (no thumbnails) and if NOT the last item
+        visible: !toolTipDelegate.showThumbnails && toolTipDelegate.isGroup && (toolTipDelegate.windows && index < toolTipDelegate.windows.length - 1)
+        opacity: 0.6 // More visible border
+    }
+
     required property int index
     required property var submodelIndex
     required property int appPid
     property string appId: ""
     required property string display
     required property bool isMinimized
+    required property bool isWindowActive
     required property bool isOnAllVirtualDesktops
     required property var virtualDesktops
     required property list<string> activities
 
     readonly property string calculatedAppName: {
-        // console.log("ToolTipInstance (" + index + ") Pid: " + appPid + " AppId: " + appId + " Url: " + toolTipDelegate.launcherUrl)
         if (toolTipDelegate.appName && toolTipDelegate.appName.length > 0) {
             return toolTipDelegate.appName;
         }
@@ -222,29 +246,29 @@ ColumnLayout {
     onAppIdChanged: updateAudioStreams({delay: false, force: true})
     Component.onCompleted: updateAudioStreams({delay: false, force: true})
 
-    spacing: Kirigami.Units.smallSpacing
 
-    // Use padding instead of anchors.margins for Layout compatibility
-    // Padding is supported in QtQuick.Layouts 1.x (Qt 5.6+) if it inherits from Item? 
-    // ColumnLayout inherits Item.
-    Layout.margins: 0 // Reset any default
-    
-    // Internal margins for the content
-    Item {
-        Layout.fillWidth: true
-        Layout.preferredHeight: Kirigami.Units.gridUnit
-        visible: !root.useOverlayStyle // Top margin spacer only if NOT overlay style? 
-                                       // Or just keep padding?
-                                       // The user wants Overlay style to be "tight"? 
-                                       // Actually, let's just use `Item` spacer or nothing if we want 0 margins for overlay.
+
+    PlasmaExtras.Highlight {
+        anchors.fill: parent
+        anchors.margins: -Kirigami.Units.smallSpacing / 2
+        visible: toolTipDelegate.isGroup && root.isHovered && !toolTipDelegate.showThumbnails
+        pressed: (rootHover.item as MouseArea)?.containsPress ?? false
+        hovered: true
+        z: -1
     }
-    
-    // Actually, simple padding is safer.
-    // But ColumnLayout checks `padding` property.
+
+    ColumnLayout {
+        id: mainLayout
+        width: parent.width
+        spacing: Kirigami.Units.smallSpacing
+        spacing: Kirigami.Units.smallSpacing
+
+    Layout.margins: 0 // Reset any default
     
     RowLayout {
         id: header
         visible: !root.useOverlayStyle
+        Layout.preferredHeight: implicitHeight // Ensure height propagates to root
         spacing: Kirigami.Units.smallSpacing
 
         Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
@@ -271,8 +295,9 @@ ColumnLayout {
                 elide: Text.ElideRight
                 
                 text: root.calculatedAppName
-                opacity: root.index === 0 ? 1 : 0
-                visible: text.length !== 0
+                // text: root.calculatedAppName (already bound above)
+                opacity: 1
+                visible: text.length !== 0 && !toolTipDelegate.isGroup
                 textFormat: Text.PlainText
             }
             PlasmaComponents3.Label {
@@ -285,7 +310,7 @@ ColumnLayout {
                 
                 text: root.titleIncludesTrack ? "" : root.title
                 opacity: 0.75
-                visible: root.title.length !== 0 && root.title !== appNameHeading.text
+                visible: root.title.length !== 0 && (toolTipDelegate.isGroup || root.title !== appNameHeading.text)
                 textFormat: Text.PlainText
             }
             PlasmaComponents3.Label {
@@ -331,6 +356,17 @@ ColumnLayout {
         }
     }
 
+    // LIST MEDIA CONTROLS (Only visible in Text Mode)
+    Loader {
+        Layout.fillWidth: true
+        Layout.topMargin: -Kirigami.Units.smallSpacing // Tighter spacing to header
+        
+        active: !toolTipDelegate.showThumbnails && root.controlsAreEffective
+        visible: active
+        
+        sourceComponent: mediaControlsComponent
+    }
+
     Item {
         id: thumbnailSourceItem
 
@@ -343,7 +379,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignCenter
         clip: false
         
-        visible: toolTipDelegate.isWin && Plasmoid.configuration.showToolTips
+        visible: toolTipDelegate.isWin && Plasmoid.configuration.showToolTips && toolTipDelegate.showThumbnails
 
         readonly property var winId: explicitWinId !== undefined ?
             explicitWinId : (toolTipDelegate.isWin ? toolTipDelegate.windows[root.index] : undefined)
@@ -358,7 +394,7 @@ ColumnLayout {
             anchors.fill: hoverHandler 
             
             // Use opacity for smooth transition matching the player controls
-            opacity: thumbnailSourceItem.thumbnailAreaHovered ? 1.0 : 0.0
+            opacity: thumbnailSourceItem.thumbnailAreaHovered ? 1.0 : (isWindowActive ? 0.3 : 0.0)
             Behavior on opacity { NumberAnimation { duration: Kirigami.Units.longDuration } }
             
             visible: opacity > 0 // Optimization
@@ -690,6 +726,7 @@ ColumnLayout {
             }
         }
     }
+}
     
     readonly property bool showPlayerControls: index !== -1 && playerData && playerData.canControl && 
         (
@@ -807,13 +844,7 @@ ColumnLayout {
         }
     }
 
-    // Classic Mode Loader (Fallback if thumbnails disabled)
-    Loader {
-        active: !toolTipDelegate.showThumbnails && (root.showPlayerControls || root.showVolumeControls)
-        visible: active
-        Layout.fillWidth: true
-        sourceComponent: mediaControlsComponent
-    }
+
 
     function generateSubText(): string {
         const subTextEntries = [];
