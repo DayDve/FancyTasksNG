@@ -261,7 +261,6 @@ Item {
         id: mainLayout
         width: parent.width
         spacing: Kirigami.Units.smallSpacing
-        spacing: Kirigami.Units.smallSpacing
 
     Layout.margins: 0 // Reset any default
     
