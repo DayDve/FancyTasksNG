@@ -9,8 +9,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 
-
-
 import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PlasmaComponents3
 import org.kde.plasma.core as PlasmaCore
@@ -44,7 +42,7 @@ PlasmoidItem {
 
     // PERSIST PARENT FOR FADE-OUT ANIMATION
     property Item lastTooltipParent: null
-    
+
     // Key: WinId, Value: ItemGrabResult
     property var thumbnailCache: ({})
 
@@ -90,21 +88,27 @@ PlasmoidItem {
     Layout.fillWidth: vertical ? true : Plasmoid.configuration.fill
     Layout.fillHeight: !vertical ? true : Plasmoid.configuration.fill
     Layout.minimumWidth: {
-        if (shouldShrinkToZero) return Kirigami.Units.gridUnit;
+        if (shouldShrinkToZero)
+            return Kirigami.Units.gridUnit;
         return vertical ? 0 : LayoutMetrics.preferredMinWidth();
     }
     Layout.minimumHeight: {
-        if (shouldShrinkToZero) return Kirigami.Units.gridUnit;
+        if (shouldShrinkToZero)
+            return Kirigami.Units.gridUnit;
         return !vertical ? 0 : LayoutMetrics.preferredMinHeight();
     }
     Layout.preferredWidth: {
-        if (shouldShrinkToZero) return 0.01;
-        if (vertical) return Kirigami.Units.gridUnit * 10;
+        if (shouldShrinkToZero)
+            return 0.01;
+        if (vertical)
+            return Kirigami.Units.gridUnit * 10;
         return taskList.Layout.maximumWidth;
     }
     Layout.preferredHeight: {
-        if (shouldShrinkToZero) return 0.01;
-        if (vertical) return taskList.Layout.maximumHeight;
+        if (shouldShrinkToZero)
+            return 0.01;
+        if (vertical)
+            return taskList.Layout.maximumHeight;
         return Kirigami.Units.gridUnit * 2;
     }
 
@@ -115,7 +119,8 @@ PlasmoidItem {
     signal activateWindowView(var winIds)
 
     onWindowsHovered: (winIds, hovered) => {
-        if (!Plasmoid.configuration.highlightWindows) return;
+        if (!Plasmoid.configuration.highlightWindows)
+            return;
         DBus.SessionBus.asyncCall({
             service: "org.kde.KWin.HighlightWindow",
             path: "/org/kde/KWin/HighlightWindow",
@@ -127,15 +132,24 @@ PlasmoidItem {
     }
 
     function cancelHighlightWindows(): DBus.DBusPendingReply {
-        return DBus.SessionBus.asyncCall({service: "org.kde.KWin.HighlightWindow", path: "/org/kde/KWin/HighlightWindow", iface: "org.kde.KWin.HighlightWindow", member: "highlightWindows", arguments: [[]], signature: "(as)"});
+        return DBus.SessionBus.asyncCall({
+            service: "org.kde.KWin.HighlightWindow",
+            path: "/org/kde/KWin/HighlightWindow",
+            iface: "org.kde.KWin.HighlightWindow",
+            member: "highlightWindows",
+            arguments: [[]],
+            signature: "(as)"
+        });
     }
 
     onDragSourceChanged: {
-        if (dragSource === null) tasksModel.syncLaunchers();
+        if (dragSource === null)
+            tasksModel.syncLaunchers();
     }
 
     function publishIconGeometries(taskItems: var): void {
-        if (TaskTools.taskManagerInstanceCount >= 2) return;
+        if (TaskTools.taskManagerInstanceCount >= 2)
+            return;
         for (let i = 0; i < taskItems.length - 1; ++i) {
             const task = taskItems[i];
             if (!task.model.IsLauncher && !task.model.IsStartup) {
@@ -148,12 +162,14 @@ PlasmoidItem {
         id: tasksModel
 
         readonly property int logicalLauncherCount: {
-            if (Plasmoid.configuration.separateLaunchers) return launcherCount;
+            if (Plasmoid.configuration.separateLaunchers)
+                return launcherCount;
             let startupsWithLaunchers = 0;
-            const isStartup = (item) => item && item["isStartup"] && item["hasLauncher"];
+            const isStartup = item => item && item["isStartup"] && item["hasLauncher"];
             for (let i = 0; i < taskRepeater.count; ++i) {
                 const item = taskRepeater.itemAt(i);
-                if (isStartup(item)) ++startupsWithLaunchers;
+                if (isStartup(item))
+                    ++startupsWithLaunchers;
             }
             return launcherCount + startupsWithLaunchers;
         }
@@ -173,25 +189,33 @@ PlasmoidItem {
         groupInline: !Plasmoid.configuration.groupPopups && !tasks.iconsOnly
         groupingWindowTasksThreshold: (Plasmoid.configuration.onlyGroupWhenFull && !tasks.iconsOnly ? LayoutMetrics.optimumCapacity(tasks.width, tasks.height) + 1 : -1)
 
-        onLauncherListChanged: Plasmoid.configuration.launchers = launcherList;
-        onGroupingAppIdBlacklistChanged: Plasmoid.configuration.groupingAppIdBlacklist = groupingAppIdBlacklist;
-        onGroupingLauncherUrlBlacklistChanged: Plasmoid.configuration.groupingLauncherUrlBlacklist = groupingLauncherUrlBlacklist;
+        onLauncherListChanged: Plasmoid.configuration.launchers = launcherList
+        onGroupingAppIdBlacklistChanged: Plasmoid.configuration.groupingAppIdBlacklist = groupingAppIdBlacklist
+        onGroupingLauncherUrlBlacklistChanged: Plasmoid.configuration.groupingLauncherUrlBlacklist = groupingLauncherUrlBlacklist
 
         function sortModeEnumValue(index: int): int {
             switch (index) {
-            case 0: return TaskManager.TasksModel.SortDisabled;
-            case 1: return TaskManager.TasksModel.SortManual;
-            case 2: return TaskManager.TasksModel.SortAlpha;
-            case 3: return TaskManager.TasksModel.SortVirtualDesktop;
-            case 4: return TaskManager.TasksModel.SortActivity;
-            default: return TaskManager.TasksModel.SortDisabled;
+            case 0:
+                return TaskManager.TasksModel.SortDisabled;
+            case 1:
+                return TaskManager.TasksModel.SortManual;
+            case 2:
+                return TaskManager.TasksModel.SortAlpha;
+            case 3:
+                return TaskManager.TasksModel.SortVirtualDesktop;
+            case 4:
+                return TaskManager.TasksModel.SortActivity;
+            default:
+                return TaskManager.TasksModel.SortDisabled;
             }
         }
 
         function groupModeEnumValue(index: int): int {
             switch (index) {
-            case 0: return TaskManager.TasksModel.GroupDisabled;
-            case 1: return TaskManager.TasksModel.GroupApplications;
+            case 0:
+                return TaskManager.TasksModel.GroupDisabled;
+            case 1:
+                return TaskManager.TasksModel.GroupApplications;
             }
         }
 
@@ -205,7 +229,7 @@ PlasmoidItem {
 
     readonly property TaskManagerApplet.Backend backend: TaskManagerApplet.Backend {
         id: backend
-        onAddLauncher: (url) => tasks.addLauncher(url);
+        onAddLauncher: url => tasks.addLauncher(url)
     }
 
     DBus.DBusServiceWatcher {
@@ -220,7 +244,8 @@ PlasmoidItem {
             running: true
             onTriggered: {
                 const task = parent as Task;
-                if (task) tasks.tasksModel.requestPublishDelegateGeometry(task.modelIndex(), backend.globalRect(task), task);
+                if (task)
+                    tasks.tasksModel.requestPublishDelegateGeometry(task.modelIndex(), backend.globalRect(task), task);
                 destroy();
             }
         }
@@ -229,7 +254,8 @@ PlasmoidItem {
     Connections {
         target: Plasmoid
         function onLocationChanged(): void {
-            if (TaskTools.taskManagerInstanceCount >= 2) return;
+            if (TaskTools.taskManagerInstanceCount >= 2)
+                return;
             iconGeometryTimer.start();
         }
     }
@@ -241,7 +267,9 @@ PlasmoidItem {
         }
     }
 
-    Mpris.Mpris2Model { id: mpris2Source }
+    Mpris.Mpris2Model {
+        id: mpris2Source
+    }
 
     Item {
         anchors.fill: parent
@@ -250,8 +278,9 @@ PlasmoidItem {
             id: rootHoverHandler
         }
 
-
-        TaskManager.VirtualDesktopInfo { id: virtualDesktopInfo }
+        TaskManager.VirtualDesktopInfo {
+            id: virtualDesktopInfo
+        }
         TaskManager.ActivityInfo {
             id: activityInfo
             readonly property string nullUuid: "00000000-0000-0000-0000-000000000000"
@@ -268,7 +297,7 @@ PlasmoidItem {
             id: iconGeometryTimer
             interval: 500
             repeat: false
-            onTriggered: tasks.publishIconGeometries(taskList.children, tasks);
+            onTriggered: tasks.publishIconGeometries(taskList.children, tasks)
         }
         Timer {
             id: startupSortFixTimer
@@ -281,8 +310,6 @@ PlasmoidItem {
             }
         }
 
-
-
         Binding {
             target: Plasmoid
             property: "status"
@@ -292,18 +319,29 @@ PlasmoidItem {
 
         Connections {
             target: Plasmoid.configuration
-            function onLaunchersChanged(): void { tasksModel.launcherList = Plasmoid.configuration.launchers; }
-            function onGroupingAppIdBlacklistChanged(): void { tasksModel.groupingAppIdBlacklist = Plasmoid.configuration.groupingAppIdBlacklist; }
-            function onGroupingLauncherUrlBlacklistChanged(): void { tasksModel.groupingLauncherUrlBlacklist = Plasmoid.configuration.groupingLauncherUrlBlacklist; }
+            function onLaunchersChanged(): void {
+                tasksModel.launcherList = Plasmoid.configuration.launchers;
+            }
+            function onGroupingAppIdBlacklistChanged(): void {
+                tasksModel.groupingAppIdBlacklist = Plasmoid.configuration.groupingAppIdBlacklist;
+            }
+            function onGroupingLauncherUrlBlacklistChanged(): void {
+                tasksModel.groupingLauncherUrlBlacklist = Plasmoid.configuration.groupingLauncherUrlBlacklist;
+            }
         }
 
-        Component { id: busyIndicator; PlasmaComponents3.BusyIndicator {} }
+        Component {
+            id: busyIndicator
+            PlasmaComponents3.BusyIndicator {}
+        }
 
         Item {
             id: dragHelper
             Drag.dragType: Drag.Automatic
             Drag.supportedActions: Qt.CopyAction | Qt.MoveAction | Qt.LinkAction
-            Drag.onDragFinished: dropAction => { tasks.dragSource = null; }
+            Drag.onDragFinished: dropAction => {
+                tasks.dragSource = null;
+            }
         }
 
         KSvg.FrameSvgItem {
@@ -325,7 +363,8 @@ PlasmoidItem {
                     urls.forEach(item => tasks.addLauncher(item));
                     return;
                 }
-                if (!hoveredItem) return;
+                if (!hoveredItem)
+                    return;
                 const task = hoveredItem as Task;
                 tasksModel.requestOpenUrls(task.modelIndex(), urls);
             }
@@ -338,15 +377,23 @@ PlasmoidItem {
             blockFirstEnter: false
             edge: {
                 switch (Plasmoid.location) {
-                case PlasmaCore.Types.BottomEdge: return Qt.TopEdge;
-                case PlasmaCore.Types.TopEdge: return Qt.BottomEdge;
-                case PlasmaCore.Types.LeftEdge: return Qt.RightEdge;
-                case PlasmaCore.Types.RightEdge: return Qt.LeftEdge;
-                default: return Qt.TopEdge;
+                case PlasmaCore.Types.BottomEdge:
+                    return Qt.TopEdge;
+                case PlasmaCore.Types.TopEdge:
+                    return Qt.BottomEdge;
+                case PlasmaCore.Types.LeftEdge:
+                    return Qt.RightEdge;
+                case PlasmaCore.Types.RightEdge:
+                    return Qt.LeftEdge;
+                default:
+                    return Qt.TopEdge;
                 }
             }
             LayoutMirroring.enabled: tasks.shouldBeMirrored(Plasmoid.configuration.reverseMode, Qt.locale().textDirection, tasks.vertical)
-            anchors { left: parent.left; top: parent.top }
+            anchors {
+                left: parent.left
+                top: parent.top
+            }
             height: taskList.childrenRect.height
             width: taskList.childrenRect.width
 
@@ -355,7 +402,10 @@ PlasmoidItem {
                 tasks: tasks
                 tasksModel: tasksModel
                 LayoutMirroring.enabled: tasks.shouldBeMirrored(Plasmoid.configuration.reverseMode, Qt.locale().textDirection, tasks.vertical)
-                anchors { left: parent.left; top: parent.top }
+                anchors {
+                    left: parent.left
+                    top: parent.top
+                }
                 readonly property real widthOccupation: taskRepeater.count / columns
                 readonly property real heightOccupation: taskRepeater.count / rows
                 Layout.maximumWidth: Math.round(children.reduce((acc, child) => isFinite(child.Layout.maximumWidth) ? acc + child.Layout.maximumWidth : acc, 0) / widthOccupation)
@@ -363,11 +413,14 @@ PlasmoidItem {
                 width: tasks.shouldShrinkToZero ? 0 : (tasks.vertical ? tasks.width * Math.min(1, widthOccupation) : Math.min(tasks.width, Layout.maximumWidth))
                 height: tasks.shouldShrinkToZero ? 0 : (tasks.vertical ? Math.min(tasks.height, Layout.maximumHeight) : tasks.height * Math.min(1, heightOccupation))
                 flow: tasks.vertical ? (Plasmoid.configuration.forceStripes ? Grid.LeftToRight : Grid.TopToBottom) : (Plasmoid.configuration.forceStripes ? Grid.TopToBottom : Grid.LeftToRight)
-                onAnimatingChanged: if (!animating) tasks.publishIconGeometries(children, tasks);
+                onAnimatingChanged: if (!animating)
+                    tasks.publishIconGeometries(children, tasks)
 
                 Repeater {
                     id: taskRepeater
-                    delegate: Task { tasksRoot: tasks }
+                    delegate: Task {
+                        tasksRoot: tasks
+                    }
                     onItemRemoved: (index, item) => {
                         const task = item as Task;
                         if (rootHoverHandler.hovered && index !== taskRepeater.count && task.model.WinIdList.length > 0 && tasks.taskClosedWithMouseMiddleButton.includes(task.model.WinIdList[0])) {
@@ -384,13 +437,23 @@ PlasmoidItem {
     property GroupDialog groupDialog
     readonly property bool supportsLaunchers: true
 
-    function hasLauncher(url: url): bool { return tasksModel.launcherPosition(url) !== -1; }
-    function addLauncher(url: url): void { if (Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable) tasksModel.requestAddLauncher(url); }
-    function removeLauncher(url: url): void { if (Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable) tasksModel.requestRemoveLauncher(url); }
+    function hasLauncher(url: url): bool {
+        return tasksModel.launcherPosition(url) !== -1;
+    }
+    function addLauncher(url: url): void {
+        if (Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable)
+            tasksModel.requestAddLauncher(url);
+    }
+    function removeLauncher(url: url): void {
+        if (Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable)
+            tasksModel.requestRemoveLauncher(url);
+    }
     function activateTaskAtIndex(index: var): void {
-        if (typeof index !== "number") return;
+        if (typeof index !== "number")
+            return;
         const task = taskRepeater.itemAt(index) as Task;
-        if (task) TaskTools.activateTask(task.modelIndex(), task.model, null, task, Plasmoid, this, effectWatcher.registered);
+        if (task)
+            TaskTools.activateTask(task.modelIndex(), task.model, null, task, Plasmoid, this, effectWatcher.registered);
     }
     function createContextMenu(rootTask, modelIndex, args = {}) {
         const initialArgs = Object.assign(args, {
@@ -405,8 +468,10 @@ PlasmoidItem {
         return contextMenuComponent.createObject(rootTask, initialArgs);
     }
     function shouldBeMirrored(reverseMode, layoutDirection, vertical): bool {
-        if (vertical) return layoutDirection === Qt.RightToLeft;
-        if (layoutDirection === Qt.LeftToRight) return reverseMode;
+        if (vertical)
+            return layoutDirection === Qt.RightToLeft;
+        if (layoutDirection === Qt.LeftToRight)
+            return reverseMode;
         return !reverseMode;
     }
 
@@ -414,19 +479,19 @@ PlasmoidItem {
         TaskTools.taskManagerInstanceCount += 1;
         requestLayout.connect(iconGeometryTimer.restart);
     }
-    Component.onDestruction: TaskTools.taskManagerInstanceCount -= 1;
+    Component.onDestruction: TaskTools.taskManagerInstanceCount -= 1
 
     PlasmaCore.Dialog {
         id: windowTooltipDialog
-        
+
         // Use lastTooltipParent to keep position during FadeOut (Fallback, overridden by visualParent binding below)
-        
+
         location: Plasmoid.location
         type: PlasmaCore.Dialog.Tooltip
 
         backgroundHints: PlasmaCore.Types.NoBackground
         flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
-        
+
         readonly property bool shouldShow: tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup && !tasks.groupDialog
         visible: shouldShow || winContainer.opacity > 0
 
@@ -435,23 +500,23 @@ PlasmoidItem {
 
         mainItem: Item {
             id: winContainer
-            
+
             readonly property real targetWidth: toolTipInstance.implicitWidth + winBgFrame.margins.left + winBgFrame.margins.right
             readonly property real targetHeight: toolTipInstance.implicitHeight + winBgFrame.margins.top + winBgFrame.margins.bottom
-            
-            readonly property int gapSize: 6
-            
+
+            readonly property int gapSize: 5
+
             readonly property bool isBottom: Plasmoid.location === PlasmaCore.Types.BottomEdge
             readonly property bool isTop: Plasmoid.location === PlasmaCore.Types.TopEdge
             readonly property bool isLeft: Plasmoid.location === PlasmaCore.Types.LeftEdge
             readonly property bool isRight: Plasmoid.location === PlasmaCore.Types.RightEdge
-            
+
             // Uniform small gap
             readonly property int marginTop: gapSize
             readonly property int marginBottom: gapSize
             readonly property int marginLeft: gapSize
             readonly property int marginRight: gapSize
-            
+
             width: Math.max(winBgFrame.width, targetWidth) + marginLeft + marginRight
             height: Math.max(winBgFrame.height, targetHeight) + marginTop + marginBottom
 
@@ -465,34 +530,31 @@ PlasmoidItem {
 
             Kirigami.ShadowedRectangle {
                 id: winBgFrame
-                
+
                 Kirigami.Theme.colorSet: Kirigami.Theme.Tooltip
                 Kirigami.Theme.inherit: false
 
                 width: winContainer.targetWidth
                 height: winContainer.targetHeight
-                
+
                 color: Kirigami.Theme.backgroundColor
                 radius: 4
-                
-                shadow.size: 20
-                shadow.color: Qt.rgba(0,0,0,0.3)
-                shadow.xOffset: 4
-                shadow.yOffset: 4
 
-                anchors.horizontalCenter: (winContainer.isBottom || winContainer.isTop) ? parent.horizontalCenter : undefined
-                anchors.verticalCenter: (winContainer.isLeft || winContainer.isRight) ? parent.verticalCenter : undefined
-                
-                anchors.bottom: winContainer.isBottom ? parent.bottom : undefined
-                anchors.top: winContainer.isTop ? parent.top : undefined
-                anchors.left: winContainer.isLeft ? parent.left : undefined
-                anchors.right: winContainer.isRight ? parent.right : undefined
-                
+                shadow.size: 12
+                shadow.color: Qt.rgba(0, 0, 0, 0.3)
+                shadow.xOffset: 0
+                shadow.yOffset: 2
+
+                anchors.centerIn: parent
+
                 // Emulate SVG margins for layout logic
                 readonly property int tooltipFramePadding: 6
                 readonly property var margins: ({
-                    left: tooltipFramePadding, top: tooltipFramePadding, right: tooltipFramePadding, bottom: tooltipFramePadding
-                })
+                        left: tooltipFramePadding,
+                        top: tooltipFramePadding,
+                        right: tooltipFramePadding,
+                        bottom: tooltipFramePadding
+                    })
 
                 Behavior on width {
                     NumberAnimation {
@@ -517,9 +579,9 @@ PlasmoidItem {
                     tasksModel: tasks.tasksModel
                     mpris2Model: mpris2Source
                     pulseAudio: pulseAudio
-                    
+
                     readonly property var taskModel: parentTask ? parentTask.model : null
-                    
+
                     rootIndex: tasksModel.makeModelIndex(parentTask ? parentTask.index : 0, -1)
                     appName: taskModel ? taskModel.AppName : ""
                     pidParent: taskModel ? taskModel.AppPid : 0
@@ -536,7 +598,7 @@ PlasmoidItem {
                     activities: taskModel ? taskModel.Activities : []
                     smartLauncherCountVisible: parentTask && parentTask.smartLauncherItem ? parentTask.smartLauncherItem["countVisible"] : false
                     smartLauncherCount: smartLauncherCountVisible ? parentTask.smartLauncherItem["count"] : 0
-                    
+
                     isPlayingAudio: taskModel ? (taskModel.IsPlayingAudio === true) : false
                     isMuted: taskModel ? (taskModel.IsMuted === true) : false
                 }
