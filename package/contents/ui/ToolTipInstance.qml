@@ -37,6 +37,8 @@ Item {
     property var mpris2Model
 
     property var explicitWinId: undefined
+    readonly property var currentWinId: explicitWinId !== undefined ? explicitWinId : (toolTipDelegate.windows && root.index < toolTipDelegate.windows.length ? toolTipDelegate.windows[root.index] : undefined)
+    
     property var pulseAudio
     
 
@@ -49,23 +51,26 @@ Item {
     PlasmaExtras.Highlight {
         anchors.fill: parent
         anchors.margins: -Kirigami.Units.smallSpacing / 2
-        visible: toolTipDelegate.isGroup && (root.isHovered || isWindowActive) && !toolTipDelegate.showThumbnails
-        opacity: root.isHovered ? 1.0 : (isWindowActive ? 0.3 : 0.0)
+        visible: (root.isHovered || (toolTipDelegate.isGroup && isWindowActive)) && !toolTipDelegate.showThumbnails
+        opacity: root.isHovered ? 1.0 : (isWindowActive ? 0.6 : 0.0)
+
         pressed: (rootHover.item as MouseArea)?.containsPress ?? false
         hovered: true
         z: -1
     }
 
-    Kirigami.Separator {
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.leftMargin: Kirigami.Units.gridUnit
-        anchors.rightMargin: Kirigami.Units.gridUnit
-        
-        // Show only in Text Mode (no thumbnails) and if NOT the last item
-        visible: !toolTipDelegate.showThumbnails && toolTipDelegate.isGroup && (toolTipDelegate.windows && index < toolTipDelegate.windows.length - 1)
-        opacity: 0.6 // More visible border
+    // Mouse Interaction for Text Mode (when thumbnails hidden)
+    Loader {
+        anchors.fill: parent
+        active: !toolTipDelegate.showThumbnails && toolTipDelegate.isWin
+        sourceComponent: ToolTipWindowMouseArea {
+            rootTask: toolTipDelegate ? toolTipDelegate.parentTask : null
+            modelIndex: root.submodelIndex
+            winId: root.currentWinId
+            globalHovered: rootHover.hovered
+            tasksModel: root.tasksModel
+            toolTipDelegate: root.toolTipDelegate
+        }
     }
 
     required property int index
@@ -247,7 +252,6 @@ Item {
     Component.onCompleted: updateAudioStreams({delay: false, force: true})
 
 
-
     PlasmaExtras.Highlight {
         anchors.fill: parent
         anchors.margins: -Kirigami.Units.smallSpacing / 2
@@ -262,7 +266,8 @@ Item {
         width: parent.width
         spacing: Kirigami.Units.smallSpacing
 
-    Layout.margins: 0 // Reset any default
+
+        Layout.margins: 0
     
     RowLayout {
         id: header
@@ -273,8 +278,10 @@ Item {
         Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
         Layout.minimumWidth: Kirigami.Units.gridUnit * 12
         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-        Layout.margins: 0
+        Layout.margins: toolTipDelegate.isGroup ? Kirigami.Units.largeSpacing : Kirigami.Units.mediumSpacing
         Layout.fillWidth: true
+
+
 
         ColumnLayout {
             spacing: 0
@@ -294,10 +301,11 @@ Item {
                 elide: Text.ElideRight
                 
                 text: root.calculatedAppName
-                // text: root.calculatedAppName (already bound above)
+
                 opacity: 1
                 visible: text.length !== 0 && !toolTipDelegate.isGroup
                 textFormat: Text.PlainText
+                horizontalAlignment: !toolTipDelegate.isGroup ? Text.AlignHCenter : Text.AlignLeft
             }
             PlasmaComponents3.Label {
                 id: winTitle
@@ -309,6 +317,7 @@ Item {
                 
                 text: root.titleIncludesTrack ? "" : root.title
                 opacity: 0.75
+                horizontalAlignment: !toolTipDelegate.isGroup ? Text.AlignHCenter : Text.AlignLeft
                 visible: root.title.length !== 0 && (toolTipDelegate.isGroup || root.title !== appNameHeading.text)
                 textFormat: Text.PlainText
             }
@@ -322,27 +331,17 @@ Item {
                 
                 text: toolTipDelegate.isWin ? root.generateSubText() : ""
                 opacity: 0.6
+                horizontalAlignment: !toolTipDelegate.isGroup ? Text.AlignHCenter : Text.AlignLeft
                 visible: text.length !== 0 && text !== appNameHeading.text
                 textFormat: Text.PlainText
             }
         }
 
-        Item {
-            Layout.alignment: Qt.AlignRight | Qt.AlignTop
-            Layout.preferredHeight: closeButton.height
-            Layout.preferredWidth: closeButton.width
-            visible: root.index === 0 && toolTipDelegate.smartLauncherCountVisible
 
-            Badge {
-                anchors.centerIn: parent
-                height: Kirigami.Units.iconSizes.smallMedium
-                number: toolTipDelegate.smartLauncherCount
-            }
-        }
 
         PlasmaComponents3.ToolButton {
             id: closeButton
-            Layout.alignment: Qt.AlignRight | Qt.AlignTop
+            Layout.alignment: Qt.AlignRight | (!toolTipDelegate.isGroup ? Qt.AlignVCenter : Qt.AlignTop)
             visible: toolTipDelegate.isWin
             icon.name: "window-close"
             onClicked: {
@@ -372,8 +371,8 @@ Item {
         readonly property int targetWidth: Kirigami.Units.gridUnit * 14
         readonly property int targetHeight: Math.round(targetWidth / (Screen.width / Screen.height))
 
-        Layout.preferredWidth: targetWidth
-        Layout.preferredHeight: targetHeight
+        Layout.preferredWidth: toolTipDelegate.showThumbnails ? targetWidth : 0
+        Layout.preferredHeight: toolTipDelegate.showThumbnails ? targetHeight : 0
 
         Layout.alignment: Qt.AlignCenter
         clip: false
@@ -390,10 +389,10 @@ Item {
         }
 
         PlasmaExtras.Highlight {
-            anchors.fill: hoverHandler 
+            anchors.fill: hoverHandler
             
             // Use opacity for smooth transition matching the player controls
-            opacity: thumbnailSourceItem.thumbnailAreaHovered ? 1.0 : (isWindowActive ? 0.3 : 0.0)
+            opacity: thumbnailSourceItem.thumbnailAreaHovered ? 1.0 : ((toolTipDelegate.isGroup && isWindowActive) ? 0.6 : 0.0)
             Behavior on opacity { NumberAnimation { duration: Kirigami.Units.longDuration } }
             
             visible: opacity > 0 // Optimization
@@ -410,7 +409,7 @@ Item {
             visible: active
             
             anchors.fill: hoverHandler
-            anchors.margins: 1
+            anchors.margins: Kirigami.Units.smallSpacing
 
             sourceComponent: root.isMinimized || pipeWireLoader.active ? iconItem : x11Thumbnail
 
@@ -535,7 +534,7 @@ Item {
             readonly property bool available: (status === Image.Ready || status === Image.Loading) && (!(toolTipDelegate.isGroup || backend.applicationCategories(launcherUrl).includes("WebBrowser")) || root.titleIncludesTrack)
 
             anchors.fill: hoverHandler
-            anchors.margins: 1
+            anchors.margins: Kirigami.Units.smallSpacing
             sourceSize: Qt.size(parent.width, parent.height)
 
             asynchronous: true

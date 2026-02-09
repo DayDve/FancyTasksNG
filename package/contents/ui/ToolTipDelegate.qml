@@ -151,7 +151,7 @@ Loader {
         ColumnLayout {
             spacing: Kirigami.Units.smallSpacing
             
-            Layout.margins: Kirigami.Units.mediumSpacing
+            Layout.margins: toolTipDelegate.showThumbnails ? Kirigami.Units.mediumSpacing : -6
             
             property alias isHovered: singleHover.hovered
             
@@ -266,7 +266,10 @@ Loader {
                 id: scrollView
                 // hovered is now handled by groupHover on the parent ColumnLayout
                 
-
+                // In text mode (no thumbnails), extend to tooltip edges
+                Layout.leftMargin: toolTipDelegate.showThumbnails ? 0 : -6
+                Layout.rightMargin: toolTipDelegate.showThumbnails ? 0 : -6
+                Layout.bottomMargin: toolTipDelegate.showThumbnails ? 0 : -6
                 
                 // Remove default padding/background to prevent size mismatch
                 padding: 0
@@ -284,10 +287,10 @@ Loader {
                 
                 // Match content size strictly, but cap at screen limits
                 Layout.preferredWidth: Math.min(parent.contentTargetWidth, parent.maxTooltipWidth)
-                Layout.preferredHeight: Math.min(Math.max(groupToolTipListView.contentHeight, delegateModel.estimatedHeight), parent.maxTooltipHeight)
+                Layout.preferredHeight: Math.min(Math.max(groupToolTipListView.contentHeight, toolTipDelegate.showThumbnails ? delegateModel.estimatedHeight : 0), parent.maxTooltipHeight)
                 Layout.fillWidth: false 
                 
-                implicitHeight: Math.min(Math.max(groupToolTipListView.contentHeight, delegateModel.estimatedHeight), parent.maxTooltipHeight)
+                implicitHeight: Math.min(Math.max(groupToolTipListView.contentHeight, toolTipDelegate.showThumbnails ? delegateModel.estimatedHeight : 0), parent.maxTooltipHeight)
                 implicitWidth: Math.min(groupToolTipListView.width, parent.maxTooltipWidth)
 
                 ListView {
