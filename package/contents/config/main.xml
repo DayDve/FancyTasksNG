@@ -160,6 +160,14 @@
       <label>Use icon size instead of scale.</label>
       <default>false</default>
     </entry>
+    <entry name="iconScaleFromEdge" type="Bool">
+      <label>Scale icons from panel edge instead of center.</label>
+      <default>true</default>
+    </entry>
+    <entry name="iconEdgeOffset" type="Int">
+      <label>Distance from panel edge in pixels.</label>
+      <default>0</default>
+    </entry>
     <entry name="fill" type="Bool">
       <label>Whether task manager should occupy all available space.</label>
       <default>true</default>

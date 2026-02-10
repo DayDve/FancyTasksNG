@@ -70,6 +70,24 @@ ConfigPage {
             onToggled: cfg_page.cfg_iconSizeOverride = checked
         }
 
+        CheckBox {
+            id: iconScaleFromEdge
+            text: Wrappers.i18n("Scale icons from panel edge")
+            checked: cfg_page.cfg_iconScaleFromEdge
+            onToggled: cfg_page.cfg_iconScaleFromEdge = checked
+        }
+
+        SpinBox {
+            id: iconEdgeOffset
+            Kirigami.FormData.label: Wrappers.i18n("Edge offset (px):")
+            from: 0
+            to: 15
+            stepSize: 1
+            visible: iconScaleFromEdge.checked
+            value: cfg_page.cfg_iconEdgeOffset
+            onValueModified: cfg_page.cfg_iconEdgeOffset = value
+        }
+
         Item {
             Kirigami.FormData.isSection: true
             Kirigami.FormData.label: Wrappers.i18n("Icon Hover Effects")

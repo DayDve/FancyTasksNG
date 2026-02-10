@@ -695,9 +695,13 @@ Item {
             property bool sizeOverride: Plasmoid.configuration.iconSizeOverride
             property int fixedSize: Plasmoid.configuration.iconSizePx
             property real iconScale: Plasmoid.configuration.iconScale / 100
+            property bool scaleFromEdge: Plasmoid.configuration.iconScaleFromEdge
+            property int edgeOffset: Plasmoid.configuration.iconEdgeOffset
 
             readonly property int baseWidth: (sizeOverride ? fixedSize : (parent.width * iconScale))
             readonly property int baseHeight: (sizeOverride ? fixedSize : (parent.height * iconScale))
+            readonly property real edgeMarginH: scaleFromEdge ? edgeOffset : (parent.width - baseWidth) / 2
+            readonly property real edgeMarginV: scaleFromEdge ? edgeOffset : (parent.height - baseHeight) / 2
 
             width: baseWidth + growSize
             height: baseHeight + growSize
@@ -705,32 +709,32 @@ Item {
             // Default anchors (fallback/bottom)
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: (parent.height - baseHeight) / 2
+            anchors.bottomMargin: edgeMarginV
 
             states: [
                 State {
                     name: "top"
                     when: Plasmoid.location === PlasmaCore.Types.TopEdge
                     AnchorChanges { target: icon; anchors.top: parent.top; anchors.bottom: undefined; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: undefined; anchors.left: undefined; anchors.right: undefined }
-                    PropertyChanges { target: icon; anchors.topMargin: (parent.height - icon.baseHeight) / 2; anchors.bottomMargin: 0; anchors.leftMargin: 0; anchors.rightMargin: 0 }
+                    PropertyChanges { target: icon; anchors.topMargin: icon.edgeMarginV; anchors.bottomMargin: 0; anchors.leftMargin: 0; anchors.rightMargin: 0 }
                 },
                 State {
                     name: "left"
                     when: Plasmoid.location === PlasmaCore.Types.LeftEdge
                     AnchorChanges { target: icon; anchors.left: parent.left; anchors.right: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.top: undefined; anchors.bottom: undefined }
-                    PropertyChanges { target: icon; anchors.leftMargin: (parent.width - icon.baseWidth) / 2; anchors.rightMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
+                    PropertyChanges { target: icon; anchors.leftMargin: icon.edgeMarginH; anchors.rightMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
                 },
                 State {
                     name: "right"
                     when: Plasmoid.location === PlasmaCore.Types.RightEdge
                     AnchorChanges { target: icon; anchors.right: parent.right; anchors.left: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.top: undefined; anchors.bottom: undefined }
-                    PropertyChanges { target: icon; anchors.rightMargin: (parent.width - icon.baseWidth) / 2; anchors.leftMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
+                    PropertyChanges { target: icon; anchors.rightMargin: icon.edgeMarginH; anchors.leftMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
                 },
                 State {
                     name: "bottom"
                     when: Plasmoid.location === PlasmaCore.Types.BottomEdge
                     AnchorChanges { target: icon; anchors.bottom: parent.bottom; anchors.top: undefined; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: undefined; anchors.left: undefined; anchors.right: undefined }
-                    PropertyChanges { target: icon; anchors.bottomMargin: (parent.height - icon.baseHeight) / 2; anchors.topMargin: 0; anchors.leftMargin: 0; anchors.rightMargin: 0 }
+                    PropertyChanges { target: icon; anchors.bottomMargin: icon.edgeMarginV; anchors.topMargin: 0; anchors.leftMargin: 0; anchors.rightMargin: 0 }
                 }
             ]
 

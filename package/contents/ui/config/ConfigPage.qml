@@ -156,4 +156,6 @@ Kirigami.ScrollablePage {
     property bool cfg_indicatorReverseDefault
     property bool cfg_indicatorOverride
     property bool cfg_indicatorOverrideDefault
+    property bool cfg_iconScaleFromEdge
+    property int cfg_iconEdgeOffset
 }

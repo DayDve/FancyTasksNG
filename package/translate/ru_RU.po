@@ -98,6 +98,14 @@ msgid "Set icon size instead of scaling"
 msgstr "Задать размер значков вместо масштабирования"
 
 #: ../contents/ui/config/ConfigAppearance.qml
+msgid "Scale icons from panel edge"
+msgstr "Масштабировать значки от края панели"
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Edge offset (px):"
+msgstr "Отступ от края (px):"
+
+#: ../contents/ui/config/ConfigAppearance.qml
 msgid "Button Colors:"
 msgstr "Цвета кнопок:"
 
