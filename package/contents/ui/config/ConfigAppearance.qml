@@ -45,10 +45,29 @@ ConfigPage {
             from: 0
             to: 300
             stepSize: 1.0
-            Kirigami.FormData.label: Wrappers.i18n("Icon Scale") + " " + iconScale.valueAt(iconScale.position) + "%"
+            Kirigami.FormData.label: Wrappers.i18n("Icon Scale") + " " + Math.round(iconScale.value) + "%"
             visible: !iconSizeOverride.checked
             value: cfg_page.cfg_iconScale
             onMoved: cfg_page.cfg_iconScale = value
+        }
+
+        Slider {
+            id: iconSizePx
+            Layout.fillWidth: true
+            from: 0
+            to: 100
+            stepSize: 1
+            Kirigami.FormData.label: Wrappers.i18n("Icon Size") + " " + Math.round(iconSizePx.value) + "px"
+            visible: iconSizeOverride.checked
+            value: cfg_page.cfg_iconSizePx
+            onMoved: cfg_page.cfg_iconSizePx = value
+        }
+
+        CheckBox {
+            id: iconSizeOverride
+            text: Wrappers.i18n("Set icon size instead of scaling")
+            checked: cfg_page.cfg_iconSizeOverride
+            onToggled: cfg_page.cfg_iconSizeOverride = checked
         }
 
         Item {
@@ -82,23 +101,6 @@ ConfigPage {
             ToolTip.delay: 1000
             ToolTip.visible: hovered
             ToolTip.text: Wrappers.i18n("Duration of the zoom animation in milliseconds")
-        }
-
-        SpinBox {
-            id: iconSizePx
-            Kirigami.FormData.label: Wrappers.i18n("Icon Size (px):")
-            from: 0
-            to: 999
-            visible: iconSizeOverride.checked
-            value: cfg_page.cfg_iconSizePx
-            onValueModified: cfg_page.cfg_iconSizePx = value
-        }
-
-        CheckBox {
-            id: iconSizeOverride
-            text: Wrappers.i18n("Set icon size instead of scaling")
-            checked: cfg_page.cfg_iconSizeOverride
-            onToggled: cfg_page.cfg_iconSizeOverride = checked
         }
 
         Item {

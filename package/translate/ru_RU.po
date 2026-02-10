@@ -90,8 +90,8 @@ msgid "Duration of the zoom animation in milliseconds"
 msgstr "Длительность анимации увеличения в миллисекундах"
 
 #: ../contents/ui/config/ConfigAppearance.qml
-msgid "Icon Size (px):"
-msgstr "Размер значков (px):"
+msgid "Icon Size"
+msgstr "Размер значков"
 
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Set icon size instead of scaling"
