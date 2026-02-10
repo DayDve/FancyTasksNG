@@ -504,7 +504,7 @@ msgstr "Сверху"
 
 #: ../contents/ui/config/ConfigIndicators.qml
 msgid "Indicator Edge Offset (px):"
-msgstr "Отступ от края (px):"
+msgstr "Сдвиг от края панели (px):"
 
 #: ../contents/ui/config/ConfigIndicators.qml
 msgid "Indicator Style:"
@@ -560,7 +560,7 @@ msgstr "Радиус индикатора (%):"
 
 #: ../contents/ui/config/ConfigIndicators.qml
 msgid "Indicator margin (px):"
-msgstr "Отступ индикатора (px):"
+msgstr "Сжатие по краям (px):"
 
 #: ../contents/ui/config/ConfigIndicators.qml
 msgid "Indicator Color:"

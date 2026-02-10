@@ -9,7 +9,6 @@ import org.kde.plasma.plasmoid
 
 Flow {
     id: indicatorsFlow
-    anchors.margins: 4
     spacing: 10
     property int taskCount: 1
     required property var task
