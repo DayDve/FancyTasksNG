@@ -714,6 +714,15 @@ Item {
             enabled: true
 
             source: task.model.decoration
+
+            layer.enabled: task.iconOverflows
+            layer.effect: DropShadow {
+                horizontalOffset: 0
+                verticalOffset: 0
+                radius: 12
+                samples: 25
+                color: Qt.rgba(0, 0, 0, 0.5)
+            }
         }
 
         states: [
