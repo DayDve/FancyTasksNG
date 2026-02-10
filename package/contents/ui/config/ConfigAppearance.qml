@@ -114,6 +114,7 @@ ConfigPage {
             checked: !buttonColorize.checked
             text: Wrappers.i18n("Using Plasma Style/Accent")
             ButtonGroup.group: colorizeButtonGroup
+            onToggled: if (checked) cfg_page.cfg_buttonColorize = false
         }
 
         RadioButton {
