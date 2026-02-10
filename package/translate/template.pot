@@ -204,6 +204,11 @@ msgstr ""
 msgid "Medium"
 msgstr ""
 
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Huge"
+msgstr ""
+
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Wide"
 msgstr ""

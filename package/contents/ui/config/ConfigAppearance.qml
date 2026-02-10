@@ -329,6 +329,10 @@ ConfigPage {
                 },
                 {
                     "label": Wrappers.i18n("Large"),
+                    "spacing": 2
+                },
+                {
+                    "label": Wrappers.i18n("Huge"),
                     "spacing": 3
                 },
             ]
@@ -338,7 +342,7 @@ ConfigPage {
 
             currentIndex: {
                 if (Kirigami.Settings.tabletMode) {
-                    return 2; // Large
+                    return 3; // Large
                 }
 
                 switch (cfg_page.cfg_iconSpacing) {
@@ -346,8 +350,10 @@ ConfigPage {
                     return 0; // Small
                 case 1:
                     return 1; // Normal
+                case 2:
+                    return 2; // Medium
                 case 3:
-                    return 2; // Large
+                    return 3; // Large
                 }
             }
             onActivated: index => {

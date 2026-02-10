@@ -201,6 +201,11 @@ msgstr "Узкая"
 msgid "Medium"
 msgstr "Средняя"
 
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Huge"
+msgstr "Огромный"
+
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Wide"
 msgstr "Широкая"
