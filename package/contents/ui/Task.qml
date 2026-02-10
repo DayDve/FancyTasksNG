@@ -709,7 +709,7 @@ Item {
                     easing.type: Easing.InOutQuad
                 }
             }
-            roundToIconSize: growSize === 0
+            roundToIconSize: false
             active: task.highlighted
             enabled: true
 
