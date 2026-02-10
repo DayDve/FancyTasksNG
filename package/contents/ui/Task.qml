@@ -696,12 +696,43 @@ Item {
             property int fixedSize: Plasmoid.configuration.iconSizePx
             property real iconScale: Plasmoid.configuration.iconScale / 100
 
-            width: (sizeOverride ? fixedSize : (parent.width * iconScale)) + growSize
-            height: (sizeOverride ? fixedSize : (parent.height * iconScale)) + growSize
+            readonly property int baseWidth: (sizeOverride ? fixedSize : (parent.width * iconScale))
+            readonly property int baseHeight: (sizeOverride ? fixedSize : (parent.height * iconScale))
 
+            width: baseWidth + growSize
+            height: baseHeight + growSize
+
+            // Default anchors (fallback/bottom)
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: (parent.height - (sizeOverride ? fixedSize : (parent.height * iconScale))) / 2
+            anchors.bottomMargin: (parent.height - baseHeight) / 2
+
+            states: [
+                State {
+                    name: "top"
+                    when: Plasmoid.location === PlasmaCore.Types.TopEdge
+                    AnchorChanges { target: icon; anchors.top: parent.top; anchors.bottom: undefined; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: undefined; anchors.left: undefined; anchors.right: undefined }
+                    PropertyChanges { target: icon; anchors.topMargin: (parent.height - icon.baseHeight) / 2; anchors.bottomMargin: 0; anchors.leftMargin: 0; anchors.rightMargin: 0 }
+                },
+                State {
+                    name: "left"
+                    when: Plasmoid.location === PlasmaCore.Types.LeftEdge
+                    AnchorChanges { target: icon; anchors.left: parent.left; anchors.right: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.top: undefined; anchors.bottom: undefined }
+                    PropertyChanges { target: icon; anchors.leftMargin: (parent.width - icon.baseWidth) / 2; anchors.rightMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
+                },
+                State {
+                    name: "right"
+                    when: Plasmoid.location === PlasmaCore.Types.RightEdge
+                    AnchorChanges { target: icon; anchors.right: parent.right; anchors.left: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.top: undefined; anchors.bottom: undefined }
+                    PropertyChanges { target: icon; anchors.rightMargin: (parent.width - icon.baseWidth) / 2; anchors.leftMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
+                },
+                State {
+                    name: "bottom"
+                    when: Plasmoid.location === PlasmaCore.Types.BottomEdge
+                    AnchorChanges { target: icon; anchors.bottom: parent.bottom; anchors.top: undefined; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: undefined; anchors.left: undefined; anchors.right: undefined }
+                    PropertyChanges { target: icon; anchors.bottomMargin: (parent.height - icon.baseHeight) / 2; anchors.topMargin: 0; anchors.leftMargin: 0; anchors.rightMargin: 0 }
+                }
+            ]
 
             Behavior on growSize {
                 NumberAnimation {
