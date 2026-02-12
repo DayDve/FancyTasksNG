@@ -423,7 +423,9 @@ PlasmoidItem {
                     }
                     onItemRemoved: (index, item) => {
                         const task = item as Task;
-                        if (rootHoverHandler.hovered && index !== taskRepeater.count && task.model.WinIdList.length > 0 && tasks.taskClosedWithMouseMiddleButton.includes(task.model.WinIdList[0])) {
+                        if (rootHoverHandler.hovered && index !== taskRepeater.count && 
+                            task.model.WinIdList && task.model.WinIdList.length > 0 && 
+                            tasks.taskClosedWithMouseMiddleButton.includes(task.model.WinIdList[0])) {
                             tasks.needLayoutRefresh = true;
                         }
                         tasks.taskClosedWithMouseMiddleButton = [];
@@ -494,7 +496,6 @@ PlasmoidItem {
 
         readonly property bool shouldShow: tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup && !tasks.groupDialog
         visible: shouldShow || winContainer.opacity > 0
-
         // Removed explicit latch for Unified Dialog as it prevents moving to new tasks.
         visualParent: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : tasks.lastTooltipParent
 
