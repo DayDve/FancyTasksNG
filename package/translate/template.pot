@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/alexankitty/FancyTasks\n"
-"POT-Creation-Date: 2026-02-06 13:04+0200\n"
+"POT-Creation-Date: 2026-02-12 15:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,6 +73,22 @@ msgid "Icon Scale"
 msgstr ""
 
 #: ../contents/ui/config/ConfigAppearance.qml
+msgid "Icon Size"
+msgstr ""
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Set icon size instead of scaling"
+msgstr ""
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Scale icons from panel edge"
+msgstr ""
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Edge offset (px):"
+msgstr ""
+
+#: ../contents/ui/config/ConfigAppearance.qml
 msgid "Icon Hover Effects"
 msgstr ""
 
@@ -90,14 +106,6 @@ msgstr ""
 
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Duration of the zoom animation in milliseconds"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Icon Size (px):"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Set icon size instead of scaling"
 msgstr ""
 
 #: ../contents/ui/config/ConfigAppearance.qml
@@ -204,11 +212,6 @@ msgstr ""
 msgid "Medium"
 msgstr ""
 
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Huge"
-msgstr ""
-
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Wide"
 msgstr ""
@@ -255,6 +258,10 @@ msgstr ""
 
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Large"
+msgstr ""
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Huge"
 msgstr ""
 
 #: ../contents/ui/config/ConfigAppearance.qml
@@ -590,18 +597,6 @@ msgid "Default Application"
 msgstr ""
 
 #: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Add Application"
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Search applications..."
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Add"
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
 msgid "Add applications to pin to the taskbar. Drag items to reorder them."
 msgstr ""
 
@@ -615,6 +610,18 @@ msgstr ""
 
 #: ../contents/ui/config/ConfigPinnedApps.qml
 msgid "Add Special Launcher..."
+msgstr ""
+
+#: ../contents/ui/config/ConfigPinnedApps.qml
+msgid "Back"
+msgstr ""
+
+#: ../contents/ui/config/ConfigPinnedApps.qml
+msgid "Add Application"
+msgstr ""
+
+#: ../contents/ui/config/ConfigPinnedApps.qml
+msgid "Search applications..."
 msgstr ""
 
 #: ../contents/ui/ContextMenu.qml

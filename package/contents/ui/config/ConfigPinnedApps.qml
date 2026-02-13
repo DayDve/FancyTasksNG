@@ -12,6 +12,9 @@ ConfigPage {
     id: cfg_page
 
     property var pinnedLaunchers: cfg_page.cfg_launchers
+    onPinnedLaunchersChanged: {
+        refreshPinnedAppsModel();
+    }
     property bool appsLoaded: false
     property bool initialLoadDone: false
     property bool isLoadingApps: false
@@ -22,6 +25,23 @@ ConfigPage {
 
     // ---------------------------------------
 
+    function cleanUrl(url) {
+        // Handle [activity-id] prefix often found in Plasma config
+        // e.g. "[uuid] applications:foo.desktop"
+        if (url.startsWith("[")) {
+            const closingBracket = url.indexOf("]");
+            if (closingBracket !== -1) {
+                // Return the part after "] " (usually 2 chars, checking simply for applications:)
+                // But it might have spaces.
+                // Let's rely on finding "applications:"
+                const appIndex = url.indexOf("applications:");
+                if (appIndex !== -1) {
+                    return url.substring(appIndex);
+                }
+            }
+        }
+        return url;
+    }
     // Initial app loading timer
     Timer {
         id: initialLoadTimer
@@ -37,7 +57,7 @@ ConfigPage {
     P5Support.DataSource {
         id: appsSource
         engine: "apps"
-        connectedSources: ["apps:"]
+        connectedSources: ["apps"]
         interval: 0
 
         property var requestedSources: ({})
@@ -45,12 +65,20 @@ ConfigPage {
         onSourceConnected: (source) => {
             // Data usually comes later in onNewData, but sometimes it's immediate if cached.
             // If data is already present, process it.
+            if (source === "apps") {
+                cfg_page.startBatchProcessing();
+                return;
+            }
             if (appsSource.data[source] !== undefined) {
                  cfg_page.processAppSource(source, appsSource.data[source]);
             }
         }
 
         onNewData: (source, data) => {
+            if (source === "apps") {
+                 cfg_page.startBatchProcessing();
+                 return;
+            }
             cfg_page.processAppSource(source, data);
         }
     }
@@ -86,8 +114,11 @@ ConfigPage {
             });
         }
 
-        // Start batch processing of app sources
-        startBatchProcessing();
+        // Start loading by connecting to "apps" list source
+        isLoadingApps = true;
+        // Connecting to "apps" source will trigger onNewData/onSourceConnected when ready
+        // which will then call startBatchProcessing()
+        appsSource.connectSource("apps");
     }
 
     function startBatchProcessing() {
@@ -98,29 +129,36 @@ ConfigPage {
         // Build set of pinned sources for O(1) lookup
         const pinnedSources = new Set();
         for (let i = 0; i < pinnedLaunchers.length; i++) {
-            let url = pinnedLaunchers[i];
+            let url = cleanUrl(pinnedLaunchers[i]);
             if (url.startsWith("applications:")) {
-                pinnedSources.add(url.substring(13)); // remove "applications:" prefix
+                const src = url.substring(13);
+                pinnedSources.add(src); // remove "applications:" prefix
+                
+                // Explicitly add pinned apps to the processing list, even if not in appsSource.sources
+                // This ensures .local apps are requested
+                desktopFiles.push({
+                    source: src,
+                    priority: -1 // Highest priority
+                });
             }
         }
 
-        // Pre-sort desktop files with common ones first
+        // Add other available sources
         for (let i = 0; i < appsSource.sources.length; i++) {
             const source = appsSource.sources[i];
-            if (source !== "apps:" && source.endsWith(".desktop")) {
+            // Skip if already added (pinned apps are handled above)
+            // Or just check if source is valid desktop file
+            if (source !== "apps" && source.endsWith(".desktop")) {
+                if (pinnedSources.has(source)) continue; // Already added
+
                 let priority = 1000;
                 const sourceLower = source.toLowerCase();
 
-                // High priority for pinned apps
-                if (pinnedSources.has(source)) {
-                    priority = -1;
-                } else {
-                    // Check if it's a commonly used app
-                    for (let j = 0; j < commonPrefixes.length; j++) {
-                        if (sourceLower.includes(commonPrefixes[j])) {
-                            priority = j;
-                            break;
-                        }
+                // Check if it's a commonly used app
+                for (let j = 0; j < commonPrefixes.length; j++) {
+                    if (sourceLower.includes(commonPrefixes[j])) {
+                        priority = j;
+                        break;
                     }
                 }
 
@@ -133,6 +171,7 @@ ConfigPage {
 
         // Sort by priority
         desktopFiles.sort((a, b) => a.priority - b.priority);
+
         // Process in batches
         let processedCount = 0;
         function processBatch() {
@@ -140,7 +179,9 @@ ConfigPage {
             const end = Math.min(processedCount + batchSize, desktopFiles.length);
 
             for (let i = processedCount; i < end; i++) {
-                const source = desktopFiles[i].source;
+                const item = desktopFiles[i];
+                const source = item.source;
+                // Only connect if not already requested or pinned (pinned forces request sometimes)
                 if (!appsSource.requestedSources[source]) {
                     appsSource.connectSource(source);
                     appsSource.requestedSources[source] = true;
@@ -155,6 +196,8 @@ ConfigPage {
                 // All batches scheduled
                 isLoadingApps = false;
                 appsLoaded = true;
+                // Once loaded, refresh pinned apps to ensure metadata is caught up
+                refreshPinnedAppsModel();
             }
         }
 
@@ -163,7 +206,7 @@ ConfigPage {
     }
 
     function processAppSource(source, data) {
-        if (source === "apps:" || !source.endsWith(".desktop")) {
+        if (source === "apps" || !source.endsWith(".desktop")) {
             return;
         }
 
@@ -278,16 +321,18 @@ ConfigPage {
         refreshPinnedAppsModel();
     }
 
-    function refreshPinnedAppsModel() {
+    function refreshPinnedAppsModel(sourceList) {
         pinnedAppsModel.clear();
-        for (let i = 0; i < pinnedLaunchers.length; i++) {
-            let launcher = pinnedLaunchers[i];
-            let name = getNameForUrl(launcher);
-            let icon = getIconForUrl(launcher);
+        let list = sourceList || pinnedLaunchers;
+        for (let i = 0; i < list.length; i++) {
+            let launcher = list[i];
+            let url = cleanUrl(launcher);
+            let name = getNameForUrl(url); // Use cleaned URL for lookup
+            let icon = getIconForUrl(url); // Use cleaned URL for lookup
             pinnedAppsModel.append({
                 "name": name,
                 "icon": icon,
-                "url": launcher
+                "url": url
             });
         }
     }
@@ -508,16 +553,50 @@ ConfigPage {
 
                             // Drag handle
                             Item {
-                                Layout.preferredWidth: Kirigami.Units.iconSizes.small
+                                id: dragHandle
+                                Layout.preferredWidth: Kirigami.Units.iconSizes.medium
                                 Layout.preferredHeight: parent.height
 
-                                Rectangle {
-                                    width: Kirigami.Units.smallSpacing
-                                    height: Kirigami.Units.iconSizes.small
-                                    radius: width / 2
+                                Grid {
                                     anchors.centerIn: parent
-                                    color: Kirigami.Theme.textColor
-                                    opacity: 0.5
+                                    columns: 2
+                                    rows: 3
+                                    columnSpacing: 2
+                                    rowSpacing: 2
+                                    
+                                    Repeater {
+                                        model: 6
+                                        Rectangle {
+                                            width: 4
+                                            height: 4
+                                            radius: 2
+                                            color: Kirigami.Theme.textColor
+                                            opacity: 0.5
+                                        }
+                                    }
+                                }
+                                
+                                MouseArea {
+                                    id: dragMouseArea
+                                    anchors.fill: parent
+                                    cursorShape: pressed ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+                                    
+                                    drag.target: pinnedAppDelegate
+                                    drag.axis: Drag.YAxis
+                                    
+                                    onPressed: {
+                                        cfg_page.dragItemIndex = pinnedAppDelegate.index;
+                                        cfg_page.isDragging = true;
+                                    }
+                                    
+                                    onReleased: {
+                                        cfg_page.isDragging = false;
+                                        if (cfg_page.dropItemIndex !== -1 && cfg_page.dragItemIndex !== -1 && cfg_page.dropItemIndex !== cfg_page.dragItemIndex) {
+                                            cfg_page.moveItem(cfg_page.dragItemIndex, cfg_page.dropItemIndex);
+                                        }
+                                        cfg_page.dragItemIndex = -1;
+                                        cfg_page.dropItemIndex = -1;
+                                    }
                                 }
                             }
 
@@ -531,16 +610,10 @@ ConfigPage {
                                 text: pinnedAppDelegate.model.name
                                 elide: Text.ElideRight
                                 Layout.fillWidth: true
-                            }
-
-                            Label {
-                                text: pinnedAppDelegate.model.url
-                                opacity: 0.6
-                                font.pointSize: Kirigami.Theme.smallFont.pointSize
-                                elide: Text.ElideMiddle
-                                Layout.maximumWidth: parent.width / 3
-                                horizontalAlignment: Text.AlignRight
-                                visible: Kirigami.Settings.isMobile ? false : true
+                                
+                                ToolTip.text: pinnedAppDelegate.model.url
+                                ToolTip.visible: mouseArea.containsMouse
+                                ToolTip.delay: 1000
                             }
 
                             Button {
@@ -558,33 +631,19 @@ ConfigPage {
                             }
                         }
 
+                        // MouseArea for hover effects only (no drag)
                         MouseArea {
                             id: mouseArea
                             anchors.fill: parent
                             hoverEnabled: true
-                            cursorShape: pressed ? Qt.ClosedHandCursor : Qt.PointingHandCursor
-
-                            drag.target: pinnedAppDelegate
-                            drag.axis: Drag.YAxis
-
-                            onPressed: {
-                                // Start dragging
-                                cfg_page.dragItemIndex = pinnedAppDelegate.index;
-                                cfg_page.isDragging = true;
+                            onClicked: {
+                                // Maybe handle click selection if needed?
                             }
-
-                            onReleased: {
-                                // End dragging
-                                cfg_page.isDragging = false;
-                                if (cfg_page.dropItemIndex !== -1 && cfg_page.dragItemIndex !== -1 && cfg_page.dropItemIndex !== cfg_page.dragItemIndex) {
-                                    // Move the item
-                                    cfg_page.moveItem(cfg_page.dragItemIndex, cfg_page.dropItemIndex);
-                                }
-
-                                // Reset state
-                                cfg_page.dragItemIndex = -1;
-                                cfg_page.dropItemIndex = -1;
-                            }
+                            // Allow passing clicks to children (like buttons) if z-ordered correctly, 
+                            // but simpler to just put this below visuals or not fill parent if possible.
+                            // Actually, putting it here AFTER RowLayout covers the button again.
+                            // We need it for hover effect (highlight).
+                            z: -1
                         }
                     }
                 }
@@ -798,22 +857,25 @@ ConfigPage {
     }
 
     // Move item in the model and update configuration
+    // Move item in the model and update configuration
     function moveItem(fromIndex, toIndex) {
-        // First create a copy of the current launchers
-        let currentLaunchers = [];
+        if (fromIndex === toIndex) return;
+
+        // Create a shallow copy to ensure change detection triggers
+        // We use the property directly which is bound to cfg_page.cfg_launchers
+        // But we need to update cfg_page.cfg_launchers to save.
+        
+        let list = []
         for (let i = 0; i < pinnedLaunchers.length; i++) {
-            currentLaunchers.push(pinnedLaunchers[i]);
+             list.push(pinnedLaunchers[i]);
         }
-
-        // Move the item in the array
-        const item = currentLaunchers.splice(fromIndex, 1)[0];
-        currentLaunchers.splice(toIndex, 0, item);
-
-        // Update the configuration
-        // Update the configuration
-        cfg_page.cfg_launchers = currentLaunchers;
-        pinnedLaunchers = currentLaunchers;
-        // Refresh model to ensure view is updated
-        refreshPinnedAppsModel();
+        
+        const item = list.splice(fromIndex, 1)[0];
+        list.splice(toIndex, 0, item);
+        
+        cfg_page.cfg_launchers = list;
+        // Do NOT assign to pinnedLaunchers as it breaks the binding
+        
+        refreshPinnedAppsModel(list);
     }
 }

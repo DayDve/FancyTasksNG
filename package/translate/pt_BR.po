@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/alexankitty/FancyTasks\n"
-"POT-Creation-Date: 2026-02-06 13:04+0200\n"
+"POT-Creation-Date: 2026-02-12 15:19+0200\n"
 "PO-Revision-Date: 2023-09-21 16:18-0300\n"
 "Last-Translator:  Douglas Guimarães <<dg2003gh@gmail.com>>\n"
 "Language-Team: \n"
@@ -72,6 +72,22 @@ msgid "Icon Scale"
 msgstr "Escala do ícone"
 
 #: ../contents/ui/config/ConfigAppearance.qml
+msgid "Icon Size"
+msgstr ""
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Set icon size instead of scaling"
+msgstr "Definir pelo tamanho do ícone ao invés da escala"
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Scale icons from panel edge"
+msgstr ""
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Edge offset (px):"
+msgstr ""
+
+#: ../contents/ui/config/ConfigAppearance.qml
 msgid "Icon Hover Effects"
 msgstr ""
 
@@ -90,14 +106,6 @@ msgstr ""
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Duration of the zoom animation in milliseconds"
 msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Icon Size (px):"
-msgstr "Tamanho do ícone (px):"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Set icon size instead of scaling"
-msgstr "Definir pelo tamanho do ícone ao invés da escala"
 
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Button Colors:"
@@ -249,6 +257,10 @@ msgstr ""
 
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Large"
+msgstr ""
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Huge"
 msgstr ""
 
 #: ../contents/ui/config/ConfigAppearance.qml
@@ -584,18 +596,6 @@ msgid "Default Application"
 msgstr ""
 
 #: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Add Application"
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Search applications..."
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Add"
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
 msgid "Add applications to pin to the taskbar. Drag items to reorder them."
 msgstr ""
 
@@ -609,6 +609,18 @@ msgstr ""
 
 #: ../contents/ui/config/ConfigPinnedApps.qml
 msgid "Add Special Launcher..."
+msgstr ""
+
+#: ../contents/ui/config/ConfigPinnedApps.qml
+msgid "Back"
+msgstr ""
+
+#: ../contents/ui/config/ConfigPinnedApps.qml
+msgid "Add Application"
+msgstr ""
+
+#: ../contents/ui/config/ConfigPinnedApps.qml
+msgid "Search applications..."
 msgstr ""
 
 #: ../contents/ui/ContextMenu.qml
@@ -818,6 +830,9 @@ msgstr "Disponível também em %1"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Disponível em %1"
+
+#~ msgid "Icon Size (px):"
+#~ msgstr "Tamanho do ícone (px):"
 
 #~ msgctxt "button to unmute app"
 #~ msgid "Unmute %1"

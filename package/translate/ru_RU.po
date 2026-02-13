@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/alexankitty/FancyTasks\n"
-"POT-Creation-Date: 2026-02-06 13:04+0200\n"
+"POT-Creation-Date: 2026-02-12 15:19+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -70,6 +70,22 @@ msgid "Icon Scale"
 msgstr "Масштаб значков"
 
 #: ../contents/ui/config/ConfigAppearance.qml
+msgid "Icon Size"
+msgstr "Размер значков"
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Set icon size instead of scaling"
+msgstr "Задать размер значков вместо масштабирования"
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Scale icons from panel edge"
+msgstr "Масштабировать значки от края панели"
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Edge offset (px):"
+msgstr "Отступ от края (px):"
+
+#: ../contents/ui/config/ConfigAppearance.qml
 msgid "Icon Hover Effects"
 msgstr "Эффекты наведения"
 
@@ -88,22 +104,6 @@ msgstr "Длительность анимации (мс):"
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Duration of the zoom animation in milliseconds"
 msgstr "Длительность анимации увеличения в миллисекундах"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Icon Size"
-msgstr "Размер значков"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Set icon size instead of scaling"
-msgstr "Задать размер значков вместо масштабирования"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Scale icons from panel edge"
-msgstr "Масштабировать значки от края панели"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Edge offset (px):"
-msgstr "Отступ от края (px):"
 
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Button Colors:"
@@ -209,11 +209,6 @@ msgstr "Узкая"
 msgid "Medium"
 msgstr "Средняя"
 
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Huge"
-msgstr "Огромный"
-
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Wide"
 msgstr "Широкая"
@@ -261,6 +256,10 @@ msgstr "Обычный"
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Large"
 msgstr "Большой"
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Huge"
+msgstr "Огромный"
 
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Automatically set to Large when in Touch mode"
@@ -594,19 +593,6 @@ msgstr "Почтовый клиент"
 msgid "Default Application"
 msgstr "Приложение по умолчанию"
 
-# --- ConfigPinnedApps.qml ---
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Add Application"
-msgstr "Добавить приложение"
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Search applications..."
-msgstr "Поиск приложений..."
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Add"
-msgstr "Добавить"
-
 #: ../contents/ui/config/ConfigPinnedApps.qml
 msgid "Add applications to pin to the taskbar. Drag items to reorder them."
 msgstr "Добавьте приложения для закрепления. Перетаскивайте элементы для изменения порядка."
@@ -622,6 +608,19 @@ msgstr "Добавить приложение..."
 #: ../contents/ui/config/ConfigPinnedApps.qml
 msgid "Add Special Launcher..."
 msgstr "Добавить спец. запуск..."
+
+#: ../contents/ui/config/ConfigPinnedApps.qml
+msgid "Back"
+msgstr ""
+
+# --- ConfigPinnedApps.qml ---
+#: ../contents/ui/config/ConfigPinnedApps.qml
+msgid "Add Application"
+msgstr "Добавить приложение"
+
+#: ../contents/ui/config/ConfigPinnedApps.qml
+msgid "Search applications..."
+msgstr "Поиск приложений..."
 
 # --- ContextMenu.qml ---
 #: ../contents/ui/ContextMenu.qml
@@ -832,6 +831,9 @@ msgstr "Также доступно в %1"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Доступно в %1"
+
+#~ msgid "Add"
+#~ msgstr "Добавить"
 
 #~ msgctxt "button to unmute app"
 #~ msgid "Unmute %1"
