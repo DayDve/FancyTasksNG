@@ -251,20 +251,24 @@ ConfigPage {
                 name: appName,
                 icon: appIcon,
                 url: appUrl,
-                keywords: appKeywords
+                keywords: appKeywords,
+                genericName: appGenericName,
+                comment: data["comment"] || ""
             };
 
             installedAppsModel.append(appItem);
 
             // Update filtered model if needed (initial populate or search match)
-            if (cfg_page.currentSearchText.length === 0 && filteredAppsModel.count < 100) {
+            if (cfg_page.currentSearchText.length === 0 && filteredAppsModel.count < 50) {
                  filteredAppsModel.append(appItem);
             } else if (cfg_page.currentSearchText.length > 0) {
                 // update search results in real time if data comes in late
                 const searchText = cfg_page.currentSearchText.toLowerCase();
                  if (appName.toLowerCase().includes(searchText) || 
                      appUrl.toLowerCase().includes(searchText) || 
-                     (appItem.keywords && appItem.keywords.toLowerCase().includes(searchText))) {
+                     (appItem.keywords && appItem.keywords.toLowerCase().includes(searchText)) ||
+                     (appItem.genericName && appItem.genericName.toLowerCase().includes(searchText)) ||
+                     (appItem.comment && appItem.comment.toLowerCase().includes(searchText))) {
                      filteredAppsModel.append(appItem);
                  }
             }
@@ -282,7 +286,7 @@ ConfigPage {
     function filterAppsModel(text) {
         const searchText = (text || "").toLowerCase();
         // Optimization for empty search with already filled model
-        if (searchText.length === 0 && filteredAppsModel.count > 0 && filteredAppsModel.count === Math.min(installedAppsModel.count, 100)) {
+        if (searchText.length === 0 && filteredAppsModel.count > 0 && filteredAppsModel.count === Math.min(installedAppsModel.count, 50)) {
             return;
         }
 
@@ -292,13 +296,17 @@ ConfigPage {
             const app = installedAppsModel.get(i);
             // Apply search filter
             if (searchText && searchText.length > 0) {
-                if (app.name.toLowerCase().includes(searchText) || app.url.toLowerCase().includes(searchText) || (app.keywords && app.keywords.toLowerCase().includes(searchText))) {
+                if (app.name.toLowerCase().includes(searchText) || 
+                    app.url.toLowerCase().includes(searchText) || 
+                    (app.keywords && app.keywords.toLowerCase().includes(searchText)) ||
+                    (app.genericName && app.genericName.toLowerCase().includes(searchText)) ||
+                    (app.comment && app.comment.toLowerCase().includes(searchText))) {
                     filteredAppsModel.append(app);
                 }
             } else {
                 filteredAppsModel.append(app);
                 // Limit initial load for better performance
-                if (filteredAppsModel.count >= 100) {
+                if (filteredAppsModel.count >= 50) {
                     break;
                 }
             }
@@ -306,11 +314,13 @@ ConfigPage {
     }
 
     function loadMoreApps() {
-        if (isLoadingApps)
+        // Only lazy load if we are showing the full list (no search)
+        if (cfg_page.currentSearchText.length > 0)
             return;
+
         if (filteredAppsModel.count < installedAppsModel.count) {
             const startIndex = filteredAppsModel.count;
-            const endIndex = Math.min(startIndex + 30, installedAppsModel.count);
+            const endIndex = Math.min(startIndex + 50, installedAppsModel.count);
 
             for (let i = startIndex; i < endIndex; i++) {
                 filteredAppsModel.append(installedAppsModel.get(i));
@@ -807,7 +817,7 @@ ConfigPage {
                         clip: true
 
                         onContentYChanged: {
-                            if (contentY + height >= contentHeight - 200 && !cfg_page.isLoadingApps) {
+                            if (contentY + height >= contentHeight - 100) {
                                 cfg_page.loadMoreApps();
                             }
                         }
@@ -821,6 +831,10 @@ ConfigPage {
                                 cfg_page.addLauncher(appsDelegate.model.url);
                                 stackView.pop();
                             }
+
+                            ToolTip.text: appsDelegate.model.comment || appsDelegate.model.name || ""
+                            ToolTip.visible: appsDelegate.hovered && ToolTip.text !== ""
+                            ToolTip.delay: 1000
 
                             contentItem: RowLayout {
                                 spacing: Kirigami.Units.smallSpacing
@@ -840,7 +854,6 @@ ConfigPage {
                                         Layout.fillWidth: true
                                         text: appsDelegate.model.name || appsDelegate.model.url
                                         wrapMode: Text.Wrap
-                                        font.bold: true
                                         color: Kirigami.Theme.textColor
                                     }
 
