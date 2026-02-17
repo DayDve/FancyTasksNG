@@ -443,7 +443,7 @@ ConfigPage {
                         id: dropArea
                         anchors.fill: parent
 
-                        onEntered: {
+                        onEntered: (drag) => {
                             if (cfg_page.isDragging) {
                                 // Calculate new index based on drop position
                                 var newIndex = Math.floor((drag.y + pinnedAppsList.contentY) / 48);
@@ -454,7 +454,7 @@ ConfigPage {
                             }
                         }
 
-                        onPositionChanged: {
+                        onPositionChanged: (drag) => {
                             if (cfg_page.isDragging) {
                                 // Handle auto-scrolling
                                 var localY = drag.y;
@@ -512,7 +512,7 @@ ConfigPage {
                         // Properties for drag operation
                         property bool beingDragged: index === cfg_page.dragItemIndex
 
-                        Drag.active: mouseArea.drag.active
+                        Drag.active: dragMouseArea.drag.active
                         Drag.source: pinnedAppDelegate
                         Drag.hotSpot.x: width / 2
                         Drag.hotSpot.y: height / 2
@@ -591,11 +591,28 @@ ConfigPage {
                                     
                                     onReleased: {
                                         cfg_page.isDragging = false;
-                                        if (cfg_page.dropItemIndex !== -1 && cfg_page.dragItemIndex !== -1 && cfg_page.dropItemIndex !== cfg_page.dragItemIndex) {
-                                            cfg_page.moveItem(cfg_page.dragItemIndex, cfg_page.dropItemIndex);
-                                        }
+                                        
+                                        // Robust index calculation using global coordinates
+                                        var mappedPos = pinnedAppsList.contentItem.mapFromItem(cfg_page, pinnedAppDelegate.x, pinnedAppDelegate.y + pinnedAppDelegate.height/2);
+                                        var targetIndex = Math.floor(mappedPos.y / 48);
+
+                                        // Clamp index to valid range
+                                        if (targetIndex < 0) targetIndex = 0;
+                                        if (targetIndex >= pinnedAppsModel.count) targetIndex = pinnedAppsModel.count - 1;
+
+                                        // Capture current drag index
+                                        var dragIdx = cfg_page.dragItemIndex;
+
+                                        // Reset state BEFORE acting (because action might destroy us)
                                         cfg_page.dragItemIndex = -1;
                                         cfg_page.dropItemIndex = -1;
+
+                                        if (dragIdx !== -1 && targetIndex !== -1 && targetIndex !== dragIdx) {
+                                            cfg_page.moveItem(dragIdx, targetIndex);
+                                        } else {
+                                            // Force refresh even if index didn't change
+                                            cfg_page.refreshPinnedAppsModel();
+                                        }
                                     }
                                 }
                             }
@@ -619,10 +636,11 @@ ConfigPage {
                             Button {
                                 icon.name: "list-remove"
                                 onClicked: {
-                                    let currentLaunchers = cfg_page.pinnedLaunchers;
+                                    // Create a copy to ensure change detection
+                                    let currentLaunchers = Array.from(cfg_page.pinnedLaunchers);
                                     currentLaunchers.splice(pinnedAppDelegate.index, 1);
                                     cfg_page.cfg_launchers = currentLaunchers;
-                                    cfg_page.pinnedLaunchers = currentLaunchers;
+                                    // pinnedLaunchers binding will update automatically
                                     cfg_page.refreshPinnedAppsModel();
                                 }
                                 ToolTip.text: Wrappers.i18n("Remove")
@@ -844,7 +862,9 @@ ConfigPage {
         }
     }
     function addLauncher(url) {
-        let currentLaunchers = pinnedLaunchers;
+        // Create a copy to ensure change detection
+        let currentLaunchers = Array.from(pinnedLaunchers);
+        
         // Don't add if already in the list
         if (currentLaunchers.indexOf(url) !== -1) {
             return;
@@ -852,30 +872,24 @@ ConfigPage {
 
         currentLaunchers.push(url);
         cfg_page.cfg_launchers = currentLaunchers;
-        pinnedLaunchers = currentLaunchers;
+        // pinnedLaunchers binding will update automatically
         refreshPinnedAppsModel();
     }
 
     // Move item in the model and update configuration
-    // Move item in the model and update configuration
     function moveItem(fromIndex, toIndex) {
         if (fromIndex === toIndex) return;
-
-        // Create a shallow copy to ensure change detection triggers
-        // We use the property directly which is bound to cfg_page.cfg_launchers
-        // But we need to update cfg_page.cfg_launchers to save.
         
-        let list = []
-        for (let i = 0; i < pinnedLaunchers.length; i++) {
-             list.push(pinnedLaunchers[i]);
+        // Update visual model immediately
+        pinnedAppsModel.move(fromIndex, toIndex, 1);
+        
+        // Rebuild list from model to update config
+        let list = [];
+        for (let i = 0; i < pinnedAppsModel.count; i++) {
+            list.push(pinnedAppsModel.get(i).url);
         }
         
-        const item = list.splice(fromIndex, 1)[0];
-        list.splice(toIndex, 0, item);
-        
         cfg_page.cfg_launchers = list;
-        // Do NOT assign to pinnedLaunchers as it breaks the binding
-        
-        refreshPinnedAppsModel(list);
+        // pinnedLaunchers binding should update automatically from cfg_launchers
     }
 }

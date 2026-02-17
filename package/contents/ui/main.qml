@@ -321,6 +321,13 @@ PlasmoidItem {
             target: Plasmoid.configuration
             function onLaunchersChanged(): void {
                 tasksModel.launcherList = Plasmoid.configuration.launchers;
+                tasksModel.syncLaunchers();
+                
+                // Force full view rebuild to ensure icons match the new order.
+                // This workaround ensures the Repeater correctly refreshes delegates when the list order changes.
+                var m = taskRepeater.model;
+                taskRepeater.model = null;
+                taskRepeater.model = m;
             }
             function onGroupingAppIdBlacklistChanged(): void {
                 tasksModel.groupingAppIdBlacklist = Plasmoid.configuration.groupingAppIdBlacklist;
