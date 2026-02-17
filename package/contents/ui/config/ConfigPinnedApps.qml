@@ -236,7 +236,8 @@ ConfigPage {
             appMetadataCache[appUrl] = {
                 name: appName,
                 icon: appIcon,
-                genericName: appGenericName
+                genericName: appGenericName,
+                comment: data["comment"] || ""
             };
 
             // Check for duplicates in the model
@@ -328,13 +329,29 @@ ConfigPage {
             let launcher = list[i];
             let url = cleanUrl(launcher);
             let name = getNameForUrl(url); // Use cleaned URL for lookup
+            let comment = getCommentForUrl(url);
             let icon = getIconForUrl(url); // Use cleaned URL for lookup
             pinnedAppsModel.append({
                 "name": name,
+                "comment": comment,
                 "icon": icon,
                 "url": url
             });
         }
+    }
+
+    function getCommentForUrl(url) {
+        if (url.startsWith("preferred://")) {
+            if (url === "preferred://browser") return Wrappers.i18n("Browse the Web");
+            if (url === "preferred://filemanager") return Wrappers.i18n("Manage Files");
+            if (url === "preferred://mail") return Wrappers.i18n("Send and Receive Email");
+            return "";
+        }
+
+        if (appMetadataCache[url]) {
+            return appMetadataCache[url].comment || appMetadataCache[url].genericName || "";
+        }
+        return "";
     }
 
     function getNameForUrl(url) {
@@ -628,8 +645,8 @@ ConfigPage {
                                 elide: Text.ElideRight
                                 Layout.fillWidth: true
                                 
-                                ToolTip.text: pinnedAppDelegate.model.url
-                                ToolTip.visible: mouseArea.containsMouse
+                                ToolTip.text: pinnedAppDelegate.model.comment || pinnedAppDelegate.model.name || ""
+                                ToolTip.visible: mouseArea.containsMouse && ToolTip.text !== ""
                                 ToolTip.delay: 1000
                             }
 
