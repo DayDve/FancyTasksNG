@@ -549,10 +549,14 @@ ConfigPage {
                             }
                         ]
 
+                        HoverHandler {
+                            id: rowHoverHandler
+                        }
+
                         Rectangle {
                             id: itemHighlight
                             anchors.fill: parent
-                            color: cfg_page.dropItemIndex === pinnedAppDelegate.index && cfg_page.isDragging ? Kirigami.Theme.highlightColor : mouseArea.containsMouse ? Kirigami.Theme.highlightColor.lighter(0.7) : "transparent"
+                            color: cfg_page.dropItemIndex === pinnedAppDelegate.index && cfg_page.isDragging ? Kirigami.Theme.highlightColor : rowHoverHandler.hovered ? Kirigami.Theme.highlightColor.lighter(0.7) : "transparent"
                             opacity: 0.3
                             radius: 3
 
@@ -646,11 +650,12 @@ ConfigPage {
                                 Layout.fillWidth: true
                                 
                                 ToolTip.text: pinnedAppDelegate.model.comment || pinnedAppDelegate.model.name || ""
-                                ToolTip.visible: mouseArea.containsMouse && ToolTip.text !== ""
+                                ToolTip.visible: rowHoverHandler.hovered && !removeButton.hovered && ToolTip.text !== ""
                                 ToolTip.delay: 1000
                             }
 
                             Button {
+                                id: removeButton
                                 icon.name: "list-remove"
                                 onClicked: {
                                     // Create a copy to ensure change detection
@@ -666,20 +671,7 @@ ConfigPage {
                             }
                         }
 
-                        // MouseArea for hover effects only (no drag)
-                        MouseArea {
-                            id: mouseArea
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            onClicked: {
-                                // Maybe handle click selection if needed?
-                            }
-                            // Allow passing clicks to children (like buttons) if z-ordered correctly, 
-                            // but simpler to just put this below visuals or not fill parent if possible.
-                            // Actually, putting it here AFTER RowLayout covers the button again.
-                            // We need it for hover effect (highlight).
-                            z: -1
-                        }
+
                     }
                 }
 
