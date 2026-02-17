@@ -572,6 +572,24 @@ ConfigPage {
                             anchors.margins: Kirigami.Units.smallSpacing
                             spacing: Kirigami.Units.smallSpacing
 
+
+
+                            Kirigami.Icon {
+                                source: pinnedAppDelegate.model.icon
+                                Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+                                Layout.preferredHeight: Kirigami.Units.iconSizes.medium
+                            }
+
+                            Label {
+                                text: pinnedAppDelegate.model.name
+                                elide: Text.ElideRight
+                                Layout.fillWidth: true
+                                
+                                ToolTip.text: pinnedAppDelegate.model.comment || pinnedAppDelegate.model.name || ""
+                                ToolTip.visible: rowHoverHandler.hovered && !removeButton.hovered && ToolTip.text !== ""
+                                ToolTip.delay: 1000
+                            }
+
                             // Drag handle
                             Item {
                                 id: dragHandle
@@ -638,25 +656,10 @@ ConfigPage {
                                 }
                             }
 
-                            Kirigami.Icon {
-                                source: pinnedAppDelegate.model.icon
-                                Layout.preferredWidth: Kirigami.Units.iconSizes.medium
-                                Layout.preferredHeight: Kirigami.Units.iconSizes.medium
-                            }
-
-                            Label {
-                                text: pinnedAppDelegate.model.name
-                                elide: Text.ElideRight
-                                Layout.fillWidth: true
-                                
-                                ToolTip.text: pinnedAppDelegate.model.comment || pinnedAppDelegate.model.name || ""
-                                ToolTip.visible: rowHoverHandler.hovered && !removeButton.hovered && ToolTip.text !== ""
-                                ToolTip.delay: 1000
-                            }
-
                             Button {
                                 id: removeButton
-                                icon.name: "list-remove"
+                                icon.name: "user-trash"
+                                flat: true
                                 onClicked: {
                                     // Create a copy to ensure change detection
                                     let currentLaunchers = Array.from(cfg_page.pinnedLaunchers);
