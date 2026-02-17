@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/alexankitty/FancyTasks\n"
-"POT-Creation-Date: 2026-02-12 15:19+0200\n"
+"POT-Creation-Date: 2026-02-17 17:28+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -588,6 +588,18 @@ msgstr "Файловый менеджер"
 #: ../contents/ui/config/ConfigPinnedApps.qml
 msgid "Default Mail Client"
 msgstr "Почтовый клиент"
+
+#: ../contents/ui/config/ConfigPinnedApps.qml
+msgid "Browse the Web"
+msgstr ""
+
+#: ../contents/ui/config/ConfigPinnedApps.qml
+msgid "Manage Files"
+msgstr ""
+
+#: ../contents/ui/config/ConfigPinnedApps.qml
+msgid "Send and Receive Email"
+msgstr ""
 
 #: ../contents/ui/config/ConfigPinnedApps.qml
 msgid "Default Application"

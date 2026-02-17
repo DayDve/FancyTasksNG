@@ -22,6 +22,23 @@ ConfigPage {
     property var appMetadataCache: ({})
     property string currentSearchText: ""
 
+    // ---------------------------------------
+    // Unified Style Configuration
+    // ---------------------------------------
+    QtObject {
+        id: appListStyle
+        property int iconSize: Kirigami.Units.iconSizes.smallMedium
+        property int spacing: Kirigami.Units.smallSpacing
+        property int contentPadding: Kirigami.Units.smallSpacing
+        
+        // Split vertical padding to prevent visual cutoff (descenders)
+        property int itemTopPadding: Kirigami.Units.smallSpacing * 0.5
+        property int itemBottomPadding: Kirigami.Units.smallSpacing * 1.5
+        
+        // Ensure row height accommodates the icon and vertical padding, PLUS extra for buttons/text
+        // use a minimum content height of iconSize OR a bit more to be safe for buttons
+        property int rowHeight: Math.max(iconSize, Kirigami.Units.gridUnit * 1.6) + itemTopPadding + itemBottomPadding
+    }
 
     // ---------------------------------------
 
@@ -260,7 +277,9 @@ ConfigPage {
 
             // Update filtered model if needed (initial populate or search match)
             if (cfg_page.currentSearchText.length === 0 && filteredAppsModel.count < 50) {
-                 filteredAppsModel.append(appItem);
+                 if (cfg_page.pinnedLaunchers.indexOf(appUrl) === -1) {
+                     filteredAppsModel.append(appItem);
+                 }
             } else if (cfg_page.currentSearchText.length > 0) {
                 // update search results in real time if data comes in late
                 const searchText = cfg_page.currentSearchText.toLowerCase();
@@ -269,7 +288,9 @@ ConfigPage {
                      (appItem.keywords && appItem.keywords.toLowerCase().includes(searchText)) ||
                      (appItem.genericName && appItem.genericName.toLowerCase().includes(searchText)) ||
                      (appItem.comment && appItem.comment.toLowerCase().includes(searchText))) {
-                     filteredAppsModel.append(appItem);
+                     if (cfg_page.pinnedLaunchers.indexOf(appUrl) === -1) {
+                         filteredAppsModel.append(appItem);
+                     }
                  }
             }
 
@@ -283,10 +304,10 @@ ConfigPage {
         }
     }
 
-    function filterAppsModel(text) {
+    function filterAppsModel(text, force) {
         const searchText = (text || "").toLowerCase();
         // Optimization for empty search with already filled model
-        if (searchText.length === 0 && filteredAppsModel.count > 0 && filteredAppsModel.count === Math.min(installedAppsModel.count, 50)) {
+        if (!force && searchText.length === 0 && filteredAppsModel.count > 0 && filteredAppsModel.count === Math.min(installedAppsModel.count, 50)) {
             return;
         }
 
@@ -294,6 +315,12 @@ ConfigPage {
 
         for (let i = 0; i < installedAppsModel.count; i++) {
             const app = installedAppsModel.get(i);
+            
+            // Skip if already pinned
+            if (cfg_page.pinnedLaunchers.indexOf(app.url) !== -1) {
+                continue;
+            }
+
             // Apply search filter
             if (searchText && searchText.length > 0) {
                 if (app.name.toLowerCase().includes(searchText) || 
@@ -323,7 +350,12 @@ ConfigPage {
             const endIndex = Math.min(startIndex + 50, installedAppsModel.count);
 
             for (let i = startIndex; i < endIndex; i++) {
-                filteredAppsModel.append(installedAppsModel.get(i));
+                const app = installedAppsModel.get(i);
+                // Skip if already pinned
+                if (cfg_page.pinnedLaunchers.indexOf(app.url) !== -1) {
+                    continue;
+                }
+                filteredAppsModel.append(app);
             }
         }
     }
@@ -473,7 +505,8 @@ ConfigPage {
                         onEntered: (drag) => {
                             if (cfg_page.isDragging) {
                                 // Calculate new index based on drop position
-                                var newIndex = Math.floor((drag.y + pinnedAppsList.contentY) / 48);
+                                var itemHeight = appListStyle.rowHeight;
+                                var newIndex = Math.floor((drag.y + pinnedAppsList.contentY) / itemHeight);
                                 // Approximate item height
                                 if (newIndex >= 0 && newIndex < pinnedAppsModel.count) {
                                     cfg_page.dropItemIndex = newIndex;
@@ -499,7 +532,8 @@ ConfigPage {
                                 }
 
                                 // Calculate drop index
-                                var newIndex = Math.floor((localY + pinnedAppsList.contentY) / 48);
+                                var itemHeight = appListStyle.rowHeight;
+                                var newIndex = Math.floor((localY + pinnedAppsList.contentY) / itemHeight);
                                 if (newIndex >= 0 && newIndex < pinnedAppsModel.count) {
                                     cfg_page.dropItemIndex = newIndex;
                                 }
@@ -533,8 +567,11 @@ ConfigPage {
                         required property var model
                         required property int index
 
+
+
                         width: ListView.view.width
-                        height: 48
+                        // Dynamic height based on unified style
+                        height: appListStyle.rowHeight
 
                         // Properties for drag operation
                         property bool beingDragged: index === cfg_page.dragItemIndex
@@ -577,17 +614,23 @@ ConfigPage {
                             }
                         }
 
+
                         RowLayout {
-                            anchors.fill: parent
-                            anchors.margins: Kirigami.Units.smallSpacing
-                            spacing: Kirigami.Units.smallSpacing
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.top: parent.top
+                            anchors.leftMargin: appListStyle.contentPadding
+                            anchors.rightMargin: appListStyle.contentPadding
+                            anchors.topMargin: appListStyle.itemTopPadding
+                            // Don't anchor bottom to avoid clipping; we know rowHeight is sufficient
+                            spacing: appListStyle.spacing
 
 
 
                             Kirigami.Icon {
                                 source: pinnedAppDelegate.model.icon
-                                Layout.preferredWidth: Kirigami.Units.iconSizes.medium
-                                Layout.preferredHeight: Kirigami.Units.iconSizes.medium
+                                Layout.preferredWidth: appListStyle.iconSize
+                                Layout.preferredHeight: appListStyle.iconSize
                             }
 
                             Label {
@@ -603,8 +646,8 @@ ConfigPage {
                             // Drag handle
                             Item {
                                 id: dragHandle
-                                Layout.preferredWidth: Kirigami.Units.iconSizes.medium
-                                Layout.preferredHeight: parent.height
+                                Layout.preferredWidth: appListStyle.iconSize
+                                Layout.fillHeight: true
 
                                 Grid {
                                     anchors.centerIn: parent
@@ -643,7 +686,8 @@ ConfigPage {
                                         
                                         // Robust index calculation using global coordinates
                                         var mappedPos = pinnedAppsList.contentItem.mapFromItem(cfg_page, pinnedAppDelegate.x, pinnedAppDelegate.y + pinnedAppDelegate.height/2);
-                                        var targetIndex = Math.floor(mappedPos.y / 48);
+                                        var itemHeight = appListStyle.rowHeight;
+                                        var targetIndex = Math.floor(mappedPos.y / itemHeight);
 
                                         // Clamp index to valid range
                                         if (targetIndex < 0) targetIndex = 0;
@@ -696,6 +740,9 @@ ConfigPage {
                         icon.name: "list-add"
                         text: Wrappers.i18n("Add Application...")
                         onClicked: {
+                            // Force refresh to ensure unpinned apps appear
+                            cfg_page.filterAppsModel(cfg_page.currentSearchText, true);
+                            
                             stackView.push(addAppsPage)
                             if (!cfg_page.initialLoadDone) {
                                 cfg_page.initialLoadDone = true;
@@ -748,10 +795,13 @@ ConfigPage {
         id: addAppsPage
         Item {
             // Add apps page container
+            focus: true // Ensure item can receive focus for keys
             
             ColumnLayout {
                 anchors.fill: parent
                 spacing: 0
+
+
 
                 // Header
                 RowLayout {
@@ -825,11 +875,21 @@ ConfigPage {
                         delegate: ItemDelegate {
                             id: appsDelegate
                             required property var model
+                            required property int index
+                            
                             width: ListView.view.width
+                            topPadding: appListStyle.itemTopPadding
+                            bottomPadding: appListStyle.itemBottomPadding
+                            leftPadding: appListStyle.contentPadding
+                            rightPadding: appListStyle.contentPadding
                             
                             onClicked: {
                                 cfg_page.addLauncher(appsDelegate.model.url);
-                                stackView.pop();
+                                // Don't close the page, just remove from the list
+                                // stackView.pop(); 
+                                
+                                // Remove item from filtered model immediately
+                                filteredAppsModel.remove(index);
                             }
 
                             ToolTip.text: appsDelegate.model.comment || appsDelegate.model.name || ""
@@ -841,8 +901,8 @@ ConfigPage {
 
                                 Kirigami.Icon {
                                     source: appsDelegate.model.icon || "application-x-executable"
-                                    Layout.preferredWidth: Kirigami.Units.iconSizes.smallMedium
-                                    Layout.preferredHeight: Kirigami.Units.iconSizes.smallMedium
+                                    Layout.preferredWidth: appListStyle.iconSize
+                                    Layout.preferredHeight: appListStyle.iconSize
                                 }
 
                                 ColumnLayout {
