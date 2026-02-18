@@ -356,19 +356,24 @@ ConfigPage {
         refreshPinnedAppsModel();
     }
 
+    function getGenericNameForUrl(url) {
+        if (appMetadataCache[url]) {
+            return appMetadataCache[url].genericName || "";
+        }
+        return "";
+    }
+
     function refreshPinnedAppsModel(sourceList) {
         pinnedAppsModel.clear();
         let list = sourceList || pinnedLaunchers;
         for (let i = 0; i < list.length; i++) {
             let launcher = list[i];
             let url = cleanUrl(launcher);
-            let name = getNameForUrl(url); // Use cleaned URL for lookup
-            let comment = getCommentForUrl(url);
-            let icon = getIconForUrl(url); // Use cleaned URL for lookup
             pinnedAppsModel.append({
-                "name": name,
-                "comment": comment,
-                "icon": icon,
+                "name": getNameForUrl(url),
+                "genericName": getGenericNameForUrl(url),
+                "comment": getCommentForUrl(url),
+                "icon": getIconForUrl(url),
                 "url": url
             });
         }
@@ -591,6 +596,10 @@ ConfigPage {
                             id: rowHoverHandler
                         }
 
+                        ToolTip.text: pinnedAppDelegate.model.comment || pinnedAppDelegate.model.name || ""
+                        ToolTip.visible: rowHoverHandler.hovered && !removeMouseArea.containsMouse && ToolTip.text !== ""
+                        ToolTip.delay: 1000
+
                         Rectangle {
                             id: itemHighlight
                             anchors.fill: parent
@@ -620,14 +629,25 @@ ConfigPage {
                                 Layout.preferredHeight: appListStyle.iconSize
                             }
 
-                            Label {
-                                text: pinnedAppDelegate.model.name
-                                elide: Text.ElideRight
+                            ColumnLayout {
                                 Layout.fillWidth: true
-                                
-                                ToolTip.text: pinnedAppDelegate.model.comment || pinnedAppDelegate.model.name || ""
-                                ToolTip.visible: rowHoverHandler.hovered && !removeMouseArea.containsMouse && ToolTip.text !== ""
-                                ToolTip.delay: 1000
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 0
+
+                                Label {
+                                    Layout.fillWidth: true
+                                    text: pinnedAppDelegate.model.name
+                                    elide: Text.ElideRight
+                                }
+
+                                Label {
+                                    Layout.fillWidth: true
+                                    visible: text !== ""
+                                    text: pinnedAppDelegate.model.genericName || ""
+                                    elide: Text.ElideRight
+                                    font.pointSize: Kirigami.Theme.smallFont.pointSize
+                                    opacity: 0.7
+                                }
                             }
 
                             // Drag handle
