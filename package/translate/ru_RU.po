@@ -587,15 +587,15 @@ msgstr "Почтовый клиент"
 
 #: ../contents/ui/config/ConfigPinnedApps.qml
 msgid "Browse the Web"
-msgstr ""
+msgstr "Просмотр веб-страниц"
 
 #: ../contents/ui/config/ConfigPinnedApps.qml
 msgid "Manage Files"
-msgstr ""
+msgstr "Управление файлами"
 
 #: ../contents/ui/config/ConfigPinnedApps.qml
 msgid "Send and Receive Email"
-msgstr ""
+msgstr "Отправка и получение почты"
 
 #: ../contents/ui/config/ConfigPinnedApps.qml
 msgid "Default Application"
@@ -619,7 +619,7 @@ msgstr "Добавить спец. запуск..."
 
 #: ../contents/ui/config/ConfigPinnedApps.qml
 msgid "Back"
-msgstr ""
+msgstr "Назад"
 
 # --- ConfigPinnedApps.qml ---
 #: ../contents/ui/config/ConfigPinnedApps.qml
