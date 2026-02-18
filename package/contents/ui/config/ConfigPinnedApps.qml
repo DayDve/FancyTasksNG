@@ -29,15 +29,7 @@ ConfigPage {
         id: appListStyle
         property int iconSize: Kirigami.Units.iconSizes.smallMedium
         property int spacing: Kirigami.Units.smallSpacing
-        property int contentPadding: Kirigami.Units.smallSpacing
-        
-        // Split vertical padding to prevent visual cutoff (descenders)
-        property int itemTopPadding: Kirigami.Units.smallSpacing * 0.5
-        property int itemBottomPadding: Kirigami.Units.smallSpacing * 1.5
-        
-        // Ensure row height accommodates the icon and vertical padding, PLUS extra for buttons/text
-        // use a minimum content height of iconSize OR a bit more to be safe for buttons
-        property int rowHeight: Math.max(iconSize, Kirigami.Units.gridUnit * 1.6) + itemTopPadding + itemBottomPadding
+        property int padding: Kirigami.Units.smallSpacing
     }
 
     // ---------------------------------------
@@ -505,7 +497,7 @@ ConfigPage {
                         onEntered: (drag) => {
                             if (cfg_page.isDragging) {
                                 // Calculate new index based on drop position
-                                var itemHeight = appListStyle.rowHeight;
+                                var itemHeight = pinnedAppDelegate.height;
                                 var newIndex = Math.floor((drag.y + pinnedAppsList.contentY) / itemHeight);
                                 // Approximate item height
                                 if (newIndex >= 0 && newIndex < pinnedAppsModel.count) {
@@ -532,7 +524,7 @@ ConfigPage {
                                 }
 
                                 // Calculate drop index
-                                var itemHeight = appListStyle.rowHeight;
+                                var itemHeight = pinnedAppDelegate.height;
                                 var newIndex = Math.floor((localY + pinnedAppsList.contentY) / itemHeight);
                                 if (newIndex >= 0 && newIndex < pinnedAppsModel.count) {
                                     cfg_page.dropItemIndex = newIndex;
@@ -570,8 +562,7 @@ ConfigPage {
 
 
                         width: ListView.view.width
-                        // Dynamic height based on unified style
-                        height: appListStyle.rowHeight
+                        implicitHeight: contentRow.implicitHeight + appListStyle.padding * 2
 
                         // Properties for drag operation
                         property bool beingDragged: index === cfg_page.dragItemIndex
@@ -616,13 +607,9 @@ ConfigPage {
 
 
                         RowLayout {
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.top: parent.top
-                            anchors.leftMargin: appListStyle.contentPadding
-                            anchors.rightMargin: appListStyle.contentPadding
-                            anchors.topMargin: appListStyle.itemTopPadding
-                            // Don't anchor bottom to avoid clipping; we know rowHeight is sufficient
+                            id: contentRow
+                            anchors.fill: parent
+                            anchors.margins: appListStyle.padding
                             spacing: appListStyle.spacing
 
 
@@ -686,7 +673,7 @@ ConfigPage {
                                         
                                         // Robust index calculation using global coordinates
                                         var mappedPos = pinnedAppsList.contentItem.mapFromItem(cfg_page, pinnedAppDelegate.x, pinnedAppDelegate.y + pinnedAppDelegate.height/2);
-                                        var itemHeight = appListStyle.rowHeight;
+                                        var itemHeight = pinnedAppDelegate.height;
                                         var targetIndex = Math.floor(mappedPos.y / itemHeight);
 
                                         // Clamp index to valid range
@@ -900,10 +887,10 @@ ConfigPage {
                             required property int index
                             
                             width: ListView.view.width
-                            topPadding: appListStyle.itemTopPadding
-                            bottomPadding: appListStyle.itemBottomPadding
-                            leftPadding: appListStyle.contentPadding
-                            rightPadding: appListStyle.contentPadding
+                            topPadding: appListStyle.padding
+                            bottomPadding: appListStyle.padding
+                            leftPadding: appListStyle.padding
+                            rightPadding: appListStyle.padding
                             
                             onClicked: {
                                 cfg_page.addLauncher(appsDelegate.model.url);
