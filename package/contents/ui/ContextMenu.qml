@@ -14,7 +14,7 @@ import org.kde.plasma.extras as PlasmaExtras
 
 import org.kde.taskmanager as TaskManager
 import org.kde.plasma.private.mpris as Mpris
-import org.kde.plasma.private.taskmanager as TaskManagerApplet
+// import org.kde.plasma.private.taskmanager as TaskManagerApplet
 
 import "code/layoutmetrics.js" as LayoutMetrics
 import "code/singletones"
@@ -22,7 +22,7 @@ import "code/singletones"
 PlasmaExtras.Menu {
     id: menu
 
-    required property TaskManagerApplet.Backend backend
+    required property var backend
     required property Mpris.Mpris2Model mpris2Source
     required property /*QModelIndex*/var modelIndex
     required property TaskManager.TasksModel tasksModel

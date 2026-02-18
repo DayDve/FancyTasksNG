@@ -14,7 +14,7 @@ import org.kde.ksvg as KSvg
 import org.kde.plasma.extras as PlasmaExtras
 import org.kde.plasma.components as PlasmaComponents3
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.private.taskmanager as TaskManagerApplet
+// import org.kde.plasma.private.taskmanager as TaskManagerApplet
 import org.kde.plasma.plasmoid
 import Qt5Compat.GraphicalEffects
 
@@ -286,7 +286,7 @@ Item {
     }
 
     onChildCountChanged: {
-        if (TaskTools.taskManagerInstanceCount < 2 && task.childCount > task.previousChildCount) {
+        if (TaskTools.taskManagerInstanceCount < 2 && task.childCount > task.previousChildCount && tasksRoot.backend) {
             tasksRoot.tasksModel.requestPublishDelegateGeometry(task.modelIndex(), tasksRoot.backend.globalRect(task), task);
         }
 
@@ -305,9 +305,18 @@ Item {
 
     onSmartLauncherEnabledChanged: {
         if (task.smartLauncherEnabled && !task.smartLauncherItem) {
-            const component = Qt.createComponent("org.kde.plasma.private.taskmanager", "SmartLauncherItem");
-            const smartLauncher = component.createObject(task);
-            component.destroy();
+            let smartLauncher = null;
+            try {
+                smartLauncher = Qt.createQmlObject('import org.kde.taskmanager; SmartLauncherItem {}', task);
+            } catch (e) {
+                try {
+                    smartLauncher = Qt.createQmlObject('import org.kde.plasma.private.taskmanager; SmartLauncherItem {}', task);
+                } catch (e2) {
+                     // SmartLauncherItem is optional or not available in this Plasma version
+                     // console.warn("Could not create SmartLauncherItem from public or private module");
+                     return;
+                }
+            }
 
             smartLauncher.launcherUrl = Qt.binding(() => task.model.LauncherUrlWithoutIcon);
 
@@ -538,16 +547,16 @@ Item {
             Qt.BackButton | Qt.ForwardButton
         onTapped: (eventPoint, button) => {
             if (button === Qt.MiddleButton) {
-                if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.NewInstance) {
+                if (Plasmoid.configuration.middleClickAction === 2 /* NewInstance */) {
                     task.tasksRoot.tasksModel.requestNewInstance(task.modelIndex());
-                } else if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.Close) {
+                } else if (Plasmoid.configuration.middleClickAction === 1 /* Close */) {
                     task.tasksRoot.taskClosedWithMouseMiddleButton = task.model.WinIdList.slice();
                     task.tasksRoot.tasksModel.requestClose(task.modelIndex());
-                } else if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.ToggleMinimized) {
+                } else if (Plasmoid.configuration.middleClickAction === 3 /* ToggleMinimized */) {
                     task.tasksRoot.tasksModel.requestToggleMinimized(task.modelIndex());
-                } else if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.ToggleGrouping) {
+                } else if (Plasmoid.configuration.middleClickAction === 4 /* ToggleGrouping */) {
                     task.tasksRoot.tasksModel.requestToggleGrouping(task.modelIndex());
-                } else if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.BringToCurrentDesktop) {
+                } else if (Plasmoid.configuration.middleClickAction === 5 /* BringToCurrentDesktop */) {
                     task.tasksRoot.tasksModel.requestVirtualDesktops(task.modelIndex(), [task.tasksRoot.virtualDesktopInfo.currentDesktop]);
                 }
             } else if (button === Qt.BackButton || button === Qt.ForwardButton) {
@@ -563,7 +572,7 @@ Item {
                 }
             }
 
-            task.tasksRoot.backend.cancelHighlightWindows();
+            task.tasksRoot.cancelHighlightWindows();
         }
     }
 

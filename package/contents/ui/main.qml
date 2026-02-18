@@ -19,7 +19,7 @@ import org.kde.kirigami as Kirigami
 import org.kde.plasma.workspace.trianglemousefilter
 
 import org.kde.taskmanager as TaskManager
-import org.kde.plasma.private.taskmanager as TaskManagerApplet
+// import org.kde.plasma.private.taskmanager as TaskManagerApplet
 import org.kde.plasma.workspace.dbus as DBus
 
 import "code/layoutmetrics.js" as LayoutMetrics
@@ -148,12 +148,13 @@ PlasmoidItem {
     }
 
     function publishIconGeometries(taskItems: var): void {
+        if (!backend) return;
         if (TaskTools.taskManagerInstanceCount >= 2)
             return;
         for (let i = 0; i < taskItems.length - 1; ++i) {
             const task = taskItems[i];
             if (!task.model.IsLauncher && !task.model.IsStartup) {
-                tasksModel.requestPublishDelegateGeometry(tasksModel.makeModelIndex(task.index), backend.globalRect(task), task);
+                tasksModel.requestPublishDelegateGeometry(tasksModel.makeModelIndex(task.index), tasks.backend.globalRect(task), task);
             }
         }
     }
@@ -227,9 +228,24 @@ PlasmoidItem {
         }
     }
 
-    readonly property TaskManagerApplet.Backend backend: TaskManagerApplet.Backend {
-        id: backend
-        onAddLauncher: url => tasks.addLauncher(url)
+    Loader {
+        id: backendLoader
+        active: true
+        source: "TaskBackendPublic.qml"
+        onStatusChanged: {
+            if (status === Loader.Error) {
+                source = "TaskBackendPrivate.qml";
+            }
+        }
+    }
+    readonly property var backend: backendLoader.item
+
+    Connections {
+        target: tasks.backend
+        ignoreUnknownSignals: true
+        function onAddLauncher(url) {
+            tasks.addLauncher(url)
+        }
     }
 
     DBus.DBusServiceWatcher {
@@ -244,8 +260,8 @@ PlasmoidItem {
             running: true
             onTriggered: {
                 const task = parent as Task;
-                if (task)
-                    tasks.tasksModel.requestPublishDelegateGeometry(task.modelIndex(), backend.globalRect(task), task);
+                if (task && tasks.backend)
+                    tasks.tasksModel.requestPublishDelegateGeometry(task.modelIndex(), tasks.backend.globalRect(task), task);
                 destroy();
             }
         }
@@ -290,7 +306,9 @@ PlasmoidItem {
             id: pulseAudio
             sourceComponent: tasks.pulseAudioComponent
             active: tasks.pulseAudioComponent.status === Component.Ready
-            onLoaded: item.backend = backend
+            onLoaded: {
+                item.backend = Qt.binding(() => tasks.backend);
+            }
         }
 
         Timer {
@@ -365,7 +383,8 @@ PlasmoidItem {
             tasks: tasks
             tasksModel: tasksModel
             onUrlsDropped: urls => {
-                const createLaunchers = urls.every(item => backend.isApplication(item));
+                if (!tasks.backend) return;
+                const createLaunchers = urls.every(item => tasks.backend.isApplication(item));
                 if (createLaunchers) {
                     urls.forEach(item => tasks.addLauncher(item));
                     return;
