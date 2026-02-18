@@ -4,6 +4,7 @@
     SPDX-FileCopyrightText: 2016 Kai Uwe Broulik <kde@privat.broulik.de>
     SPDX-FileCopyrightText: 2017 Roman Gilg <subdiff@gmail.com>
     SPDX-FileCopyrightText: 2020 Nate Graham <nate@kde.org>
+    SPDX-FileCopyrightText: 2025-2026 Vitaliy Elin <daydve@smbit.pro>
 
     SPDX-License-Identifier: LGPL-2.0-or-later
 */

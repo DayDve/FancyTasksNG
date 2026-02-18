@@ -1,5 +1,6 @@
 /*
     SPDX-FileCopyrightText: 2013 Eike Hein <hein@kde.org>
+    SPDX-FileCopyrightText: 2025-2026 Vitaliy Elin <daydve@smbit.pro>
 
     SPDX-License-Identifier: GPL-2.0-or-later
 */
