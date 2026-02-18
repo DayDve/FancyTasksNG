@@ -37,10 +37,12 @@ ConfigPage {
             enabled: indicatorsEnabled.currentIndex
             visible: indicatorProgress.checked
             id: indicatorProgressColor
-            Kirigami.FormData.label: Wrappers.i18n("Progress Color:")
-            showAlphaChannel: true
             color: cfg_page.cfg_indicatorProgressColor
-            onColorChanged: cfg_page.cfg_indicatorProgressColor = color
+            onColorChanged: {
+                if (!Qt.colorEqual(color, cfg_page.cfg_indicatorProgressColor)) {
+                    cfg_page.cfg_indicatorProgressColor = color
+                }
+            }
         }
 
         CheckBox {
@@ -282,9 +284,12 @@ ConfigPage {
             enabled: indicatorsEnabled.currentIndex & !indicatorDominantColor.checked & !indicatorAccentColor.checked
             id: indicatorCustomColor
             Kirigami.FormData.label: Wrappers.i18n("Custom Color:")
-            showAlphaChannel: true
             color: cfg_page.cfg_indicatorCustomColor
-            onColorChanged: cfg_page.cfg_indicatorCustomColor = color
+            onColorChanged: {
+                if (!Qt.colorEqual(color, cfg_page.cfg_indicatorCustomColor)) {
+                    cfg_page.cfg_indicatorCustomColor = color
+                }
+            }
         }
 
         Item {

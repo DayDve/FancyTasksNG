@@ -162,7 +162,11 @@ ConfigPage {
             showAlphaChannel: true
             visible: buttonColorize.checked && !buttonColorizeDominant.checked
             color: cfg_page.cfg_buttonColorizeCustom
-            onColorChanged: cfg_page.cfg_buttonColorizeCustom = color
+            onColorChanged: {
+                if (!Qt.colorEqual(color, cfg_page.cfg_buttonColorizeCustom)) {
+                    cfg_page.cfg_buttonColorizeCustom = color
+                }
+            }
         }
 
         CheckBox {

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/alexankitty/FancyTasks\n"
-"POT-Creation-Date: 2026-02-17 17:28+0200\n"
+"POT-Creation-Date: 2026-02-18 18:07+0200\n"
 "PO-Revision-Date: 2023-09-21 16:18-0300\n"
 "Last-Translator:  Douglas Guimarães <<dg2003gh@gmail.com>>\n"
 "Language-Team: \n"
@@ -464,10 +464,6 @@ msgid "Display Progress on Indicator"
 msgstr "Mostrar progresso no indicator"
 
 #: ../contents/ui/config/ConfigIndicators.qml
-msgid "Progress Color:"
-msgstr "Cor de progresso:"
-
-#: ../contents/ui/config/ConfigIndicators.qml
 msgid "Disable for Inactive Windows"
 msgstr "Desabilitar para janelas inativas"
 
@@ -842,6 +838,9 @@ msgstr "Disponível também em %1"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Disponível em %1"
+
+#~ msgid "Progress Color:"
+#~ msgstr "Cor de progresso:"
 
 #~ msgid "Icon Size (px):"
 #~ msgstr "Tamanho do ícone (px):"
