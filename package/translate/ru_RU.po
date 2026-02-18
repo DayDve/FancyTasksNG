@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/alexankitty/FancyTasks\n"
-"POT-Creation-Date: 2026-02-17 17:28+0200\n"
+"POT-Creation-Date: 2026-02-18 18:07+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -462,10 +462,6 @@ msgid "Display Progress on Indicator"
 msgstr "Показывать прогресс на индикаторе"
 
 #: ../contents/ui/config/ConfigIndicators.qml
-msgid "Progress Color:"
-msgstr "Цвет прогресса:"
-
-#: ../contents/ui/config/ConfigIndicators.qml
 msgid "Disable for Inactive Windows"
 msgstr "Отключить для неактивных окон"
 
@@ -843,6 +839,9 @@ msgstr "Также доступно в %1"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Доступно в %1"
+
+#~ msgid "Progress Color:"
+#~ msgstr "Цвет прогресса:"
 
 #~ msgid "Add"
 #~ msgstr "Добавить"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/alexankitty/FancyTasks\n"
-"POT-Creation-Date: 2026-02-17 17:28+0200\n"
+"POT-Creation-Date: 2026-02-18 18:07+0200\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -461,10 +461,6 @@ msgstr "Ingeschakeld"
 
 #: ../contents/ui/config/ConfigIndicators.qml
 msgid "Display Progress on Indicator"
-msgstr ""
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Progress Color:"
 msgstr ""
 
 #: ../contents/ui/config/ConfigIndicators.qml
