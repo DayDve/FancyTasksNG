@@ -639,7 +639,7 @@ ConfigPage {
                                 Layout.fillWidth: true
                                 
                                 ToolTip.text: pinnedAppDelegate.model.comment || pinnedAppDelegate.model.name || ""
-                                ToolTip.visible: rowHoverHandler.hovered && !removeButton.hovered && ToolTip.text !== ""
+                                ToolTip.visible: rowHoverHandler.hovered && !removeMouseArea.containsMouse && ToolTip.text !== ""
                                 ToolTip.delay: 1000
                             }
 
@@ -710,20 +710,42 @@ ConfigPage {
                                 }
                             }
 
-                            Button {
-                                id: removeButton
-                                icon.name: "user-trash"
-                                flat: true
-                                onClicked: {
-                                    // Create a copy to ensure change detection
-                                    let currentLaunchers = Array.from(cfg_page.pinnedLaunchers);
-                                    currentLaunchers.splice(pinnedAppDelegate.index, 1);
-                                    cfg_page.cfg_launchers = currentLaunchers;
-                                    // pinnedLaunchers binding will update automatically
-                                    cfg_page.refreshPinnedAppsModel();
+                            // Simple Item-based button (No complex Button control)
+                            Item {
+                                id: removeButtonContainer
+                                Layout.preferredWidth: appListStyle.iconSize
+                                Layout.preferredHeight: appListStyle.iconSize
+
+                                Kirigami.Icon {
+                                    anchors.centerIn: parent
+                                    width: Kirigami.Units.iconSizes.small
+                                    height: Kirigami.Units.iconSizes.small
+                                    
+                                    source: "user-trash"
+                                    isMask: true
+                                    
+                                    // Change color on hover
+                                    color: removeMouseArea.containsMouse ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.textColor
                                 }
+
+                                MouseArea {
+                                    id: removeMouseArea
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    
+                                    onClicked: {
+                                        // Create a copy to ensure change detection
+                                        let currentLaunchers = Array.from(cfg_page.pinnedLaunchers);
+                                        currentLaunchers.splice(pinnedAppDelegate.index, 1);
+                                        cfg_page.cfg_launchers = currentLaunchers;
+                                        // pinnedLaunchers binding will update automatically
+                                        cfg_page.refreshPinnedAppsModel();
+                                    }
+                                }
+
                                 ToolTip.text: Wrappers.i18n("Remove")
-                                ToolTip.visible: hovered
+                                ToolTip.visible: removeMouseArea.containsMouse
                                 ToolTip.delay: 1000
                             }
                         }
