@@ -494,6 +494,59 @@ ConfigPage {
                     // Add scrollbar when needed
                     ScrollBar.vertical: ScrollBar {}
 
+                    // Drop indicator visual component
+                    Component {
+                        id: dropIndicatorComponent
+                        Item {
+                            height: 2
+                            // Left arrow
+                            Canvas {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 8
+                                height: 10
+                                onPaint: {
+                                    var ctx = getContext("2d");
+                                    ctx.clearRect(0, 0, width, height);
+                                    ctx.fillStyle = Kirigami.Theme.highlightColor;
+                                    ctx.beginPath();
+                                    ctx.moveTo(0, 0);
+                                    ctx.lineTo(width, height / 2);
+                                    ctx.lineTo(0, height);
+                                    ctx.closePath();
+                                    ctx.fill();
+                                }
+                            }
+                            // Right arrow
+                            Canvas {
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 8
+                                height: 10
+                                onPaint: {
+                                    var ctx = getContext("2d");
+                                    ctx.clearRect(0, 0, width, height);
+                                    ctx.fillStyle = Kirigami.Theme.highlightColor;
+                                    ctx.beginPath();
+                                    ctx.moveTo(width, 0);
+                                    ctx.lineTo(0, height / 2);
+                                    ctx.lineTo(width, height);
+                                    ctx.closePath();
+                                    ctx.fill();
+                                }
+                            }
+                            Rectangle {
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.leftMargin: 8
+                                anchors.rightMargin: 8
+                                height: 2
+                                color: Kirigami.Theme.highlightColor
+                            }
+                        }
+                    }
+
                     // Add drop area to handle autoscroll
                     DropArea {
                         id: dropArea
@@ -501,39 +554,23 @@ ConfigPage {
 
                         onEntered: (drag) => {
                             if (cfg_page.isDragging) {
-                                // Calculate new index based on drop position
-                                var itemHeight = pinnedAppDelegate.height;
-                                var newIndex = Math.floor((drag.y + pinnedAppsList.contentY) / itemHeight);
-                                // Approximate item height
-                                if (newIndex >= 0 && newIndex < pinnedAppsModel.count) {
-                                    cfg_page.dropItemIndex = newIndex;
-                                }
+                                updateDropIndex(drag.y);
                             }
                         }
 
                         onPositionChanged: (drag) => {
                             if (cfg_page.isDragging) {
-                                // Handle auto-scrolling
                                 var localY = drag.y;
                                 if (localY < 50) {
-                                    // Auto-scroll up
                                     autoScrollTimer.direction = -1;
                                     autoScrollTimer.running = true;
                                 } else if (localY > pinnedAppsList.height - 50) {
-                                    // Auto-scroll down
                                     autoScrollTimer.direction = 1;
                                     autoScrollTimer.running = true;
                                 } else {
-                                    // Stop auto-scrolling
                                     autoScrollTimer.running = false;
                                 }
-
-                                // Calculate drop index
-                                var itemHeight = pinnedAppDelegate.height;
-                                var newIndex = Math.floor((localY + pinnedAppsList.contentY) / itemHeight);
-                                if (newIndex >= 0 && newIndex < pinnedAppsModel.count) {
-                                    cfg_page.dropItemIndex = newIndex;
-                                }
+                                updateDropIndex(localY);
                             }
                         }
 
@@ -544,14 +581,29 @@ ConfigPage {
                         onExited: {
                             autoScrollTimer.running = false;
                         }
+
+                        function updateDropIndex(localY) {
+                            var absY = localY + pinnedAppsList.contentY;
+                            var idx = pinnedAppsList.indexAt(0, absY);
+                            if (idx === -1) {
+                                cfg_page.dropItemIndex = pinnedAppsModel.count;
+                                return;
+                            }
+                            var item = pinnedAppsList.itemAtIndex(idx);
+                            if (item) {
+                                var midY = item.y + item.height / 2;
+                                cfg_page.dropItemIndex = absY < midY ? idx : idx + 1;
+                            } else {
+                                cfg_page.dropItemIndex = idx;
+                            }
+                        }
                     }
 
-                    // Timer for auto-scrolling during drag
                     Timer {
                         id: autoScrollTimer
                         interval: 50
                         repeat: true
-                        property int direction: 0 // -1 for up, 1 for down
+                        property int direction: 0
                         property int scrollStep: 10
 
                         onTriggered: {
@@ -564,200 +616,182 @@ ConfigPage {
                         required property var model
                         required property int index
 
-
-
                         width: ListView.view.width
-                        implicitHeight: contentRow.implicitHeight + appListStyle.padding * 2
+                        height: beingDragged ? 0 : dragContent.implicitHeight
+                        clip: true
 
-                        // Properties for drag operation
                         property bool beingDragged: index === cfg_page.dragItemIndex
 
-                        Drag.active: dragMouseArea.drag.active
-                        Drag.source: pinnedAppDelegate
-                        Drag.hotSpot.x: width / 2
-                        Drag.hotSpot.y: height / 2
-
-                        // Visual representation during drag
-                        states: [
-                            State {
-                                when: pinnedAppDelegate.beingDragged
-                                ParentChange {
-                                    target: pinnedAppDelegate
-                                    parent: cfg_page
-                                }
-                                PropertyChanges {
-                                    pinnedAppDelegate.z: 100
-                                    pinnedAppDelegate.opacity: 0.8
-                                }
-                            }
-                        ]
-
-                        HoverHandler {
-                            id: rowHoverHandler
+                        // Top insertion indicator
+                        Loader {
+                            active: cfg_page.isDragging && cfg_page.dropItemIndex === pinnedAppDelegate.index && !pinnedAppDelegate.beingDragged
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            y: -1
+                            z: 20
+                            sourceComponent: dropIndicatorComponent
                         }
 
-                        ToolTip.text: pinnedAppDelegate.model.comment || pinnedAppDelegate.model.name || ""
-                        ToolTip.visible: rowHoverHandler.hovered && !removeMouseArea.containsMouse && ToolTip.text !== ""
-                        ToolTip.delay: 1000
-
-                        Rectangle {
-                            id: itemHighlight
-                            anchors.fill: parent
-                            color: cfg_page.dropItemIndex === pinnedAppDelegate.index && cfg_page.isDragging ? Kirigami.Theme.highlightColor : rowHoverHandler.hovered ? Kirigami.Theme.highlightColor.lighter(0.7) : "transparent"
-                            opacity: 0.3
-                            radius: 3
-
-                            Behavior on color {
-                                ColorAnimation {
-                                    duration: 100
-                                }
+                        // Bottom insertion indicator (insert at end of list)
+                        Loader {
+                            active: {
+                                if (!cfg_page.isDragging || pinnedAppDelegate.beingDragged) return false;
+                                if (cfg_page.dropItemIndex !== pinnedAppsModel.count) return false;
+                                var lastIdx = cfg_page.dragItemIndex === pinnedAppsModel.count - 1
+                                    ? pinnedAppsModel.count - 2
+                                    : pinnedAppsModel.count - 1;
+                                return pinnedAppDelegate.index === lastIdx;
                             }
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            z: 20
+                            sourceComponent: dropIndicatorComponent
                         }
 
+                        Item {
+                            id: dragContent
+                            width: pinnedAppDelegate.width
+                            implicitHeight: contentRow.implicitHeight + appListStyle.padding * 2
 
-                        RowLayout {
-                            id: contentRow
-                            anchors.fill: parent
-                            anchors.margins: appListStyle.padding
-                            spacing: appListStyle.spacing
+                            Drag.active: dragMouseArea.drag.active
+                            Drag.source: pinnedAppDelegate
+                            Drag.hotSpot.x: width / 2
+                            Drag.hotSpot.y: height / 2
 
-
-
-                            Kirigami.Icon {
-                                source: pinnedAppDelegate.model.icon
-                                Layout.preferredWidth: appListStyle.iconSize
-                                Layout.preferredHeight: appListStyle.iconSize
-                            }
-
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                Layout.alignment: Qt.AlignVCenter
-                                spacing: 0
-
-                                Label {
-                                    Layout.fillWidth: true
-                                    text: pinnedAppDelegate.model.name
-                                    elide: Text.ElideRight
-                                }
-
-                                Label {
-                                    Layout.fillWidth: true
-                                    visible: text !== ""
-                                    text: pinnedAppDelegate.model.genericName || ""
-                                    elide: Text.ElideRight
-                                    font.pointSize: Kirigami.Theme.smallFont.pointSize
-                                    opacity: 0.7
-                                }
-                            }
-
-                            // Drag handle
-                            Item {
-                                id: dragHandle
-                                Layout.preferredWidth: appListStyle.iconSize
-                                Layout.fillHeight: true
-
-                                Grid {
-                                    anchors.centerIn: parent
-                                    columns: 2
-                                    rows: 3
-                                    columnSpacing: 2
-                                    rowSpacing: 2
-                                    
-                                    Repeater {
-                                        model: 6
-                                        Rectangle {
-                                            width: 4
-                                            height: 4
-                                            radius: 2
-                                            color: Kirigami.Theme.textColor
-                                            opacity: 0.5
-                                        }
+                            states: [
+                                State {
+                                    when: pinnedAppDelegate.beingDragged
+                                    ParentChange {
+                                        target: dragContent
+                                        parent: cfg_page
+                                    }
+                                    PropertyChanges {
+                                        dragContent.z: 100
+                                        dragContent.opacity: 0.8
                                     }
                                 }
-                                
-                                MouseArea {
-                                    id: dragMouseArea
-                                    anchors.fill: parent
-                                    cursorShape: pressed ? Qt.ClosedHandCursor : Qt.OpenHandCursor
-                                    
-                                    drag.target: pinnedAppDelegate
-                                    drag.axis: Drag.YAxis
-                                    
-                                    onPressed: {
-                                        cfg_page.dragItemIndex = pinnedAppDelegate.index;
-                                        cfg_page.isDragging = true;
-                                    }
-                                    
-                                    onReleased: {
-                                        cfg_page.isDragging = false;
-                                        
-                                        // Robust index calculation using global coordinates
-                                        var mappedPos = pinnedAppsList.contentItem.mapFromItem(cfg_page, pinnedAppDelegate.x, pinnedAppDelegate.y + pinnedAppDelegate.height/2);
-                                        var itemHeight = pinnedAppDelegate.height;
-                                        var targetIndex = Math.floor(mappedPos.y / itemHeight);
+                            ]
 
-                                        // Clamp index to valid range
-                                        if (targetIndex < 0) targetIndex = 0;
-                                        if (targetIndex >= pinnedAppsModel.count) targetIndex = pinnedAppsModel.count - 1;
-
-                                        // Capture current drag index
-                                        var dragIdx = cfg_page.dragItemIndex;
-
-                                        // Reset state BEFORE acting (because action might destroy us)
-                                        cfg_page.dragItemIndex = -1;
-                                        cfg_page.dropItemIndex = -1;
-
-                                        if (dragIdx !== -1 && targetIndex !== -1 && targetIndex !== dragIdx) {
-                                            cfg_page.moveItem(dragIdx, targetIndex);
-                                        } else {
-                                            // Force refresh even if index didn't change
-                                            cfg_page.refreshPinnedAppsModel();
-                                        }
-                                    }
-                                }
+                            HoverHandler {
+                                id: rowHoverHandler
                             }
 
-                            // Simple Item-based button (No complex Button control)
-                            Item {
-                                id: removeButtonContainer
-                                Layout.preferredWidth: appListStyle.iconSize
-                                Layout.preferredHeight: appListStyle.iconSize
+                            ToolTip.text: pinnedAppDelegate.model.comment || pinnedAppDelegate.model.name || ""
+                            ToolTip.visible: rowHoverHandler.hovered && !removeMouseArea.containsMouse && !cfg_page.isDragging && ToolTip.text !== ""
+                            ToolTip.delay: 1000
 
-                                Kirigami.Icon {
-                                    anchors.centerIn: parent
-                                    width: Kirigami.Units.iconSizes.small
-                                    height: Kirigami.Units.iconSizes.small
-                                    
-                                    source: "user-trash"
-                                    isMask: true
-                                    
-                                    // Change color on hover
-                                    color: removeMouseArea.containsMouse ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.textColor
+                            Rectangle {
+                                anchors.fill: parent
+                                color: rowHoverHandler.hovered ? Kirigami.Theme.hoverColor : "transparent"
+                                opacity: 0.3
+                                radius: 3
+                                visible: !cfg_page.isDragging
+                            }
+
+                            MouseArea {
+                                id: dragMouseArea
+                                anchors.fill: parent
+                                z: -1
+                                cursorShape: pressed ? Qt.ClosedHandCursor : Qt.ArrowCursor
+
+                                drag.target: dragContent
+                                drag.axis: Drag.YAxis
+
+                                onPressed: {
+                                    cfg_page.dragItemIndex = pinnedAppDelegate.index;
+                                    cfg_page.isDragging = true;
                                 }
 
-                                MouseArea {
-                                    id: removeMouseArea
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    
-                                    onClicked: {
-                                        // Create a copy to ensure change detection
-                                        let currentLaunchers = Array.from(cfg_page.pinnedLaunchers);
-                                        currentLaunchers.splice(pinnedAppDelegate.index, 1);
-                                        cfg_page.cfg_launchers = currentLaunchers;
-                                        // pinnedLaunchers binding will update automatically
+                                onReleased: {
+                                    cfg_page.isDragging = false;
+
+                                    var dropIdx = cfg_page.dropItemIndex;
+                                    var dragIdx = cfg_page.dragItemIndex;
+
+                                    cfg_page.dragItemIndex = -1;
+                                    cfg_page.dropItemIndex = -1;
+
+                                    var targetIndex = dropIdx <= dragIdx ? dropIdx : dropIdx - 1;
+                                    if (targetIndex < 0) targetIndex = 0;
+                                    if (targetIndex >= pinnedAppsModel.count) targetIndex = pinnedAppsModel.count - 1;
+
+                                    if (dragIdx !== -1 && targetIndex !== dragIdx) {
+                                        cfg_page.moveItem(dragIdx, targetIndex);
+                                    } else {
                                         cfg_page.refreshPinnedAppsModel();
                                     }
                                 }
+                            }
 
-                                ToolTip.text: Wrappers.i18n("Remove")
-                                ToolTip.visible: removeMouseArea.containsMouse
-                                ToolTip.delay: 1000
+                            RowLayout {
+                                id: contentRow
+                                anchors.fill: parent
+                                anchors.margins: appListStyle.padding
+                                spacing: appListStyle.spacing
+
+                                Kirigami.Icon {
+                                    source: pinnedAppDelegate.model.icon
+                                    Layout.preferredWidth: appListStyle.iconSize
+                                    Layout.preferredHeight: appListStyle.iconSize
+                                }
+
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignVCenter
+                                    spacing: 0
+
+                                    Label {
+                                        Layout.fillWidth: true
+                                        text: pinnedAppDelegate.model.name
+                                        elide: Text.ElideRight
+                                    }
+
+                                    Label {
+                                        Layout.fillWidth: true
+                                        visible: text !== ""
+                                        text: pinnedAppDelegate.model.genericName || ""
+                                        elide: Text.ElideRight
+                                        font.pointSize: Kirigami.Theme.smallFont.pointSize
+                                        opacity: 0.7
+                                    }
+                                }
+
+                                Item {
+                                    id: removeButtonContainer
+                                    Layout.preferredWidth: appListStyle.iconSize
+                                    Layout.preferredHeight: appListStyle.iconSize
+                                    visible: !pinnedAppDelegate.beingDragged
+
+                                    Kirigami.Icon {
+                                        anchors.centerIn: parent
+                                        width: Kirigami.Units.iconSizes.small
+                                        height: Kirigami.Units.iconSizes.small
+                                        source: "user-trash"
+                                        isMask: true
+                                        color: removeMouseArea.containsMouse ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.textColor
+                                    }
+
+                                    MouseArea {
+                                        id: removeMouseArea
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        cursorShape: Qt.PointingHandCursor
+
+                                        onClicked: {
+                                            let currentLaunchers = Array.from(cfg_page.pinnedLaunchers);
+                                            currentLaunchers.splice(pinnedAppDelegate.index, 1);
+                                            cfg_page.cfg_launchers = currentLaunchers;
+                                            cfg_page.refreshPinnedAppsModel();
+                                        }
+                                    }
+
+                                    ToolTip.text: Wrappers.i18n("Remove")
+                                    ToolTip.visible: removeMouseArea.containsMouse
+                                    ToolTip.delay: 1000
+                                }
                             }
                         }
-
-
                     }
                 }
 
