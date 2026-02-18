@@ -4,9 +4,9 @@
 */
 
 import QtQuick
-import org.kde.kirigami as Kirigami
+import org.kde.kcmutils as KCMUtils
 
-Kirigami.ScrollablePage {
+KCMUtils.SimpleKCM {
     // --- Properties to silence KCM errors ---
     // Defaults for existing aliases
     // --- General ---
