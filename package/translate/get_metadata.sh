@@ -1,4 +1,6 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2025-2026 Vitaliy Elin <daydve@smbit.pro>
+# SPDX-License-Identifier: GPL-2.0-or-later
 # Скрипт для извлечения значений из metadata.json
 # Использование: ./get_metadata.sh "Ключ"
 
