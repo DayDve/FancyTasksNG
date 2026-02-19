@@ -2,11 +2,10 @@
 # SPDX-FileCopyrightText: 2023 Alexandra Stone <alexankitty@gmail.com>
 # SPDX-FileCopyrightText: 2025-2026 Vitaliy Elin <daydve@smbit.pro>
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Version: 24 (Modular)
 
 DIR=$(dirname $(readlink -f "$0"))
 
-# Используем единый скрипт для получения данных
+# Use a unified script to retrieve data
 plasmoidName=$("$DIR/get_metadata.sh" "Id")
 widgetName="${plasmoidName##*.}"
 bugAddress=$("$DIR/get_metadata.sh" "Website")

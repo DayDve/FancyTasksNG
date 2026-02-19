@@ -15,7 +15,6 @@ QtObject {
     signal streamsChanged()
     
     Component.onCompleted: {
-        console.log("PulseAudio: Initialized. Backend:", backend);
     }
     
     // QtObject has no default property, hence adding the Instantiator to one explicitly.
