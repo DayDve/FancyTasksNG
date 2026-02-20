@@ -304,25 +304,60 @@ Item {
         }
     }
 
-    onSmartLauncherEnabledChanged: {
+    function updateSmartLauncherItem() {
         if (task.smartLauncherEnabled && !task.smartLauncherItem) {
             let smartLauncher = null;
+            
+            // Plasma 6.6 approach
             try {
-                smartLauncher = Qt.createQmlObject('import org.kde.taskmanager; SmartLauncherItem {}', task);
-            } catch (e) {
+                let component = Qt.createComponent("plasma.applet.org.kde.plasma.taskmanager", "SmartLauncherItem");
+                if (component) {
+                    if (component.status === Component.Ready) {
+                        smartLauncher = component.createObject(task);
+                    }
+                    component.destroy();
+                }
+            } catch(e) {}
+
+            // Plasma 6.5 and older fallbacks
+            if (!smartLauncher) {
                 try {
                     smartLauncher = Qt.createQmlObject('import org.kde.plasma.private.taskmanager; SmartLauncherItem {}', task);
-                } catch (e2) {
-                     // SmartLauncherItem is optional or not available in this Plasma version
-                     // console.warn("Could not create SmartLauncherItem from public or private module");
-                     return;
+                } catch (e) {
+                    try {
+                        smartLauncher = Qt.createQmlObject('import org.kde.taskmanager; SmartLauncherItem {}', task);
+                    } catch (e2) {
+                        console.warn("FancyTasks: Could not create SmartLauncherItem. Unread badges may not work.");
+                        return;
+                    }
                 }
             }
 
-            smartLauncher.launcherUrl = Qt.binding(() => task.model.LauncherUrlWithoutIcon);
+            if (smartLauncher) {
+                smartLauncher.launcherUrl = Qt.binding(() => {
+                    if (task.model.LauncherUrlWithoutIcon) {
+                         return task.model.LauncherUrlWithoutIcon;
+                    }
+                    // Fallback 1: Cleaned LauncherUrl (remove all params)
+                    if (task.model.LauncherUrl) {
+                         return task.model.LauncherUrl.toString().split('?')[0];
+                    }
+                    // Fallback 2: Construct from AppId
+                    if (task.model.AppId) {
+                         const appId = task.model.AppId;
+                         if (appId.indexOf("applications:") === 0) return appId;
+                         return "applications:" + appId;
+                    }
+                    return "";
+                });
 
-            task.smartLauncherItem = smartLauncher;
+                task.smartLauncherItem = smartLauncher;
+            }
         }
+    }
+
+    onSmartLauncherEnabledChanged: {
+        updateSmartLauncherItem();
     }
 
     onHasAudioStreamChanged: {
@@ -987,6 +1022,8 @@ Item {
     ]
 
     Component.onCompleted: {
+        task.updateSmartLauncherItem();
+        
         if (!task.inPopup && task.model.IsWindow) {
             if (Plasmoid.configuration.groupIconEnabled) {
                 const component = Qt.createComponent("GroupExpanderOverlay.qml");

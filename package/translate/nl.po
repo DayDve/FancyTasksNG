@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/alexankitty/FancyTasks\n"
-"POT-Creation-Date: 2026-02-18 18:07+0200\n"
+"POT-Creation-Date: 2026-02-20 01:28+0200\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -62,574 +62,6 @@ msgstr "—"
 msgctxt "Over 9999 new messages, overlay, keep short"
 msgid "9,999+"
 msgstr "9,999+"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Use plasma borders"
-msgstr "Plasmakaders gebruiken"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Icon Scale"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Icon Size"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Set icon size instead of scaling"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Scale icons from panel edge"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Edge offset (px):"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Icon Hover Effects"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Icon zoom factor (px):"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "How much the icon should grow when hovered (in pixels)"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Zoom animation duration (ms):"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Duration of the zoom animation in milliseconds"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Button Colors:"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Using Plasma Style/Accent"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Using Color Overlay"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml ../contents/ui/config/ConfigIndicators.qml
-msgid "Use dominant icon color"
-msgstr "Dominante pictogramkleur gebruiken"
-
-#: ../contents/ui/config/ConfigAppearance.qml ../contents/ui/config/ConfigIndicators.qml
-msgid "Custom Color:"
-msgstr "Zelfgekozen kleur:"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Colorize inactive buttons"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Plasma Button Decorations:"
-msgstr "Plasma-knopdecoraties:"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Disable All"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Disable Inactive Buttons"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Plasma Button Direction:"
-msgstr "Plasma-knoprichting:"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Override"
-msgstr "Afdwingen"
-
-#: ../contents/ui/config/ConfigAppearance.qml ../contents/ui/config/ConfigIndicators.qml
-msgid "Be sure to use this when using as a floating widget"
-msgstr "Let op: gebruik dit alleen bĳ gebruik als zwevende widget"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "North"
-msgstr "Bovenaan"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "South"
-msgstr "Onderaan"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "West"
-msgstr "Links"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "East"
-msgstr "Rechts"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Maximum button length (px):"
-msgstr "Maximale knopbreedte (in px):"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Space between taskbar items (px):"
-msgstr "Ruimte tussen taakbalkitems (in px):"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "General:"
-msgstr "Algemeen:"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Show small window previews when hovering over tasks"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Hide other windows when hovering over previews"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Mark applications that play audio"
-msgstr "Programma's die audio afspelen markeren"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Fill free space on panel"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Maximum task width:"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Narrow"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Medium"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Wide"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Use multi-column view:"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Use multi-row view:"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Never"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "When panel is low on space and thick enough"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Always when panel is thick enough"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Maximum columns:"
-msgstr "Maximaal aantal kolommen:"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Maximum rows:"
-msgstr "Maximaal aantal rĳen:"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Spacing between icons:"
-msgstr "Ruimte tussen pictogrammen:"
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Small"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Normal"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Large"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Huge"
-msgstr ""
-
-#: ../contents/ui/config/ConfigAppearance.qml
-msgid "Automatically set to Large when in Touch mode"
-msgstr ""
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Display:"
-msgstr "Tonen:"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Show task names"
-msgstr "Pictogrammen en namen"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Show icons only"
-msgstr "Alleen pictogrammen"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Group:"
-msgstr "Groeperen:"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Do not group"
-msgstr "Niet groeperen"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "By program name"
-msgstr "Op programmanaam"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Clicking grouped task:"
-msgstr "Actie na aanklikken van gegroepeerde taak:"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Cycles through tasks"
-msgstr ""
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Shows small window previews"
-msgstr ""
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Shows large window previews"
-msgstr ""
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Shows textual list"
-msgstr ""
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "The compositor does not support displaying windows side by side, so a textual list will be displayed instead."
-msgstr "De compositor heeft geen ondersteuning voor het tonen van vensters naast elkaar; er wordt een lĳst getoond."
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Combine into single button"
-msgstr "Combineren tot één knop"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Group only when the Task Manager is full"
-msgstr "Alleen groeperen als takenbeheer vol is"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Sort:"
-msgstr "Rangschikken:"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Do not sort"
-msgstr "Niet rangschikken"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Manually"
-msgstr "Handmatig"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Alphabetically"
-msgstr "Op alfabetische volgorde"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "By desktop"
-msgstr "Op bureaublad"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "By activity"
-msgstr "Op activiteit"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Keep launchers separate"
-msgstr "Starters gescheiden houden"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Hide launchers after application startup"
-msgstr ""
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Clicking active task:"
-msgstr ""
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Minimizes the task"
-msgstr ""
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Middle-clicking any task:"
-msgstr "Actie na middelklikken op een taak:"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Does nothing"
-msgstr ""
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Closes window or group"
-msgstr ""
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Opens a new window"
-msgstr ""
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Minimizes/Restores window or group"
-msgstr ""
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Toggles grouping"
-msgstr ""
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Brings it to the current virtual desktop"
-msgstr ""
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Mouse wheel:"
-msgstr ""
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Skip minimized tasks"
-msgstr "Geminimaliseerde taken overslaan"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Show only tasks:"
-msgstr "Alleen taken tonen van:"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "From current screen"
-msgstr "Huidig scherm"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "From current desktop"
-msgstr "Huidig bureaublad"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "From current activity"
-msgstr "Huidige activiteit"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "That are minimized"
-msgstr "Geminimaliseerde vensters"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "When panel is hidden:"
-msgstr "Als het paneel verborgen is:"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "Unhide when a window wants attention"
-msgstr "Tonen als een venster om aandacht vraagt"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "New tasks appear:"
-msgstr "Nieuwe taken tonen aan:"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "On the bottom"
-msgstr ""
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "To the right"
-msgstr "Rechterkant"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "To the left"
-msgstr "Linkerkant"
-
-#: ../contents/ui/config/ConfigBehavior.qml
-msgid "On the top"
-msgstr ""
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Indicators:"
-msgstr "Indicators:"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Disabled"
-msgstr "Uitgeschakeld"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Enabled"
-msgstr "Ingeschakeld"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Display Progress on Indicator"
-msgstr ""
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Disable for Inactive Windows"
-msgstr ""
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Group Overlay:"
-msgstr "Groepslaag:"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Takes effect on next time plasma groups tasks."
-msgstr "Let op: dit wordt toegepast na de volgende groepering."
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Animate Indicators:"
-msgstr "Indicators voorzien van animaties:"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Indicator Location:"
-msgstr "Indicatorlocatie:"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Reverse shown side"
-msgstr "Aan andere zĳde tonen"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Override location"
-msgstr "Locatie afdwingen"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Bottom"
-msgstr "Onderaan"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Left"
-msgstr "Links"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Right"
-msgstr "Rechts"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Top"
-msgstr "Bovenaan"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Indicator Edge Offset (px):"
-msgstr ""
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Indicator Style:"
-msgstr "Indicatorstijl:"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Metro"
-msgstr "Metro"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Ciliora"
-msgstr "Ciliora"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Dashes"
-msgstr "Streepjes"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Indicator Min Limit:"
-msgstr ""
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Indicator Max Limit:"
-msgstr ""
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Minimize Options:"
-msgstr "Minimaliseeropties:"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Desaturate"
-msgstr "Verzadiging verminderen"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Shrink when minimized"
-msgstr "Verkleinen"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Growth/Shrink factor:"
-msgstr "Vergroot-/Verkleinfactor:"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Indicator size (px):"
-msgstr "Indicatorgrootte (in px):"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Indicator length (px):"
-msgstr "Indicatorbreedte (in px):"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Indicator Radius (%):"
-msgstr "Indicatorstraal (in %):"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Indicator margin (px):"
-msgstr "Indicatormarge (in px):"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Indicator Color:"
-msgstr "Indicatorkleur:"
-
-#: ../contents/ui/config/ConfigIndicators.qml
-msgid "Use plasma accent color"
-msgstr "Plasma-accentkleur"
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Default Web Browser"
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Default File Manager"
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Default Mail Client"
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Browse the Web"
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Manage Files"
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Send and Receive Email"
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Default Application"
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Add applications to pin to the taskbar. Drag items to reorder them."
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Remove"
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Add Application..."
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Add Special Launcher..."
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Back"
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Add Application"
-msgstr ""
-
-#: ../contents/ui/config/ConfigPinnedApps.qml
-msgid "Search applications..."
-msgstr ""
 
 #: ../contents/ui/ContextMenu.qml
 msgid "Places"
@@ -782,6 +214,574 @@ msgstr ""
 #: ../contents/ui/ContextMenu.qml
 msgid "&Close"
 msgstr "&Sluiten"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Use plasma borders"
+msgstr "Plasmakaders gebruiken"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Icon Scale"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Icon Size"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Set icon size instead of scaling"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Scale icons from panel edge"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Edge offset (px):"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Icon Hover Effects"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Icon zoom factor (px):"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "How much the icon should grow when hovered (in pixels)"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Zoom animation duration (ms):"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Duration of the zoom animation in milliseconds"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Button Colors:"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Using Plasma Style/Accent"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Using Color Overlay"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Use dominant icon color"
+msgstr "Dominante pictogramkleur gebruiken"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Custom Color:"
+msgstr "Zelfgekozen kleur:"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Colorize inactive buttons"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Plasma Button Decorations:"
+msgstr "Plasma-knopdecoraties:"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Disable All"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Disable Inactive Buttons"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Plasma Button Direction:"
+msgstr "Plasma-knoprichting:"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Override"
+msgstr "Afdwingen"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Be sure to use this when using as a floating widget"
+msgstr "Let op: gebruik dit alleen bĳ gebruik als zwevende widget"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "North"
+msgstr "Bovenaan"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "South"
+msgstr "Onderaan"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "West"
+msgstr "Links"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "East"
+msgstr "Rechts"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Maximum button length (px):"
+msgstr "Maximale knopbreedte (in px):"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Space between taskbar items (px):"
+msgstr "Ruimte tussen taakbalkitems (in px):"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "General:"
+msgstr "Algemeen:"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Show small window previews when hovering over tasks"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Hide other windows when hovering over previews"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Mark applications that play audio"
+msgstr "Programma's die audio afspelen markeren"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Fill free space on panel"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Maximum task width:"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Narrow"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Medium"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Wide"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Use multi-column view:"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Use multi-row view:"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Never"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "When panel is low on space and thick enough"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Always when panel is thick enough"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Maximum columns:"
+msgstr "Maximaal aantal kolommen:"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Maximum rows:"
+msgstr "Maximaal aantal rĳen:"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Spacing between icons:"
+msgstr "Ruimte tussen pictogrammen:"
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Small"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Normal"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Large"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Huge"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigAppearance.qml
+msgid "Automatically set to Large when in Touch mode"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Display:"
+msgstr "Tonen:"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Show task names"
+msgstr "Pictogrammen en namen"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Show icons only"
+msgstr "Alleen pictogrammen"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Group:"
+msgstr "Groeperen:"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Do not group"
+msgstr "Niet groeperen"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "By program name"
+msgstr "Op programmanaam"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Clicking grouped task:"
+msgstr "Actie na aanklikken van gegroepeerde taak:"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Cycles through tasks"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Shows small window previews"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Shows large window previews"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Shows textual list"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "The compositor does not support displaying windows side by side, so a textual list will be displayed instead."
+msgstr "De compositor heeft geen ondersteuning voor het tonen van vensters naast elkaar; er wordt een lĳst getoond."
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Combine into single button"
+msgstr "Combineren tot één knop"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Group only when the Task Manager is full"
+msgstr "Alleen groeperen als takenbeheer vol is"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Sort:"
+msgstr "Rangschikken:"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Do not sort"
+msgstr "Niet rangschikken"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Manually"
+msgstr "Handmatig"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Alphabetically"
+msgstr "Op alfabetische volgorde"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "By desktop"
+msgstr "Op bureaublad"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "By activity"
+msgstr "Op activiteit"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Keep launchers separate"
+msgstr "Starters gescheiden houden"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Hide launchers after application startup"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Clicking active task:"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Minimizes the task"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Middle-clicking any task:"
+msgstr "Actie na middelklikken op een taak:"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Does nothing"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Closes window or group"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Opens a new window"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Minimizes/Restores window or group"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Toggles grouping"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Brings it to the current virtual desktop"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Mouse wheel:"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Skip minimized tasks"
+msgstr "Geminimaliseerde taken overslaan"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Show only tasks:"
+msgstr "Alleen taken tonen van:"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "From current screen"
+msgstr "Huidig scherm"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "From current desktop"
+msgstr "Huidig bureaublad"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "From current activity"
+msgstr "Huidige activiteit"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "That are minimized"
+msgstr "Geminimaliseerde vensters"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "When panel is hidden:"
+msgstr "Als het paneel verborgen is:"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "Unhide when a window wants attention"
+msgstr "Tonen als een venster om aandacht vraagt"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "New tasks appear:"
+msgstr "Nieuwe taken tonen aan:"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "On the bottom"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "To the right"
+msgstr "Rechterkant"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "To the left"
+msgstr "Linkerkant"
+
+#: ../contents/ui/SettingsWindow/ConfigBehavior.qml
+msgid "On the top"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Indicators:"
+msgstr "Indicators:"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Disabled"
+msgstr "Uitgeschakeld"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Enabled"
+msgstr "Ingeschakeld"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Display Progress on Indicator"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Disable for Inactive Windows"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Group Overlay:"
+msgstr "Groepslaag:"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Takes effect on next time plasma groups tasks."
+msgstr "Let op: dit wordt toegepast na de volgende groepering."
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Animate Indicators:"
+msgstr "Indicators voorzien van animaties:"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Indicator Location:"
+msgstr "Indicatorlocatie:"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Reverse shown side"
+msgstr "Aan andere zĳde tonen"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Override location"
+msgstr "Locatie afdwingen"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Bottom"
+msgstr "Onderaan"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Left"
+msgstr "Links"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Right"
+msgstr "Rechts"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Top"
+msgstr "Bovenaan"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Indicator Edge Offset (px):"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Indicator Style:"
+msgstr "Indicatorstijl:"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Metro"
+msgstr "Metro"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Ciliora"
+msgstr "Ciliora"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Dashes"
+msgstr "Streepjes"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Indicator Min Limit:"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Indicator Max Limit:"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Minimize Options:"
+msgstr "Minimaliseeropties:"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Desaturate"
+msgstr "Verzadiging verminderen"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Shrink when minimized"
+msgstr "Verkleinen"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Growth/Shrink factor:"
+msgstr "Vergroot-/Verkleinfactor:"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Indicator size (px):"
+msgstr "Indicatorgrootte (in px):"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Indicator length (px):"
+msgstr "Indicatorbreedte (in px):"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Indicator Radius (%):"
+msgstr "Indicatorstraal (in %):"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Indicator margin (px):"
+msgstr "Indicatormarge (in px):"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Indicator Color:"
+msgstr "Indicatorkleur:"
+
+#: ../contents/ui/SettingsWindow/ConfigIndicators.qml
+msgid "Use plasma accent color"
+msgstr "Plasma-accentkleur"
+
+#: ../contents/ui/SettingsWindow/ConfigPinnedApps.qml
+msgid "Default Web Browser"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigPinnedApps.qml
+msgid "Default File Manager"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigPinnedApps.qml
+msgid "Default Mail Client"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigPinnedApps.qml
+msgid "Browse the Web"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigPinnedApps.qml
+msgid "Manage Files"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigPinnedApps.qml
+msgid "Send and Receive Email"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigPinnedApps.qml
+msgid "Default Application"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigPinnedApps.qml
+msgid "Add applications to pin to the taskbar. Drag items to reorder them."
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigPinnedApps.qml
+msgid "Remove"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigPinnedApps.qml
+msgid "Add Application..."
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigPinnedApps.qml
+msgid "Add Special Launcher..."
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigPinnedApps.qml
+msgid "Back"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigPinnedApps.qml
+msgid "Add Application"
+msgstr ""
+
+#: ../contents/ui/SettingsWindow/ConfigPinnedApps.qml
+msgid "Search applications..."
+msgstr ""
 
 #: ../contents/ui/Task.qml
 msgctxt "@info:usagetip %1 application name"
