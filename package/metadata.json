@@ -23,7 +23,7 @@
         "Description": "More modern taskbar-style window switcher displaying icons and text, with some improvments and customization options",
         "Description[ru]": "Современный переключатель окон в стиле панели задач с иконками, текстом и расширенными настройками",
         "EnabledByDefault": true,
-        "Icon": "FancyTasks.png",
+        "Icon": "FancyTasksNG.svg",
         "Id": "io.github.daydve.fancytasksng",
         "License": "GPL-2.0+",
         "Name": "Fancy Tasks NG",
