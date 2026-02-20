@@ -1,7 +1,7 @@
 # Fancy Tasks NG
 
 <p align="center">
-  <img src="FansyTasksNG.svg" alt="Fancy Tasks NG Icon" width="128">
+  <img src="FansyTasksNG.svg" alt="Fancy Tasks NG Icon">
 </p>
 
 Fancy Tasks NG is a feature-rich, highly customizable taskbar-style window switcher for KDE Plasma. It brings modern aesthetics, improved animations, and deep configuration options to your desktop.
