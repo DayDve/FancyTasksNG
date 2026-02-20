@@ -1,65 +1,76 @@
-# FancyTasks+
+# Fancy Tasks NG
 
-![Fancy Tasks Icon](https://github.com/alexankitty/FancyTasks/blob/main/package/FancyTasks.png?raw=true)
+<img src="FansyTasksNG.svg" width="128" alt="Fancy Tasks NG Icon">
 
-This is a fork of [FancyTasks](https://github.com//alexankitty/FancyTasks) and [Luis Bocanegra's plasma6,hover-zoom branch](https://github.com/luisbocanegra/FancyTasks) with additional features:
-- Configurable icon zoom on hover
-- With better padding on hover previews
-- With a option in configuration which allows you to choose apps to pin and rearrange them 
+Fancy Tasks NG is a feature-rich, highly customizable taskbar-style window switcher for KDE Plasma. It brings modern aesthetics, improved animations, and deep configuration options to your desktop.
 
-# Contact
-You can reach me at ideas@alexankitty.com, by putting an issue on this github, by commenting on the [AUR package](https://aur.archlinux.org/packages/fancytasks), by commenting on the kde-look page, or on the [FancyTasks KDE Reddit community](https://www.reddit.com/r/fancytaskskde/).
+## Why this fork?
 
-## Installing
+This project is a modern continuation of the Fancy Tasks plasmoid. 
+It started as a fork of [FancyTasksPlus](https://github.com/SushiTrashXD/FancyTasksPlus) by SushiTrashXD, which in turn was a fork of the original [FancyTasks](https://github.com/alexankitty/FancyTasks) by alexankitty (with additional code from Luis Bocanegra).
 
-If your distro does not include kirigami2, install it now. It's required for the settings, and used for the dominant icon color effect. Python3 is required for installing.
+The primary reason for creating this fork is that both the original repository and its subsequent forks have long been abandoned. They lack support for modern versions of KDE Plasma and contained numerous bugs that broke the experience on newer systems. Fancy Tasks NG breathes new life into the project by ensuring compatibility and introducing several major improvements.
 
-**Note for Plasma 6:** This plasmoid requires `Qt5Compat.GraphicalEffects` (often packaged as `qt6-5compat` or similar) to be installed on your system.
+## Features & Improvements
 
-1. Clone this repository with the following command `git clone https://github.com/alexankitty/FancyTasks`
-2. CD into the folder and run the script `install.sh`, you may need to chmod +x or prepend your shell before the script in order to run it
-3. Right click your panel, click add widgets and search for fancy tasks.
-4. Right click the new task panel and click Configure Fancy Tasks... - everything you will want to configure to enable the new features will be in there. Default features are based on the KDE's team existing vision.
+Compared to the previous versions, Fancy Tasks NG includes the following major changes:
 
-(Alternatively you should be able to double click the shell script to run it)
+- **Full Modern Plasma 6.5+ Compatibility**: Fully adapted for the latest KDE Plasma.
+- **Russian Localization**: Full translation of the plasmoid interface and settings into Russian.
+- **Reworked Tooltip System**: Completely redesigned, unified, smooth-morphing tooltips native to Plasma 6.
+- **Reworked Pinned Apps Manager**: A fully redesigned interface for managing and rearranging pinned applications in the settings.
+- **Hover Zoom Fixes**: Corrected and improved the icon scaling (zoom) mechanism on hover.
+- **Zoom Rendering Fixes**: Fixed the display mechanism for scaled icons to eliminate visual artifacts.
+- **Numerous Bug Fixes**: A huge amount of under-the-hood fixes and optimizations for a smoother experience.
 
-(This package is also on the AUR and can be installed from there)
+*Additionally, it retains all the great features from previous versions:*
+- Custom Indicators: Various styles of indicators (Dashes, Dots, Metro, Ciliora, etc.) with customizable colors.
+- Animation Enhancements: Smooth transitions, growing/shrinking indicators, and desaturation of minimized tasks.
+- Smart Launcher Badges: Support for unread message counts on supported application icons (e.g., KMail).
+
+## Installation
+
+**Note:** This plasmoid requires Qt 6 and plasma-workspace 6.5+.
+
+### From Source
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/daydve/FancyTasksNG.git
+   ```
+2. Enter the directory and install using the provided script:
+   ```bash
+   cd FancyTasksNG
+   ./install.sh
+   ```
+   *(If you are updating an existing installation, run `./update.sh`)*
+3. Restart your Plasma session or run `plasmashell --replace > /dev/null 2>&1 & disown` to apply the new plasmoid.
+4. Right-click your panel, select "Add Widgets," and search for "Fancy Tasks NG".
 
 ## Updating
+To update easily from the cloned repository, simply run:
+```bash
+./update.sh
+```
+This script will compile translations, update the plasmoid via `kpackagetool6`, and gracefully restart Plasma.
 
-1. Run the update.sh script, it will automatically stop and restart plasma to make sure the new changes get loaded in.
-2. It is recommended you log out and back into your session. plasmashell seems to exhibit some odd behaviors if the plasmoid is updated without clearing the session.
+## Credits & Acknowledgements
 
-## Features
+Fancy Tasks NG is built upon the great work of previous developers:
+- [FancyTasksPlus](https://github.com/SushiTrashXD/FancyTasksPlus) by [SushiTrashXD](https://github.com/SushiTrashXD).
+- Original [FancyTasks](https://github.com/alexankitty/FancyTasks) by [Alexandra Stone (alexankitty)](https://github.com/alexankitty).
+- [Hover-zoom branch](https://github.com/luisbocanegra/FancyTasks) by [Luis Bocanegra](https://github.com/luisbocanegra).
+- The original KDE Plasma Task Manager plasmoid by Eike Hein, Nate Graham, and the KDE Team.
+- Additional contributions by ziomek64 and others to the original repository.
 
-Features improvements tweaks and options to the original task manager plasmoid made by Eike Hein, licensed under GPL V2.0: [link](https://github.com/KDE/plasma-desktop/tree/master/applets/taskmanager).
+## Translation
+Translations are handled via gettext `.po` files located in the `package/translate` directory. Contributions to translations are welcome via pull requests!
 
-* Implemented adjustable task width.
-* Implemented switching between taskbar types.
-* Indicators based on dash to panel styles from gnome, using [latte-indicator-dashtopanel](https://github.com/psifidotos/latte-indicator-dashtopanel) as the reference implementation.
-* Customizable indicator locations and colorizing of plasma. Note: not every plasma theme will color in a pleasant way as it depends on how the SVGs are made. General rule of thumb is bright white does not colorize well.
-* Animations (Thanks ziomek64!)
-* Growing/Shrinking and desaturation of indicators on minimize (Thanks ziomek64!)
-* Customization of number of indicators displayed - limit 10.
-
-
-## Known Issues
-* Does not support LTS currently! (fix me pls)
-
-## To Do
-* Fix LTS support
-* Correct Metro to have *no* spacing (the multi app running indicator doesn't have a spacing in win10 and I apparently missed this)
-* Allow customization of the space between indicators (may have dangerous implications, required for presets)
-* Allow changing of animation duration, and possibly animating of button color and frame transitions.
-* Change styles (Metro, Ciliora, Dashes) to presets, switch preset to custom when modifying settings. Add in Dots as a preset.
-* Fix naming conventions to be more clear to users.
-
-## Translation Help Wanted!
-Information regarding submitting translations is available [here](https://github.com/alexankitty/FancyTasks/blob/main/package/translate/ReadMe.md).  
-Important note: Any time an update to strings is made, the translations need to be merged and a new po template needs to be created.  
-Finally, the metadata.json is done separately.
+## Contact & Bug Reports
+For bug reports, feature requests, or contributions, please use the [GitHub Issues tracker](https://github.com/daydve/FancyTasksNG/issues).
 
 ## Pictures
+
 Colorful Tasks  
 
 ![Colorful tasks](https://github.com/alexankitty/FancyTasks/blob/main/docs/colorfulicons%20crop.png?raw=true)
@@ -87,15 +98,3 @@ Desaturate minimized tasks
 Minimized task shrinking  
 
 ![Minimized task shrinking](https://github.com/alexankitty/FancyTasks/blob/main/docs/shrink%20crop.png?raw=true)
-
-## Extra Notes
-I'm a solo developer working on this project in my free time so it may take me a bit of time to work on issues. You can help me out by either doing a PR with fixes and I'll validate that they work in the code, or put in an issue for things that need to be changed.
-Especially helpful will be settings names to make them more clear. I have a code bias unfortunately so it does make it exceedingly difficult to convey what everything does.
-Lastly any feedback is appreciated, and I'll try to implement it as soon as I can.
-
-## Supporters
-catraxx  
-Kloud  
-
-If you want to support the project and have your name added to the readme, you may do so below.  
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Q5Q4IFNAO)
