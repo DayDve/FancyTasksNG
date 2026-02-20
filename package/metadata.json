@@ -21,7 +21,7 @@
         ],
         "Category": "Windows and Tasks",
         "Description": "More modern taskbar-style window switcher displaying icons and text, with some improvments and customization options",
-        "Description[ru]": "Современный переключатель окон в стиле панели задач с иконками, текстом и расширенными настройками",
+        "Description[ru]": "Многофункциональная настраиваемая панель задач с современным дизайном и приятными анимациями",
         "EnabledByDefault": true,
         "Icon": "FancyTasksNG.svg",
         "Id": "io.github.daydve.fancytasksng",
