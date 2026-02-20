@@ -31,7 +31,7 @@
         "ServiceTypes": [
             "Plasma/Applet"
         ],
-        "Version": "3.0.0",
+        "Version": "1.0.0",
         "Website": "https://github.com/daydve/FancyTasksNG",
         "BugTrackerUrl": "https://github.com/daydve/FancyTasksNG/issues"
     },
