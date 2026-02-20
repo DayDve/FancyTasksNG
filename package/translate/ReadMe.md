@@ -8,7 +8,7 @@ Go to `~/.local/share/plasma/plasmoids/Fancy Tasks/translate/` and run `sh ./bui
 
 ## New Translations
 
-1. Fill out [`template.pot`](template.pot) with your translations then open a [new issue](https://github.com/alexankitty/FancyTasks/issues/new), name the file `spanish.txt`, attach the txt file to the issue (drag and drop).
+1. Fill out [`template.pot`](template.pot) with your translations then open a [new issue](https://github.com/daydve/FancyTasksNG/issues/new), name the file `spanish.txt`, attach the txt file to the issue (drag and drop).
 
 Or if you know how to make a pull request
 
