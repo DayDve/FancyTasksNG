@@ -3,6 +3,10 @@
     "KPlugin": {
         "Authors": [
             {
+                "Email": "daydve@smbit.pro",
+                "Name": "Vitaliy Elin"
+            },
+            {
                 "Email": "Hein@kde.org",
                 "Name": "Eike Hein, Alexandra Stone"
             },
@@ -20,15 +24,16 @@
         "Description[ru]": "Современный переключатель окон в стиле панели задач с иконками, текстом и расширенными настройками",
         "EnabledByDefault": true,
         "Icon": "FancyTasks.png",
-        "Id": "alexankitty.fancytasks",
+        "Id": "io.github.daydve.fancytasksng",
         "License": "GPL-2.0+",
-        "Name": "Fancy Tasks",
-        "Name[ru]": "Fancy Tasks",
+        "Name": "Fancy Tasks NG",
+        "Name[ru]": "Fancy Tasks NG",
         "ServiceTypes": [
             "Plasma/Applet"
         ],
-        "Version": "2.5.2",
-        "Website": "https://github.com/alexankitty/FancyTasks"
+        "Version": "3.0.0",
+        "Website": "https://github.com/daydve/FancyTasksNG",
+        "BugTrackerUrl": "https://github.com/daydve/FancyTasksNG/issues"
     },
     "X-Plasma-Provides": [
         "org.kde.plasma.multitasking"
