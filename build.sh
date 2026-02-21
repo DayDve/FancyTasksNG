@@ -9,7 +9,7 @@ set -e
 SCRIPT_DIR=$(dirname $(readlink -f "$0"))
 
 # Configuration
-PACKAGE_NAME="FancyTasks"
+PACKAGE_NAME="FancyTasksNG"
 ICON_NAME="${PACKAGE_NAME}" # Defaults to package name
 
 BUILD_DIR="$SCRIPT_DIR/build"
@@ -52,9 +52,11 @@ mkdir -p "$BUILD_DIR"
 mkdir -p "$RELEASE_DIR"
 
 # Copy package files
-cp -r "$SCRIPT_DIR/package"/{contents,metadata.json,"${ICON_NAME}.png"} "$BUILD_DIR"
+cp -r "$SCRIPT_DIR/package"/{contents,metadata.json,"${ICON_NAME}.svg"} "$BUILD_DIR"
 
 # Create archive
-tar -C "$BUILD_DIR" -czf "$RELEASE_DIR/${PACKAGE_NAME}.tar.gz" .
+cd "$BUILD_DIR"
+zip -r "$RELEASE_DIR/${PACKAGE_NAME}.plasmoid" .
+cd - > /dev/null
 
-echo -e "${GREEN}Build complete: $RELEASE_DIR/${PACKAGE_NAME}.tar.gz${NC}"
+echo -e "${GREEN}Build complete: $RELEASE_DIR/${PACKAGE_NAME}.plasmoid${NC}"

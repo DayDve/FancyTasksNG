@@ -1,0 +1,46 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext zip
+
+      - name: Build Plasmoid
+        run: bash ./build.sh
+
+      - name: Get Version and Metadata
+        id: metadata
+        run: |
+          VERSION=$(bash ./package/translate/get_metadata.sh "Version")
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          # Create a friendly filename for the release
+          FILENAME="fancytasksng-v${VERSION}.plasmoid"
+          cp release/FancyTasksNG.plasmoid "$FILENAME"
+          echo "FILENAME=$FILENAME" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ steps.metadata.outputs.FILENAME }}
+          name: Release v${{ steps.metadata.outputs.VERSION }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
