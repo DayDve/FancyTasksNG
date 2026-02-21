@@ -1,0 +1,64 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext zip
+
+      - name: Build Plasmoid
+        run: bash ./build.sh
+
+      - name: Prepare Release Asset
+        id: asset
+        run: |
+          VERSION=$(bash ./package/translate/get_metadata.sh "Version")
+          ASSET_NAME="fancytasksng-v${VERSION}.plasmoid"
+          # Rename the build output to our versioned naming convention
+          mv release/FancyTasksNG.plasmoid "$ASSET_NAME"
+          echo "asset_path=$ASSET_NAME" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: ${{ steps.asset.outputs.asset_path }}
+          name: Release ${{ github.ref_name }}
+          body: |
+            ## Fancy Tasks NG - Release ${{ github.ref_name }}
+
+            Feature-rich taskbar-style window switcher for KDE Plasma.
+
+            ### Key Features:
+            - Fully adapted for KDE Plasma 6.5+
+            - Full Russian localization
+            - Redesigned tooltip system (native Plasma 6 style)
+            - Improved Pinned Apps Manager
+            - Various hover zoom and rendering bug fixes
+
+            **Installation:** Download the `.plasmoid` file below and install it through the "Add Widgets" menu or using `kpackagetool6`.
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -4,5 +4,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 bash $SCRIPT_DIR/build.sh
-kpackagetool6 -u $SCRIPT_DIR/release/FancyTasks.tar.gz
+kpackagetool6 -u $SCRIPT_DIR/release/FancyTasksNG.plasmoid
 QML_DISABLE_DISK_CACHE=true plasmawindowed io.github.daydve.fancytasksng
