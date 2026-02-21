@@ -1,0 +1,6 @@
+{
+    "editor.formatOnSave": false,
+    "[qml]": {
+        "editor.formatOnSave": false
+    }
+}
