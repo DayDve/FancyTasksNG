@@ -35,11 +35,12 @@ jobs:
           echo "FILENAME=$FILENAME" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ github.ref_name }}
           files: ${{ steps.metadata.outputs.FILENAME }}
-          name: Release v${{ steps.metadata.outputs.VERSION }}
+          name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
           generate_release_notes: true
