@@ -2,8 +2,11 @@ name: Create Release
 
 on:
   push:
+    branches:
+      - master
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
   build:
