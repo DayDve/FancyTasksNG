@@ -519,7 +519,7 @@ PlasmoidItem {
         type: PlasmaCore.Dialog.Tooltip
 
         backgroundHints: PlasmaCore.Types.NoBackground
-        flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
+        flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WA_TranslucentBackground | Qt.BypassWindowManagerHint
 
         readonly property bool shouldShow: tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup && !tasks.groupDialog
         visible: shouldShow || winContainer.opacity > 0
@@ -583,19 +583,6 @@ PlasmoidItem {
                         right: tooltipFramePadding,
                         bottom: tooltipFramePadding
                     })
-
-                Behavior on width {
-                    NumberAnimation {
-                        duration: Kirigami.Units.longDuration
-                        easing.type: Easing.OutExpo
-                    }
-                }
-                Behavior on height {
-                    NumberAnimation {
-                        duration: Kirigami.Units.longDuration
-                        easing.type: Easing.OutExpo
-                    }
-                }
 
                 ToolTipDelegate {
                     id: toolTipInstance

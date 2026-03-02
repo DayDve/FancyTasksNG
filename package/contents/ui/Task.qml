@@ -802,6 +802,7 @@ Item {
                 radius: 12
                 samples: 25
                 color: Qt.rgba(0, 0, 0, 0.5)
+                transparentBorder: true
             }
         }
 

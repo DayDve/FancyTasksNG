@@ -187,29 +187,41 @@ Loader {
                 textFormat: Text.PlainText
             }
 
-            ToolTipInstance {
+            Loader {
+                id: singleInstanceLoader
                 visible: toolTipDelegate.windows.length > 0
                 
-                index: 0 
-                submodelIndex: toolTipDelegate.rootIndex
-                appPid: toolTipDelegate.pidParent
-                appId: (toolTipDelegate.parentTask && toolTipDelegate.parentTask.appId) ? toolTipDelegate.parentTask.appId : "" // Fallback
-                display: toolTipDelegate.display
-                isMinimized: toolTipDelegate.isMinimized
-                isOnAllVirtualDesktops: toolTipDelegate.isOnAllVirtualDesktops
-                virtualDesktops: toolTipDelegate.virtualDesktops
-                activities: toolTipDelegate.activities
+                property var currentWin: (toolTipDelegate.windows && toolTipDelegate.windows.length > 0) ? toolTipDelegate.windows[0] : undefined
                 
-                isWindowActive: toolTipDelegate.isActive
+                onCurrentWinChanged: {
+                    active = false;
+                    Qt.callLater(() => { active = true; });
+                }
                 
-                tasksModel: toolTipDelegate.tasksModel
-                toolTipDelegate: toolTipDelegate
+                sourceComponent: ToolTipInstance {    
+                    index: 0 
+                    submodelIndex: toolTipDelegate.rootIndex
+                    explicitWinId: singleInstanceLoader.currentWin
+                    
+                    appPid: toolTipDelegate.pidParent
+                    appId: (toolTipDelegate.parentTask && toolTipDelegate.parentTask.appId) ? toolTipDelegate.parentTask.appId : "" // Fallback
+                    display: toolTipDelegate.display
+                    isMinimized: toolTipDelegate.isMinimized
+                    isOnAllVirtualDesktops: toolTipDelegate.isOnAllVirtualDesktops
+                    virtualDesktops: toolTipDelegate.virtualDesktops
+                    activities: toolTipDelegate.activities
+                    
+                    isWindowActive: toolTipDelegate.isActive
+                    
+                    tasksModel: toolTipDelegate.tasksModel
+                    toolTipDelegate: toolTipDelegate
 
-                mpris2Model: toolTipDelegate.mpris2Model
-                pulseAudio: toolTipDelegate.pulseAudio
-                
-                isPlayingAudio: toolTipDelegate.isPlayingAudio
-                isMuted: toolTipDelegate.isMuted
+                    mpris2Model: toolTipDelegate.mpris2Model
+                    pulseAudio: toolTipDelegate.pulseAudio
+                    
+                    isPlayingAudio: toolTipDelegate.isPlayingAudio
+                    isMuted: toolTipDelegate.isMuted
+                }
             }
         }
     }
