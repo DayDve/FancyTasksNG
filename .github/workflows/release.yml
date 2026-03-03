@@ -36,6 +36,8 @@ jobs:
           mv release/FancyTasksNG.plasmoid "$ASSET_NAME"
           echo "asset_path=$ASSET_NAME" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          # Extract release notes for this version from CHANGELOG.md
+          awk -v ver="[${VERSION}]" '/^## / { if (index($0, ver) > 0) { flag = 1; next } else if (flag) { flag = 0 } } flag' CHANGELOG.md > release_notes.txt
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -44,19 +46,7 @@ jobs:
           tag_name: ${{ github.ref_name }}
           files: ${{ steps.asset.outputs.asset_path }}
           name: Release ${{ github.ref_name }}
-          body: |
-            ## Fancy Tasks NG - Release ${{ github.ref_name }}
-
-            Feature-rich taskbar-style window switcher for KDE Plasma.
-
-            ### Key Features:
-            - Fully adapted for KDE Plasma 6.5+
-            - Full Russian localization
-            - Redesigned tooltip system (native Plasma 6 style)
-            - Improved Pinned Apps Manager
-            - Various hover zoom and rendering bug fixes
-
-            **Installation:** Download the `.plasmoid` file below and install it through the "Add Widgets" menu or using `kpackagetool6`.
+          body_path: release_notes.txt
           draft: false
           prerelease: false
           generate_release_notes: true
