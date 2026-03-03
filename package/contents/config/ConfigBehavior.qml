@@ -15,7 +15,7 @@ import org.kde.plasma.plasmoid
 
 import org.kde.plasma.workspace.dbus as DBus
 
-import "../code/singletones"
+import "../ui/code/singletones"
 
 ConfigPage {
     id: cfg_page

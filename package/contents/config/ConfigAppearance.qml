@@ -14,7 +14,7 @@ import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
 import org.kde.kquickcontrols as KQuickAddons
 
-import "../code/singletones"
+import "../ui/code/singletones"
 
 ConfigPage {
     id: cfg_page

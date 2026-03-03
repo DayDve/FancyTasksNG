@@ -12,7 +12,7 @@ import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
 import org.kde.kquickcontrols as KQControls
 
-import "../code/singletones"
+import "../ui/code/singletones"
 
 ConfigPage {
     id: cfg_page

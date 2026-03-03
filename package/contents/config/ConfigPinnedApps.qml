@@ -12,7 +12,7 @@ import org.kde.kirigami as Kirigami
 
 import org.kde.plasma.plasma5support as P5Support
 
-import "../code/singletones"
+import "../ui/code/singletones"
 
 ConfigPage {
     id: cfg_page
