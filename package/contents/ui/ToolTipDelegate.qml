@@ -39,8 +39,10 @@ Loader {
 
     readonly property bool isActive: (tasksModel && rootIndex.valid) ? tasksModel.data(rootIndex, TaskManager.AbstractTasksModel.IsActive) === true : false
     
+    property int innerDragCount: 0
+    
     function getHovered(target) {
-        return target && target.isHovered;
+        return (target && target.isHovered) || innerDragCount > 0;
     }
     readonly property bool containsMouse: getHovered(item)
     onContainsMouseChanged: {
@@ -153,10 +155,15 @@ Loader {
             
             Layout.margins: toolTipDelegate.showThumbnails ? Kirigami.Units.mediumSpacing : -6
             
-            property alias isHovered: singleHover.hovered
+            property bool isHovered: singleHover.hovered || singleDrop.containsDrag
             
             HoverHandler {
                 id: singleHover
+            }
+
+            DropArea {
+                id: singleDrop
+                anchors.fill: parent
             }
 
             PlasmaComponents3.Label {
@@ -232,7 +239,7 @@ Loader {
         ColumnLayout {
             spacing: Kirigami.Units.smallSpacing
 
-            property alias isHovered: groupHover.hovered
+            property bool isHovered: groupHover.hovered || groupDrop.containsDrag
             
             readonly property int safeCount: toolTipDelegate.windows.length > 0 ? toolTipDelegate.windows.length : 1
             readonly property int maxTooltipWidth: Screen.width - Kirigami.Units.gridUnit * 2
@@ -247,6 +254,11 @@ Loader {
                 id: groupHover
             }
 
+            DropArea {
+                id: groupDrop
+                anchors.fill: parent
+            }
+
             PlasmaComponents3.Label {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
@@ -256,7 +268,7 @@ Loader {
                 text: toolTipDelegate.calculatedAppName
                 font.bold: true
                 elide: Text.ElideRight
-                visible: text.length > 0
+                visible: text.length > 0 && toolTipDelegate.showThumbnails
                 opacity: 0.8
             }
 
@@ -337,7 +349,7 @@ Loader {
                     
                     // Reduced padding for overlay style (was * 3)
                     // Fallback to 2 grid units for Text Mode items
-                    readonly property real singleItemHeight: instanceThumbHeight > 0 ? instanceThumbHeight : Kirigami.Units.gridUnit * 2.5
+                    readonly property real singleItemHeight: instanceThumbHeight > 0 ? instanceThumbHeight : Kirigami.Units.gridUnit * 2
 
 
                     

@@ -151,16 +151,17 @@ function activateTask(index, model, modifiers, task, plasmoid, tasks, windowView
             tasks.activateWindowView(model.WinIdList);
         }
 
-        // Option 4: show group dialog/textual list
+        // Option 4: show textual list (now using text tooltips instead of GroupDialog)
         // ========================================
         // This is also the final fallback option if Window View
         // is chosen but not actually available
         else {
-            if (tasks.groupDialog) {
-                task.hideToolTip();
-                tasks.groupDialog.visible = false;
+            if (tasks.toolTipOpenedByClick) {
+                task.hideImmediately();
             } else {
-                createGroupDialog(task, tasks);
+                tasks.toolTipOpenedByClick = task;
+                task.updateMainItemBindings(); // BUG 452187
+                task.showToolTip();
             }
         }
     } else {
@@ -200,22 +201,4 @@ function taskPrefixHovered(prefix, location) {
         ...prefix ? taskPrefix("hover", location) : [],
         ...taskPrefix(prefix, location),
     ];
-}
-
-function createGroupDialog(visualParent, tasks) {
-    if (!visualParent) {
-        return;
-    }
-
-    if (tasks.groupDialog) {
-        tasks.groupDialog.visualParent = visualParent;
-        return;
-    }
-
-    tasks.groupDialog = tasks.groupDialogComponent.createObject(tasks, {
-        visualParent,
-        tasksModel: tasks.tasksModel,
-        backend: tasks.backend,
-        tasks: tasks
-    });
 }

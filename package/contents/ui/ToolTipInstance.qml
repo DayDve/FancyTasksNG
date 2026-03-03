@@ -278,10 +278,16 @@ Item {
         Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
         Layout.minimumWidth: Kirigami.Units.gridUnit * 12
         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-        Layout.margins: toolTipDelegate.isGroup ? Kirigami.Units.largeSpacing : Kirigami.Units.mediumSpacing
+        Layout.margins: toolTipDelegate.showThumbnails ? Kirigami.Units.mediumSpacing : Kirigami.Units.smallSpacing
         Layout.fillWidth: true
 
-
+        Kirigami.Icon {
+            source: toolTipDelegate.icon
+            Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+            Layout.preferredHeight: Kirigami.Units.iconSizes.medium
+            Layout.alignment: Qt.AlignVCenter
+            visible: !toolTipDelegate.showThumbnails && toolTipDelegate.isWin
+        }
 
         ColumnLayout {
             spacing: 0
@@ -303,9 +309,9 @@ Item {
                 text: root.calculatedAppName
 
                 opacity: 1
-                visible: text.length !== 0 && !toolTipDelegate.isGroup
+                visible: text.length !== 0 && toolTipDelegate.showThumbnails
                 textFormat: Text.PlainText
-                horizontalAlignment: !toolTipDelegate.isGroup ? Text.AlignHCenter : Text.AlignLeft
+                horizontalAlignment: Text.AlignHCenter
             }
             PlasmaComponents3.Label {
                 id: winTitle
@@ -315,10 +321,10 @@ Item {
                 Layout.minimumWidth: 0
                 elide: Text.ElideRight
                 
-                text: root.titleIncludesTrack ? "" : root.title
-                opacity: 0.75
-                horizontalAlignment: !toolTipDelegate.isGroup ? Text.AlignHCenter : Text.AlignLeft
-                visible: root.title.length !== 0 && (toolTipDelegate.isGroup || root.title !== appNameHeading.text)
+                text: toolTipDelegate.showThumbnails ? (root.titleIncludesTrack ? "" : root.title) : root.display
+                opacity: toolTipDelegate.showThumbnails ? 0.75 : 1.0
+                horizontalAlignment: toolTipDelegate.showThumbnails ? Text.AlignHCenter : Text.AlignLeft
+                visible: text.length !== 0
                 textFormat: Text.PlainText
             }
             PlasmaComponents3.Label {
@@ -331,8 +337,8 @@ Item {
                 
                 text: toolTipDelegate.isWin ? root.generateSubText() : ""
                 opacity: 0.6
-                horizontalAlignment: !toolTipDelegate.isGroup ? Text.AlignHCenter : Text.AlignLeft
-                visible: text.length !== 0 && text !== appNameHeading.text
+                horizontalAlignment: Text.AlignHCenter
+                visible: toolTipDelegate.showThumbnails && text.length !== 0 && text !== appNameHeading.text
                 textFormat: Text.PlainText
             }
         }
@@ -341,9 +347,11 @@ Item {
 
         PlasmaComponents3.ToolButton {
             id: closeButton
-            Layout.alignment: Qt.AlignRight | (!toolTipDelegate.isGroup ? Qt.AlignVCenter : Qt.AlignTop)
-            visible: toolTipDelegate.isWin
+            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+            visible: toolTipDelegate.isWin && (toolTipDelegate.showThumbnails || root.isHovered)
             icon.name: "window-close"
+            icon.width: !toolTipDelegate.showThumbnails ? Kirigami.Units.iconSizes.small : undefined
+            icon.height: !toolTipDelegate.showThumbnails ? Kirigami.Units.iconSizes.small : undefined
             onClicked: {
                 if (toolTipDelegate.parentTask && toolTipDelegate.parentTask.tasksRoot) {
                     toolTipDelegate.parentTask.tasksRoot.cancelHighlightWindows();

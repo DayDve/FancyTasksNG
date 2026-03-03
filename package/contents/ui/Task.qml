@@ -95,8 +95,7 @@ Item {
 
     readonly property bool highlighted: (task.inPopup && activeFocus) ||
         (!task.inPopup && containsMouse) || (tasksRoot.currentHoveredTask === task) || 
-        (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open) ||
-        (!!tasksRoot.groupDialog && tasksRoot.groupDialog.visualParent === task)
+        (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open)
 
     property int itemIndex: task.index 
 
@@ -404,8 +403,7 @@ Item {
     }
 
     function modelIndex(): /*QModelIndex*/ var {
-        return task.inPopup ?
-            tasksRoot.tasksModel.makeModelIndex(tasksRoot.groupDialog.visualParent.index, task.index) : tasksRoot.tasksModel.makeModelIndex(task.index);
+        return tasksRoot.tasksModel.makeModelIndex(task.index);
     }
 
     function closeTooltip(): void {

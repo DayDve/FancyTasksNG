@@ -55,10 +55,10 @@ PlasmoidItem {
 
     Timer {
         id: tooltipCloseTimer
-        interval: 250
-        running: !tasks.isTooltipHovered && tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.containsMouse
+        interval: 500
+        running: !tasks.isTooltipHovered && tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.containsMouse && tasks.currentHoveredTask !== mouseHandler.hoveredItem
         onTriggered: {
-            if (!tasks.isTooltipHovered && (tasks.currentHoveredTask && !tasks.currentHoveredTask.containsMouse)) {
+            if (!tasks.isTooltipHovered && (tasks.currentHoveredTask && !tasks.currentHoveredTask.containsMouse && tasks.currentHoveredTask !== mouseHandler.hoveredItem)) {
                 tasks.currentHoveredTask = null;
             }
         }
@@ -81,8 +81,8 @@ PlasmoidItem {
     Plasmoid.constraintHints: Plasmoid.CanFillArea
 
     Plasmoid.onUserConfiguringChanged: {
-        if (Plasmoid.userConfiguring && groupDialog !== null) {
-            groupDialog.visible = false;
+        if (Plasmoid.userConfiguring) {
+            // No action needed for group dialog since it's removed
         }
     }
 
@@ -462,8 +462,7 @@ PlasmoidItem {
         }
     }
 
-    readonly property Component groupDialogComponent: Qt.createComponent("GroupDialog.qml")
-    property GroupDialog groupDialog
+    // groupDialogComponent has been entirely replaced by ToolTip text mode
     readonly property bool supportsLaunchers: true
 
     function hasLauncher(url: url): bool {
@@ -520,8 +519,9 @@ PlasmoidItem {
 
         backgroundHints: PlasmaCore.Types.NoBackground
         flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WA_TranslucentBackground | Qt.BypassWindowManagerHint
+        hideOnWindowDeactivate: false
 
-        readonly property bool shouldShow: tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup && !tasks.groupDialog
+        readonly property bool shouldShow: tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup
         visible: shouldShow || winContainer.opacity > 0
         // Removed explicit latch for Unified Dialog as it prevents moving to new tasks.
         visualParent: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : tasks.lastTooltipParent
@@ -576,7 +576,7 @@ PlasmoidItem {
                 anchors.centerIn: parent
 
                 // Emulate SVG margins for layout logic
-                readonly property int tooltipFramePadding: 6
+                readonly property int tooltipFramePadding: 4
                 readonly property var margins: ({
                         left: tooltipFramePadding,
                         top: tooltipFramePadding,

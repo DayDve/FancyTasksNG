@@ -12,6 +12,7 @@ import QtQuick
 import org.kde.taskmanager as TaskManager
 
 MouseArea {
+    id: rootMouseArea
     required property var modelIndex
     required property var winId
     required property var rootTask
@@ -96,4 +97,55 @@ MouseArea {
 
     onContainsMouseChanged: updateHoverState()
     onGlobalHoveredChanged: updateHoverState()
+
+    Timer {
+        id: dragActivationTimer
+        interval: 750
+        repeat: false
+        onTriggered: {
+            let targetIndex = rootMouseArea.modelIndex;
+            if (rootMouseArea.rootTask.childCount > 0 && rootMouseArea.winId !== undefined) {
+                 targetIndex = rootMouseArea.findMatchingTaskIndex();
+            }
+            rootMouseArea.tasksModel.requestActivate(targetIndex);
+        }
+    }
+
+    DropArea {
+        anchors.fill: parent
+        
+        onEntered: {
+            dragActivationTimer.restart();
+            if (rootMouseArea.toolTipDelegate) {
+                rootMouseArea.toolTipDelegate.innerDragCount += 1;
+            }
+        }
+        onPositionChanged: {
+            if (!dragActivationTimer.running) {
+                dragActivationTimer.restart();
+            }
+        }
+        onExited: {
+            dragActivationTimer.stop();
+            if (rootMouseArea.toolTipDelegate) {
+                rootMouseArea.toolTipDelegate.innerDragCount = Math.max(0, rootMouseArea.toolTipDelegate.innerDragCount - 1);
+            }
+        }
+        onDropped: (drop) => {
+            if (drop.hasUrls) {
+                let targetIndex = rootMouseArea.modelIndex;
+                if (rootMouseArea.rootTask.childCount > 0 && rootMouseArea.winId !== undefined) {
+                    targetIndex = rootMouseArea.findMatchingTaskIndex();
+                }
+                rootMouseArea.tasksModel.requestOpenUrls(targetIndex, drop.urls);
+                drop.accept();
+                
+                if (rootMouseArea.rootTask && typeof rootMouseArea.rootTask.closeTooltip === "function") {
+                    rootMouseArea.rootTask.closeTooltip();
+                }
+            } else {
+                drop.accepted = false;
+            }
+        }
+    }
 }
