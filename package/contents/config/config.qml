@@ -13,22 +13,22 @@ ConfigModel {
     ConfigCategory {
         name: i18n("Appearance")
         icon: "preferences-desktop-color"
-        source: "SettingsWindow/ConfigAppearance.qml"
+        source: "../config/ConfigAppearance.qml"
     }
     ConfigCategory {
         name: i18n("Behavior")
         icon: "preferences-desktop"
-        source: "SettingsWindow/ConfigBehavior.qml"
+        source: "../config/ConfigBehavior.qml"
     }
     ConfigCategory {
         name: i18n("Indicators")
         icon: "preferences-desktop-navigation"
-        source: "SettingsWindow/ConfigIndicators.qml"
+        source: "../config/ConfigIndicators.qml"
     }
     ConfigCategory {
         name: i18n("Pinned Applications")
         icon: "window-pin"
-        source: "SettingsWindow/ConfigPinnedApps.qml"
+        source: "../config/ConfigPinnedApps.qml"
     }
     // qmllint enable unqualified
 }
