@@ -19,11 +19,16 @@ Rectangle {
     property alias text: label.text
     property alias textColor: label.color
     property int number: 0
+    property bool isRound: true
+    property real fontPointSize: 1024
 
-    implicitWidth: Math.max(height, Math.round(label.contentWidth + radius / 2)) // Add some padding around.
-    implicitHeight: implicitWidth
+    implicitHeight: height > 0 ? height : Kirigami.Units.gridUnit
+    implicitWidth: {
+        const textWidth = Math.round(label.contentWidth + Kirigami.Units.smallSpacing * 2);
+        return isRound ? Math.max(implicitHeight, textWidth) : textWidth;
+    }
 
-    radius: height / 2
+    radius: isRound ? implicitHeight / 2 : Kirigami.Units.smallSpacing / 2
 
     color: Kirigami.Theme.backgroundColor
 
@@ -46,8 +51,8 @@ Rectangle {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         fontSizeMode: Text.VerticalFit
-        font.pointSize: 1024
-        minimumPointSize: 5
+        font.pointSize: badgeRect.fontPointSize
+        minimumPointSize: 4
         text: {
             if (badgeRect.number < 0) {
                 return Wrappers.i18nc("Invalid number of new messages, overlay, keep short", "—");

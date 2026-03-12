@@ -127,10 +127,6 @@ Loader {
                 }
             }
         }
-
-        if (name && smartLauncherCountVisible && smartLauncherCount > 0) {
-            return name + " (" + smartLauncherCount + ")";
-        }
         return name;
     }
 
@@ -176,19 +172,38 @@ Loader {
                 anchors.fill: parent
                 spacing: Kirigami.Units.smallSpacing
                 
-                PlasmaComponents3.Label {
+                Item {
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillWidth: true
                     Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
-                    horizontalAlignment: Text.AlignHCenter
-                    
-                    text: toolTipDelegate.calculatedAppName
-                    font.bold: true
-                    elide: Text.ElideRight
-                    // Show if Pinned OR if in Thumbnail Mode.
-                    // If Running + TextMode, ToolTipInstance handles the header (with Close Button).
-                    visible: text.length > 0 && (!toolTipDelegate.isWin || toolTipDelegate.showThumbnails)
+                    implicitHeight: nameLabel.implicitHeight
+                    visible: toolTipDelegate.calculatedAppName.length > 0 && (!toolTipDelegate.isWin || toolTipDelegate.showThumbnails)
                     opacity: 0.8
+
+                    PlasmaComponents3.Label {
+                        id: nameLabel
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        // Ensure it stays centered by leaving space on both sides for the badge.
+                        width: Math.min(implicitWidth, parent.width - (badge.visible ? (badge.implicitWidth + Kirigami.Units.smallSpacing) * 2 : 0))
+                        
+                        text: toolTipDelegate.calculatedAppName
+                        font.bold: true
+                        elide: Text.ElideRight
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    Badge {
+                        id: badge
+                        anchors.left: nameLabel.right
+                        anchors.leftMargin: Kirigami.Units.smallSpacing
+                        anchors.verticalCenter: nameLabel.verticalCenter
+                        
+                        visible: toolTipDelegate.smartLauncherCountVisible && toolTipDelegate.smartLauncherCount > 0
+                        number: toolTipDelegate.smartLauncherCount
+                        height: Math.round(Kirigami.Units.gridUnit * 0.8)
+                        isRound: false
+                        fontPointSize: 8
+                    }
                 }
 
             PlasmaComponents3.Label {
@@ -276,17 +291,37 @@ Loader {
                      return Math.ceil(count * toolTipDelegate.tooltipInstanceMaximumWidth + Math.max(0, count - 1) * Kirigami.Units.smallSpacing);
                 }
 
-                PlasmaComponents3.Label {
+                Item {
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillWidth: true
                     Layout.maximumWidth: groupLayout.contentTargetWidth
-                    horizontalAlignment: Text.AlignHCenter
-                    
-                    text: toolTipDelegate.calculatedAppName
-                    font.bold: true
-                    elide: Text.ElideRight
-                    visible: text.length > 0 && toolTipDelegate.showThumbnails
+                    implicitHeight: groupNameLabel.implicitHeight
+                    visible: toolTipDelegate.calculatedAppName.length > 0 && toolTipDelegate.showThumbnails
                     opacity: 0.8
+
+                    PlasmaComponents3.Label {
+                        id: groupNameLabel
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: Math.min(implicitWidth, parent.width - (groupBadge.visible ? (groupBadge.implicitWidth + Kirigami.Units.smallSpacing) * 2 : 0))
+                        
+                        text: toolTipDelegate.calculatedAppName
+                        font.bold: true
+                        elide: Text.ElideRight
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    Badge {
+                        id: groupBadge
+                        anchors.left: groupNameLabel.right
+                        anchors.leftMargin: Kirigami.Units.smallSpacing
+                        anchors.verticalCenter: groupNameLabel.verticalCenter
+                        
+                        visible: toolTipDelegate.smartLauncherCountVisible && toolTipDelegate.smartLauncherCount > 0
+                        number: toolTipDelegate.smartLauncherCount
+                        height: Math.round(Kirigami.Units.gridUnit * 0.8)
+                        isRound: false
+                        fontPointSize: 8
+                    }
                 }
 
             PlasmaComponents3.Label {
