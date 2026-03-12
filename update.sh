@@ -3,6 +3,8 @@
 # SPDX-FileCopyrightText: 2025-2026 Vitaliy Elin <daydve@smbit.pro>
 # SPDX-License-Identifier: GPL-2.0-or-later
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+echo "Building Unity Launcher plugin..."
+bash "$SCRIPT_DIR/plugin/build"
 
 echo "Compiling translations..."
 bash "$SCRIPT_DIR/package/translate/build"

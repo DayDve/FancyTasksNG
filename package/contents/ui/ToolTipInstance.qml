@@ -85,25 +85,28 @@ Item {
     required property list<string> activities
 
     readonly property string calculatedAppName: {
+        let name = "";
         if (toolTipDelegate.appName && toolTipDelegate.appName.length > 0) {
-            return toolTipDelegate.appName;
+            name = toolTipDelegate.appName;
+        } else {
+            const text = display;
+            const versionRegex = /\s+(?:—|-|–)\s+([^\s(—|-|–)]+)\s+(?:—|-|–)\s+v?\d+(?:\.\d+)+.*$/i;
+            const matchVersion = text.match(versionRegex);
+            if (matchVersion && matchVersion[1]) {
+                name = matchVersion[1];
+            } else {
+                const lastSepRegex = /.*(?:—|-|–)\s+(.*)$/;
+                const matchLast = text.match(lastSepRegex);
+                if (matchLast && matchLast[1]) {
+                    name = matchLast[1];
+                }
+            }
         }
 
-        const text = display;
-        
-        const versionRegex = /\s+(?:—|-|–)\s+([^\s(—|-|–)]+)\s+(?:—|-|–)\s+v?\d+(?:\.\d+)+.*$/i;
-        const matchVersion = text.match(versionRegex);
-        if (matchVersion && matchVersion[1]) {
-            return matchVersion[1];
+        if (name && toolTipDelegate.smartLauncherCountVisible && toolTipDelegate.smartLauncherCount > 0) {
+             return name + " (" + toolTipDelegate.smartLauncherCount + ")";
         }
-
-        const lastSepRegex = /.*(?:—|-|–)\s+(.*)$/;
-        const matchLast = text.match(lastSepRegex);
-        if (matchLast && matchLast[1]) {
-            return matchLast[1];
-        }
-
-        return "";
+        return name;
     }
 
     readonly property string title: {

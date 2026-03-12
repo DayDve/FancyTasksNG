@@ -108,24 +108,30 @@ Loader {
     property bool isMuted
 
     readonly property string calculatedAppName: {
-        if (appName && appName.length > 0) return appName;
-
-        const text = display;
-        if (!text) return "";
-        
-        const versionRegex = /\s+(?:—|-|–)\s+([^\s(—|-|–)]+)\s+(?:—|-|–)\s+v?\d+(?:\.\d+)+.*$/i;
-        const matchVersion = text.match(versionRegex);
-        if (matchVersion && matchVersion[1]) {
-            return matchVersion[1];
+        let name = "";
+        if (appName && appName.length > 0) {
+            name = appName;
+        } else {
+            const text = display;
+            if (text) {
+                const versionRegex = /\s+(?:—|-|–)\s+([^\s(—|-|–)]+)\s+(?:—|-|–)\s+v?\d+(?:\.\d+)+.*$/i;
+                const matchVersion = text.match(versionRegex);
+                if (matchVersion && matchVersion[1]) {
+                    name = matchVersion[1];
+                } else {
+                    const lastSepRegex = /.*(?:—|-|–)\s+(.*)$/;
+                    const matchLast = text.match(lastSepRegex);
+                    if (matchLast && matchLast[1]) {
+                        name = matchLast[1];
+                    }
+                }
+            }
         }
 
-        const lastSepRegex = /.*(?:—|-|–)\s+(.*)$/;
-        const matchLast = text.match(lastSepRegex);
-        if (matchLast && matchLast[1]) {
-            return matchLast[1];
+        if (name && smartLauncherCountVisible && smartLauncherCount > 0) {
+            return name + " (" + smartLauncherCount + ")";
         }
-
-        return "";
+        return name;
     }
 
     readonly property bool isVerticalPanel: Plasmoid.formFactor === PlasmaCore.Types.Vertical

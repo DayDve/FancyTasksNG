@@ -4,3 +4,5 @@ iconinstaller.tar.gz
 .qtcreator/project.qmlproject.user
 package/project.qmlproject
 package/.qtcreator/project.qmlproject.user
+build/
+package/contents/ui/unity/*.so

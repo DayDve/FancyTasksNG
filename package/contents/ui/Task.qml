@@ -306,30 +306,36 @@ Item {
     function updateSmartLauncherItem() {
         if (task.smartLauncherEnabled && !task.smartLauncherItem) {
             let smartLauncher = null;
-            
-            // Plasma 6.6 approach
-            try {
-                let component = Qt.createComponent("plasma.applet.org.kde.plasma.taskmanager", "SmartLauncherItem");
-                if (component) {
-                    if (component.status === Component.Ready) {
-                        smartLauncher = component.createObject(task);
-                    }
-                    component.destroy();
-                }
-            } catch(e) {}
 
-            // Plasma 6.5 and older fallbacks
+            // Try our bundled C++ Unity Launcher backend first (works on all Plasma 6.x)
             if (!smartLauncher) {
                 try {
-                    smartLauncher = Qt.createQmlObject('import org.kde.plasma.private.taskmanager; SmartLauncherItem {}', task);
-                } catch (e) {
-                    try {
-                        smartLauncher = Qt.createQmlObject('import org.kde.taskmanager; SmartLauncherItem {}', task);
-                    } catch (e2) {
-                        console.warn("FancyTasks: Could not create SmartLauncherItem. Unread badges may not work.");
-                        return;
-                    }
-                }
+                    smartLauncher = Qt.createQmlObject('import "unity"; SmartLauncherItem {}', task);
+                } catch(e) {}
+            }
+
+            // Fallback: Plasma 6.6+ private applet module (only works for built-in taskmanager)
+            if (!smartLauncher) {
+                try {
+                    smartLauncher = Qt.createQmlObject('import plasma.applet.org.kde.plasma.taskmanager; SmartLauncherItem {}', task);
+                } catch(e) {}
+            }
+
+            // Fallback: Plasma 6.5 and older
+            if (!smartLauncher) {
+                try {
+                    smartLauncher = Qt.createQmlObject('import org.kde.plasma.private.taskmanager 0.1; SmartLauncherItem {}', task);
+                } catch(e) {}
+            }
+            if (!smartLauncher) {
+                try {
+                    smartLauncher = Qt.createQmlObject('import org.kde.taskmanager; SmartLauncherItem {}', task);
+                } catch(e) {}
+            }
+
+            if (!smartLauncher) {
+                console.warn("FancyTasks: Could not create SmartLauncherItem. Unread badges will not work.");
+                return;
             }
 
             if (smartLauncher) {
