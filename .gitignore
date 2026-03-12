@@ -5,4 +5,7 @@ iconinstaller.tar.gz
 package/project.qmlproject
 package/.qtcreator/project.qmlproject.user
 build/
+build-*/
+package/contents/ui/unity/bin/
 package/contents/ui/unity/*.so
+package/contents/ui/unity/qmldir

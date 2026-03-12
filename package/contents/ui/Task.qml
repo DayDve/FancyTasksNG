@@ -309,9 +309,21 @@ Item {
 
             // Try our bundled C++ Unity Launcher backend first (works on all Plasma 6.x)
             if (!smartLauncher) {
-                try {
-                    smartLauncher = Qt.createQmlObject('import "unity"; SmartLauncherItem {}', task);
-                } catch(e) {}
+                const arches = ["x86_64", "aarch64"];
+                for (let i = 0; i < arches.length; ++i) {
+                    try {
+                        const path = "unity/bin/" + arches[i];
+                        smartLauncher = Qt.createQmlObject('import "' + path + '" as P; P.SmartLauncherItem {}', task);
+                        if (smartLauncher) break;
+                    } catch(e) {}
+                }
+                
+                // Fallback to legacy path (in case it was built in the root)
+                if (!smartLauncher) {
+                    try {
+                        smartLauncher = Qt.createQmlObject('import "unity" as P; P.SmartLauncherItem {}', task);
+                    } catch(e) {}
+                }
             }
 
             // Fallback: Plasma 6.6+ private applet module (only works for built-in taskmanager)

@@ -46,6 +46,12 @@ trap cleanup EXIT
   bash ./build
 )
 
+# Build Unity plugin for current architecture (can be skipped in CI)
+if [ "$SKIP_PLUGIN_BUILD" != "true" ]; then
+  echo "Building Unity Launcher plugin..."
+  bash "$SCRIPT_DIR/plugin/build"
+fi
+
 # Prepare directories
 rm -rf "$RELEASE_DIR"
 mkdir -p "$BUILD_DIR"

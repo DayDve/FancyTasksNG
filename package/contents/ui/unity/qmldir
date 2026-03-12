@@ -1,4 +1,0 @@
-# SPDX-FileCopyrightText: 2025-2026 Vitaliy Elin <daydve@smbit.pro>
-# SPDX-License-Identifier: GPL-2.0-or-later
-module io.github.daydve.fancytasksng.unity
-plugin fancytasksng_unityplugin

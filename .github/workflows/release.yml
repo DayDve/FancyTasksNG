@@ -7,8 +7,42 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-plugin:
+    name: Build Plugin (${{ matrix.arch }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - arch: x86_64
+            distro: ubuntu24.04
+          - arch: aarch64
+            distro: ubuntu24.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Plugin
+        uses: uraimo/run-on-arch-action@v2
+        with:
+          arch: ${{ matrix.arch }}
+          distro: ${{ matrix.distro }}
+          githubToken: ${{ github.token }}
+          setup: |
+            apt-get update
+            apt-get install -y cmake g++ qt6-base-dev qt6-declarative-dev
+          run: |
+            bash ./plugin/build
+
+      - name: Upload Plugin Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-${{ matrix.arch }}
+          path: package/contents/ui/unity/bin/${{ matrix.arch }}/
+
+  create-release:
     name: Build and Release
+    needs: build-plugin
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -24,19 +58,32 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gettext zip
 
+      - name: Download all plugin artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: plugin-artifacts
+
+      - name: Organize plugins
+        run: |
+          mkdir -p package/contents/ui/unity/bin/x86_64
+          mkdir -p package/contents/ui/unity/bin/aarch64
+          cp -r plugin-artifacts/plugin-x86_64/* package/contents/ui/unity/bin/x86_64/
+          cp -r plugin-artifacts/plugin-aarch64/* package/contents/ui/unity/bin/aarch64/
+          ls -R package/contents/ui/unity/bin/
+
       - name: Build Plasmoid
-        run: bash ./build.sh
+        run: |
+          export SKIP_PLUGIN_BUILD=true
+          bash ./build.sh
 
       - name: Prepare Release Asset
         id: asset
         run: |
           VERSION=$(bash ./package/translate/get_metadata.sh "Version")
           ASSET_NAME="fancytasksng-v${VERSION}.plasmoid"
-          # Rename the build output to our versioned naming convention
           mv release/FancyTasksNG.plasmoid "$ASSET_NAME"
           echo "asset_path=$ASSET_NAME" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          # Extract release notes for this version from CHANGELOG.md
           awk -v ver="[${VERSION}]" '/^## / { if (index($0, ver) > 0) { flag = 1; next } else if (flag) { flag = 0 } } flag' CHANGELOG.md > release_notes.txt
 
       - name: Create GitHub Release
