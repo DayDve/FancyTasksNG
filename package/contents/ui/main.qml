@@ -34,6 +34,14 @@ PlasmoidItem {
     readonly property bool shouldShrinkToZero: tasksModel.count === 0
     readonly property bool vertical: Plasmoid.formFactor === PlasmaCore.Types.Vertical
     readonly property bool iconsOnly: Plasmoid.configuration.iconOnly
+    property bool showBadges: Plasmoid.configuration.showBadges
+
+    Connections {
+        target: Plasmoid.configuration
+        function onShowBadgesChanged() {
+            tasks.showBadges = Plasmoid.configuration.showBadges
+        }
+    }
 
     property Task toolTipOpenedByClick
     property Task toolTipAreaItem

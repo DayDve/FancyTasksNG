@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-03-03 23:25+0200\n"
+"POT-Creation-Date: 2026-03-13 00:50+0200\n"
 "PO-Revision-Date: 2023-09-21 16:18-0300\n"
 "Last-Translator:  Douglas Guimarães <<dg2003gh@gmail.com>>\n"
 "Language-Team: \n"
@@ -528,6 +528,14 @@ msgstr "Cor do indicador:"
 #: ../contents/config/ConfigIndicators.qml
 msgid "Use plasma accent color"
 msgstr "Usar cor de acentuação do Plasma"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Badges:"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Show notification badges"
+msgstr ""
 
 #: ../contents/config/ConfigPinnedApps.qml
 msgid "Default Web Browser"

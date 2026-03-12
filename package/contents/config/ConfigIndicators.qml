@@ -9,7 +9,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.core as PlasmaCore
 import org.kde.kquickcontrols as KQControls
 
 import "../ui/code/singletones"
@@ -71,6 +70,7 @@ ConfigPage {
             text: Wrappers.i18n("Takes effect on next time plasma groups tasks.")
             font: Kirigami.Theme.smallFont
         }
+
 
         Item {
             Kirigami.FormData.isSection: true
@@ -298,8 +298,12 @@ ConfigPage {
             }
         }
 
-        Item {
-            Kirigami.FormData.isSection: true
+        CheckBox {
+            id: cfg_showBadges
+            Kirigami.FormData.label: Wrappers.i18n("Badges:")
+            text: Wrappers.i18n("Show notification badges")
+            checked: cfg_page.cfg_showBadges
+            onToggled: cfg_page.cfg_showBadges = checked
         }
     }
 }

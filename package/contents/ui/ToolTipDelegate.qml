@@ -16,7 +16,6 @@ import QtQuick.Controls
 
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents3
-import org.kde.plasma.extras as PlasmaExtras
 import org.kde.plasma.private.mpris as Mpris
 import org.kde.kirigami as Kirigami
 
@@ -198,7 +197,7 @@ Loader {
                         anchors.leftMargin: Kirigami.Units.smallSpacing
                         anchors.verticalCenter: nameLabel.verticalCenter
                         
-                        visible: toolTipDelegate.smartLauncherCountVisible && toolTipDelegate.smartLauncherCount > 0
+                        visible: plasmoid.configuration.showBadges && toolTipDelegate.smartLauncherCountVisible && toolTipDelegate.smartLauncherCount > 0
                         number: toolTipDelegate.smartLauncherCount
                         height: Math.round(Kirigami.Units.gridUnit * 0.8)
                         isRound: false
@@ -316,7 +315,7 @@ Loader {
                         anchors.leftMargin: Kirigami.Units.smallSpacing
                         anchors.verticalCenter: groupNameLabel.verticalCenter
                         
-                        visible: toolTipDelegate.smartLauncherCountVisible && toolTipDelegate.smartLauncherCount > 0
+                        visible: plasmoid.configuration.showBadges && toolTipDelegate.smartLauncherCountVisible && toolTipDelegate.smartLauncherCount > 0
                         number: toolTipDelegate.smartLauncherCount
                         height: Math.round(Kirigami.Units.gridUnit * 0.8)
                         isRound: false

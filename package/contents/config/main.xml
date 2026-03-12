@@ -342,6 +342,10 @@
         <label>Icon zoom animation duration</label>
         <tooltip>Duration of the zoom animation in milliseconds</tooltip>
     </entry>
+    <entry name="showBadges" type="Bool">
+      <label i18n-label="Show notification badges">Whether to show notification badges on task icons and in tooltips.</label>
+      <default>true</default>
+    </entry>
   </group>
 
 </kcfg>

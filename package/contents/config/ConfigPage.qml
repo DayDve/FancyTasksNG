@@ -160,4 +160,6 @@ KCMUtils.SimpleKCM {
     property bool cfg_iconScaleFromEdgeDefault
     property int cfg_iconEdgeOffset
     property int cfg_iconEdgeOffsetDefault
+    property bool cfg_showBadges
+    property bool cfg_showBadgesDefault
 }

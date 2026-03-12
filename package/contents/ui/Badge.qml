@@ -22,13 +22,13 @@ Rectangle {
     property bool isRound: true
     property real fontPointSize: 1024
 
-    implicitHeight: height > 0 ? height : Kirigami.Units.gridUnit
+    implicitHeight: Kirigami.Units.gridUnit
     implicitWidth: {
         const textWidth = Math.round(label.contentWidth + Kirigami.Units.smallSpacing * 2);
-        return isRound ? Math.max(implicitHeight, textWidth) : textWidth;
+        return isRound ? Math.max(Kirigami.Units.gridUnit, textWidth) : textWidth;
     }
 
-    radius: isRound ? implicitHeight / 2 : Kirigami.Units.smallSpacing / 2
+    radius: isRound ? height / 2 : Kirigami.Units.smallSpacing / 2
 
     color: Kirigami.Theme.backgroundColor
 

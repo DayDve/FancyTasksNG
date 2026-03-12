@@ -31,6 +31,7 @@ Item {
     readonly property bool isMetro: Plasmoid.configuration.indicatorStyle === 0
     readonly property bool isCiliora: Plasmoid.configuration.indicatorStyle === 1
     readonly property bool isDashes: Plasmoid.configuration.indicatorStyle === 2
+
     readonly property int _cfgIconSize: Plasmoid.configuration.iconSizeOverride ? Plasmoid.configuration.iconSizePx : (Math.min(tasksRoot.width, tasksRoot.height) * Plasmoid.configuration.iconScale / 100)
     readonly property int _cfgZoom: Plasmoid.configuration.iconZoomFactor
     readonly property int _maxIconSize: _cfgIconSize + _cfgZoom
@@ -732,7 +733,7 @@ Item {
             width : (parent.height - adjustMargin(false, parent.height, task.tasksRoot.taskFrame.margins.top) - adjustMargin(false, parent.height, task.tasksRoot.taskFrame.margins.bottom))
 
         asynchronous: true
-        active: height >= Kirigami.Units.iconSizes.small && task.smartLauncherItem && task.smartLauncherItem["countVisible"]
+        active: plasmoid.configuration.showBadges && height >= Kirigami.Units.iconSizes.small && task.smartLauncherItem && task.smartLauncherItem["countVisible"]
         source: "TaskBadgeOverlay.qml"
 
         function adjustMargin(isVertical: bool, size: real, margin: real): real {
