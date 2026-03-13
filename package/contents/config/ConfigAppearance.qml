@@ -18,7 +18,7 @@ import "../ui/code/singletones"
 
 ConfigPage {
     id: cfg_page
-    readonly property bool plasmaPaAvailable: Qt.createComponent("../PulseAudio.qml").status === Component.Ready
+    readonly property bool plasmaPaAvailable: Qt.createComponent("../ui/PulseAudio.qml").status === Component.Ready
     readonly property bool plasmoidVertical: Plasmoid.formFactor === PlasmaCore.Types.Vertical
     readonly property bool iconOnly: Plasmoid.configuration.iconOnly
 
@@ -132,36 +132,36 @@ ConfigPage {
 
         RadioButton {
             Kirigami.FormData.label: Wrappers.i18n("Button Colors:")
-            checked: !buttonColorize.checked
+            checked: !cfg_page.cfg_buttonColorize
             text: Wrappers.i18n("Using Plasma Style/Accent")
             ButtonGroup.group: colorizeButtonGroup
             onToggled: if (checked) cfg_page.cfg_buttonColorize = false
         }
 
         RadioButton {
-            id: buttonColorize
+            id: cfg_buttonColorize
             checked: cfg_page.cfg_buttonColorize
-            onToggled: cfg_page.cfg_buttonColorize = checked
+            onToggled: if (checked) cfg_page.cfg_buttonColorize = true
             text: Wrappers.i18n("Using Color Overlay")
             ButtonGroup.group: colorizeButtonGroup
         }
 
         CheckBox {
-            id: buttonColorizeDominant
-            enabled: buttonColorize.checked
+            id: cfg_buttonColorizeDominant
+            enabled: cfg_page.cfg_buttonColorize
             text: Wrappers.i18n("Use dominant icon color")
-            visible: buttonColorize.checked
+            visible: cfg_page.cfg_buttonColorize
             checked: cfg_page.cfg_buttonColorizeDominant
             onToggled: cfg_page.cfg_buttonColorizeDominant = checked
         }
 
         KQuickAddons.ColorButton {
-            id: buttonColorizeCustom
+            id: cfg_buttonColorizeCustom
             Layout.leftMargin: Kirigami.Units.gridUnit
-            enabled: buttonColorize.checked & !buttonColorizeDominant.checked
+            enabled: cfg_page.cfg_buttonColorize && !cfg_page.cfg_buttonColorizeDominant
             Kirigami.FormData.label: Wrappers.i18n("Custom Color:")
             showAlphaChannel: true
-            visible: buttonColorize.checked && !buttonColorizeDominant.checked
+            visible: cfg_page.cfg_buttonColorize && !cfg_page.cfg_buttonColorizeDominant
             color: cfg_page.cfg_buttonColorizeCustom
             onColorChanged: {
                 if (!Qt.colorEqual(color, cfg_page.cfg_buttonColorizeCustom)) {
@@ -171,10 +171,10 @@ ConfigPage {
         }
 
         CheckBox {
-            id: buttonColorizeInactive
+            id: cfg_buttonColorizeInactive
             text: Wrappers.i18n("Colorize inactive buttons")
-            visible: buttonColorize.checked
-            enabled: !disableButtonInactiveSvg.checked
+            visible: cfg_page.cfg_buttonColorize
+            enabled: !cfg_disableButtonInactiveSvg.checked
             checked: cfg_page.cfg_buttonColorizeInactive
             onToggled: cfg_page.cfg_buttonColorizeInactive = checked
         }
@@ -184,16 +184,16 @@ ConfigPage {
         }
 
         CheckBox {
-            id: disableButtonSvg
+            id: cfg_disableButtonSvg
             Kirigami.FormData.label: Wrappers.i18n("Plasma Button Decorations:")
             text: Wrappers.i18n("Disable All")
             checked: cfg_page.cfg_disableButtonSvg
             onToggled: cfg_page.cfg_disableButtonSvg = checked
         }
         CheckBox {
-            id: disableButtonInactiveSvg
+            id: cfg_disableButtonInactiveSvg
             text: Wrappers.i18n("Disable Inactive Buttons")
-            enabled: !disableButtonSvg.checked
+            enabled: !cfg_disableButtonSvg.checked
             checked: cfg_page.cfg_disableButtonInactiveSvg
             onToggled: cfg_page.cfg_disableButtonInactiveSvg = checked
         }
@@ -258,9 +258,9 @@ ConfigPage {
         }
 
         CheckBox {
-            id: indicateAudioStreams
+            id: cfg_indicateAudioStreams
             text: Wrappers.i18n("Mark applications that play audio")
-            checked: cfg_page.cfg_indicateAudioStreams && cfg_page.plasmaPaAvailable
+            checked: cfg_page.cfg_indicateAudioStreams
             onToggled: cfg_page.cfg_indicateAudioStreams = checked
             enabled: cfg_page.plasmaPaAvailable
         }

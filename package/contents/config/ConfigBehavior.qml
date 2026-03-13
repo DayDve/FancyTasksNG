@@ -33,7 +33,7 @@ ConfigPage {
 
     Kirigami.FormLayout {
         ComboBox {
-            id: iconOnly
+            id: cfg_iconOnly
             Kirigami.FormData.label: Wrappers.i18n ("Display:")
             Layout.fillWidth: true
             Layout.minimumWidth: Kirigami.Units.gridUnit * 14
@@ -43,7 +43,7 @@ ConfigPage {
         }
 
         ComboBox {
-            id: groupingStrategy
+            id: cfg_groupingStrategy
             Kirigami.FormData.label: Wrappers.i18n("Group:")
             Layout.fillWidth: true
             Layout.minimumWidth: Kirigami.Units.gridUnit * 14
@@ -56,12 +56,12 @@ ConfigPage {
         }
 
         ComboBox {
-            id: groupedTaskVisualization
+            id: cfg_groupedTaskVisualization
             Kirigami.FormData.label: Wrappers.i18n("Clicking grouped task:")
             Layout.fillWidth: true
             Layout.minimumWidth: Kirigami.Units.gridUnit * 14
             
-            enabled: groupingStrategy.currentIndex !== 0
+            enabled: cfg_groupingStrategy.currentIndex !== 0
 
             model: [
                 Wrappers.i18n("Cycles through tasks"),
@@ -78,7 +78,7 @@ ConfigPage {
         // "You asked for Window View but Window View is not available" message
         Kirigami.InlineMessage {
             Layout.fillWidth: true
-            visible: groupedTaskVisualization.currentIndex === 2 && !effectWatcher.registered
+            visible: cfg_groupedTaskVisualization.currentIndex === 2 && !effectWatcher.registered
             type: Kirigami.MessageType.Warning
             text: Wrappers.i18n("The compositor does not support displaying windows side by side, so a textual list will be displayed instead.")
         }
@@ -88,19 +88,19 @@ ConfigPage {
         }
 
         CheckBox {
-            id: groupPopups
+            id: cfg_groupPopups
             visible: (!cfg_page.cfg_iconOnly)
             text: Wrappers.i18n("Combine into single button")
-            enabled: groupingStrategy.currentIndex > 0
+            enabled: cfg_groupingStrategy.currentIndex > 0
             checked: cfg_page.cfg_groupPopups
             onToggled: cfg_page.cfg_groupPopups = checked
         }
 
         CheckBox {
-            id: onlyGroupWhenFull
+            id: cfg_onlyGroupWhenFull
             visible: (!cfg_page.cfg_iconOnly)
             text: Wrappers.i18n("Group only when the Task Manager is full")
-            enabled: groupingStrategy.currentIndex > 0 && groupPopups.checked
+            enabled: cfg_groupingStrategy.currentIndex > 0 && cfg_groupPopups.checked
             Accessible.onPressAction: toggle()
             checked: cfg_page.cfg_onlyGroupWhenFull
             onToggled: cfg_page.cfg_onlyGroupWhenFull = checked
@@ -113,7 +113,7 @@ ConfigPage {
 
 
         ComboBox {
-            id: sortingStrategy
+            id: cfg_sortingStrategy
             Kirigami.FormData.label: Wrappers.i18n("Sort:")
             Layout.fillWidth: true
             Layout.minimumWidth: Kirigami.Units.gridUnit * 14
@@ -129,16 +129,16 @@ ConfigPage {
         }
 
         CheckBox {
-            id: separateLaunchers
+            id: cfg_separateLaunchers
             visible: (!cfg_page.cfg_iconOnly)
             text: Wrappers.i18n("Keep launchers separate")
-            enabled: sortingStrategy.currentIndex === 1
+            enabled: cfg_sortingStrategy.currentIndex === 1
             checked: cfg_page.cfg_separateLaunchers
             onToggled: cfg_page.cfg_separateLaunchers = checked
         }
 
         CheckBox {
-            id: hideLauncherOnStart
+            id: cfg_hideLauncherOnStart
             visible: (!cfg_page.cfg_iconOnly)
             text: Wrappers.i18n("Hide launchers after application startup")
             checked: cfg_page.cfg_hideLauncherOnStart
@@ -151,7 +151,7 @@ ConfigPage {
         }
 
         CheckBox {
-            id: minimizeActive
+            id: cfg_minimizeActiveTaskOnClick
             Kirigami.FormData.label: Wrappers.i18n("Clicking active task:")
             text: Wrappers.i18n("Minimizes the task")
             checked: cfg_page.cfg_minimizeActiveTaskOnClick
@@ -159,7 +159,7 @@ ConfigPage {
         }
 
         ComboBox {
-            id: middleClickAction
+            id: cfg_middleClickAction
             Kirigami.FormData.label: Wrappers.i18n("Middle-clicking any task:")
             Layout.fillWidth: true
             Layout.minimumWidth: Kirigami.Units.gridUnit * 14
@@ -180,7 +180,7 @@ ConfigPage {
         }
 
         CheckBox {
-            id: wheelEnabled
+            id: cfg_wheelEnabled
             Kirigami.FormData.label: Wrappers.i18n("Mouse wheel:")
             text: Wrappers.i18n("Cycles through tasks")
             checked: cfg_page.cfg_wheelEnabled
@@ -192,9 +192,9 @@ ConfigPage {
             // due to which a simple Layout.leftMargin on CheckBox doesn't work
             Item { implicitWidth: Kirigami.Units.gridUnit }
             CheckBox {
-                id: wheelSkipMinimized
+                id: cfg_wheelSkipMinimized
                 text: Wrappers.i18n("Skip minimized tasks")
-                enabled: wheelEnabled.checked
+                enabled: cfg_wheelEnabled.checked
                 checked: cfg_page.cfg_wheelSkipMinimized
                 onToggled: cfg_page.cfg_wheelSkipMinimized = checked
             }
@@ -205,7 +205,7 @@ ConfigPage {
         }
 
         CheckBox {
-            id: showOnlyCurrentScreen
+            id: cfg_showOnlyCurrentScreen
             Kirigami.FormData.label: Wrappers.i18n("Show only tasks:")
             text: Wrappers.i18n("From current screen")
             checked: cfg_page.cfg_showOnlyCurrentScreen
@@ -213,21 +213,21 @@ ConfigPage {
         }
 
         CheckBox {
-            id: showOnlyCurrentDesktop
+            id: cfg_showOnlyCurrentDesktop
             text: Wrappers.i18n("From current desktop")
             checked: cfg_page.cfg_showOnlyCurrentDesktop
             onToggled: cfg_page.cfg_showOnlyCurrentDesktop = checked
         }
 
         CheckBox {
-            id: showOnlyCurrentActivity
+            id: cfg_showOnlyCurrentActivity
             text: Wrappers.i18n("From current activity")
             checked: cfg_page.cfg_showOnlyCurrentActivity
             onToggled: cfg_page.cfg_showOnlyCurrentActivity = checked
         }
 
         CheckBox {
-            id: showOnlyMinimized
+            id: cfg_showOnlyMinimized
             text: Wrappers.i18n("That are minimized")
             checked: cfg_page.cfg_showOnlyMinimized
             onToggled: cfg_page.cfg_showOnlyMinimized = checked
@@ -238,7 +238,7 @@ ConfigPage {
         }
 
         CheckBox {
-            id: unhideOnAttention
+            id: cfg_unhideOnAttention
             Kirigami.FormData.label: Wrappers.i18n("When panel is hidden:")
             text: Wrappers.i18n("Unhide when a window wants attention")
             checked: cfg_page.cfg_unhideOnAttention
@@ -255,7 +255,7 @@ ConfigPage {
 
         RadioButton {
             Kirigami.FormData.label: Wrappers.i18n("New tasks appear:")
-            checked: !reverseMode.checked
+            checked: !cfg_page.cfg_reverseMode
             text: {
                 if (Plasmoid.formFactor === PlasmaCore.Types.Vertical) {
                     return Wrappers.i18n("On the bottom")
@@ -271,7 +271,7 @@ ConfigPage {
         }
 
         RadioButton {
-            id: reverseMode
+            id: cfg_reverseMode
             checked: cfg_page.cfg_reverseMode
             onToggled: cfg_page.cfg_reverseMode = checked
             text: {

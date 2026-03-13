@@ -270,8 +270,8 @@ ConfigPage {
         }
 
         CheckBox {
-            enabled: indicatorsEnabled.currentIndex & !indicatorAccentColor.checked
-            id: indicatorDominantColor
+            enabled: indicatorsEnabled.currentIndex && !cfg_indicatorAccentColor.checked
+            id: cfg_indicatorDominantColor
             Kirigami.FormData.label: Wrappers.i18n("Indicator Color:")
             text: Wrappers.i18n("Use dominant icon color")
             checked: cfg_page.cfg_indicatorDominantColor
@@ -279,16 +279,16 @@ ConfigPage {
         }
 
         CheckBox {
-            enabled: indicatorsEnabled.currentIndex & !indicatorDominantColor.checked
-            id: indicatorAccentColor
+            enabled: indicatorsEnabled.currentIndex && !cfg_indicatorDominantColor.checked
+            id: cfg_indicatorAccentColor
             text: Wrappers.i18n("Use plasma accent color")
             checked: cfg_page.cfg_indicatorAccentColor
             onToggled: cfg_page.cfg_indicatorAccentColor = checked
         }
 
         KQControls.ColorButton {
-            enabled: indicatorsEnabled.currentIndex & !indicatorDominantColor.checked & !indicatorAccentColor.checked
-            id: indicatorCustomColor
+            enabled: indicatorsEnabled.currentIndex && !cfg_indicatorDominantColor.checked && !cfg_indicatorAccentColor.checked
+            id: cfg_indicatorCustomColor
             Kirigami.FormData.label: Wrappers.i18n("Custom Color:")
             color: cfg_page.cfg_indicatorCustomColor
             onColorChanged: {
