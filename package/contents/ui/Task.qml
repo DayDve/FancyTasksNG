@@ -33,7 +33,7 @@ Item {
     readonly property bool isDashes: Plasmoid.configuration.indicatorStyle === 2
 
     readonly property int _cfgIconSize: Plasmoid.configuration.iconSizeOverride ? Plasmoid.configuration.iconSizePx : (Math.min(tasksRoot.width, tasksRoot.height) * Plasmoid.configuration.iconScale / 100)
-    readonly property int _cfgZoom: Plasmoid.configuration.iconZoomFactor
+    readonly property int _cfgZoom: Plasmoid.configuration.taskHoverEffect ? Plasmoid.configuration.iconZoomFactor : 0
     readonly property int _maxIconSize: _cfgIconSize + _cfgZoom
     property alias taskIcon: icon
     readonly property bool iconOverflows: tasksRoot.vertical ? 
@@ -751,7 +751,7 @@ Item {
 
         Kirigami.Icon {
             id: icon
-            property int growSize: active ?
+            property int growSize: (active && Plasmoid.configuration.taskHoverEffect) ?
                 Plasmoid.configuration.iconZoomFactor : 0
 
             property bool sizeOverride: Plasmoid.configuration.iconSizeOverride

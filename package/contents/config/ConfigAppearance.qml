@@ -89,9 +89,12 @@ ConfigPage {
             onValueModified: cfg_page.cfg_iconEdgeOffset = value
         }
 
-        Item {
-            Kirigami.FormData.isSection: true
+        CheckBox {
+            id: cfg_taskHoverEffect
             Kirigami.FormData.label: Wrappers.i18n("Icon Hover Effects")
+            text: Wrappers.i18n("Enabled")
+            checked: cfg_page.cfg_taskHoverEffect
+            onToggled: cfg_page.cfg_taskHoverEffect = checked
         }
 
         SpinBox {
@@ -100,6 +103,7 @@ ConfigPage {
             from: 0
             to: 50
             stepSize: 1
+            visible: cfg_taskHoverEffect.checked
             value: cfg_page.cfg_iconZoomFactor
             onValueModified: cfg_page.cfg_iconZoomFactor = value
 
@@ -114,6 +118,7 @@ ConfigPage {
             from: 0
             to: 1000
             stepSize: 50
+            visible: cfg_taskHoverEffect.checked
             value: cfg_page.cfg_iconZoomDuration
             onValueModified: cfg_page.cfg_iconZoomDuration = value
 
