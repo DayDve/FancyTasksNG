@@ -1,6 +1,5 @@
 /*
-    SPDX-FileCopyrightText: 2023 Alexandra Stone <alexankitty@gmail.com>
-    SPDX-FileCopyrightText: 2026 Vitaliy Elin <daydve@smbit.pro>
+    SPDX-FileCopyrightText: 2025-2026 Vitaliy Elin <daydve@smbit.pro>
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
@@ -9,301 +8,340 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
-import org.kde.kquickcontrols as KQControls
+import org.kde.kquickcontrols as KQuickAddons
 
 import "../ui/code/singletones"
 
 ConfigPage {
     id: cfg_page
+    readonly property bool plasmaPaAvailable: Qt.createComponent("../ui/PulseAudio.qml").status === Component.Ready
 
+    ScrollView {
+        anchors.fill: parent
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
+        Kirigami.FormLayout {
+            width: parent.width - Kirigami.Units.gridUnit * 2
 
-
-    Kirigami.FormLayout {
-
-        ComboBox {
-            id: indicatorsEnabled
-            Kirigami.FormData.label: Wrappers.i18n("Indicators:")
-            model: [Wrappers.i18n("Disabled"), Wrappers.i18n("Enabled")]
-            currentIndex: cfg_page.cfg_indicatorsEnabled
-            onActivated: (index) => cfg_page.cfg_indicatorsEnabled = index
-        }
-
-        CheckBox {
-            id: indicatorProgress
-            enabled: indicatorsEnabled.currentIndex
-            visible: indicatorsEnabled.currentIndex
-            text: Wrappers.i18n("Display Progress on Indicator")
-            checked: cfg_page.cfg_indicatorProgress
-            onToggled: cfg_page.cfg_indicatorProgress = checked
-        }
-
-        KQControls.ColorButton {
-            enabled: indicatorsEnabled.currentIndex
-            visible: indicatorProgress.checked
-            id: indicatorProgressColor
-            color: cfg_page.cfg_indicatorProgressColor
-            onColorChanged: {
-                if (!Qt.colorEqual(color, cfg_page.cfg_indicatorProgressColor)) {
-                    cfg_page.cfg_indicatorProgressColor = color
-                }
+            Label {
+                text: Wrappers.i18n("Active application indicators:")
             }
-        }
 
-        CheckBox {
-            enabled: indicatorsEnabled.currentIndex
-            visible: indicatorsEnabled.currentIndex
-            id: disableInactiveIndicators
-            text: Wrappers.i18n("Disable for Inactive Windows")
-            checked: cfg_page.cfg_disableInactiveIndicators
-            onToggled: cfg_page.cfg_disableInactiveIndicators = checked
-        }
+            CheckBox {
+                id: indicatorsEnabled
+                text: Wrappers.i18n("Enable")
+                checked: cfg_page.cfg_indicatorsEnabled
+                onToggled: cfg_page.cfg_indicatorsEnabled = checked
+            }
 
-        ComboBox {
-            id: groupIconEnabled
-            Kirigami.FormData.label: Wrappers.i18n("Group Overlay:")
-            model: [Wrappers.i18n("Disabled"), Wrappers.i18n("Enabled")]
-            currentIndex: cfg_page.cfg_groupIconEnabled
-            onActivated: (index) => cfg_page.cfg_groupIconEnabled = index
-        }
-        Label {
-            text: Wrappers.i18n("Takes effect on next time plasma groups tasks.")
-            font: Kirigami.Theme.smallFont
-        }
+            CheckBox {
+                visible: indicatorsEnabled.checked
+                id: indicatorsAnimated
+                text: Wrappers.i18n("Animate indicators")
+                checked: cfg_page.cfg_indicatorsAnimated
+                onToggled: cfg_page.cfg_indicatorsAnimated = checked
+            }
 
+            Item { height: Kirigami.Units.largeSpacing; visible: indicatorsEnabled.checked }
 
-        Item {
-            Kirigami.FormData.isSection: true
-        }
+            Label {
+                visible: indicatorsEnabled.checked
+                text: Wrappers.i18n("Indicator Style:")
+            }
 
-        CheckBox {
-            enabled: indicatorsEnabled.currentIndex
-            id: indicatorsAnimated
-            Kirigami.FormData.label: Wrappers.i18n("Animate Indicators:")
-            text: Wrappers.i18n("Enabled")
-            checked: cfg_page.cfg_indicatorsAnimated
-            onToggled: cfg_page.cfg_indicatorsAnimated = checked
-        }
-
-
-        Item {
-            Kirigami.FormData.isSection: true
-        }
-
-        CheckBox {
-            enabled: indicatorsEnabled.currentIndex && !indicatorOverride.checked
-            id: indicatorReverse
-            Kirigami.FormData.label: Wrappers.i18n("Indicator Location:")
-            text: Wrappers.i18n("Reverse shown side")
-            checked: cfg_page.cfg_indicatorReverse
-            onToggled: cfg_page.cfg_indicatorReverse = checked
-        }
-
-        CheckBox {
-            enabled: indicatorsEnabled.currentIndex
-            id: indicatorOverride
-            text: Wrappers.i18n("Override location")
-            checked: cfg_page.cfg_indicatorOverride
-            onToggled: cfg_page.cfg_indicatorOverride = checked
-        }
-
-        ComboBox {
-            enabled: indicatorsEnabled.currentIndex
-            visible: indicatorOverride.checked
-            id: indicatorLocation
-            model: [
-                Wrappers.i18n("Bottom"),
-                Wrappers.i18n("Left"),
-                Wrappers.i18n("Right"),
-                Wrappers.i18n("Top")
-            ]
-            currentIndex: cfg_page.cfg_indicatorLocation
-            onActivated: (index) => cfg_page.cfg_indicatorLocation = index
-        }
-
-        Label {
-            text: Wrappers.i18n("Be sure to use this when using as a floating widget")
-            font: Kirigami.Theme.smallFont
-        }
-
-        SpinBox {
-            enabled: indicatorsEnabled.currentIndex
-            id: indicatorEdgeOffset
-            Kirigami.FormData.label: Wrappers.i18n("Indicator Edge Offset (px):")
-            from: 0
-            to: 999
-            value: cfg_page.cfg_indicatorEdgeOffset
-            onValueModified: cfg_page.cfg_indicatorEdgeOffset = value
-        }
-
-        Item {
-            Kirigami.FormData.isSection: true
-        }
-
-        ComboBox {
-            enabled: indicatorsEnabled.currentIndex
-            id: indicatorStyle
-            Kirigami.FormData.label: Wrappers.i18n("Indicator Style:")
-            Layout.fillWidth: true
-            Layout.minimumWidth: Kirigami.Units.gridUnit * 14
-            model: [
-                Wrappers.i18n("Metro"),
-                Wrappers.i18n("Ciliora"),
-                Wrappers.i18n("Dashes")
+            ComboBox {
+                visible: indicatorsEnabled.checked
+                id: indicatorStyle
+                Layout.fillWidth: true
+                model: [
+                    Wrappers.i18n("Metro"),
+                    Wrappers.i18n("Ciliora"),
+                    Wrappers.i18n("Dashes")
                 ]
-            currentIndex: cfg_page.cfg_indicatorStyle
-            onActivated: (index) => cfg_page.cfg_indicatorStyle = index
-        }
-
-        SpinBox {
-            enabled: indicatorsEnabled.currentIndex
-            id: indicatorMinLimit
-            Kirigami.FormData.label: Wrappers.i18n("Indicator Min Limit:")
-            from: 0
-            to: 10
-            value: cfg_page.cfg_indicatorMinLimit
-            onValueModified: cfg_page.cfg_indicatorMinLimit = value
-        }
-
-        SpinBox {
-            enabled: indicatorsEnabled.currentIndex
-            id: indicatorMaxLimit
-            Kirigami.FormData.label: Wrappers.i18n("Indicator Max Limit:")
-            from: 1
-            to: 10
-            value: cfg_page.cfg_indicatorMaxLimit
-            onValueModified: cfg_page.cfg_indicatorMaxLimit = value
-        }
-
-        CheckBox {
-            enabled: indicatorsEnabled.currentIndex
-            id: indicatorDesaturate
-            Kirigami.FormData.label: Wrappers.i18n("Minimize Options:")
-            text: Wrappers.i18n("Desaturate")
-            checked: cfg_page.cfg_indicatorDesaturate
-            onToggled: cfg_page.cfg_indicatorDesaturate = checked
-        }
-
-        CheckBox {
-            enabled: indicatorsEnabled.currentIndex
-            id: indicatorGrow
-            text: Wrappers.i18n("Shrink when minimized")
-            checked: cfg_page.cfg_indicatorGrow
-            onToggled: cfg_page.cfg_indicatorGrow = checked
-        }
-
-        SpinBox {
-            id: indicatorGrowFactor
-            enabled: indicatorsEnabled.currentIndex
-            visible: indicatorGrow.checked
-            from: 100
-            to: 10 * 100
-            stepSize: 25
-            Kirigami.FormData.label: Wrappers.i18n("Growth/Shrink factor:")
-            value: cfg_page.cfg_indicatorGrowFactor
-            onValueModified: cfg_page.cfg_indicatorGrowFactor = value
-
-            property int decimals: 2
-            property real realValue: value / 100
-
-            validator: DoubleValidator {
-                bottom: Math.min(indicatorGrowFactor.from, indicatorGrowFactor.to)
-                top:  Math.max(indicatorGrowFactor.from, indicatorGrowFactor.to)
+                currentIndex: cfg_page.cfg_indicatorStyle
+                onActivated: (index) => cfg_page.cfg_indicatorStyle = index
             }
 
-            textFromValue: function(value, locale) {
-                return Number(value / 100).toLocaleString(locale, 'f', indicatorGrowFactor.decimals)
+            CheckBox {
+                visible: indicatorsEnabled.checked
+                id: indicatorOverride
+                text: Wrappers.i18n("Override indicator location")
+                checked: cfg_page.cfg_indicatorOverride
+                onToggled: cfg_page.cfg_indicatorOverride = checked
             }
 
-            valueFromText: function(text, locale) {
-                return Number.fromLocaleString(locale, text) * 100
+            ComboBox {
+                visible: indicatorsEnabled.checked && indicatorOverride.checked
+                id: indicatorLocation
+                Layout.fillWidth: true
+                model: [
+                    Wrappers.i18n("Bottom"),
+                    Wrappers.i18n("Left"),
+                    Wrappers.i18n("Right"),
+                    Wrappers.i18n("Top")
+                ]
+                currentIndex: cfg_page.cfg_indicatorLocation
+                onActivated: (index) => cfg_page.cfg_indicatorLocation = index
             }
-        }
 
-        Item {
-            Kirigami.FormData.isSection: true
-        }
+            Item { height: Kirigami.Units.smallSpacing; visible: indicatorsEnabled.checked }
 
-        SpinBox {
-            enabled: indicatorsEnabled.currentIndex
-            id: indicatorSize
-            Kirigami.FormData.label: Wrappers.i18n("Indicator size (px):")
-            from: 1
-            to: 999
-            value: cfg_page.cfg_indicatorSize
-            onValueModified: cfg_page.cfg_indicatorSize = value
-        }
-
-        SpinBox {
-            enabled: indicatorsEnabled.currentIndex
-            id: indicatorLength
-            Kirigami.FormData.label: Wrappers.i18n("Indicator length (px):")
-            from: 1
-            to: 999
-            value: cfg_page.cfg_indicatorLength
-            onValueModified: cfg_page.cfg_indicatorLength = value
-        }
-
-        SpinBox {
-            enabled: indicatorsEnabled.currentIndex
-            id: indicatorRadius
-            Kirigami.FormData.label: Wrappers.i18n("Indicator Radius (%):")
-            from: 0
-            to: 100
-            value: cfg_page.cfg_indicatorRadius
-            onValueModified: cfg_page.cfg_indicatorRadius = value
-        }
-
-        SpinBox {
-            enabled: indicatorsEnabled.currentIndex
-            id: indicatorShrink
-            Kirigami.FormData.label: Wrappers.i18n("Indicator margin (px):")
-            from: 0
-            to: 999
-            value: cfg_page.cfg_indicatorShrink
-            onValueModified: cfg_page.cfg_indicatorShrink = value
-        }
-
-
-        Item {
-            Kirigami.FormData.isSection: true
-        }
-
-        CheckBox {
-            enabled: indicatorsEnabled.currentIndex && !cfg_indicatorAccentColor.checked
-            id: cfg_indicatorDominantColor
-            Kirigami.FormData.label: Wrappers.i18n("Indicator Color:")
-            text: Wrappers.i18n("Use dominant icon color")
-            checked: cfg_page.cfg_indicatorDominantColor
-            onToggled: cfg_page.cfg_indicatorDominantColor = checked
-        }
-
-        CheckBox {
-            enabled: indicatorsEnabled.currentIndex && !cfg_indicatorDominantColor.checked
-            id: cfg_indicatorAccentColor
-            text: Wrappers.i18n("Use plasma accent color")
-            checked: cfg_page.cfg_indicatorAccentColor
-            onToggled: cfg_page.cfg_indicatorAccentColor = checked
-        }
-
-        KQControls.ColorButton {
-            enabled: indicatorsEnabled.currentIndex && !cfg_indicatorDominantColor.checked && !cfg_indicatorAccentColor.checked
-            id: cfg_indicatorCustomColor
-            Kirigami.FormData.label: Wrappers.i18n("Custom Color:")
-            color: cfg_page.cfg_indicatorCustomColor
-            onColorChanged: {
-                if (!Qt.colorEqual(color, cfg_page.cfg_indicatorCustomColor)) {
-                    cfg_page.cfg_indicatorCustomColor = color
+            RowLayout {
+                visible: indicatorsEnabled.checked
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Edge offset:")
+                }
+                SpinBox {
+                    id: indicatorEdgeOffset
+                    from: 0
+                    to: 999
+                    value: cfg_page.cfg_indicatorEdgeOffset
+                    onValueModified: cfg_page.cfg_indicatorEdgeOffset = value
+                }
+                Label {
+                    text: "px"
                 }
             }
-        }
 
-        CheckBox {
-            id: cfg_showBadges
-            Kirigami.FormData.label: Wrappers.i18n("Badges:")
-            text: Wrappers.i18n("Show notification badges")
-            checked: cfg_page.cfg_showBadges
-            onToggled: cfg_page.cfg_showBadges = checked
+            RowLayout {
+                visible: indicatorsEnabled.checked
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Indicator size:")
+                }
+                SpinBox {
+                    id: indicatorSize
+                    from: 1
+                    to: 999
+                    value: cfg_page.cfg_indicatorSize
+                    onValueModified: cfg_page.cfg_indicatorSize = value
+                }
+                Label {
+                    text: "px"
+                }
+
+                Item { width: Kirigami.Units.largeSpacing }
+
+                Label {
+                    text: Wrappers.i18n("Indicator length:")
+                }
+                SpinBox {
+                    id: indicatorLength
+                    from: 1
+                    to: 999
+                    value: cfg_page.cfg_indicatorLength
+                    onValueModified: cfg_page.cfg_indicatorLength = value
+                }
+                Label {
+                    text: "px"
+                }
+            }
+
+            RowLayout {
+                visible: indicatorsEnabled.checked
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Indicator Radius:")
+                }
+                SpinBox {
+                    id: indicatorRadius
+                    from: 0
+                    to: 100
+                    value: cfg_page.cfg_indicatorRadius
+                    onValueModified: cfg_page.cfg_indicatorRadius = value
+                }
+                Label {
+                    text: "%"
+                }
+
+                Item { width: Kirigami.Units.largeSpacing }
+
+                Label {
+                    text: Wrappers.i18n("Indicator margins:")
+                }
+                SpinBox {
+                    id: indicatorShrink
+                    from: 0
+                    to: 999
+                    value: cfg_page.cfg_indicatorShrink
+                    onValueModified: cfg_page.cfg_indicatorShrink = value
+                }
+                Label {
+                    text: "px"
+                }
+            }
+
+            Item { height: Kirigami.Units.largeSpacing; visible: indicatorsEnabled.checked }
+
+            Label {
+                visible: indicatorsEnabled.checked
+                text: Wrappers.i18n("Limits (Min/Max):")
+            }
+
+            RowLayout {
+                visible: indicatorsEnabled.checked
+                spacing: Kirigami.Units.smallSpacing
+                SpinBox {
+                    id: indicatorMinLimit
+                    from: 0
+                    to: 99
+                    value: cfg_page.cfg_indicatorMinLimit
+                    onValueModified: cfg_page.cfg_indicatorMinLimit = value
+                }
+                Label { text: "/" }
+                SpinBox {
+                    id: indicatorMaxLimit
+                    from: 0
+                    to: 99
+                    value: cfg_page.cfg_indicatorMaxLimit
+                    onValueModified: cfg_page.cfg_indicatorMaxLimit = value
+                }
+            }
+
+            Item { height: Kirigami.Units.largeSpacing; visible: indicatorsEnabled.checked }
+
+            Label {
+                visible: indicatorsEnabled.checked
+                text: Wrappers.i18n("Indicator Colors:")
+            }
+
+            CheckBox {
+                visible: indicatorsEnabled.checked
+                id: indicatorAccentColor
+                text: Wrappers.i18n("Use plasma accent color")
+                checked: cfg_page.cfg_indicatorAccentColor
+                onToggled: cfg_page.cfg_indicatorAccentColor = checked
+            }
+
+            CheckBox {
+                visible: indicatorsEnabled.checked && !indicatorAccentColor.checked
+                id: indicatorDominantColor
+                text: Wrappers.i18n("Use dominant icon color")
+                checked: cfg_page.cfg_indicatorDominantColor
+                onToggled: cfg_page.cfg_indicatorDominantColor = checked
+            }
+
+            RowLayout {
+                visible: indicatorsEnabled.checked && !indicatorAccentColor.checked && !indicatorDominantColor.checked
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Custom color:")
+                }
+                KQuickAddons.ColorButton {
+                    id: indicatorCustomColor
+                    showAlphaChannel: true
+                    color: cfg_page.cfg_indicatorCustomColor
+                    onColorChanged: {
+                        if (!Qt.colorEqual(color, cfg_page.cfg_indicatorCustomColor)) {
+                            cfg_page.cfg_indicatorCustomColor = color
+                        }
+                    }
+                }
+            }
+
+            Item { height: Kirigami.Units.largeSpacing; visible: indicatorsEnabled.checked }
+
+            Label {
+                visible: indicatorsEnabled.checked
+                text: Wrappers.i18n("Indicator Behavior:")
+            }
+
+            CheckBox {
+                visible: indicatorsEnabled.checked
+                id: indicatorDesaturate
+                text: Wrappers.i18n("Desaturate when minimized")
+                checked: cfg_page.cfg_indicatorDesaturate
+                onToggled: cfg_page.cfg_indicatorDesaturate = checked
+            }
+
+            RowLayout {
+                visible: indicatorsEnabled.checked
+                spacing: Kirigami.Units.smallSpacing
+                CheckBox {
+                    id: indicatorGrow
+                    text: Wrappers.i18n("Grow/Shrink when minimized:")
+                    checked: cfg_page.cfg_indicatorGrow
+                    onToggled: cfg_page.cfg_indicatorGrow = checked
+                }
+                SpinBox {
+                    visible: indicatorGrow.checked
+                    id: indicatorGrowFactor
+                    from: 0
+                    to: 500
+                    value: cfg_page.cfg_indicatorGrowFactor
+                    onValueModified: cfg_page.cfg_indicatorGrowFactor = value
+                }
+                Label {
+                    visible: indicatorGrow.checked
+                    text: "%"
+                }
+            }
+
+            Item { height: Kirigami.Units.largeSpacing }
+
+            Label {
+                text: Wrappers.i18n("Group Indicators:")
+            }
+
+            CheckBox {
+                id: groupIconEnabled
+                text: Wrappers.i18n("Standard group overlay")
+                checked: cfg_page.cfg_groupIconEnabled
+                onToggled: cfg_page.cfg_groupIconEnabled = checked
+            }
+
+            Item { height: Kirigami.Units.largeSpacing }
+
+            Label {
+                text: Wrappers.i18n("Feedback:")
+            }
+
+            CheckBox {
+                id: cfg_showBadges
+                text: Wrappers.i18n("Show badges")
+                checked: cfg_page.cfg_showBadges
+                onToggled: cfg_page.cfg_showBadges = checked
+            }
+
+            CheckBox {
+                id: cfg_indicateAudioStreams
+                text: Wrappers.i18n("Mark applications playing audio")
+                checked: cfg_page.cfg_indicateAudioStreams
+                onToggled: cfg_page.cfg_indicateAudioStreams = checked
+                visible: cfg_page.plasmaPaAvailable
+            }
+
+            Item { height: Kirigami.Units.largeSpacing }
+
+            Label {
+                text: Wrappers.i18n("Progress:")
+            }
+
+            CheckBox {
+                id: indicatorProgress
+                text: Wrappers.i18n("Display progress on indicator instead of button")
+                checked: cfg_page.cfg_indicatorProgress
+                onToggled: cfg_page.cfg_indicatorProgress = checked
+            }
+
+            RowLayout {
+                visible: indicatorProgress.checked
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Progress color:")
+                }
+                KQuickAddons.ColorButton {
+                    id: indicatorProgressColor
+                    showAlphaChannel: true
+                    color: cfg_page.cfg_indicatorProgressColor
+                    onColorChanged: {
+                        if (!Qt.colorEqual(color, cfg_page.cfg_indicatorProgressColor)) {
+                            cfg_page.cfg_indicatorProgressColor = color
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -38,7 +38,7 @@
     </entry>
     <entry name="iconOnly" type="Enum">
       <label
-            >How tasks are display: 0 = Show Task Names, 1 = Show Icons Only</label>
+            >How tasks are display: 0 = Classic Panel, 1 = Show Icons Only</label>
       <default>1</default>
     </entry>
     <entry name="groupedTaskVisualization" type="Enum">

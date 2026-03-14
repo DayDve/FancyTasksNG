@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-03-13 00:50+0200\n"
+"POT-Creation-Date: 2026-03-15 00:21+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -15,21 +15,77 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
+#: ../contents/config/ConfigAdvanced.qml
+msgid "Button Direction:"
+msgstr "Направление кнопок:"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "Override system direction"
+msgstr "Переопределить системное направление"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "North"
+msgstr "Север"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "South"
+msgstr "Юг"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "West"
+msgstr "Запад"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "East"
+msgstr "Восток"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "Layout settings:"
+msgstr "Настройки разметки:"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "Fill free space on panel"
+msgstr "Заполнять свободное место панели"
+
 #: ../contents/config/ConfigAppearance.qml
 msgid "Use plasma borders"
 msgstr "Использовать рамки Plasma"
 
 #: ../contents/config/ConfigAppearance.qml
-msgid "Icon Scale"
-msgstr "Масштаб значков"
+msgid "Display:"
+msgstr "Отображение:"
 
 #: ../contents/config/ConfigAppearance.qml
-msgid "Icon Size"
-msgstr "Размер значков"
+msgid "Classic panel"
+msgstr "Классическая панель"
 
 #: ../contents/config/ConfigAppearance.qml
-msgid "Set icon size instead of scaling"
-msgstr "Задать размер значков вместо масштабирования"
+msgid "Show icons only"
+msgstr "Только значки"
+
+#: ../contents/config/ConfigAppearance.qml
+msgid "Icon size:"
+msgstr "Размер значков:"
+
+#: ../contents/config/ConfigAppearance.qml
+msgid "Relative"
+msgstr "Относительный"
+
+#: ../contents/config/ConfigAppearance.qml
+msgid "Absolute"
+msgstr "Абсолютный"
+
+#: ../contents/config/ConfigAppearance.qml
+msgid "Icon Scale:"
+msgstr "Масштаб значков:"
+
+#: ../contents/config/ConfigAppearance.qml
+msgid "Icon Size:"
+msgstr "Размер значков:"
+
+#: ../contents/config/ConfigAppearance.qml
+msgid "Reset to default"
+msgstr "Сбросить по умолчанию"
 
 #: ../contents/config/ConfigAppearance.qml
 msgid "Scale icons from panel edge"
@@ -40,8 +96,8 @@ msgid "Edge offset (px):"
 msgstr "Отступ от края (px):"
 
 #: ../contents/config/ConfigAppearance.qml
-msgid "Icon Hover Effects"
-msgstr "Эффекты наведения"
+msgid "Icon hover effects"
+msgstr "Эффекты при наведении"
 
 #: ../contents/config/ConfigAppearance.qml
 msgid "Icon zoom factor (px):"
@@ -75,7 +131,7 @@ msgstr "Использовать оверлей цвета"
 msgid "Use dominant icon color"
 msgstr "Использовать основной цвет значка"
 
-#: ../contents/config/ConfigAppearance.qml ../contents/config/ConfigIndicators.qml
+#: ../contents/config/ConfigAppearance.qml
 msgid "Custom Color:"
 msgstr "Свой цвет:"
 
@@ -84,44 +140,12 @@ msgid "Colorize inactive buttons"
 msgstr "Окрашивать неактивные кнопки"
 
 #: ../contents/config/ConfigAppearance.qml
-msgid "Plasma Button Decorations:"
-msgstr "Декорации кнопок Plasma:"
+msgid "Disable plasma context decorations"
+msgstr "Отключить декорации контекста Plasma"
 
 #: ../contents/config/ConfigAppearance.qml
-msgid "Disable All"
-msgstr "Отключить все"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Disable Inactive Buttons"
-msgstr "Отключить неактивные кнопки"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Plasma Button Direction:"
-msgstr "Направление кнопок Plasma:"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Override"
-msgstr "Переопределить"
-
-#: ../contents/config/ConfigAppearance.qml ../contents/config/ConfigIndicators.qml
-msgid "Be sure to use this when using as a floating widget"
-msgstr "Используйте это, если виджет плавающий"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "North"
-msgstr "Север"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "South"
-msgstr "Юг"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "West"
-msgstr "Запад"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "East"
-msgstr "Восток"
+msgid "Hide backgrounds for inactive buttons"
+msgstr "Скрывать фон неактивных кнопок"
 
 #: ../contents/config/ConfigAppearance.qml
 msgid "Maximum button length (px):"
@@ -130,26 +154,6 @@ msgstr "Макс. длина кнопки (px):"
 #: ../contents/config/ConfigAppearance.qml
 msgid "Space between taskbar items (px):"
 msgstr "Расстояние между элементами (px):"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "General:"
-msgstr "Общие:"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Show small window previews when hovering over tasks"
-msgstr "Показывать миниатюры окон при наведении"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Hide other windows when hovering over previews"
-msgstr "Скрывать остальные окна при наведении на миниатюру"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Mark applications that play audio"
-msgstr "Помечать приложения, воспроизводящие звук"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Fill free space on panel"
-msgstr "Заполнять свободное место панели"
 
 #: ../contents/config/ConfigAppearance.qml
 msgid "Maximum task width:"
@@ -196,8 +200,8 @@ msgid "Maximum rows:"
 msgstr "Макс. строк:"
 
 #: ../contents/config/ConfigAppearance.qml
-msgid "Spacing between icons:"
-msgstr "Интервал между значками:"
+msgid "Inner padding:"
+msgstr "Внутренние отступы кнопок:"
 
 #: ../contents/config/ConfigAppearance.qml
 msgid "Small"
@@ -220,18 +224,6 @@ msgid "Automatically set to Large when in Touch mode"
 msgstr "Автоматически «Большой» в сенсорном режиме"
 
 #: ../contents/config/ConfigBehavior.qml
-msgid "Display:"
-msgstr "Отображение:"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Show task names"
-msgstr "Показывать названия задач"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Show icons only"
-msgstr "Только значки"
-
-#: ../contents/config/ConfigBehavior.qml
 msgid "Group:"
 msgstr "Группировка:"
 
@@ -244,28 +236,8 @@ msgid "By program name"
 msgstr "По имени программы"
 
 #: ../contents/config/ConfigBehavior.qml
-msgid "Clicking grouped task:"
-msgstr "Нажатие на сгруппированную задачу:"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Cycles through tasks"
-msgstr "Переключает задачи"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Shows small window previews"
-msgstr "Показывает миниатюры окон"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Shows large window previews"
-msgstr "Показывает большие превью"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Shows textual list"
-msgstr "Показывает текстовый список"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "The compositor does not support displaying windows side by side, so a textual list will be displayed instead."
-msgstr "Композитор не поддерживает показ окон рядом, будет показан текстовый список."
+msgid "Clicking group button:"
+msgstr "Нажатие на кнопку группы:"
 
 #: ../contents/config/ConfigBehavior.qml
 msgid "Combine into single button"
@@ -305,15 +277,11 @@ msgstr "Держать значки запуска отдельно"
 
 #: ../contents/config/ConfigBehavior.qml
 msgid "Hide launchers after application startup"
-msgstr "Скрывать значки запуска после старта приложения"
+msgstr ""
 
 #: ../contents/config/ConfigBehavior.qml
-msgid "Clicking active task:"
-msgstr "Нажатие на активную задачу:"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Minimizes the task"
-msgstr "Сворачивает задачу"
+msgid "Clicking active task minimizes the task"
+msgstr "Нажатие на активную задачу сворачивает задачу"
 
 #: ../contents/config/ConfigBehavior.qml
 msgid "Middle-clicking any task:"
@@ -344,12 +312,36 @@ msgid "Brings it to the current virtual desktop"
 msgstr "Переносит на текущий рабочий стол"
 
 #: ../contents/config/ConfigBehavior.qml
-msgid "Mouse wheel:"
-msgstr "Колесо мыши:"
+msgid "Mouse wheel cycles through tasks"
+msgstr "Переключать задачи прокруткой колеса мыши"
 
 #: ../contents/config/ConfigBehavior.qml
 msgid "Skip minimized tasks"
 msgstr "Пропускать свернутые"
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Show window previews when hovering over tasks"
+msgstr "Показывать эскизы окон при наведении на задачи"
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Hide other windows when hovering over previews"
+msgstr "Скрывать остальные окна при наведении на тултип"
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Cycles through tasks"
+msgstr "Переключение задач"
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Shows small window previews"
+msgstr "Показывает миниатюры окон"
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Shows large window previews"
+msgstr "Показывает большие превью"
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Shows textual list"
+msgstr "Показывает текстовый список"
 
 #: ../contents/config/ConfigBehavior.qml
 msgid "Show only tasks:"
@@ -370,10 +362,6 @@ msgstr "Из текущей комнаты"
 #: ../contents/config/ConfigBehavior.qml
 msgid "That are minimized"
 msgstr "Которые свернуты"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "When panel is hidden:"
-msgstr "Когда панель скрыта:"
 
 #: ../contents/config/ConfigBehavior.qml
 msgid "Unhide when a window wants attention"
@@ -400,48 +388,36 @@ msgid "On the top"
 msgstr "Сверху"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicators:"
-msgstr "Индикаторы:"
+msgid "Active application indicators:"
+msgstr "Индикаторы запущенных приложений:"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Disabled"
-msgstr "Выкл."
+msgid "Enable"
+msgstr "Включить"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Enabled"
-msgstr "Вкл."
+msgid "Animate indicators"
+msgstr "Анимация индикаторов"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Display Progress on Indicator"
-msgstr "Показывать прогресс на индикаторе"
+msgid "Indicator Style:"
+msgstr "Стиль индикаторов:"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Disable for Inactive Windows"
-msgstr "Отключить для неактивных окон"
+msgid "Metro"
+msgstr "Metro"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Group Overlay:"
-msgstr "Оверлей группы:"
+msgid "Ciliora"
+msgstr "Ciliora"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Takes effect on next time plasma groups tasks."
-msgstr "Применится при следующей группировке задач."
+msgid "Dashes"
+msgstr "Dashes"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Animate Indicators:"
-msgstr "Анимация индикаторов:"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Location:"
-msgstr "Расположение индикатора:"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Reverse shown side"
-msgstr "Инвертировать сторону"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Override location"
-msgstr "Переопределить положение"
+msgid "Override indicator location"
+msgstr "Переопределить расположение индикаторов"
 
 #: ../contents/config/ConfigIndicators.qml
 msgid "Bottom"
@@ -460,80 +436,84 @@ msgid "Top"
 msgstr "Сверху"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Edge Offset (px):"
-msgstr "Сдвиг от края панели (px):"
+msgid "Edge offset:"
+msgstr "Сдвиг от края:"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Style:"
-msgstr "Стиль индикатора:"
+msgid "Indicator size:"
+msgstr "Размер индикатора:"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Metro"
-msgstr "Metro"
+msgid "Indicator length:"
+msgstr "Длина индикатора:"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Ciliora"
-msgstr "Ciliora"
+msgid "Indicator Radius:"
+msgstr "Радиус индикатора:"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Dashes"
-msgstr "Dashes"
+msgid "Indicator margins:"
+msgstr "Сжатие по краям:"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Min Limit:"
-msgstr "Мин. предел индикатора:"
+msgid "Limits (Min/Max):"
+msgstr "Пределы (Мин/Макс):"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Max Limit:"
-msgstr "Макс. предел индикатора:"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Minimize Options:"
-msgstr "Параметры сворачивания:"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Desaturate"
-msgstr "Обесцветить"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Shrink when minimized"
-msgstr "Уменьшать при сворачивании"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Growth/Shrink factor:"
-msgstr "Коэффициент роста/уменьшения:"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Indicator size (px):"
-msgstr "Размер индикатора (px):"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Indicator length (px):"
-msgstr "Длина индикатора (px):"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Radius (%):"
-msgstr "Радиус индикатора (%):"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Indicator margin (px):"
-msgstr "Сжатие по краям (px):"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Color:"
-msgstr "Цвет индикатора:"
+msgid "Indicator Colors:"
+msgstr "Цвета индикаторов:"
 
 #: ../contents/config/ConfigIndicators.qml
 msgid "Use plasma accent color"
 msgstr "Использовать цвет акцента Plasma"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Badges:"
-msgstr "Бейджи:"
+msgid "Custom color:"
+msgstr "Свой цвет:"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Show notification badges"
-msgstr "Показывать бейджи уведомлений"
+msgid "Indicator Behavior:"
+msgstr "Поведение индикаторов:"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Desaturate when minimized"
+msgstr "Обесцвечивать при сворачивании"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Grow/Shrink when minimized:"
+msgstr "Масштабировать при сворачивании:"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Group Indicators:"
+msgstr "Групповые индикаторы:"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Standard group overlay"
+msgstr "Стандартный оверлей групп"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Feedback:"
+msgstr "Обратная связь:"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Show badges"
+msgstr "Счётчики на значках"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Mark applications playing audio"
+msgstr "Отмечать приложения со звуком"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Progress:"
+msgstr "Прогресс:"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Display progress on indicator instead of button"
+msgstr "Отображать прогресс на индикаторе вместо кнопки"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Progress color:"
+msgstr "Цвет прогресса:"
 
 #: ../contents/config/ConfigPinnedApps.qml
 msgid "Default Web Browser"
@@ -603,6 +583,10 @@ msgstr "Поведение"
 #: ../contents/config/config.qml
 msgid "Indicators"
 msgstr "Индикаторы"
+
+#: ../contents/config/config.qml
+msgid "Advanced"
+msgstr "Прочее"
 
 #: ../contents/config/config.qml
 msgid "Pinned Applications"
@@ -847,6 +831,141 @@ msgstr "Также доступно в %1"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Доступно в %1"
+
+#~ msgid "Floating Widget Settings"
+#~ msgstr "Настройки плавающего виджета"
+
+#~ msgid "Indicator Settings"
+#~ msgstr "Настройки индикаторов"
+
+#~ msgid "Layout:"
+#~ msgstr "Разметка:"
+
+#~ msgid "Previews and Hover Effects:"
+#~ msgstr "Превью и эффекты:"
+
+#~ msgid "Mouse wheel:"
+#~ msgstr "Колесо мыши:"
+
+#~ msgid "When panel is hidden:"
+#~ msgstr "Когда панель скрыта:"
+
+#~ msgid "Settings for the behavior of plasmoid elements when hovering the mouse over them."
+#~ msgstr "Настройки поведения элементов при наведении мыши."
+
+#~ msgid "The compositor does not support displaying windows side by side, so a textual list will be displayed instead."
+#~ msgstr "Композитор не поддерживает показ окон рядом, будет показан текстовый список."
+
+#~ msgid "Icon Hover Effects"
+#~ msgstr "Эффекты наведения"
+
+#~ msgid "Button Style:"
+#~ msgstr "Стиль кнопок:"
+
+#~ msgid "Indicators:"
+#~ msgstr "Индикаторы:"
+
+#~ msgid "Placement:"
+#~ msgstr "Расположение:"
+
+#~ msgid "Group Overlays:"
+#~ msgstr "Групповые оверлеи:"
+
+#~ msgid "Notifications:"
+#~ msgstr "Уведомления:"
+
+#~ msgid "Task Progress:"
+#~ msgstr "Прогресс задачи:"
+
+#~ msgid "Tooltips:"
+#~ msgstr "Подсказки:"
+
+#~ msgid "Plasma Button Decorations:"
+#~ msgstr "Декорации кнопок Plasma:"
+
+#~ msgid "Disable All"
+#~ msgstr "Отключить все"
+
+#~ msgid "Disable Inactive Buttons"
+#~ msgstr "Отключить неактивные кнопки"
+
+#~ msgid "Plasma Button Direction:"
+#~ msgstr "Направление кнопок Plasma:"
+
+#~ msgid "Override"
+#~ msgstr "Переопределить"
+
+#~ msgid "Be sure to use this when using as a floating widget"
+#~ msgstr "Используйте это, если виджет плавающий"
+
+#~ msgid "General:"
+#~ msgstr "Общие:"
+
+#~ msgid "Show small window previews when hovering over tasks"
+#~ msgstr "Показывать миниатюры окон при наведении"
+
+#~ msgid "Mark applications that play audio"
+#~ msgstr "Помечать приложения, воспроизводящие звук"
+
+#~ msgid "Disabled"
+#~ msgstr "Выкл."
+
+#~ msgid "Display Progress on Indicator"
+#~ msgstr "Показывать прогресс на индикаторе"
+
+#~ msgid "Disable for Inactive Windows"
+#~ msgstr "Отключить для неактивных окон"
+
+#~ msgid "Group Overlay:"
+#~ msgstr "Оверлей группы:"
+
+#~ msgid "Takes effect on next time plasma groups tasks."
+#~ msgstr "Применится при следующей группировке задач."
+
+#~ msgid "Animate Indicators:"
+#~ msgstr "Анимация индикаторов:"
+
+#~ msgid "Override location"
+#~ msgstr "Переопределить положение"
+
+#~ msgid "Indicator Min Limit:"
+#~ msgstr "Мин. предел индикатора:"
+
+#~ msgid "Indicator Max Limit:"
+#~ msgstr "Макс. предел индикатора:"
+
+#~ msgid "Minimize Options:"
+#~ msgstr "Параметры сворачивания:"
+
+#~ msgid "Desaturate"
+#~ msgstr "Обесцветить"
+
+#~ msgid "Shrink when minimized"
+#~ msgstr "Уменьшать при сворачивании"
+
+#~ msgid "Growth/Shrink factor:"
+#~ msgstr "Коэффициент роста/уменьшения:"
+
+#~ msgid "Indicator size (px):"
+#~ msgstr "Размер индикатора (px):"
+
+#~ msgid "Indicator length (px):"
+#~ msgstr "Длина индикатора (px):"
+
+#~ msgid "Indicator Radius (%):"
+#~ msgstr "Радиус индикатора (%):"
+
+#~ msgid "Indicator margin (px):"
+#~ msgstr "Сжатие по краям (px):"
+
+#~ msgid "Indicator Color:"
+#~ msgstr "Цвет индикатора:"
+
+#~ msgid "Badges:"
+#~ msgstr "Бейджи:"
+
+#~ msgid "Show notification badges"
+#~ msgstr "Показывать бейджи уведомлений"
 
 #~ msgid "Progress Color:"
 #~ msgstr "Цвет прогресса:"

@@ -26,9 +26,13 @@ ConfigModel {
         source: "../config/ConfigIndicators.qml"
     }
     ConfigCategory {
+        name: i18n("Advanced")
+        icon: "preferences-other"
+        source: "../config/ConfigAdvanced.qml"
+    }
+    ConfigCategory {
         name: i18n("Pinned Applications")
         icon: "window-pin"
         source: "../config/ConfigPinnedApps.qml"
     }
-    // qmllint enable unqualified
 }

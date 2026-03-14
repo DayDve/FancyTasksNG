@@ -4,9 +4,9 @@
 */
 
 import QtQuick
-import org.kde.kcmutils as KCMUtils
+import org.kde.kirigami as Kirigami
 
-KCMUtils.SimpleKCM {
+Kirigami.Page {
     // --- Properties to silence KCM errors ---
     // Defaults for existing aliases
     // --- General ---

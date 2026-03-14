@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-03-13 00:50+0200\n"
+"POT-Creation-Date: 2026-03-15 00:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,20 +17,76 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: ../contents/config/ConfigAdvanced.qml
+msgid "Button Direction:"
+msgstr ""
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "Override system direction"
+msgstr ""
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "North"
+msgstr "北"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "South"
+msgstr "南"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "West"
+msgstr "西"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "East"
+msgstr "东"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "Layout settings:"
+msgstr ""
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "Fill free space on panel"
+msgstr ""
+
 #: ../contents/config/ConfigAppearance.qml
 msgid "Use plasma borders"
 msgstr "使用plasma边框"
 
 #: ../contents/config/ConfigAppearance.qml
-msgid "Icon Scale"
+msgid "Display:"
+msgstr "显示："
+
+#: ../contents/config/ConfigAppearance.qml
+msgid "Classic panel"
 msgstr ""
 
 #: ../contents/config/ConfigAppearance.qml
-msgid "Icon Size"
+msgid "Show icons only"
+msgstr "只显示图标"
+
+#: ../contents/config/ConfigAppearance.qml
+msgid "Icon size:"
 msgstr ""
 
 #: ../contents/config/ConfigAppearance.qml
-msgid "Set icon size instead of scaling"
+msgid "Relative"
+msgstr ""
+
+#: ../contents/config/ConfigAppearance.qml
+msgid "Absolute"
+msgstr ""
+
+#: ../contents/config/ConfigAppearance.qml
+msgid "Icon Scale:"
+msgstr ""
+
+#: ../contents/config/ConfigAppearance.qml
+msgid "Icon Size:"
+msgstr ""
+
+#: ../contents/config/ConfigAppearance.qml
+msgid "Reset to default"
 msgstr ""
 
 #: ../contents/config/ConfigAppearance.qml
@@ -42,7 +98,7 @@ msgid "Edge offset (px):"
 msgstr ""
 
 #: ../contents/config/ConfigAppearance.qml
-msgid "Icon Hover Effects"
+msgid "Icon hover effects"
 msgstr ""
 
 #: ../contents/config/ConfigAppearance.qml
@@ -77,7 +133,7 @@ msgstr ""
 msgid "Use dominant icon color"
 msgstr "使用图标主体色"
 
-#: ../contents/config/ConfigAppearance.qml ../contents/config/ConfigIndicators.qml
+#: ../contents/config/ConfigAppearance.qml
 msgid "Custom Color:"
 msgstr "自定义颜色："
 
@@ -86,44 +142,12 @@ msgid "Colorize inactive buttons"
 msgstr ""
 
 #: ../contents/config/ConfigAppearance.qml
-msgid "Plasma Button Decorations:"
-msgstr "Plasma按钮装饰："
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Disable All"
+msgid "Disable plasma context decorations"
 msgstr ""
 
 #: ../contents/config/ConfigAppearance.qml
-msgid "Disable Inactive Buttons"
+msgid "Hide backgrounds for inactive buttons"
 msgstr ""
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Plasma Button Direction:"
-msgstr "Plasma按钮方向"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Override"
-msgstr "覆盖"
-
-#: ../contents/config/ConfigAppearance.qml ../contents/config/ConfigIndicators.qml
-msgid "Be sure to use this when using as a floating widget"
-msgstr "作为浮动组件使用时需要设置"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "North"
-msgstr "北"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "South"
-msgstr "南"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "West"
-msgstr "西"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "East"
-msgstr "东"
 
 #: ../contents/config/ConfigAppearance.qml
 msgid "Maximum button length (px):"
@@ -132,26 +156,6 @@ msgstr "最大按钮长度（px）"
 #: ../contents/config/ConfigAppearance.qml
 msgid "Space between taskbar items (px):"
 msgstr "任务栏组件间距（px）"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "General:"
-msgstr "通用："
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Show small window previews when hovering over tasks"
-msgstr ""
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Hide other windows when hovering over previews"
-msgstr ""
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Mark applications that play audio"
-msgstr "标记正在播放音频的应用"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Fill free space on panel"
-msgstr ""
 
 #: ../contents/config/ConfigAppearance.qml
 msgid "Maximum task width:"
@@ -198,8 +202,8 @@ msgid "Maximum rows:"
 msgstr "最大行数"
 
 #: ../contents/config/ConfigAppearance.qml
-msgid "Spacing between icons:"
-msgstr "图标间距："
+msgid "Inner padding:"
+msgstr ""
 
 #: ../contents/config/ConfigAppearance.qml
 msgid "Small"
@@ -222,18 +226,6 @@ msgid "Automatically set to Large when in Touch mode"
 msgstr ""
 
 #: ../contents/config/ConfigBehavior.qml
-msgid "Display:"
-msgstr "显示："
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Show task names"
-msgstr "显示任务名称"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Show icons only"
-msgstr "只显示图标"
-
-#: ../contents/config/ConfigBehavior.qml
 msgid "Group:"
 msgstr "分组："
 
@@ -246,28 +238,8 @@ msgid "By program name"
 msgstr "以程序名分组"
 
 #: ../contents/config/ConfigBehavior.qml
-msgid "Clicking grouped task:"
-msgstr "点击已分组任务时："
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Cycles through tasks"
+msgid "Clicking group button:"
 msgstr ""
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Shows small window previews"
-msgstr ""
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Shows large window previews"
-msgstr ""
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Shows textual list"
-msgstr ""
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "The compositor does not support displaying windows side by side, so a textual list will be displayed instead."
-msgstr "混成器不支持并列显示窗口，展示文字列表"
 
 #: ../contents/config/ConfigBehavior.qml
 msgid "Combine into single button"
@@ -310,11 +282,7 @@ msgid "Hide launchers after application startup"
 msgstr ""
 
 #: ../contents/config/ConfigBehavior.qml
-msgid "Clicking active task:"
-msgstr ""
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Minimizes the task"
+msgid "Clicking active task minimizes the task"
 msgstr ""
 
 #: ../contents/config/ConfigBehavior.qml
@@ -346,12 +314,36 @@ msgid "Brings it to the current virtual desktop"
 msgstr ""
 
 #: ../contents/config/ConfigBehavior.qml
-msgid "Mouse wheel:"
+msgid "Mouse wheel cycles through tasks"
 msgstr ""
 
 #: ../contents/config/ConfigBehavior.qml
 msgid "Skip minimized tasks"
 msgstr "跳过最小化的任务"
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Show window previews when hovering over tasks"
+msgstr ""
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Hide other windows when hovering over previews"
+msgstr ""
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Cycles through tasks"
+msgstr ""
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Shows small window previews"
+msgstr ""
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Shows large window previews"
+msgstr ""
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Shows textual list"
+msgstr ""
 
 #: ../contents/config/ConfigBehavior.qml
 msgid "Show only tasks:"
@@ -372,10 +364,6 @@ msgstr "从当前活动"
 #: ../contents/config/ConfigBehavior.qml
 msgid "That are minimized"
 msgstr "最小化的任务"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "When panel is hidden:"
-msgstr "面板隐藏时："
 
 #: ../contents/config/ConfigBehavior.qml
 msgid "Unhide when a window wants attention"
@@ -402,67 +390,15 @@ msgid "On the top"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicators:"
-msgstr "指示器："
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Disabled"
-msgstr "关闭"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Enabled"
-msgstr "打开"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Display Progress on Indicator"
+msgid "Active application indicators:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Disable for Inactive Windows"
+msgid "Enable"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Group Overlay:"
-msgstr "分组覆盖"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Takes effect on next time plasma groups tasks."
-msgstr "在下一次plasma组合任务时生效"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Animate Indicators:"
-msgstr "动态指示器"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Location:"
-msgstr "指示器位置："
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Reverse shown side"
-msgstr "切换显示位置"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Override location"
-msgstr "覆盖位置"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Bottom"
-msgstr "底部"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Left"
-msgstr "左边"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Right"
-msgstr "右边"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Top"
-msgstr "顶部"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Edge Offset (px):"
+msgid "Animate indicators"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
@@ -482,59 +418,99 @@ msgid "Dashes"
 msgstr "Dashes"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Min Limit:"
+msgid "Override indicator location"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Max Limit:"
+msgid "Bottom"
+msgstr "底部"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Left"
+msgstr "左边"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Right"
+msgstr "右边"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Top"
+msgstr "顶部"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Edge offset:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Minimize Options:"
-msgstr "最小化选项："
+msgid "Indicator size:"
+msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Desaturate"
-msgstr "降低饱和度"
+msgid "Indicator length:"
+msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Shrink when minimized"
-msgstr "最小化时收缩"
+msgid "Indicator Radius:"
+msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Growth/Shrink factor:"
-msgstr "增长/收缩因数"
+msgid "Indicator margins:"
+msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator size (px):"
-msgstr "指示器大小（px）："
+msgid "Limits (Min/Max):"
+msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator length (px):"
-msgstr "指示器长度（px）："
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Radius (%):"
-msgstr "指示器圆角（%）："
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Indicator margin (px):"
-msgstr "指示器间距（px）"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Color:"
-msgstr "指示器颜色："
+msgid "Indicator Colors:"
+msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
 msgid "Use plasma accent color"
 msgstr "使用plasma预设"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Badges:"
+msgid "Custom color:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Show notification badges"
+msgid "Indicator Behavior:"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Desaturate when minimized"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Grow/Shrink when minimized:"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Group Indicators:"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Standard group overlay"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Feedback:"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Show badges"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Mark applications playing audio"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Progress:"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Display progress on indicator instead of button"
 msgstr ""
 
 #: ../contents/config/ConfigPinnedApps.qml
@@ -604,6 +580,10 @@ msgstr "行为"
 #: ../contents/config/config.qml
 msgid "Indicators"
 msgstr "指示器"
+
+#: ../contents/config/config.qml
+msgid "Advanced"
+msgstr ""
 
 #: ../contents/config/config.qml
 msgid "Pinned Applications"
@@ -846,6 +826,93 @@ msgstr "也在 %1 上可用"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "在 %1 上可用"
+
+#~ msgid "Indicator Location:"
+#~ msgstr "指示器位置："
+
+#~ msgid "Enabled"
+#~ msgstr "打开"
+
+#~ msgid "Spacing between icons:"
+#~ msgstr "图标间距："
+
+#~ msgid "Show task names"
+#~ msgstr "显示任务名称"
+
+#~ msgid "When panel is hidden:"
+#~ msgstr "面板隐藏时："
+
+#~ msgid "Reverse shown side"
+#~ msgstr "切换显示位置"
+
+#~ msgid "Clicking grouped task:"
+#~ msgstr "点击已分组任务时："
+
+#~ msgid "The compositor does not support displaying windows side by side, so a textual list will be displayed instead."
+#~ msgstr "混成器不支持并列显示窗口，展示文字列表"
+
+#~ msgid "Indicators:"
+#~ msgstr "指示器："
+
+#~ msgid "Plasma Button Decorations:"
+#~ msgstr "Plasma按钮装饰："
+
+#~ msgid "Plasma Button Direction:"
+#~ msgstr "Plasma按钮方向"
+
+#~ msgid "Override"
+#~ msgstr "覆盖"
+
+#~ msgid "Be sure to use this when using as a floating widget"
+#~ msgstr "作为浮动组件使用时需要设置"
+
+#~ msgid "General:"
+#~ msgstr "通用："
+
+#~ msgid "Mark applications that play audio"
+#~ msgstr "标记正在播放音频的应用"
+
+#~ msgid "Disabled"
+#~ msgstr "关闭"
+
+#~ msgid "Group Overlay:"
+#~ msgstr "分组覆盖"
+
+#~ msgid "Takes effect on next time plasma groups tasks."
+#~ msgstr "在下一次plasma组合任务时生效"
+
+#~ msgid "Animate Indicators:"
+#~ msgstr "动态指示器"
+
+#~ msgid "Override location"
+#~ msgstr "覆盖位置"
+
+#~ msgid "Minimize Options:"
+#~ msgstr "最小化选项："
+
+#~ msgid "Desaturate"
+#~ msgstr "降低饱和度"
+
+#~ msgid "Shrink when minimized"
+#~ msgstr "最小化时收缩"
+
+#~ msgid "Growth/Shrink factor:"
+#~ msgstr "增长/收缩因数"
+
+#~ msgid "Indicator size (px):"
+#~ msgstr "指示器大小（px）："
+
+#~ msgid "Indicator length (px):"
+#~ msgstr "指示器长度（px）："
+
+#~ msgid "Indicator Radius (%):"
+#~ msgstr "指示器圆角（%）："
+
+#~ msgid "Indicator margin (px):"
+#~ msgstr "指示器间距（px）"
+
+#~ msgid "Indicator Color:"
+#~ msgstr "指示器颜色："
 
 #~ msgctxt "button to unmute app"
 #~ msgid "Unmute %1"
