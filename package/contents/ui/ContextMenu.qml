@@ -650,7 +650,7 @@ PlasmaExtras.Menu {
                 text: Wrappers.i18n("Ma&ximize")
                 icon: "window-maximize"
 
-                onClicked: menu.tasksModel.requestToggleMaximized(modelIndex)
+                onClicked: menu.tasksModel.requestToggleMaximized(menu.modelIndex)
             }
 
             PlasmaExtras.MenuItem {
@@ -664,7 +664,7 @@ PlasmaExtras.Menu {
                 text: Wrappers.i18n("Mi&nimize")
                 icon: "window-minimize"
 
-                onClicked: menu.tasksModel.requestToggleMinimized(modelIndex)
+                onClicked: menu.tasksModel.requestToggleMinimized(menu.modelIndex)
             }
 
             PlasmaExtras.MenuItem {
@@ -771,11 +771,7 @@ PlasmaExtras.Menu {
         icon: "window-close"
 
         onClicked: {
-            if (tasks.groupDialog !== null && tasks.groupDialog.visualParent === visualParent) {
-                tasks.groupDialog.visible = false;
-            }
-
-            menu.tasksModel.requestClose(modelIndex);
+            menu.tasksModel.requestClose(menu.modelIndex);
         }
     }
 }
