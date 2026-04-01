@@ -257,28 +257,7 @@ ConfigPage {
                 onToggled: cfg_page.cfg_indicatorDesaturate = checked
             }
 
-            RowLayout {
-                visible: indicatorsEnabled.checked
-                spacing: Kirigami.Units.smallSpacing
-                CheckBox {
-                    id: indicatorGrow
-                    text: Wrappers.i18n("Shrink when minimized:")
-                    checked: cfg_page.cfg_indicatorGrow
-                    onToggled: cfg_page.cfg_indicatorGrow = checked
-                }
-                SpinBox {
-                    visible: indicatorGrow.checked
-                    id: indicatorGrowFactor
-                    from: 0
-                    to: 500
-                    value: cfg_page.cfg_indicatorGrowFactor
-                    onValueModified: cfg_page.cfg_indicatorGrowFactor = value
-                }
-                Label {
-                    visible: indicatorGrow.checked
-                    text: "%"
-                }
-            }
+
 
             Item { height: Kirigami.Units.largeSpacing }
 

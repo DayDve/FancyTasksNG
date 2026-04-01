@@ -479,9 +479,7 @@ msgstr "Поведение:"
 msgid "Desaturate when minimized"
 msgstr "Обесцвечивать при сворачивании"
 
-#: ../contents/config/ConfigIndicators.qml
-msgid "Shrink when minimized:"
-msgstr "Сжимать при сворачивании:"
+
 
 #: ../contents/config/ConfigIndicators.qml
 msgid "Group Indicators:"

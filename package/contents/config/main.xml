@@ -242,14 +242,7 @@
       <label>Desaturate the indicator when minimized</label>
       <default>false</default>
     </entry>
-    <entry name="indicatorGrow" type="Bool">
-      <label>Shrink the indicator when minimized</label>
-      <default>false</default>
-    </entry>
-    <entry name="indicatorGrowFactor" type="Int">
-      <label>Amount to grow the indicator by</label>
-      <default>100</default>
-    </entry>
+
     <entry name="indicatorEdgeOffset" type="Int">
       <label>Sets how many pixels offset from the edge the indicator is</label>
       <default>0</default>

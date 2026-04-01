@@ -132,10 +132,7 @@ Kirigami.Page {
     property int cfg_indicatorMaxLimitDefault
     property bool cfg_indicatorDesaturate
     property bool cfg_indicatorDesaturateDefault
-    property bool cfg_indicatorGrow
-    property bool cfg_indicatorGrowDefault
-    property int cfg_indicatorGrowFactor
-    property int cfg_indicatorGrowFactorDefault
+
     property int cfg_indicatorEdgeOffset
     property int cfg_indicatorEdgeOffsetDefault
     property int cfg_indicatorSize

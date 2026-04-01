@@ -75,19 +75,14 @@ Flow {
                 }
                 if(isFirst){//compute the size
         
-                    var growFactor = Plasmoid.configuration.indicatorGrowFactor / 100
-                    if(Plasmoid.configuration.indicatorGrow && indicatorsFlow.task.state === "minimized") {
-                        var mainSize = indicatorLength * growFactor;
-                    }
-                    else{
-                        var mainSize = (parentSize + parentSpacingAdjust);
-                    }
+                    var mainSize = (parentSize + parentSpacingAdjust);
+
                     switch(Plasmoid.configuration.indicatorStyle){
                         case 0: // Line
                         indicatorComputedSize = mainSize - (Math.min(indicatorsFlow.taskCount, maxStates === 1 ? 0 : maxStates)  * (spacing + indicatorLength)) - adjust
                         break
                         case 1: // Dashes
-                        indicatorComputedSize = Plasmoid.configuration.indicatorGrow && indicatorsFlow.task.state !== "minimized" ? indicatorLength * growFactor : indicatorLength
+                        indicatorComputedSize = indicatorLength
                         break
                         default:
                         break
