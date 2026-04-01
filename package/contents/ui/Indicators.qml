@@ -101,15 +101,15 @@ Flow {
                     height = indicatorComputedSize
                 
                 }
+                var baseColor = Qt.darker(colorEval, 1.0)
+                if(!isFirst && Plasmoid.configuration.indicatorDarkenExtras) {
+                    baseColor = Qt.darker(baseColor, 1.2)
+                }
+
                 if(Plasmoid.configuration.indicatorDesaturate && indicatorsFlow.task.state === "minimized") {
-                    var colorHSL = hexToHSL(colorEval)  // qmllint disable unqualified
-                    colorCalc = Qt.hsla(colorHSL.h, colorHSL.s*0.5, colorHSL.l*.8, 1)
-                }
-                else if(!isFirst && Plasmoid.configuration.indicatorDarkenExtras && indicatorsFlow.task.state !== "minimized") {
-                    colorCalc = Qt.darker(colorEval, 1.2) 
-                }
-                else {
-                    colorCalc = colorEval
+                    colorCalc = Qt.hsla(baseColor.hslHue, 0.0, baseColor.hslLightness, baseColor.a * 0.5)
+                } else {
+                    colorCalc = baseColor
                 }
                 return {height: height, width: width, colorCalc: colorCalc}
             }
