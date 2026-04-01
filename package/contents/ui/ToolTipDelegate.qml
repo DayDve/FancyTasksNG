@@ -134,8 +134,10 @@ Loader {
 
     readonly property Mpris.PlayerContainer playerData: mpris2Model && mpris2Model.playerForLauncherUrl ? mpris2Model.playerForLauncherUrl(launcherUrl, pidParent) : null
     
+    property bool forceTextMode: false
+
     // Using showToolTips as the toggle for "Show Thumbnails"
-    readonly property bool showThumbnails: Plasmoid.configuration.showToolTips
+    readonly property bool showThumbnails: Plasmoid.configuration.showToolTips && !forceTextMode
 
     function getAppLayoutDirection(app) {
         return app.layoutDirection;

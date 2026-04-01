@@ -134,11 +134,12 @@ function activateTask(index, model, modifiers, task, plasmoid, tasks, windowView
         // ===========================================
         else if (plasmoid.configuration.groupedTaskVisualization === 1) {
             if (tasks.toolTipOpenedByClick) {
-                task.hideImmediately();
+                tasks.toolTipOpenedByClick.closeTooltip();
             } else {
                 tasks.toolTipOpenedByClick = task;
-                task.updateMainItemBindings(); // BUG 452187
-                task.showToolTip();
+                tasks.currentHoveredTask = task;
+                task.toolTipOpen = true;
+                tasks.toolTipAreaItem = task;
             }
         }
 
@@ -147,7 +148,7 @@ function activateTask(index, model, modifiers, task, plasmoid, tasks, windowView
         // Make sure the Window View effect is  are actually enabled though;
         // if not, fall through to the next option.
         else if (plasmoid.configuration.groupedTaskVisualization === 2 && windowViewAvailable) {
-            task.hideToolTip();
+            task.closeTooltip();
             tasks.activateWindowView(model.WinIdList);
         }
 
@@ -157,11 +158,12 @@ function activateTask(index, model, modifiers, task, plasmoid, tasks, windowView
         // is chosen but not actually available
         else {
             if (tasks.toolTipOpenedByClick) {
-                task.hideImmediately();
+                tasks.toolTipOpenedByClick.closeTooltip();
             } else {
                 tasks.toolTipOpenedByClick = task;
-                task.updateMainItemBindings(); // BUG 452187
-                task.showToolTip();
+                tasks.currentHoveredTask = task;
+                task.toolTipOpen = true;
+                tasks.toolTipAreaItem = task;
             }
         }
     } else {

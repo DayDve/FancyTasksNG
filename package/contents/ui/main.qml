@@ -140,7 +140,18 @@ PlasmoidItem {
 
     signal requestLayout
     signal windowsHovered(var winIds, bool hovered)
-    signal activateWindowView(var winIds)
+    function activateWindowView(winIds) {
+        if (!effectWatcher.registered) return;
+        cancelHighlightWindows();
+        return DBus.SessionBus.asyncCall({
+            service: "org.kde.KWin.Effect.WindowView1",
+            path: "/org/kde/KWin/Effect/WindowView1",
+            iface: "org.kde.KWin.Effect.WindowView1",
+            member: "activate",
+            arguments: [winIds.map(s => String(s))],
+            signature: "(as)"
+        });
+    }
 
     onWindowsHovered: (winIds, hovered) => {
         if (!Plasmoid.configuration.highlightWindows)
@@ -680,6 +691,11 @@ PlasmoidItem {
 
                     isPlayingAudio: taskModel ? (taskModel.IsPlayingAudio === true) : false
                     isMuted: taskModel ? (taskModel.IsMuted === true) : false
+
+                    // Force text-only mode when tooltip was opened by clicking a group
+                    // and the visualization mode is NOT "show thumbnails" (option 1)
+                    forceTextMode: tasks.toolTipOpenedByClick !== null
+                                   && Plasmoid.configuration.groupedTaskVisualization !== 1
                 }
             }
         }
