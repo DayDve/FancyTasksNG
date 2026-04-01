@@ -146,6 +146,8 @@ Kirigami.Page {
     property int cfg_indicatorRadiusDefault
     property int cfg_indicatorShrink
     property int cfg_indicatorShrinkDefault
+    property bool cfg_indicatorDarkenExtras
+    property bool cfg_indicatorDarkenExtrasDefault
     property bool cfg_indicatorDominantColor
     property bool cfg_indicatorDominantColorDefault
     property bool cfg_indicatorAccentColor

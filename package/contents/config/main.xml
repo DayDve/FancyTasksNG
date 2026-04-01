@@ -227,8 +227,7 @@
       <default>0</default>
     </entry>
     <entry name="indicatorStyle" type="Int">
-      <label
-            >Select between 1 of 3 indicator styles. 0 = Metro, 1 = Cliora, 2 = Dots</label>
+      <label>Indicator style. 0 = Line, 1 = Dashes</label>
       <default>0</default>
     </entry>
     <entry name="indicatorMinLimit" type="Int">
@@ -270,6 +269,10 @@
     <entry name="indicatorShrink" type="Int">
       <label>Set the indicator margins in pixels</label>
       <default>4</default>
+    </entry>
+    <entry name="indicatorDarkenExtras" type="Bool">
+      <label>Darken extra indicator segments (Line style only)</label>
+      <default>true</default>
     </entry>
     <entry name="indicatorDominantColor" type="Bool">
       <label>Make the indicator the dominant Icon Color</label>

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-03-15 00:21+0200\n"
+"POT-Creation-Date: 2026-04-01 13:52+0300\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -400,20 +400,16 @@ msgid "Animate indicators"
 msgstr "Анимация индикаторов"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Style:"
-msgstr "Стиль индикаторов:"
+msgid "Style:"
+msgstr "Стиль:"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Metro"
-msgstr "Metro"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Ciliora"
-msgstr "Ciliora"
+msgid "Line"
+msgstr "Линия"
 
 #: ../contents/config/ConfigIndicators.qml
 msgid "Dashes"
-msgstr "Dashes"
+msgstr "Штрихи"
 
 #: ../contents/config/ConfigIndicators.qml
 msgid "Override indicator location"
@@ -440,28 +436,32 @@ msgid "Edge offset:"
 msgstr "Сдвиг от края:"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator size:"
-msgstr "Размер индикатора:"
+msgid "Thickness:"
+msgstr "Толщина:"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator length:"
-msgstr "Длина индикатора:"
+msgid "Segment length:"
+msgstr "Длина сегмента:"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Radius:"
-msgstr "Радиус индикатора:"
+msgid "Roundness:"
+msgstr "Скругление:"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator margins:"
-msgstr "Сжатие по краям:"
+msgid "Side padding:"
+msgstr "Боковой отступ:"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Limits (Min/Max):"
-msgstr "Пределы (Мин/Макс):"
+msgid "Darken extra segments"
+msgstr "Затенять дополнительные сегменты"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Colors:"
-msgstr "Цвета индикаторов:"
+msgid "Max segments:"
+msgstr "Макс. сегментов:"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Colors:"
+msgstr "Цвета:"
 
 #: ../contents/config/ConfigIndicators.qml
 msgid "Use plasma accent color"
@@ -472,16 +472,16 @@ msgid "Custom color:"
 msgstr "Свой цвет:"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Behavior:"
-msgstr "Поведение индикаторов:"
+msgid "Behavior:"
+msgstr "Поведение:"
 
 #: ../contents/config/ConfigIndicators.qml
 msgid "Desaturate when minimized"
 msgstr "Обесцвечивать при сворачивании"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Grow/Shrink when minimized:"
-msgstr "Масштабировать при сворачивании:"
+msgid "Shrink when minimized:"
+msgstr "Сжимать при сворачивании:"
 
 #: ../contents/config/ConfigIndicators.qml
 msgid "Group Indicators:"

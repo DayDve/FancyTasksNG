@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-03-15 00:21+0200\n"
+"POT-Creation-Date: 2026-04-01 13:52+0300\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -511,6 +511,10 @@ msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
 msgid "Display progress on indicator instead of button"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Progress color:"
 msgstr ""
 
 #: ../contents/config/ConfigPinnedApps.qml

@@ -22,8 +22,6 @@ Flow {
         model: {
             if(!Plasmoid.configuration.indicatorsEnabled)
             return 0;
-            if(indicatorsFlow.taskCount < Plasmoid.configuration.indicatorMinLimit)
-            return 0;
             if(indicatorsFlow.task.isSubTask)//Target only the main task items.
             return 0;
             if(indicatorsFlow.task.state === 'launcher') {
@@ -85,13 +83,10 @@ Flow {
                         var mainSize = (parentSize + parentSpacingAdjust);
                     }
                     switch(Plasmoid.configuration.indicatorStyle){
-                        case 0:
+                        case 0: // Line
                         indicatorComputedSize = mainSize - (Math.min(indicatorsFlow.taskCount, maxStates === 1 ? 0 : maxStates)  * (spacing + indicatorLength)) - adjust
                         break
-                        case 1:
-                        indicatorComputedSize = mainSize - (Math.min(indicatorsFlow.taskCount, maxStates === 1 ? 0 : maxStates)  * (spacing + indicatorLength)) - adjust
-                        break
-                        case 2:
+                        case 1: // Dashes
                         indicatorComputedSize = Plasmoid.configuration.indicatorGrow && indicatorsFlow.task.state !== "minimized" ? indicatorLength * growFactor : indicatorLength
                         break
                         default:
@@ -115,7 +110,7 @@ Flow {
                     var colorHSL = hexToHSL(colorEval)  // qmllint disable unqualified
                     colorCalc = Qt.hsla(colorHSL.h, colorHSL.s*0.5, colorHSL.l*.8, 1)
                 }
-                else if(!isFirst && Plasmoid.configuration.indicatorStyle ===  0 && indicatorsFlow.task.state !== "minimized") {//Metro specific handling
+                else if(!isFirst && Plasmoid.configuration.indicatorDarkenExtras && indicatorsFlow.task.state !== "minimized") {
                     colorCalc = Qt.darker(colorEval, 1.2) 
                 }
                 else {

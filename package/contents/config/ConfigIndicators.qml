@@ -16,6 +16,8 @@ ConfigPage {
     id: cfg_page
     readonly property bool plasmaPaAvailable: Qt.createComponent("../ui/PulseAudio.qml").status === Component.Ready
 
+    readonly property bool isLineStyle: cfg_page.cfg_indicatorStyle === 0
+
     ScrollView {
         anchors.fill: parent
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
@@ -44,22 +46,22 @@ ConfigPage {
 
             Item { height: Kirigami.Units.largeSpacing; visible: indicatorsEnabled.checked }
 
-            Label {
+            RowLayout {
                 visible: indicatorsEnabled.checked
-                text: Wrappers.i18n("Indicator Style:")
-            }
-
-            ComboBox {
-                visible: indicatorsEnabled.checked
-                id: indicatorStyle
-                Layout.fillWidth: true
-                model: [
-                    Wrappers.i18n("Metro"),
-                    Wrappers.i18n("Ciliora"),
-                    Wrappers.i18n("Dashes")
-                ]
-                currentIndex: cfg_page.cfg_indicatorStyle
-                onActivated: (index) => cfg_page.cfg_indicatorStyle = index
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Style:")
+                }
+                ComboBox {
+                    id: indicatorStyle
+                    Layout.fillWidth: true
+                    model: [
+                        Wrappers.i18n("Line"),
+                        Wrappers.i18n("Dashes")
+                    ]
+                    currentIndex: cfg_page.cfg_indicatorStyle
+                    onActivated: (index) => cfg_page.cfg_indicatorStyle = index
+                }
             }
 
             CheckBox {
@@ -108,7 +110,7 @@ ConfigPage {
                 visible: indicatorsEnabled.checked
                 spacing: Kirigami.Units.smallSpacing
                 Label {
-                    text: Wrappers.i18n("Indicator size:")
+                    text: Wrappers.i18n("Thickness:")
                 }
                 SpinBox {
                     id: indicatorSize
@@ -124,7 +126,7 @@ ConfigPage {
                 Item { width: Kirigami.Units.largeSpacing }
 
                 Label {
-                    text: Wrappers.i18n("Indicator length:")
+                    text: Wrappers.i18n("Segment length:")
                 }
                 SpinBox {
                     id: indicatorLength
@@ -142,7 +144,7 @@ ConfigPage {
                 visible: indicatorsEnabled.checked
                 spacing: Kirigami.Units.smallSpacing
                 Label {
-                    text: Wrappers.i18n("Indicator Radius:")
+                    text: Wrappers.i18n("Roundness:")
                 }
                 SpinBox {
                     id: indicatorRadius
@@ -155,44 +157,44 @@ ConfigPage {
                     text: "%"
                 }
 
-                Item { width: Kirigami.Units.largeSpacing }
+                Item { width: Kirigami.Units.largeSpacing; visible: isLineStyle }
 
                 Label {
-                    text: Wrappers.i18n("Indicator margins:")
+                    visible: isLineStyle
+                    text: Wrappers.i18n("Side padding:")
                 }
                 SpinBox {
                     id: indicatorShrink
+                    visible: isLineStyle
                     from: 0
                     to: 999
                     value: cfg_page.cfg_indicatorShrink
                     onValueModified: cfg_page.cfg_indicatorShrink = value
                 }
                 Label {
+                    visible: isLineStyle
                     text: "px"
                 }
             }
 
-            Item { height: Kirigami.Units.largeSpacing; visible: indicatorsEnabled.checked }
-
-            Label {
-                visible: indicatorsEnabled.checked
-                text: Wrappers.i18n("Limits (Min/Max):")
+            CheckBox {
+                visible: indicatorsEnabled.checked && isLineStyle
+                text: Wrappers.i18n("Darken extra segments")
+                checked: cfg_page.cfg_indicatorDarkenExtras
+                onToggled: cfg_page.cfg_indicatorDarkenExtras = checked
             }
+
+            Item { height: Kirigami.Units.largeSpacing; visible: indicatorsEnabled.checked }
 
             RowLayout {
                 visible: indicatorsEnabled.checked
                 spacing: Kirigami.Units.smallSpacing
-                SpinBox {
-                    id: indicatorMinLimit
-                    from: 0
-                    to: 99
-                    value: cfg_page.cfg_indicatorMinLimit
-                    onValueModified: cfg_page.cfg_indicatorMinLimit = value
+                Label {
+                    text: Wrappers.i18n("Max segments:")
                 }
-                Label { text: "/" }
                 SpinBox {
                     id: indicatorMaxLimit
-                    from: 0
+                    from: 1
                     to: 99
                     value: cfg_page.cfg_indicatorMaxLimit
                     onValueModified: cfg_page.cfg_indicatorMaxLimit = value
@@ -203,7 +205,7 @@ ConfigPage {
 
             Label {
                 visible: indicatorsEnabled.checked
-                text: Wrappers.i18n("Indicator Colors:")
+                text: Wrappers.i18n("Colors:")
             }
 
             CheckBox {
@@ -244,7 +246,7 @@ ConfigPage {
 
             Label {
                 visible: indicatorsEnabled.checked
-                text: Wrappers.i18n("Indicator Behavior:")
+                text: Wrappers.i18n("Behavior:")
             }
 
             CheckBox {
@@ -260,7 +262,7 @@ ConfigPage {
                 spacing: Kirigami.Units.smallSpacing
                 CheckBox {
                     id: indicatorGrow
-                    text: Wrappers.i18n("Grow/Shrink when minimized:")
+                    text: Wrappers.i18n("Shrink when minimized:")
                     checked: cfg_page.cfg_indicatorGrow
                     onToggled: cfg_page.cfg_indicatorGrow = checked
                 }
