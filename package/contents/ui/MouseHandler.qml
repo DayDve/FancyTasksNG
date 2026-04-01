@@ -83,10 +83,10 @@ DropArea {
 
             if (dropArea.tasks.dragSource !== above && dropArea.tasks.dragSource.index !== insertAt) {
                 if (dropArea.tasks.groupDialog) {
-                    dropArea.tasksModel.move(dropArea.tasks.dragSource.index, insertAt,
-                        dropArea.tasksModel.makeModelIndex(dropArea.tasks.groupDialog.visualParent.index));
+                    dropArea.tasks.tasksModel.move(dropArea.tasks.dragSource.modelIndex().row, above.modelIndex().row,
+                        dropArea.tasks.tasksModel.makeModelIndex(dropArea.tasks.groupDialog.visualParent.modelIndex().row));
                 } else {
-                    dropArea.tasksModel.move(dropArea.tasks.dragSource.index, insertAt);
+                    dropArea.tasks.tasksModel.move(dropArea.tasks.dragSource.modelIndex().row, above.modelIndex().row);
                 }
 
                 dropArea.ignoredItem = above;
@@ -180,7 +180,7 @@ DropArea {
                 parent.hoveredItem.toolTipOpen = true;
                 parent.hoveredItem.tasksRoot.toolTipAreaItem = parent.hoveredItem;
             } else if (!parent.hoveredItem.model.IsLauncher) {
-                dropArea.tasksModel.requestActivate(parent.hoveredItem.modelIndex());
+                dropArea.tasks.tasksModel.requestActivate(parent.hoveredItem.modelIndex());
             }
         }
     }

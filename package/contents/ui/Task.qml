@@ -61,7 +61,7 @@ Item {
     Layout.fillWidth: true
     Layout.fillHeight: !task.inPopup
     Layout.maximumWidth: tasksRoot.vertical ?
-        -1 : ((task.model.IsLauncher && !tasksRoot.iconsOnly) ? tasksRoot.height / tasksRoot.taskList.rows : LayoutMetrics.preferredMaxWidth())
+        -1 : ((task.model?.IsLauncher && !tasksRoot.iconsOnly) ? tasksRoot.height / tasksRoot.taskList.rows : LayoutMetrics.preferredMaxWidth())
     Layout.maximumHeight: tasksRoot.vertical ?
         LayoutMetrics.preferredMaxHeight() : -1
 
@@ -76,8 +76,8 @@ Item {
         task.model.IsLauncher
     property bool toolTipOpen: false
     property bool inPopup: false
-    property bool isWindow: task.model.IsWindow
-    property int childCount: task.model.ChildCount
+    property bool isWindow: !!task.model && task.model.IsWindow
+    property int childCount: task.model ? task.model.ChildCount : 0
     property int previousChildCount: 0
     property alias labelText: label.text
     property var contextMenu: null
@@ -227,8 +227,8 @@ Item {
         }
 
         let smartLauncherDescription = "";
-        if (iconBox.active) {
-            smartLauncherDescription += Wrappers.i18ncp("@info:tooltip", "There is %1 new message.", "There are %1 new messages.", task.smartLauncherItem.count);
+        if (task.model && iconBox.active) {
+            smartLauncherDescription += Wrappers.i18ncp("@info:tooltip", "There is %1 new message.", "There are %1 new messages.", task.smartLauncherItem ? task.smartLauncherItem.count : 0);
         }
 
         if (task.model.IsGroupParent) {
@@ -351,8 +351,9 @@ Item {
                 return;
             }
 
-            if (smartLauncher) {
+            if (smartLauncher && task.model) {
                 smartLauncher.launcherUrl = Qt.binding(() => {
+                    if (!task.model) return "";
                     if (task.model.LauncherUrlWithoutIcon) {
                          return task.model.LauncherUrlWithoutIcon;
                     }
@@ -422,6 +423,9 @@ Item {
     }
 
     function modelIndex(): /*QModelIndex*/ var {
+        if (typeof filteredTasksModel !== "undefined") {
+            return filteredTasksModel.mapToSource(filteredTasksModel.index(task.index, 0));
+        }
         return tasksRoot.tasksModel.makeModelIndex(task.index);
     }
 

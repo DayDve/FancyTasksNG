@@ -20,7 +20,7 @@ function activateNextPrevTask(anchor, next, wheelSkipMinimized, tasks) {
 
     for (let i = 0; i < tasks.taskList.children.length - 1; ++i) {
         const task = tasks.taskList.children[i];
-        const modelIndex = task.modelIndex(i);
+        const modelIndex = task.modelIndex();
 
         if (!task.model.IsLauncher && !task.model.IsStartup) {
             if (task.model.IsGroupParent) {
@@ -29,7 +29,7 @@ function activateNextPrevTask(anchor, next, wheelSkipMinimized, tasks) {
                 }
 
                 for (let j = 0; j < tasks.tasksModel.rowCount(modelIndex); ++j) {
-                    const childModelIndex = tasks.tasksModel.makeModelIndex(i, j);
+                    const childModelIndex = tasks.tasksModel.makeModelIndex(modelIndex.row, j);
                     const childHidden = tasks.tasksModel.data(childModelIndex, TaskManager.AbstractTasksModel.IsHidden);
                     if (!wheelSkipMinimized || !childHidden) {
                         taskIndexList.push(childModelIndex);
@@ -96,8 +96,8 @@ function activateTask(index, model, modifiers, task, plasmoid, tasks, windowView
             let lastUsedTask = undefined;
 
             // Build list of child tasks and get stacking order data for them
-            for (let i = 0; i < tasks.tasksModel.rowCount(task.modelIndex(index)); ++i) {
-                const childTaskModelIndex = tasks.tasksModel.makeModelIndex(task.index, i);
+            for (let i = 0; i < tasks.tasksModel.rowCount(index); ++i) {
+                const childTaskModelIndex = tasks.tasksModel.makeModelIndex(index.row, i);
                 childTaskList.push(childTaskModelIndex);
                 const stacking = tasks.tasksModel.data(childTaskModelIndex, TaskManager.AbstractTasksModel.StackingOrder);
                 if (stacking > highestStacking) {

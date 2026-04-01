@@ -22,6 +22,7 @@ import org.kde.plasma.workspace.trianglemousefilter
 import org.kde.taskmanager as TaskManager
 // import org.kde.plasma.private.taskmanager as TaskManagerApplet
 import org.kde.plasma.workspace.dbus as DBus
+import org.kde.kitemmodels as KItemModels
 
 import "code/layoutmetrics.js" as LayoutMetrics
 import "code/tools.js" as TaskTools
@@ -38,11 +39,6 @@ PlasmoidItem {
 
     property int _modelUpdatePhase: 0
     property bool _isApplyingConfig: false
-    property bool _lastShowOnlyMinimized: Plasmoid.configuration.showOnlyMinimized
-
-    onIconsOnlyChanged: { tasks._modelUpdatePhase = 0; modelUpdateTimer.restart(); }
-    onWidthChanged: { tasks._modelUpdatePhase = 0; modelUpdateTimer.restart(); }
-    onHeightChanged: { tasks._modelUpdatePhase = 0; modelUpdateTimer.restart(); }
 
     Connections {
         target: Plasmoid.configuration
@@ -50,16 +46,16 @@ PlasmoidItem {
             tasks.showBadges = Plasmoid.configuration.showBadges
         }
 
-        function onShowOnlyCurrentDesktopChanged() { tasks._modelUpdatePhase = 0; modelUpdateTimer.restart() }
-        function onShowOnlyCurrentScreenChanged() { tasks._modelUpdatePhase = 0; modelUpdateTimer.restart() }
-        function onShowOnlyCurrentActivityChanged() { tasks._modelUpdatePhase = 0; modelUpdateTimer.restart() }
-        function onShowOnlyMinimizedChanged() { tasks._modelUpdatePhase = 0; modelUpdateTimer.restart() }
-        function onHideLauncherOnStartChanged() { tasks._modelUpdatePhase = 0; modelUpdateTimer.restart() }
-        function onSortingStrategyChanged() { tasks._modelUpdatePhase = 0; modelUpdateTimer.restart() }
-        function onGroupingStrategyChanged() { tasks._modelUpdatePhase = 0; modelUpdateTimer.restart() }
-        function onGroupPopupsChanged() { tasks._modelUpdatePhase = 0; modelUpdateTimer.restart() }
-        function onOnlyGroupWhenFullChanged() { tasks._modelUpdatePhase = 0; modelUpdateTimer.restart() }
-        function onSeparateLaunchersChanged() { tasks._modelUpdatePhase = 0; modelUpdateTimer.restart() }
+        function onShowOnlyCurrentDesktopChanged() { modelUpdateTimer.restart() }
+        function onShowOnlyCurrentScreenChanged() { modelUpdateTimer.restart() }
+        function onShowOnlyCurrentActivityChanged() { modelUpdateTimer.restart() }
+        function onShowOnlyMinimizedChanged() { modelUpdateTimer.restart() }
+        function onHideLauncherOnStartChanged() { modelUpdateTimer.restart() }
+        function onSortingStrategyChanged() { modelUpdateTimer.restart() }
+        function onGroupingStrategyChanged() { modelUpdateTimer.restart() }
+        function onGroupPopupsChanged() { modelUpdateTimer.restart() }
+        function onOnlyGroupWhenFullChanged() { modelUpdateTimer.restart() }
+        function onSeparateLaunchersChanged() { modelUpdateTimer.restart() }
     }
 
     property Task toolTipOpenedByClick
@@ -187,48 +183,71 @@ PlasmoidItem {
         }
     }
 
-    Component {
-        id: tasksModelFactory
-        TaskManager.TasksModel {
-            id: internalTasksModel
+    readonly property TaskManager.TasksModel tasksModel: TaskManager.TasksModel {
+        id: tasksModel
 
-            virtualDesktop: virtualDesktopInfo.currentDesktop
-            screenGeometry: Plasmoid.containment.screenGeometry
-            activity: activityInfo.currentActivity
+        virtualDesktop: virtualDesktopInfo.currentDesktop
+        screenGeometry: Plasmoid.containment.screenGeometry
+        activity: activityInfo.currentActivity
 
-            onLauncherListChanged: {
-                if (!tasks._isApplyingConfig) {
-                    Plasmoid.configuration.launchers = launcherList;
-                }
+        onLauncherListChanged: {
+            if (!tasks._isApplyingConfig) {
+                Plasmoid.configuration.launchers = launcherList;
             }
-            onGroupingAppIdBlacklistChanged: {
-                if (!tasks._isApplyingConfig) {
-                    Plasmoid.configuration.groupingAppIdBlacklist = groupingAppIdBlacklist;
-                }
+        }
+        onGroupingAppIdBlacklistChanged: {
+            if (!tasks._isApplyingConfig) {
+                Plasmoid.configuration.groupingAppIdBlacklist = groupingAppIdBlacklist;
             }
-            onGroupingLauncherUrlBlacklistChanged: {
-                if (!tasks._isApplyingConfig) {
-                    Plasmoid.configuration.groupingLauncherUrlBlacklist = groupingLauncherUrlBlacklist;
-                }
+        }
+        onGroupingLauncherUrlBlacklistChanged: {
+            if (!tasks._isApplyingConfig) {
+                Plasmoid.configuration.groupingLauncherUrlBlacklist = groupingLauncherUrlBlacklist;
             }
+        }
 
-            Component.onCompleted: {
-                launcherList = Plasmoid.configuration.launchers;
-                groupingAppIdBlacklist = Plasmoid.configuration.groupingAppIdBlacklist;
-                groupingLauncherUrlBlacklist = Plasmoid.configuration.groupingLauncherUrlBlacklist;
-                taskRepeater.model = this;
-                tasks.applyModelConfiguration();
-            }
+        Component.onCompleted: {
+            launcherList = Plasmoid.configuration.launchers;
+            groupingAppIdBlacklist = Plasmoid.configuration.groupingAppIdBlacklist;
+            groupingLauncherUrlBlacklist = Plasmoid.configuration.groupingLauncherUrlBlacklist;
+            tasks.applyModelConfiguration();
         }
     }
 
-    Loader {
-        id: tasksModelLoader
-        active: true
-        sourceComponent: tasksModelFactory
+    KItemModels.KSortFilterProxyModel {
+        id: filteredTasksModel
+        sourceModel: tasksModel
+        filterRowCallback: (source_row, source_parent) => {
+            if (!Plasmoid.configuration.showOnlyMinimized) {
+                return true;
+            }
+            const idx = tasksModel.index(source_row, 0, source_parent);
+            return tasksModel.data(idx, TaskManager.AbstractTasksModel.IsMinimized) === true;
+        }
     }
 
-    readonly property TaskManager.TasksModel tasksModel: tasksModelLoader.item as TaskManager.TasksModel
+    // Handle changes in source model properties (like IsMinimized) for filteredTasksModel
+    Connections {
+        target: tasksModel
+        function onDataChanged(topLeft, bottomRight, roles) {
+            if (!roles || roles.length === 0 || roles.includes(TaskManager.AbstractTasksModel.IsMinimized)) {
+                filteredTasksModel.invalidateFilter();
+            }
+        }
+        function onRowsInserted() { filteredTasksModel.invalidateFilter(); }
+        function onRowsRemoved() { filteredTasksModel.invalidateFilter(); }
+        function onModelReset() { filteredTasksModel.invalidateFilter(); }
+    }
+    
+    // Invalidate filter when config changes
+    Connections {
+        target: Plasmoid.configuration
+        function onShowOnlyMinimizedChanged() {
+            filteredTasksModel.invalidateFilter();
+        }
+    }
+
+    readonly property alias tasksModelAlias: tasksModel // keep compatibility if needed
 
     Timer {
         id: modelUpdateTimer
@@ -236,6 +255,31 @@ PlasmoidItem {
         repeat: false
         onTriggered: tasks.applyModelConfiguration()
     }
+
+    function applyModelConfiguration() {
+        if (!tasks.tasksModel) return;
+
+        tasks._isApplyingConfig = true;
+
+        tasks.tasksModel.filterByVirtualDesktop = Plasmoid.configuration.showOnlyCurrentDesktop;
+        tasks.tasksModel.filterByScreen = Plasmoid.configuration.showOnlyCurrentScreen;
+        tasks.tasksModel.filterByActivity = Plasmoid.configuration.showOnlyCurrentActivity;
+        // tasks.tasksModel.filterNotMinimized = Plasmoid.configuration.showOnlyMinimized;
+        // The above is now handled by filteredTasksModel proxy to prevent crashes.
+        tasks.tasksModel.filterNotMinimized = false;
+        
+        tasks.tasksModel.hideActivatedLaunchers = (tasks.iconsOnly || Plasmoid.configuration.hideLauncherOnStart);
+        tasks.tasksModel.sortMode = tasks.sortModeEnumValue(Plasmoid.configuration.sortingStrategy);
+        tasks.tasksModel.launchInPlace = (tasks.iconsOnly && Plasmoid.configuration.sortingStrategy === 1);
+        tasks.tasksModel.separateLaunchers = (!tasks.iconsOnly && !Plasmoid.configuration.separateLaunchers && Plasmoid.configuration.sortingStrategy === 1 ? false : true);
+
+        tasks.tasksModel.groupMode = tasks.groupModeEnumValue(Plasmoid.configuration.groupingStrategy);
+        tasks.tasksModel.groupInline = !Plasmoid.configuration.groupPopups && !tasks.iconsOnly;
+        tasks.tasksModel.groupingWindowTasksThreshold = (Plasmoid.configuration.onlyGroupWhenFull && !tasks.iconsOnly ? LayoutMetrics.optimumCapacity(tasks.width, tasks.height) + 1 : -1);
+
+        tasks._isApplyingConfig = false;
+    }
+
 
     function sortModeEnumValue(index) {
         switch (index) {
@@ -256,58 +300,6 @@ PlasmoidItem {
         }
     }
 
-    function applyModelConfiguration() {
-        if (!tasks.tasksModel) {
-            if (tasksModelLoader.status !== Loader.Ready) {
-                tasksModelLoader.active = true;
-            }
-            return;
-        }
-
-        // CRITICAL FIX: If 'Only minimized' option is turning OFF, we MUST recreate the model.
-        // Changing it live causes ASSERT: "false" in libtaskmanager/taskgroupingproxymodel.cpp
-        if (tasks._lastShowOnlyMinimized && !Plasmoid.configuration.showOnlyMinimized) {
-             tasks._lastShowOnlyMinimized = false;
-             tasksModelLoader.active = false;
-             modelUpdateTimer.interval = 100;
-             modelUpdateTimer.restart();
-             return;
-        }
-        tasks._lastShowOnlyMinimized = Plasmoid.configuration.showOnlyMinimized;
-
-        if (tasks._isApplyingConfig) return;
-        tasks._isApplyingConfig = true;
-
-        if (tasks._modelUpdatePhase === 0) {
-            // PHASE 1: Disable grouping and apply filters.
-            tasks.tasksModel.groupMode = TaskManager.TasksModel.GroupDisabled;
-            
-            tasks.tasksModel.filterByVirtualDesktop = Plasmoid.configuration.showOnlyCurrentDesktop;
-            tasks.tasksModel.filterByScreen = Plasmoid.configuration.showOnlyCurrentScreen;
-            tasks.tasksModel.filterByActivity = Plasmoid.configuration.showOnlyCurrentActivity;
-            tasks.tasksModel.filterNotMinimized = Plasmoid.configuration.showOnlyMinimized;
-            
-            tasks.tasksModel.hideActivatedLaunchers = tasks.iconsOnly || Plasmoid.configuration.hideLauncherOnStart;
-            tasks.tasksModel.sortMode = tasks.sortModeEnumValue(Plasmoid.configuration.sortingStrategy);
-            tasks.tasksModel.launchInPlace = tasks.iconsOnly && Plasmoid.configuration.sortingStrategy === 1;
-            tasks.tasksModel.separateLaunchers = !tasks.iconsOnly && !Plasmoid.configuration.separateLaunchers && Plasmoid.configuration.sortingStrategy === 1 ? false : true;
-
-            tasks._modelUpdatePhase = 1;
-            modelUpdateTimer.interval = 200; // Longer delay for stabilization
-            modelUpdateTimer.restart();
-            tasks._isApplyingConfig = false;
-            return;
-        }
-
-        // PHASE 2: Restore grouping and dependent UI properties.
-        tasks.tasksModel.groupMode = tasks.groupModeEnumValue(Plasmoid.configuration.groupingStrategy);
-        tasks.tasksModel.groupInline = !Plasmoid.configuration.groupPopups && !tasks.iconsOnly;
-        tasks.tasksModel.groupingWindowTasksThreshold = (Plasmoid.configuration.onlyGroupWhenFull && !tasks.iconsOnly ? LayoutMetrics.optimumCapacity(tasks.width, tasks.height) + 1 : -1);
-
-        tasks._modelUpdatePhase = 0;
-        modelUpdateTimer.interval = 100;
-        tasks._isApplyingConfig = false;
-    }
 
     Loader {
         id: backendLoader
@@ -422,20 +414,8 @@ PlasmoidItem {
                 if (tasks.tasksModel) {
                     tasks.tasksModel.launcherList = Plasmoid.configuration.launchers;
                     tasks.tasksModel.syncLaunchers();
-                    
-                    // Force full view rebuild to ensure icons match the new order.
-                    var m = taskRepeater.model;
-                    taskRepeater.model = null;
-                    taskRepeater.model = m;
                 }
             }
-            // These handlers are moved to a new Connections block below to ensure tasks.tasksModel is available.
-            // function onGroupingAppIdBlacklistChanged(): void {
-            //     tasksModel.groupingAppIdBlacklist = Plasmoid.configuration.groupingAppIdBlacklist;
-            // }
-            // function onGroupingLauncherUrlBlacklistChanged(): void {
-            //     tasksModel.groupingLauncherUrlBlacklist = Plasmoid.configuration.groupingLauncherUrlBlacklist;
-            // }
         }
 
         Component {
@@ -464,7 +444,7 @@ PlasmoidItem {
             anchors.fill: parent
             target: taskList
             tasks: tasks
-            tasksModel: tasks.tasksModel
+            tasksModel: filteredTasksModel
             onUrlsDropped: urls => {
                 if (!tasks.backend) return;
                 const createLaunchers = urls.every(item => tasks.backend.isApplication(item));
@@ -510,7 +490,7 @@ PlasmoidItem {
             TaskList {
                 id: taskList
                 tasks: tasks
-                tasksModel: tasksModelLoader.item
+                tasksModel: filteredTasksModel
                 LayoutMirroring.enabled: tasks.shouldBeMirrored(Plasmoid.configuration.reverseMode, Qt.locale().textDirection, tasks.vertical)
                 anchors {
                     left: parent.left
@@ -528,6 +508,7 @@ PlasmoidItem {
 
                 Repeater {
                     id: taskRepeater
+                    model: filteredTasksModel
                     delegate: Task {
                         tasksRoot: tasks
                     }
