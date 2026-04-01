@@ -51,20 +51,18 @@ ConfigPage {
 
             Item { height: Kirigami.Units.largeSpacing }
 
-            Label {
-                text: Wrappers.i18n("Icon size:")
-            }
-
-            ComboBox {
-                id: iconSizeOverrideCombo
-                Layout.fillWidth: true
-                model: [Wrappers.i18n("Relative"), Wrappers.i18n("Absolute")]
-                currentIndex: cfg_page.cfg_iconSizeOverride ? 1 : 0
-                onActivated: (index) => cfg_page.cfg_iconSizeOverride = (index === 1)
-            }
-
-            Label {
-                text: !cfg_page.cfg_iconSizeOverride ? Wrappers.i18n("Icon Scale:") : Wrappers.i18n("Icon Size:")
+            RowLayout {
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Icon size:")
+                }
+                ComboBox {
+                    id: iconSizeOverrideCombo
+                    Layout.fillWidth: true
+                    model: [Wrappers.i18n("Relative"), Wrappers.i18n("Absolute")]
+                    currentIndex: cfg_page.cfg_iconSizeOverride ? 1 : 0
+                    onActivated: (index) => cfg_page.cfg_iconSizeOverride = (index === 1)
+                }
             }
 
             RowLayout {
