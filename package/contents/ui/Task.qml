@@ -307,48 +307,30 @@ Item {
     function updateSmartLauncherItem() {
         if (task.smartLauncherEnabled && !task.smartLauncherItem) {
             let smartLauncher = null;
-
-            // Try our bundled C++ Unity Launcher backend first (works on all Plasma 6.x)
-            if (!smartLauncher) {
-                const arches = ["x86_64", "aarch64"];
-                for (let i = 0; i < arches.length; ++i) {
-                    try {
-                        const path = "unity/bin/" + arches[i];
-                        smartLauncher = Qt.createQmlObject('import "' + path + '" as P; P.SmartLauncherItem {}', task);
-                        if (smartLauncher) break;
-                    } catch(e) {}
+            
+            // Plasma 6.6 approach
+            try {
+                let component = Qt.createComponent("plasma.applet.org.kde.plasma.taskmanager", "SmartLauncherItem");
+                if (component) {
+                    if (component.status === Component.Ready) {
+                        smartLauncher = component.createObject(task);
+                    }
+                    component.destroy();
                 }
-                
-                // Fallback to legacy path (in case it was built in the root)
-                if (!smartLauncher) {
+            } catch(e) {}
+
+            // Plasma 6.5 and older fallbacks
+            if (!smartLauncher) {
+                try {
+                    smartLauncher = Qt.createQmlObject('import org.kde.plasma.private.taskmanager; SmartLauncherItem {}', task);
+                } catch (e) {
                     try {
-                        smartLauncher = Qt.createQmlObject('import "unity" as P; P.SmartLauncherItem {}', task);
-                    } catch(e) {}
+                        smartLauncher = Qt.createQmlObject('import org.kde.taskmanager; SmartLauncherItem {}', task);
+                    } catch (e2) {
+                        console.warn("FancyTasks: Could not create SmartLauncherItem. Unread badges may not work.");
+                        return;
+                    }
                 }
-            }
-
-            // Fallback: Plasma 6.6+ private applet module (only works for built-in taskmanager)
-            if (!smartLauncher) {
-                try {
-                    smartLauncher = Qt.createQmlObject('import plasma.applet.org.kde.plasma.taskmanager; SmartLauncherItem {}', task);
-                } catch(e) {}
-            }
-
-            // Fallback: Plasma 6.5 and older
-            if (!smartLauncher) {
-                try {
-                    smartLauncher = Qt.createQmlObject('import org.kde.plasma.private.taskmanager 0.1; SmartLauncherItem {}', task);
-                } catch(e) {}
-            }
-            if (!smartLauncher) {
-                try {
-                    smartLauncher = Qt.createQmlObject('import org.kde.taskmanager; SmartLauncherItem {}', task);
-                } catch(e) {}
-            }
-
-            if (!smartLauncher) {
-                console.warn("FancyTasks: Could not create SmartLauncherItem. Unread badges will not work.");
-                return;
             }
 
             if (smartLauncher && task.model) {
@@ -715,10 +697,29 @@ Item {
 
         anchors.fill: frame
         asynchronous: true
-        active: task.model.IsWindow && task.smartLauncherItem && task.smartLauncherItem.progressVisible
+        active: task.model.IsWindow && task.smartLauncherItem && task.smartLauncherItem.progressVisible && Plasmoid.configuration.indicatorProgressStyle === 1
 
         source: "TaskProgressOverlay.qml"
         onLoaded: item.task = task
+    }
+
+    Rectangle {
+        id: edgeProgress
+        readonly property bool isVertical: task.tasksRoot.vertical
+        visible: task.model.IsWindow && task.smartLauncherItem && task.smartLauncherItem.progressVisible && (Plasmoid.configuration.indicatorProgressStyle === 2 || Plasmoid.configuration.indicatorProgressStyle === 3)
+        color: Plasmoid.configuration.indicatorProgressColor
+        opacity: Plasmoid.configuration.indicatorProgressOpacity / 100.0
+
+        readonly property int lineThickness: Plasmoid.configuration.indicatorProgressThickness
+        readonly property real currentProgress: task.smartLauncherItem ? task.smartLauncherItem.progress / 100.0 : 0
+
+        width: isVertical ? lineThickness : parent.width * currentProgress
+        height: isVertical ? parent.height * currentProgress : lineThickness
+
+        anchors.top: isVertical ? undefined : (Plasmoid.configuration.indicatorProgressStyle === 2 ? parent.top : undefined)
+        anchors.bottom: isVertical ? parent.bottom : (Plasmoid.configuration.indicatorProgressStyle === 3 ? parent.bottom : undefined)
+        anchors.left: isVertical ? (Plasmoid.configuration.indicatorProgressStyle === 2 ? parent.left : undefined) : parent.left
+        anchors.right: isVertical ? (Plasmoid.configuration.indicatorProgressStyle === 3 ? parent.right : undefined) : undefined
     }
 
     Loader {

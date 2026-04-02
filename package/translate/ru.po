@@ -872,6 +872,21 @@ msgstr "Доступно в %1"
 #~ msgid "Notifications:"
 #~ msgstr "Уведомления:"
 
+msgid "Disabled"
+msgstr "Выключен"
+
+msgid "Fill button"
+msgstr "Заливка кнопки"
+
+msgid "Top edge"
+msgstr "Полоска сверху"
+
+msgid "Bottom edge"
+msgstr "Полоска снизу"
+
+msgid "Opacity:"
+msgstr "Непрозрачность:"
+
 #~ msgid "Task Progress:"
 #~ msgstr "Прогресс задачи:"
 
@@ -905,8 +920,7 @@ msgstr "Доступно в %1"
 #~ msgid "Mark applications that play audio"
 #~ msgstr "Помечать приложения, воспроизводящие звук"
 
-#~ msgid "Disabled"
-#~ msgstr "Выкл."
+
 
 #~ msgid "Display Progress on Indicator"
 #~ msgstr "Показывать прогресс на индикаторе"

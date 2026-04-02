@@ -118,29 +118,7 @@ Flow {
             color: computedVar.colorCalc
             radius: Math.min(width, height) * (Plasmoid.configuration.indicatorRadius / 200)
 
-            Rectangle{
-                Behavior on height { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-                Behavior on width { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-                Behavior on color { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-                Behavior on radius { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-                visible:  indicatorsFlow.task.isWindow && indicatorsFlow.task.smartLauncherItem && indicatorsFlow.task.smartLauncherItem.progressVisible && stateRect.isFirst && Plasmoid.configuration.indicatorProgress
-                anchors{
-                    top: stateRect.isVertical ? undefined : parent.top
-                    bottom: stateRect.isVertical ? undefined : parent.bottom
-                    left: stateRect.isVertical ? parent.left : undefined
-                    right: stateRect.isVertical ? parent.right : undefined
-                }
-                readonly property var progress: {
-                    if(indicatorsFlow.task.smartLauncherItem && indicatorsFlow.task.smartLauncherItem.progressVisible && indicatorsFlow.task.smartLauncherItem.progress){
-                        return indicatorsFlow.task.smartLauncherItem.progress / 100
-                    }
-                    return 0
-                }
-                width: stateRect.isVertical ? parent.width : parent.width * progress
-                height: stateRect.isVertical ? parent.height * progress : parent.height
-                radius: parent.radius
-                color: Plasmoid.configuration.indicatorProgressColor
-            }
+
         }
     }
     

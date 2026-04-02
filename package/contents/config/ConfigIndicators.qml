@@ -299,15 +299,20 @@ ConfigPage {
                 text: Wrappers.i18n("Progress:")
             }
 
-            CheckBox {
-                id: indicatorProgress
-                text: Wrappers.i18n("Display progress on indicator instead of button")
-                checked: cfg_page.cfg_indicatorProgress
-                onToggled: cfg_page.cfg_indicatorProgress = checked
+            ComboBox {
+                id: indicatorProgressStyle
+                model: [
+                    Wrappers.i18n("Disabled"),
+                    Wrappers.i18n("Fill button"),
+                    Wrappers.i18n("Top edge"),
+                    Wrappers.i18n("Bottom edge")
+                ]
+                currentIndex: cfg_page.cfg_indicatorProgressStyle
+                onActivated: cfg_page.cfg_indicatorProgressStyle = currentIndex
             }
 
             RowLayout {
-                visible: indicatorProgress.checked
+                visible: indicatorProgressStyle.currentIndex > 1
                 spacing: Kirigami.Units.smallSpacing
                 Label {
                     text: Wrappers.i18n("Progress color:")
@@ -321,6 +326,38 @@ ConfigPage {
                             cfg_page.cfg_indicatorProgressColor = color
                         }
                     }
+                }
+            }
+
+            RowLayout {
+                visible: indicatorProgressStyle.currentIndex > 1
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Thickness:")
+                }
+                Slider {
+                    id: indicatorProgressThickness
+                    from: 1
+                    to: 10
+                    stepSize: 1
+                    value: cfg_page.cfg_indicatorProgressThickness
+                    onMoved: cfg_page.cfg_indicatorProgressThickness = value
+                }
+
+                Item {
+                    width: Kirigami.Units.largeSpacing
+                }
+
+                Label {
+                    text: Wrappers.i18n("Opacity:")
+                }
+                Slider {
+                    id: indicatorProgressOpacity
+                    from: 10
+                    to: 100
+                    stepSize: 5
+                    value: cfg_page.cfg_indicatorProgressOpacity
+                    onMoved: cfg_page.cfg_indicatorProgressOpacity = value
                 }
             }
         }

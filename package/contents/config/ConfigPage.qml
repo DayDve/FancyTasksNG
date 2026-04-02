@@ -112,10 +112,14 @@ Kirigami.Page {
     // --- Indicators ---
     property int cfg_indicatorsEnabled
     property int cfg_indicatorsEnabledDefault
-    property bool cfg_indicatorProgress
-    property bool cfg_indicatorProgressDefault
+    property int cfg_indicatorProgressStyle
+    property int cfg_indicatorProgressStyleDefault
     property string cfg_indicatorProgressColor
     property string cfg_indicatorProgressColorDefault
+    property int cfg_indicatorProgressThickness
+    property int cfg_indicatorProgressThicknessDefault
+    property int cfg_indicatorProgressOpacity
+    property int cfg_indicatorProgressOpacityDefault
     property bool cfg_disableInactiveIndicators
     property bool cfg_disableInactiveIndicatorsDefault
     property bool cfg_indicatorsAnimated
