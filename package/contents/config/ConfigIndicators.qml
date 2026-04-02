@@ -18,12 +18,22 @@ ConfigPage {
 
     readonly property bool isLineStyle: cfg_page.cfg_indicatorStyle === 0
 
-    ScrollView {
+    ColumnLayout {
         anchors.fill: parent
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        spacing: Kirigami.Units.largeSpacing
 
-        Kirigami.FormLayout {
-            width: parent.width - Kirigami.Units.gridUnit * 2
+        LivePreview {
+            cfg_page: cfg_page
+            Layout.fillWidth: true
+        }
+
+        ScrollView {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+
+            Kirigami.FormLayout {
+                width: parent.width - Kirigami.Units.gridUnit * 2
 
             Label {
                 text: Wrappers.i18n("Active application indicators:")
@@ -362,4 +372,5 @@ ConfigPage {
             }
         }
     }
+}
 }

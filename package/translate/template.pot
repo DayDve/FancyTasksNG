@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-04-01 13:52+0300\n"
+"POT-Creation-Date: 2026-04-02 17:36+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -76,14 +76,6 @@ msgstr ""
 
 #: ../contents/config/ConfigAppearance.qml
 msgid "Absolute"
-msgstr ""
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Icon Scale:"
-msgstr ""
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Icon Size:"
 msgstr ""
 
 #: ../contents/config/ConfigAppearance.qml
@@ -363,7 +355,15 @@ msgid "From current activity"
 msgstr ""
 
 #: ../contents/config/ConfigBehavior.qml
-msgid "That are minimized"
+msgid "In any state"
+msgstr ""
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Only minimized"
+msgstr ""
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Only not minimized"
 msgstr ""
 
 #: ../contents/config/ConfigBehavior.qml
@@ -403,15 +403,11 @@ msgid "Animate indicators"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Style:"
+msgid "Style:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Metro"
-msgstr ""
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Ciliora"
+msgid "Line"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
@@ -422,19 +418,19 @@ msgstr ""
 msgid "Override indicator location"
 msgstr ""
 
-#: ../contents/config/ConfigIndicators.qml
+#: ../contents/config/ConfigIndicators.qml ../contents/config/LivePreview.qml
 msgid "Bottom"
 msgstr ""
 
-#: ../contents/config/ConfigIndicators.qml
+#: ../contents/config/ConfigIndicators.qml ../contents/config/LivePreview.qml
 msgid "Left"
 msgstr ""
 
-#: ../contents/config/ConfigIndicators.qml
+#: ../contents/config/ConfigIndicators.qml ../contents/config/LivePreview.qml
 msgid "Right"
 msgstr ""
 
-#: ../contents/config/ConfigIndicators.qml
+#: ../contents/config/ConfigIndicators.qml ../contents/config/LivePreview.qml
 msgid "Top"
 msgstr ""
 
@@ -443,27 +439,31 @@ msgid "Edge offset:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator size:"
+msgid "Thickness:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator length:"
+msgid "Segment length:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Radius:"
+msgid "Roundness:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator margins:"
+msgid "Side padding:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Limits (Min/Max):"
+msgid "Darken extra segments"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Colors:"
+msgid "Max segments:"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Colors:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
@@ -475,15 +475,11 @@ msgid "Custom color:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Behavior:"
+msgid "Behavior:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
 msgid "Desaturate when minimized"
-msgstr ""
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Grow/Shrink when minimized:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
@@ -511,11 +507,27 @@ msgid "Progress:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Display progress on indicator instead of button"
+msgid "Disabled"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Fill button"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Top edge"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Bottom edge"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
 msgid "Progress color:"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Opacity:"
 msgstr ""
 
 #: ../contents/config/ConfigPinnedApps.qml
@@ -592,6 +604,18 @@ msgstr ""
 
 #: ../contents/config/config.qml
 msgid "Pinned Applications"
+msgstr ""
+
+#: ../contents/config/LivePreview.qml
+msgid "Preview"
+msgstr ""
+
+#: ../contents/config/LivePreview.qml
+msgid "Location:"
+msgstr ""
+
+#: ../contents/config/LivePreview.qml
+msgid "Size:"
 msgstr ""
 
 #: ../contents/ui/AudioStream.qml

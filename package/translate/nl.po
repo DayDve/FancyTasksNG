@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-04-01 13:52+0300\n"
+"POT-Creation-Date: 2026-04-02 17:36+0300\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -75,14 +75,6 @@ msgstr ""
 
 #: ../contents/config/ConfigAppearance.qml
 msgid "Absolute"
-msgstr ""
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Icon Scale:"
-msgstr ""
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Icon Size:"
 msgstr ""
 
 #: ../contents/config/ConfigAppearance.qml
@@ -362,8 +354,16 @@ msgid "From current activity"
 msgstr "Huidige activiteit"
 
 #: ../contents/config/ConfigBehavior.qml
-msgid "That are minimized"
-msgstr "Geminimaliseerde vensters"
+msgid "In any state"
+msgstr ""
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Only minimized"
+msgstr ""
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Only not minimized"
+msgstr ""
 
 #: ../contents/config/ConfigBehavior.qml
 msgid "Unhide when a window wants attention"
@@ -402,16 +402,12 @@ msgid "Animate indicators"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Style:"
-msgstr "Indicatorstijl:"
+msgid "Style:"
+msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Metro"
-msgstr "Metro"
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Ciliora"
-msgstr "Ciliora"
+msgid "Line"
+msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
 msgid "Dashes"
@@ -421,19 +417,19 @@ msgstr "Streepjes"
 msgid "Override indicator location"
 msgstr ""
 
-#: ../contents/config/ConfigIndicators.qml
+#: ../contents/config/ConfigIndicators.qml ../contents/config/LivePreview.qml
 msgid "Bottom"
 msgstr "Onderaan"
 
-#: ../contents/config/ConfigIndicators.qml
+#: ../contents/config/ConfigIndicators.qml ../contents/config/LivePreview.qml
 msgid "Left"
 msgstr "Links"
 
-#: ../contents/config/ConfigIndicators.qml
+#: ../contents/config/ConfigIndicators.qml ../contents/config/LivePreview.qml
 msgid "Right"
 msgstr "Rechts"
 
-#: ../contents/config/ConfigIndicators.qml
+#: ../contents/config/ConfigIndicators.qml ../contents/config/LivePreview.qml
 msgid "Top"
 msgstr "Bovenaan"
 
@@ -442,27 +438,31 @@ msgid "Edge offset:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator size:"
+msgid "Thickness:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator length:"
+msgid "Segment length:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Radius:"
+msgid "Roundness:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator margins:"
+msgid "Side padding:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Limits (Min/Max):"
+msgid "Darken extra segments"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Colors:"
+msgid "Max segments:"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Colors:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
@@ -474,15 +474,11 @@ msgid "Custom color:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Indicator Behavior:"
+msgid "Behavior:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
 msgid "Desaturate when minimized"
-msgstr ""
-
-#: ../contents/config/ConfigIndicators.qml
-msgid "Grow/Shrink when minimized:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
@@ -510,11 +506,27 @@ msgid "Progress:"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Display progress on indicator instead of button"
+msgid "Disabled"
+msgstr "Uitgeschakeld"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Fill button"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Top edge"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Bottom edge"
 msgstr ""
 
 #: ../contents/config/ConfigIndicators.qml
 msgid "Progress color:"
+msgstr ""
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Opacity:"
 msgstr ""
 
 #: ../contents/config/ConfigPinnedApps.qml
@@ -591,6 +603,18 @@ msgstr ""
 
 #: ../contents/config/config.qml
 msgid "Pinned Applications"
+msgstr ""
+
+#: ../contents/config/LivePreview.qml
+msgid "Preview"
+msgstr ""
+
+#: ../contents/config/LivePreview.qml
+msgid "Location:"
+msgstr ""
+
+#: ../contents/config/LivePreview.qml
+msgid "Size:"
 msgstr ""
 
 #: ../contents/ui/AudioStream.qml
@@ -831,6 +855,18 @@ msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Actief op %1"
 
+#~ msgid "That are minimized"
+#~ msgstr "Geminimaliseerde vensters"
+
+#~ msgid "Indicator Style:"
+#~ msgstr "Indicatorstijl:"
+
+#~ msgid "Metro"
+#~ msgstr "Metro"
+
+#~ msgid "Ciliora"
+#~ msgstr "Ciliora"
+
 #~ msgid "Indicator Location:"
 #~ msgstr "Indicatorlocatie:"
 
@@ -875,9 +911,6 @@ msgstr "Actief op %1"
 
 #~ msgid "Mark applications that play audio"
 #~ msgstr "Programma's die audio afspelen markeren"
-
-#~ msgid "Disabled"
-#~ msgstr "Uitgeschakeld"
 
 #~ msgid "Group Overlay:"
 #~ msgstr "Groepslaag:"

@@ -18,6 +18,10 @@ Kirigami.Page {
     property bool cfg_showOnlyCurrentActivityDefault
     property int cfg_minimizedFilter
     property int cfg_minimizedFilterDefault
+    property bool cfg_showOnlyMinimized
+    property bool cfg_showOnlyMinimizedDefault
+    property bool cfg_showOnlyNotMinimized
+    property bool cfg_showOnlyNotMinimizedDefault
     property bool cfg_unhideOnAttention
     property bool cfg_unhideOnAttentionDefault
     property int cfg_maxStripes
@@ -44,6 +48,11 @@ Kirigami.Page {
     property int cfg_iconSizePxDefault
     property bool cfg_iconSizeOverride
     property bool cfg_iconSizeOverrideDefault
+    // --- Preview Config ---
+    property int cfg_previewEdge: 0
+    property int cfg_previewEdgeDefault: 0
+    property int cfg_previewSize: 48
+    property int cfg_previewSizeDefault: 48
     property bool cfg_fill
     property bool cfg_fillDefault
     property bool cfg_taskHoverEffect

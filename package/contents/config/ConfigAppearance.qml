@@ -22,13 +22,24 @@ ConfigPage {
     readonly property bool plasmoidVertical: Plasmoid.formFactor === PlasmaCore.Types.Vertical
     readonly property bool iconOnly: Plasmoid.configuration.iconOnly
 
-        ScrollView {
+    ColumnLayout {
         anchors.fill: parent
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        spacing: Kirigami.Units.largeSpacing
 
-        Kirigami.FormLayout {
-            width: parent.width - Kirigami.Units.gridUnit * 2
-            CheckBox {
+        LivePreview {
+            cfg_page: cfg_page
+            Layout.fillWidth: true
+        }
+
+        ScrollView {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+
+            Kirigami.FormLayout {
+                width: parent.width - Kirigami.Units.gridUnit * 2
+
+                CheckBox {
                 id: useBorders
                 text: Wrappers.i18n("Use plasma borders")
                 checked: cfg_page.cfg_useBorders
@@ -448,4 +459,5 @@ ConfigPage {
             }
         }
     }
+}
 }

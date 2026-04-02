@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-04-01 13:52+0300\n"
+"POT-Creation-Date: 2026-04-02 17:36+0300\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -74,14 +74,6 @@ msgstr "Относительный"
 #: ../contents/config/ConfigAppearance.qml
 msgid "Absolute"
 msgstr "Абсолютный"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Icon Scale:"
-msgstr "Масштаб значков:"
-
-#: ../contents/config/ConfigAppearance.qml
-msgid "Icon Size:"
-msgstr "Размер значков:"
 
 #: ../contents/config/ConfigAppearance.qml
 msgid "Reset to default"
@@ -423,19 +415,19 @@ msgstr "Штрихи"
 msgid "Override indicator location"
 msgstr "Переопределить расположение индикаторов"
 
-#: ../contents/config/ConfigIndicators.qml
+#: ../contents/config/ConfigIndicators.qml ../contents/config/LivePreview.qml
 msgid "Bottom"
 msgstr "Снизу"
 
-#: ../contents/config/ConfigIndicators.qml
+#: ../contents/config/ConfigIndicators.qml ../contents/config/LivePreview.qml
 msgid "Left"
 msgstr "Слева"
 
-#: ../contents/config/ConfigIndicators.qml
+#: ../contents/config/ConfigIndicators.qml ../contents/config/LivePreview.qml
 msgid "Right"
 msgstr "Справа"
 
-#: ../contents/config/ConfigIndicators.qml
+#: ../contents/config/ConfigIndicators.qml ../contents/config/LivePreview.qml
 msgid "Top"
 msgstr "Сверху"
 
@@ -487,8 +479,6 @@ msgstr "Поведение:"
 msgid "Desaturate when minimized"
 msgstr "Обесцвечивать при сворачивании"
 
-
-
 #: ../contents/config/ConfigIndicators.qml
 msgid "Group Indicators:"
 msgstr "Групповые индикаторы:"
@@ -514,12 +504,28 @@ msgid "Progress:"
 msgstr "Прогресс:"
 
 #: ../contents/config/ConfigIndicators.qml
-msgid "Display progress on indicator instead of button"
-msgstr "Отображать прогресс на индикаторе вместо кнопки"
+msgid "Disabled"
+msgstr "Выключен"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Fill button"
+msgstr "Заливка кнопки"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Top edge"
+msgstr "Полоска сверху"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Bottom edge"
+msgstr "Полоска снизу"
 
 #: ../contents/config/ConfigIndicators.qml
 msgid "Progress color:"
 msgstr "Цвет прогресса:"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Opacity:"
+msgstr "Непрозрачность:"
 
 #: ../contents/config/ConfigPinnedApps.qml
 msgid "Default Web Browser"
@@ -597,6 +603,18 @@ msgstr "Прочее"
 #: ../contents/config/config.qml
 msgid "Pinned Applications"
 msgstr "Закрепленные приложения"
+
+#: ../contents/config/LivePreview.qml
+msgid "Preview"
+msgstr "Предпросмотр"
+
+#: ../contents/config/LivePreview.qml
+msgid "Location:"
+msgstr "Расположение:"
+
+#: ../contents/config/LivePreview.qml
+msgid "Size:"
+msgstr "Размер панели:"
 
 #: ../contents/ui/AudioStream.qml
 msgctxt "@action:button"
@@ -838,6 +856,15 @@ msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Доступно в %1"
 
+#~ msgid "Icon Scale:"
+#~ msgstr "Масштаб значков:"
+
+#~ msgid "Icon Size:"
+#~ msgstr "Размер значков:"
+
+#~ msgid "Display progress on indicator instead of button"
+#~ msgstr "Отображать прогресс на индикаторе вместо кнопки"
+
 #~ msgid "Floating Widget Settings"
 #~ msgstr "Настройки плавающего виджета"
 
@@ -880,21 +907,6 @@ msgstr "Доступно в %1"
 #~ msgid "Notifications:"
 #~ msgstr "Уведомления:"
 
-msgid "Disabled"
-msgstr "Выключен"
-
-msgid "Fill button"
-msgstr "Заливка кнопки"
-
-msgid "Top edge"
-msgstr "Полоска сверху"
-
-msgid "Bottom edge"
-msgstr "Полоска снизу"
-
-msgid "Opacity:"
-msgstr "Непрозрачность:"
-
 #~ msgid "Task Progress:"
 #~ msgstr "Прогресс задачи:"
 
@@ -927,8 +939,6 @@ msgstr "Непрозрачность:"
 
 #~ msgid "Mark applications that play audio"
 #~ msgstr "Помечать приложения, воспроизводящие звук"
-
-
 
 #~ msgid "Display Progress on Indicator"
 #~ msgstr "Показывать прогресс на индикаторе"

@@ -327,7 +327,7 @@ Item {
                     try {
                         smartLauncher = Qt.createQmlObject('import org.kde.taskmanager; SmartLauncherItem {}', task);
                     } catch (e2) {
-                        console.warn("FancyTasks: Could not create SmartLauncherItem. Unread badges may not work.");
+                        // console.warn("FancyTasks: Could not create SmartLauncherItem. Unread badges may not work.");
                         return;
                     }
                 }
