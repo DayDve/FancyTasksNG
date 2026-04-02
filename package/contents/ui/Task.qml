@@ -370,10 +370,8 @@ Item {
             }
             return;
         }
-        // Create item on demand instead of using Loader to reduce memory consumption,
-        // because only a few applications have audio streams.
         const component = Qt.createComponent("AudioStream.qml");
-        audioStreamIcon = component.createObject(task, {
+        audioStreamIcon = component.createObject(iconBox, {
             "iconBox": iconBox,
             "task": task,
             "frame": frame

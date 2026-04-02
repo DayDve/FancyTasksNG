@@ -22,12 +22,15 @@ Item {
     width: Math.round(Math.min(Math.min(audioStreamIconBox.iconBox.width, audioStreamIconBox.iconBox.height) * 0.4, Kirigami.Units.iconSizes.smallMedium)
            * (audioStreamIconBox.task.taskIcon && audioStreamIconBox.task.taskIcon.baseWidth > 0 ? (audioStreamIconBox.task.taskIcon.width / audioStreamIconBox.task.taskIcon.baseWidth) : 1))
     height: width
+    
+    // Scale from the anchor point to keep it pinned to the corner/edge
+    transformOrigin: Item.TopRight
+
     anchors {
         top: audioStreamIconBox.task.taskIcon.top
         right: audioStreamIconBox.task.taskIcon.right
-        // Smaller fixed margins so it stays "on" the icon
-        rightMargin: Kirigami.Units.smallSpacing / 2
-        topMargin: Kirigami.Units.smallSpacing / 2
+        rightMargin: Kirigami.Units.smallSpacing / 4
+        topMargin: Kirigami.Units.smallSpacing / 4
     }
 
     readonly property real indicatorScale: 1.2
@@ -151,7 +154,7 @@ Item {
 
                 PropertyChanges {
                     target: audioStreamIconBox
-                    anchors.rightMargin: Math.round(audioStreamIconBox.task.tasksRoot.taskFrame.margins.right * indicatorScale)
+                    anchors.rightMargin: Math.round(audioStreamIconBox.task.tasksRoot.taskFrame.margins.right * (audioStreamIconBox.task.taskIcon ? (audioStreamIconBox.task.taskIcon.width / audioStreamIconBox.task.taskIcon.baseWidth) : 1))
                 }
             },
 
@@ -168,6 +171,8 @@ Item {
 
                 PropertyChanges {
                     target: audioStreamIconBox
+                    // Reset transformOrigin for center alignment if preferred, but usually TopRight is fine for consistency
+                    transformOrigin: Item.Center 
                     width: Kirigami.Units.iconSizes.roundedIconSize(Math.min(Math.min(audioStreamIconBox.iconBox.width, audioStreamIconBox.iconBox.height), Kirigami.Units.iconSizes.smallMedium))
                 }
 
@@ -192,7 +197,7 @@ Item {
 
                 PropertyChanges {
                     target: audioStreamIconBox
-
+                    transformOrigin: Item.Center
                     anchors.topMargin: audioStreamIconBox.task.tasksRoot.taskFrame.margins.top
                     width: Kirigami.Units.iconSizes.roundedIconSize(Math.min(Math.min(audioStreamIconBox.iconBox.width, audioStreamIconBox.iconBox.height), Kirigami.Units.iconSizes.smallMedium))
                 }
