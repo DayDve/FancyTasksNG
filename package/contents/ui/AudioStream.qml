@@ -19,13 +19,15 @@ Item {
     required property var task
     required property Item frame
 
-    width: Math.min(Math.min(audioStreamIconBox.iconBox.width, audioStreamIconBox.iconBox.height) * 0.4, Kirigami.Units.iconSizes.smallMedium)
+    width: Math.round(Math.min(Math.min(audioStreamIconBox.iconBox.width, audioStreamIconBox.iconBox.height) * 0.4, Kirigami.Units.iconSizes.smallMedium)
+           * (audioStreamIconBox.task.taskIcon && audioStreamIconBox.task.taskIcon.baseWidth > 0 ? (audioStreamIconBox.task.taskIcon.width / audioStreamIconBox.task.taskIcon.baseWidth) : 1))
     height: width
     anchors {
-        top: audioStreamIconBox.frame.top
-        right: audioStreamIconBox.frame.right
-        rightMargin: audioStreamIconBox.task.tasksRoot.taskFrame.margins.right
-        topMargin: Math.round(audioStreamIconBox.task.tasksRoot.taskFrame.margins.top * indicatorScale)
+        top: audioStreamIconBox.task.taskIcon.top
+        right: audioStreamIconBox.task.taskIcon.right
+        // Smaller fixed margins so it stays "on" the icon
+        rightMargin: Kirigami.Units.smallSpacing / 2
+        topMargin: Kirigami.Units.smallSpacing / 2
     }
 
     readonly property real indicatorScale: 1.2
@@ -161,7 +163,7 @@ Item {
                     target: audioStreamIconBox
 
                     anchors.top: undefined
-                    anchors.verticalCenter: audioStreamIconBox.frame.verticalCenter
+                    anchors.verticalCenter: audioStreamIconBox.task.taskIcon.verticalCenter
                 }
 
                 PropertyChanges {
@@ -185,7 +187,7 @@ Item {
                     target: audioStreamIconBox
 
                     anchors.right: undefined
-                    anchors.horizontalCenter: audioStreamIconBox.frame.horizontalCenter
+                    anchors.horizontalCenter: audioStreamIconBox.task.taskIcon.horizontalCenter
                 }
 
                 PropertyChanges {
