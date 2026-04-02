@@ -16,8 +16,8 @@ Kirigami.Page {
     property bool cfg_showOnlyCurrentDesktopDefault
     property bool cfg_showOnlyCurrentActivity
     property bool cfg_showOnlyCurrentActivityDefault
-    property bool cfg_showOnlyMinimized
-    property bool cfg_showOnlyMinimizedDefault
+    property int cfg_minimizedFilter
+    property int cfg_minimizedFilterDefault
     property bool cfg_unhideOnAttention
     property bool cfg_unhideOnAttentionDefault
     property int cfg_maxStripes

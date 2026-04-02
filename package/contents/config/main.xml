@@ -23,9 +23,9 @@
             >Whether to show only tasks that are on the current activity.</label>
       <default>true</default>
     </entry>
-    <entry name="showOnlyMinimized" type="Bool">
-      <label>Whether to show only window tasks that are minmized.</label>
-      <default>false</default>
+    <entry name="minimizedFilter" type="Enum">
+      <label>Filter tasks by minimized state: 0 = All, 1 = Only Minimized, 2 = Only Not Minimized</label>
+      <default>0</default>
     </entry>
     <entry name="unhideOnAttention" type="Bool">
       <label>Whether to unhide if a window wants attention.</label>

@@ -229,11 +229,16 @@ PlasmoidItem {
         id: filteredTasksModel
         sourceModel: tasksModel
         filterRowCallback: (source_row, source_parent) => {
-            if (!Plasmoid.configuration.showOnlyMinimized) {
-                return true;
-            }
             const idx = tasksModel.index(source_row, 0, source_parent);
-            return tasksModel.data(idx, TaskManager.AbstractTasksModel.IsMinimized) === true;
+            const isMinimized = tasksModel.data(idx, TaskManager.AbstractTasksModel.IsMinimized) === true;
+
+            if (Plasmoid.configuration.minimizedFilter === 1) { // Only Minimized
+                return isMinimized;
+            } else if (Plasmoid.configuration.minimizedFilter === 2) { // Only Not Minimized
+                return !isMinimized;
+            }
+
+            return true;
         }
     }
 
@@ -253,7 +258,7 @@ PlasmoidItem {
     // Invalidate filter when config changes
     Connections {
         target: Plasmoid.configuration
-        function onShowOnlyMinimizedChanged() {
+        function onMinimizedFilterChanged() {
             filteredTasksModel.invalidateFilter();
         }
     }

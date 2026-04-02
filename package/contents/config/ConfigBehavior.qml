@@ -206,11 +206,29 @@ ConfigPage {
                 onToggled: cfg_page.cfg_showOnlyCurrentActivity = checked
             }
 
-            CheckBox {
-                id: cfg_showOnlyMinimized
-                text: Wrappers.i18n("That are minimized")
-                checked: cfg_page.cfg_showOnlyMinimized
-                onToggled: cfg_page.cfg_showOnlyMinimized = checked
+            ButtonGroup {
+                id: minimizedFilterButtonGroup
+            }
+
+            RadioButton {
+                checked: cfg_page.cfg_minimizedFilter === 0
+                text: Wrappers.i18n("In any state")
+                ButtonGroup.group: minimizedFilterButtonGroup
+                onToggled: if (checked) cfg_page.cfg_minimizedFilter = 0
+            }
+
+            RadioButton {
+                checked: cfg_page.cfg_minimizedFilter === 1
+                text: Wrappers.i18n("Only minimized")
+                ButtonGroup.group: minimizedFilterButtonGroup
+                onToggled: if (checked) cfg_page.cfg_minimizedFilter = 1
+            }
+
+            RadioButton {
+                checked: cfg_page.cfg_minimizedFilter === 2
+                text: Wrappers.i18n("Only not minimized")
+                ButtonGroup.group: minimizedFilterButtonGroup
+                onToggled: if (checked) cfg_page.cfg_minimizedFilter = 2
             }
 
             Item { height: Kirigami.Units.largeSpacing }

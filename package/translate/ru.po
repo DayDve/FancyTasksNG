@@ -360,8 +360,16 @@ msgid "From current activity"
 msgstr "Из текущей комнаты"
 
 #: ../contents/config/ConfigBehavior.qml
-msgid "That are minimized"
-msgstr "Которые свернуты"
+msgid "In any state"
+msgstr "В любом состоянии"
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Only minimized"
+msgstr "Только свернутые"
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Only not minimized"
+msgstr "Только развернутые"
 
 #: ../contents/config/ConfigBehavior.qml
 msgid "Unhide when a window wants attention"
