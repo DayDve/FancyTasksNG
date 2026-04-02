@@ -371,7 +371,7 @@ Item {
             return;
         }
         const component = Qt.createComponent("AudioStream.qml");
-        audioStreamIcon = component.createObject(iconBox, {
+        audioStreamIcon = component.createObject(task, {
             "iconBox": iconBox,
             "task": task,
             "frame": frame

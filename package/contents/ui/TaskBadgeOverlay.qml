@@ -16,38 +16,28 @@ Item {
     // Fix: Anchor directly to the icon to sync scaling and position automatically
     anchors.fill: root.parentTask.taskIcon
 
-    readonly property int iconWidthDelta: (root.parentTask.taskIcon.width - root.parentTask.taskIcon.paintedWidth) / 2
-    readonly property bool shiftBadgeDown: root.parentTask.audioStreamIcon !== null
+    // Stable offset calculation
+    readonly property int badgeOffset: Math.round(Math.max(Kirigami.Units.smallSpacing / 2, root.width / 32))
 
     Item {
         id: badgeMask
         anchors.fill: parent
 
         Rectangle {
-            readonly property int offset: Math.round(Math.max(Kirigami.Units.smallSpacing / 2, badgeMask.width / 32))
-
             anchors.right: parent.right
-            anchors.rightMargin: -offset
-            y: root.shiftBadgeDown ?
-                (root.parentTask.taskIcon.height / 2) : 0
-
-        Behavior on y {
-            NumberAnimation {
-                duration: root.parentTask.smartLauncherItem && root.parentTask.smartLauncherItem.countVisible 
-                          ? Plasmoid.configuration.iconZoomDuration 
-                          : Kirigami.Units.longDuration
-            }
-        }
+            anchors.rightMargin: -root.badgeOffset
+            anchors.top: parent.top
+            anchors.topMargin: -root.badgeOffset
 
             visible: root.parentTask.smartLauncherItem.countVisible
-            width: badgeRect.width + offset * 2
-            height: badgeRect.height + offset * 2
-            radius: badgeRect.radius + offset * 2
+            width: badgeRect.width + root.badgeOffset * 2
+            height: badgeRect.height + root.badgeOffset * 2
+            radius: height / 2
 
-            // Badge changes width based on number.
+            // Force update the shader mask when geometry changes
             onWidthChanged: maskShaderSource.scheduleUpdate()
+            onHeightChanged: maskShaderSource.scheduleUpdate()
             onVisibleChanged: maskShaderSource.scheduleUpdate()
-            onYChanged: maskShaderSource.scheduleUpdate()
         }
     }
 
@@ -79,14 +69,7 @@ Item {
         id: badgeRect
 
         anchors.right: parent.right
-        y: {
-            const offset = Math.round(Math.max(Kirigami.Units.smallSpacing / 2, badgeMask.width / 32));
-            return offset + (root.shiftBadgeDown ? (root.parentTask.taskIcon.height / 2) : 0);
-        }
-
-        Behavior on y {
-            NumberAnimation { duration: Kirigami.Units.longDuration }
-        }
+        anchors.top: parent.top
 
         height: Math.round(parent.height * 0.4)
         visible: root.parentTask.smartLauncherItem.countVisible

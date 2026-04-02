@@ -23,17 +23,32 @@ Item {
            * (audioStreamIconBox.task.taskIcon && audioStreamIconBox.task.taskIcon.baseWidth > 0 ? (audioStreamIconBox.task.taskIcon.width / audioStreamIconBox.task.taskIcon.baseWidth) : 1))
     height: width
     
-    // Scale from the anchor point to keep it pinned to the corner/edge
-    transformOrigin: Item.TopRight
+    // Scale from the TopLeft point
+    transformOrigin: Item.TopLeft
 
-    anchors {
-        top: audioStreamIconBox.task.taskIcon.top
-        right: audioStreamIconBox.task.taskIcon.right
-        rightMargin: Kirigami.Units.smallSpacing / 4
-        topMargin: Kirigami.Units.smallSpacing / 4
+    // Absolute positioning relative to the 'task' root to ensure interactivity
+    // and perfect alignment with the icon as it grows.
+    x: audioStreamIconBox.iconBox.x + audioStreamIconBox.task.taskIcon.x - badgeOffset
+    y: audioStreamIconBox.iconBox.y + audioStreamIconBox.task.taskIcon.y - badgeOffset
+
+    readonly property int badgeOffset: Math.round(Math.max(Kirigami.Units.smallSpacing / 2, audioStreamIconBox.iconBox.width / 32))
+    readonly property real indicatorScale: 0.7 // Smaller icon inside the circle for better aesthetics
+
+    // Background to match Badge style and ensure visibility on any icon
+    Rectangle {
+        id: indicatorBackground
+        anchors.fill: parent
+        radius: height / 2
+        color: Kirigami.Theme.backgroundColor
+        
+        Rectangle {
+            anchors.fill: parent
+            radius: parent.radius
+            color: Qt.alpha(Kirigami.Theme.highlightColor, 0.3)
+            border.color: Kirigami.Theme.highlightColor
+            border.width: 1
+        }
     }
-
-    readonly property real indicatorScale: 1.2
 
     activeFocusOnTab: true
 
@@ -143,8 +158,8 @@ Item {
         width: height
 
         anchors {
-            verticalCenter: parent.verticalCenter
-            horizontalCenter: parent.horizontalCenter
+            top: parent.top
+            right: parent.right
         }
 
         states: [

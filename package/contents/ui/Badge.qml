@@ -28,6 +28,9 @@ Rectangle {
         return isRound ? Math.max(Kirigami.Units.gridUnit, textWidth) : textWidth;
     }
 
+    // Fix: keep it round even when scaled externally by TaskBadgeOverlay
+    width: isRound ? Math.max(height, implicitWidth) : implicitWidth
+
     radius: isRound ? height / 2 : Kirigami.Units.smallSpacing / 2
 
     color: Kirigami.Theme.backgroundColor
