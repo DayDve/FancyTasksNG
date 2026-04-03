@@ -100,7 +100,8 @@ Item {
 
     property int itemIndex: task.index 
 
-    readonly property bool containsMouse: hoverHandler.hovered
+    property bool isAudioHovered: false
+    readonly property bool containsMouse: hoverHandler.hovered || isAudioHovered
 
     HoverHandler {
         id: hoverHandler

@@ -1,15 +1,5 @@
-/*
-    SPDX-FileCopyrightText: 2017 Kai Uwe Broulik <kde@privat.broulik.de>
-
-    SPDX-License-Identifier: GPL-2.0-or-later
-*/
-
 import QtQuick
-
-import org.kde.plasma.extras as PlasmaExtras
 import org.kde.kirigami as Kirigami
-import org.kde.ksvg as KSvg
-
 import "code/singletones"
 
 Item {
@@ -19,87 +9,69 @@ Item {
     required property var task
     required property Item frame
 
-    width: Math.round(Math.min(Math.min(audioStreamIconBox.iconBox.width, audioStreamIconBox.iconBox.height) * 0.4, Kirigami.Units.iconSizes.smallMedium)
-           * (audioStreamIconBox.task.taskIcon && audioStreamIconBox.task.taskIcon.baseWidth > 0 ? (audioStreamIconBox.task.taskIcon.width / audioStreamIconBox.task.taskIcon.baseWidth) : 1))
-    height: width
+    z: 5000 // Topmost
+
+    // Clamping coordinates to keep the indicator within the task item bounds
+    x: Math.max(0, Math.min(task.width - visualSize, iconBox.x + task.taskIcon.x))
+    y: Math.max(0, Math.min(task.height - visualSize, iconBox.y + task.taskIcon.y))
+
+    width: visualSize
+    height: visualSize
+
+    readonly property int visualSize: Math.round(Math.min(Math.min(iconBox.width, iconBox.height) * 0.4, Kirigami.Units.iconSizes.smallMedium)
+            * (task.taskIcon && task.taskIcon.baseWidth > 0 ? (task.taskIcon.width / task.taskIcon.baseWidth) : 1))
     
-    // Scale from the TopLeft point
-    transformOrigin: Item.TopLeft
+    property bool hovered: false
 
-    // Absolute positioning relative to the 'task' root to ensure interactivity
-    // and perfect alignment with the icon as it grows.
-    x: audioStreamIconBox.iconBox.x + audioStreamIconBox.task.taskIcon.x - badgeOffset
-    y: audioStreamIconBox.iconBox.y + audioStreamIconBox.task.taskIcon.y - badgeOffset
-
-    readonly property int badgeOffset: Math.round(Math.max(Kirigami.Units.smallSpacing / 2, audioStreamIconBox.iconBox.width / 32))
-    readonly property real indicatorScale: 0.7 // Smaller icon inside the circle for better aesthetics
-
-    // Background to match Badge style and ensure visibility on any icon
-    Rectangle {
-        id: indicatorBackground
+    // Using the project's own Badge component
+    Badge {
+        id: badge
         anchors.fill: parent
-        radius: height / 2
-        color: Kirigami.Theme.backgroundColor
+        iconSource: audioStreamIconBox.task.muted ? "audio-volume-muted-symbolic" : "audio-volume-high-symbolic"
+        hovered: audioStreamIconBox.hovered
         
-        Rectangle {
-            anchors.fill: parent
-            radius: parent.radius
-            color: Qt.alpha(Kirigami.Theme.highlightColor, 0.3)
-            border.color: Kirigami.Theme.highlightColor
-            border.width: 1
+        // Change color to red if muted for better visibility on small sizes
+        highlightColor: audioStreamIconBox.task.muted ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.highlightColor
+
+        Behavior on highlightColor { ColorAnimation { duration: Kirigami.Units.longDuration } }
+    }
+
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        hoverEnabled: true
+        acceptedButtons: Qt.LeftButton | Qt.MiddleButton
+        onContainsMouseChanged: {
+            audioStreamIconBox.hovered = containsMouse;
+            if (audioStreamIconBox.task) {
+                audioStreamIconBox.task.isAudioHovered = containsMouse;
+            }
+        }
+        onClicked: (mouse) => {
+            mouse.accepted = true;
+            audioStreamIconBox.task.toggleMuted();
         }
     }
 
-    activeFocusOnTab: true
+    opacity: 0
+    visible: opacity > 0
 
-    // Using States rather than a simple Behavior we can apply different transitions,
-    // which allows us to delay showing the icon but hide it instantly still.
     states: [
         State {
-            name: "playing"
-            when: audioStreamIconBox.task.playingAudio && !audioStreamIconBox.task.muted
-            PropertyChanges {
-                target: audioStreamIconBox
-                opacity: 1
-            }
-            PropertyChanges {
-                target: audioStreamIcon
-                source: "audio-volume-high-symbolic"
-            }
-        },
-        State {
-            name: "muted"
-            when: audioStreamIconBox.task.muted
-            PropertyChanges {
-                target: audioStreamIconBox
-                opacity: 1
-            }
-            PropertyChanges {
-                target: audioStreamIcon
-                source: "audio-volume-muted-symbolic"
-            }
+            name: "visible"
+            when: audioStreamIconBox.task.playingAudio || audioStreamIconBox.task.muted
+            PropertyChanges { target: audioStreamIconBox; opacity: 1 }
         }
     ]
 
     transitions: [
         Transition {
              from: ""
-             to: "playing"
+             to: "visible"
              SequentialAnimation {
-                 // Delay showing the play indicator so we don't flash it for brief sounds.
                  PauseAnimation {
                      duration: !audioStreamIconBox.task.delayAudioStreamIndicator || audioStreamIconBox.task.inPopup ? 0 : 2000
                  }
-                 NumberAnimation {
-                     property: "opacity"
-                     duration: Kirigami.Units.longDuration
-                 }
-             }
-        },
-        Transition {
-             from: ""
-             to: "muted"
-             SequentialAnimation {
                  NumberAnimation {
                      property: "opacity"
                      duration: Kirigami.Units.longDuration
@@ -114,116 +86,4 @@ Item {
              }
         }
     ]
-
-    opacity: 0
-    visible: opacity > 0
-
-    Keys.onReturnPressed: event => audioStreamIconBox.task.toggleMuted()
-    Keys.onEnterPressed: event => Keys.returnPressed(event);
-    Keys.onSpacePressed: event => Keys.returnPressed(event);
-
-    Accessible.checkable: true
-    Accessible.checked: audioStreamIconBox.task.muted
-    Accessible.name: audioStreamIconBox.task.muted ? Wrappers.i18nc("@action:button", "Unmute") : Wrappers.i18nc("@action:button", "Mute")
-    Accessible.description: audioStreamIconBox.task.muted ? Wrappers.i18nc("@info:tooltip %1 is the window title", "Unmute %1", audioStreamIconBox.task.model.display) : Wrappers.i18nc("@info:tooltip %1 is the window title", "Mute %1", audioStreamIconBox.task.model.display)
-    Accessible.role: Accessible.Button
-
-    HoverHandler {
-        id: hoverHandler
-    }
-
-    TapHandler {
-        id: tapHandler
-        gesturePolicy: TapHandler.ReleaseWithinBounds // Exclusive grab
-        onTapped: (eventPoint, button) => audioStreamIconBox.task.toggleMuted()
-    }
-
-    PlasmaExtras.Highlight {
-        anchors.fill: audioStreamIcon
-        hovered: hoverHandler.hovered || parent.activeFocus
-        pressed: tapHandler.pressed
-    }
-
-    Kirigami.Icon {
-        id: audioStreamIcon
-
-        // Need audio indicator twice, to keep iconBox in the center.
-        readonly property real requiredSpace: Math.min(audioStreamIconBox.iconBox.width, audioStreamIconBox.iconBox.height)
-            + Math.min(Math.min(audioStreamIconBox.iconBox.width, audioStreamIconBox.iconBox.height), Kirigami.Units.iconSizes.smallMedium) * 2
-
-        source: "audio-volume-high-symbolic"
-        selected: tapHandler.pressed
-
-        height: Math.round(Math.min(parent.height * audioStreamIconBox.indicatorScale, Kirigami.Units.iconSizes.smallMedium))
-        width: height
-
-        anchors {
-            top: parent.top
-            right: parent.right
-        }
-
-        states: [
-            State {
-                name: "verticalIconsOnly"
-                when: audioStreamIconBox.task.tasksRoot.vertical && audioStreamIconBox.frame.width < audioStreamIcon.requiredSpace
-
-                PropertyChanges {
-                    target: audioStreamIconBox
-                    anchors.rightMargin: Math.round(audioStreamIconBox.task.tasksRoot.taskFrame.margins.right * (audioStreamIconBox.task.taskIcon ? (audioStreamIconBox.task.taskIcon.width / audioStreamIconBox.task.taskIcon.baseWidth) : 1))
-                }
-            },
-
-            State {
-                name: "horizontal"
-                when: audioStreamIconBox.frame.width > audioStreamIcon.requiredSpace
-
-                AnchorChanges {
-                    target: audioStreamIconBox
-
-                    anchors.top: undefined
-                    anchors.verticalCenter: audioStreamIconBox.task.taskIcon.verticalCenter
-                }
-
-                PropertyChanges {
-                    target: audioStreamIconBox
-                    // Reset transformOrigin for center alignment if preferred, but usually TopRight is fine for consistency
-                    transformOrigin: Item.Center 
-                    width: Kirigami.Units.iconSizes.roundedIconSize(Math.min(Math.min(audioStreamIconBox.iconBox.width, audioStreamIconBox.iconBox.height), Kirigami.Units.iconSizes.smallMedium))
-                }
-
-                PropertyChanges {
-                    target: audioStreamIcon
-
-                    height: parent.height
-                    width: parent.width
-                }
-            },
-
-            State {
-                name: "vertical"
-                when: audioStreamIconBox.frame.height > audioStreamIcon.requiredSpace
-
-                AnchorChanges {
-                    target: audioStreamIconBox
-
-                    anchors.right: undefined
-                    anchors.horizontalCenter: audioStreamIconBox.task.taskIcon.horizontalCenter
-                }
-
-                PropertyChanges {
-                    target: audioStreamIconBox
-                    transformOrigin: Item.Center
-                    anchors.topMargin: audioStreamIconBox.task.tasksRoot.taskFrame.margins.top
-                    width: Kirigami.Units.iconSizes.roundedIconSize(Math.min(Math.min(audioStreamIconBox.iconBox.width, audioStreamIconBox.iconBox.height), Kirigami.Units.iconSizes.smallMedium))
-                }
-
-                PropertyChanges {
-                    target: audioStreamIcon
-
-                    height: parent.height
-                    width: parent.width
-                }
-            }
-        ]
-    }
 }

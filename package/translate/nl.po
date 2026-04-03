@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-04-02 17:36+0300\n"
+"POT-Creation-Date: 2026-04-03 12:07+0300\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -615,26 +615,6 @@ msgstr ""
 
 #: ../contents/config/LivePreview.qml
 msgid "Size:"
-msgstr ""
-
-#: ../contents/ui/AudioStream.qml
-msgctxt "@action:button"
-msgid "Unmute"
-msgstr ""
-
-#: ../contents/ui/AudioStream.qml
-msgctxt "@action:button"
-msgid "Mute"
-msgstr ""
-
-#: ../contents/ui/AudioStream.qml
-msgctxt "@info:tooltip %1 is the window title"
-msgid "Unmute %1"
-msgstr ""
-
-#: ../contents/ui/AudioStream.qml
-msgctxt "@info:tooltip %1 is the window title"
-msgid "Mute %1"
 msgstr ""
 
 #: ../contents/ui/Badge.qml

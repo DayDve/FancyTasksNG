@@ -542,7 +542,7 @@ Item {
 
         Image {
             id: albumArtImage
-            readonly property bool available: (status === Image.Ready || status === Image.Loading) && (!(toolTipDelegate.isGroup || backend.applicationCategories(launcherUrl).includes("WebBrowser")) || root.titleIncludesTrack)
+            readonly property bool available: (status === Image.Ready || status === Image.Loading) && (!(toolTipDelegate.isGroup || (typeof backend.applicationCategories === "function" && backend.applicationCategories(launcherUrl).includes("WebBrowser"))) || root.titleIncludesTrack)
 
             anchors.fill: hoverHandler
             anchors.margins: Kirigami.Units.smallSpacing
