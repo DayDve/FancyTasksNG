@@ -69,19 +69,19 @@ Item {
     required property int index
     required property /*main.qml*/  var tasksRoot
 
-    readonly property int pid: task.model.AppPid
-    readonly property string appName: task.model.AppName
-    readonly property string appId: task.model.AppId.replace(/\.desktop/, '')
-    readonly property bool isIcon: tasksRoot.iconsOnly ||
-        task.model.IsLauncher
+    readonly property int pid: (task.model && task.model.AppPid) ? task.model.AppPid : 0
+    readonly property string appName: (task.model && task.model.AppName) ? task.model.AppName : ""
+    readonly property string appId: (task.model && task.model.AppId) ? task.model.AppId.replace(/\.desktop/, '') : ""
+    readonly property bool isIcon: task.model ? (tasksRoot.iconsOnly || !!task.model.IsLauncher) : tasksRoot.iconsOnly
     property bool toolTipOpen: false
     property bool inPopup: false
-    property bool isWindow: !!task.model && task.model.IsWindow
-    property int childCount: task.model ? task.model.ChildCount : 0
+    property bool isStartup: !!(task.model && task.model.IsStartup)
+    property bool isWindow: !!(task.model && task.model.IsWindow)
+    property int childCount: (task.model && task.model.ChildCount) ? task.model.ChildCount : 0
     property int previousChildCount: 0
     property alias labelText: label.text
     property var contextMenu: null
-    readonly property bool smartLauncherEnabled: !task.inPopup && !task.model.IsStartup
+    readonly property bool smartLauncherEnabled: !task.inPopup && task.model && !task.model.IsStartup
     property var smartLauncherItem: null
 
     property Item audioStreamIcon: null
@@ -217,9 +217,9 @@ Item {
         id: translateTransform
     }
 
-    Accessible.name: task.model.display
+    Accessible.name: task.model ? task.model.display : ""
     Accessible.description: {
-        if (!task.model.display) {
+        if (!task.model || !task.model.display) {
             return "";
         }
 
@@ -696,7 +696,7 @@ Item {
 
         anchors.fill: frame
         asynchronous: true
-        active: task.model.IsWindow && task.smartLauncherItem && task.smartLauncherItem.progressVisible && Plasmoid.configuration.indicatorProgressStyle === 1
+        active: !!(task.model && task.model.IsWindow) && !!task.smartLauncherItem && !!task.smartLauncherItem.progressVisible && Plasmoid.configuration.indicatorProgressStyle === 1
 
         source: "TaskProgressOverlay.qml"
         onLoaded: item.task = task
@@ -705,7 +705,7 @@ Item {
     Rectangle {
         id: edgeProgress
         readonly property bool isVertical: task.tasksRoot.vertical
-        visible: task.model.IsWindow && task.smartLauncherItem && task.smartLauncherItem.progressVisible && (Plasmoid.configuration.indicatorProgressStyle === 2 || Plasmoid.configuration.indicatorProgressStyle === 3)
+        visible: !!(task.model && task.model.IsWindow) && !!task.smartLauncherItem && !!task.smartLauncherItem.progressVisible && (Plasmoid.configuration.indicatorProgressStyle === 2 || Plasmoid.configuration.indicatorProgressStyle === 3)
         color: Plasmoid.configuration.indicatorProgressColor
         opacity: Plasmoid.configuration.indicatorProgressOpacity / 100.0
 
@@ -852,7 +852,7 @@ Item {
             anchors.centerIn: parent
             width: Math.min(parent.width, parent.height)
             height: width
-            active: task.model.IsStartup
+            active: !!(task.model && task.model.IsStartup)
             sourceComponent: task.tasksRoot.busyIndicator
         }
     }

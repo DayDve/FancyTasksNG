@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Qt5Compat.GraphicalEffects
 
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
@@ -8,6 +9,7 @@ import org.kde.ksvg as KSvg
 
 import "../ui/code/singletones"
 import "../ui" as FancyUI
+import "../ui/code/tools.js" as TaskTools
 
 Item {
     id: previewRoot
@@ -16,6 +18,8 @@ Item {
     implicitHeight: 200
 
     property var cfg_page: null
+    property bool cfg_showOnlyMinimized: false
+    property bool cfg_showOnlyNotMinimized: false
     property var fallbackIcons: ["system-run", "preferences-system"]
     property var fakeNames: ["Konsole", "System Settings"]
 
@@ -150,31 +154,97 @@ Item {
                             readonly property bool iconOnly: mockTask.cfgReady ? previewRoot.cfg_page.cfg_iconOnly === 1 : true
                             readonly property bool showText: !mockTask.iconOnly && (!previewRoot.isVertical || previewRoot.simulatedThickness > 80)
                             
-                            readonly property real cellWidth: previewRoot.isVertical ? (dummyPanel.width - 4) : (showText ? 140 : dummyPanel.height - 4)
-                            readonly property real cellHeight: previewRoot.isVertical ? (showText ? 50 : dummyPanel.width - 4) : (dummyPanel.height - 4)
+                            readonly property real cellWidth: previewRoot.isVertical ? previewRoot.simulatedThickness : (showText ? 140 : previewRoot.simulatedThickness)
+                            readonly property real cellHeight: previewRoot.isVertical ? (showText ? 50 : previewRoot.simulatedThickness) : previewRoot.simulatedThickness
                             
                             Layout.preferredWidth: cellWidth
                             Layout.preferredHeight: cellHeight
                             
                             // 1. Frame background
                             KSvg.FrameSvgItem {
+                                id: taskBackground
                                 anchors.fill: parent
                                 imagePath: (mockTask.cfgReady && previewRoot.cfg_page.cfg_disableButtonSvg) ? "" : "widgets/tasks"
                                 enabledBorders: (mockTask.cfgReady && previewRoot.cfg_page.cfg_useBorders) ? (1 | 2 | 4 | 8) : 0
+                                
+                                readonly property string basePrefix: (mockTask.isMinimized && !(previewRoot.cfg_page.cfg_buttonColorize && previewRoot.cfg_page.cfg_buttonColorizeInactive) ? "minimized" : "normal")
                                 prefix: mockTask.isHovered ? 
-                                        ((mockTask.cfgReady && previewRoot.cfg_page.cfg_iconOnly && previewRoot.cfg_page.cfg_taskHoverEffect) ? "normal" : "hover") : 
-                                        (mockTask.isMinimized && !(previewRoot.cfg_page.cfg_buttonColorize && previewRoot.cfg_page.cfg_buttonColorizeInactive) ? "minimized" : "normal")
+                                    TaskTools.taskPrefixHovered(basePrefix, previewRoot.simulatedLocation) : 
+                                    TaskTools.taskPrefix(basePrefix, previewRoot.simulatedLocation)
 
-                                opacity: 1.0
-                                visible: mockTask.cfgReady && !previewRoot.cfg_page.cfg_disableButtonSvg && 
-                                        (mockTask.isHovered || previewRoot.cfg_page.cfg_useBorders || mockTask.isMinimized)
+                                Kirigami.ImageColors {
+                                    id: imageColors
+                                    source: "system-run" // Mock source for preview
+                                }
+                                property color dominantColor: imageColors.dominant
+                                property color indicatorColor: Kirigami.ColorUtils.tintWithAlpha(dominantColor, Kirigami.Theme.highlightColor, .38)
                             }
                             
-                            // 2. Icon Wrapper
+                            // 2. Button Colorization (Matches Task.qml)
+                            ColorOverlay {
+                                id: colorOverride
+                                anchors.fill: taskBackground
+                                source: taskBackground
+                                color: previewRoot.cfg_page.cfg_buttonColorizeDominant ? 
+                                    taskBackground.indicatorColor : previewRoot.cfg_page.cfg_buttonColorizeCustom
+                                visible: previewRoot.cfg_page.cfg_buttonColorize
+                            }
+
+                             // 3. Progress overlay (Unified Implementation)
+                             Item {
+                                 id: progressOverlay
+                                 anchors.fill: taskBackground
+                                 // Show progress on the FIRST task (index 0) for clarity
+                                 visible: index === 0 && mockTask.cfgReady && previewRoot.cfg_page.cfg_indicatorProgressStyle > 0
+                                 clip: true
+                                 
+                                 readonly property int pStyle: previewRoot.cfg_page.cfg_indicatorProgressStyle
+                                 
+                                 // Style 1: Fill button (Always left-to-right, theme SVG)
+                                 KSvg.FrameSvgItem {
+                                     visible: progressOverlay.pStyle === 1
+                                     imagePath: "widgets/tasks"
+                                     prefix: TaskTools.taskPrefix("progress", previewRoot.simulatedLocation)
+                                     anchors.left: parent.left
+                                     anchors.top: parent.top
+                                     anchors.bottom: parent.bottom
+                                     width: parent.width * 0.6 
+                                 }
+
+                                 // Style 2 & 3: Edge progress (Line/Edge, custom color & opacity)
+                                 Rectangle {
+                                     visible: progressOverlay.pStyle === 2 || progressOverlay.pStyle === 3
+                                     color: previewRoot.cfg_page.cfg_indicatorProgressColor
+                                     opacity: previewRoot.cfg_page.cfg_indicatorProgressOpacity / 100.0
+                                     
+                                     readonly property int thick: previewRoot.cfg_page.cfg_indicatorProgressThickness
+                                     
+                                     // Corrected Geometry:
+                                     // Horizontal: Lines are horizontal (width 60%, height 'thick')
+                                     // Vertical: Lines are vertical (width 'thick', height 60%)
+                                     width: !previewRoot.isVertical ? (parent.width * 0.6) : thick
+                                     height: previewRoot.isVertical ? (parent.height * 0.6) : thick
+                                     
+                                     // Corrected Anchors:
+                                     anchors.top: (previewRoot.isVertical || progressOverlay.pStyle === 2) ? parent.top : undefined
+                                     anchors.bottom: (!previewRoot.isVertical && progressOverlay.pStyle === 3) ? parent.bottom : undefined
+                                     anchors.left: (!previewRoot.isVertical || progressOverlay.pStyle === 2) ? parent.left : undefined
+                                     anchors.right: (previewRoot.isVertical && progressOverlay.pStyle === 3) ? parent.right : undefined
+                                 }
+                             }
+
+                            // Helper for margin adjustment (simplified version of layoutmetrics.js)
+                            readonly property real adjMarginL: taskBackground.margins.left
+                            readonly property real adjMarginR: taskBackground.margins.right
+                            readonly property real adjMarginT: taskBackground.margins.top
+                            readonly property real adjMarginB: taskBackground.margins.bottom
+
+                            // 4. Icon Wrapper
                             Item {
                                 id: iconBox
-                                width: Math.min(parent.width, parent.height) - 4
-                                height: width
+                                width: parent.width - adjMarginL - adjMarginR
+                                height: parent.height - adjMarginT - adjMarginB
+                                anchors.centerIn: parent
                                 
                                 states: [
                                     State {
@@ -199,7 +269,7 @@ Item {
                                             anchors.verticalCenter: mockTask.verticalCenter
                                             anchors.top: undefined
                                         }
-                                        PropertyChanges { target: iconBox; anchors.leftMargin: Kirigami.Units.smallSpacing; anchors.topMargin: 0 }
+                                        PropertyChanges { target: iconBox; anchors.leftMargin: adjMarginL; anchors.topMargin: 0 }
                                     },
                                     State {
                                         name: "classic_vertical"
@@ -211,7 +281,7 @@ Item {
                                             anchors.verticalCenter: undefined
                                             anchors.left: undefined
                                         }
-                                        PropertyChanges { target: iconBox; anchors.topMargin: Kirigami.Units.smallSpacing; anchors.leftMargin: 0 }
+                                        PropertyChanges { target: iconBox; anchors.topMargin: adjMarginT; anchors.leftMargin: 0 }
                                     }
                                 ]
                                 
@@ -269,26 +339,34 @@ Item {
                                         }
                                     ]
                                     
-                                    // Badge Demo (Task 0 only)
+                                    // Badge Demo (Task 1 only)
                                     FancyUI.Badge {
-                                        visible: index === 0 && mockTask.cfgReady && previewRoot.cfg_page.cfg_showBadges
-                                        anchors.right: parent.right
-                                        anchors.rightMargin: -Math.max(Kirigami.Units.smallSpacing / 2, width / 32)
-                                        y: Math.max(0, (parent.height / 2))
-                                        height: Math.round(parent.height * 0.4)
-                                        number: 3
-                                    }
-                                    
-                                    // Audio Indicator Demo (Task 1 only)
-                                    Kirigami.Icon {
-                                        visible: index === 1 && mockTask.cfgReady && previewRoot.cfg_page.cfg_indicateAudioStreams
-                                        source: "audio-volume-high-symbolic"
-                                        width: Math.min(Math.min(parent.width, parent.height) * 0.4, Kirigami.Units.iconSizes.smallMedium)
-                                        height: width
+                                        visible: index === 1 && mockTask.cfgReady && previewRoot.cfg_page.cfg_showBadges
                                         anchors.right: parent.right
                                         anchors.top: parent.top
+                                        anchors.rightMargin: -Math.max(Kirigami.Units.smallSpacing / 2, width / 32)
+                                        anchors.topMargin: -Math.max(Kirigami.Units.smallSpacing / 2, height / 32)
+                                        height: Math.round(parent.height * 0.4)
+                                        number: 3
+                                        isRound: true
+                                        hovered: mockTask.isHovered
                                     }
                                 }
+                            }
+
+                            // Audio Indicator Demo (Task 0 only) - Showing "Muted" state (red)
+                            // Matched to top-left as in AudioStream.qml (x: iconBox.x + taskIcon.x)
+                            FancyUI.Badge {
+                                visible: index === 0 && mockTask.cfgReady && previewRoot.cfg_page.cfg_indicateAudioStreams
+                                iconSource: "audio-volume-muted-symbolic"
+                                highlightColor: Kirigami.Theme.negativeTextColor
+                                hovered: mockTask.isHovered
+                                height: Math.round(iconBox.height * 0.4)
+                                width: height
+                                anchors.left: iconBox.left
+                                anchors.top: iconBox.top
+                                anchors.leftMargin: -Math.max(Kirigami.Units.smallSpacing / 2, width / 32)
+                                anchors.topMargin: -Math.max(Kirigami.Units.smallSpacing / 2, height / 32)
                             }
 
                             // 2.5 Text label
@@ -389,63 +467,6 @@ Item {
                                 radius: Math.min(width, height) * ((mockTask.cfgReady ? previewRoot.cfg_page.cfg_indicatorRadius : 0) / 200)
                             }
 
-                            // 4. Progress Overlay (Moved to Index 0)
-                            Item {
-                                id: progressWrapper
-                                anchors.fill: parent
-                                visible: mockTask.cfgReady && index === 0
-                                
-                                readonly property int pStyle: mockTask.cfgReady ? previewRoot.cfg_page.cfg_indicatorProgressStyle : 0
-                                readonly property real pProgress: 0.6 // Mock 60% progress
-
-                                // Background filling progress (Style 1)
-                                Rectangle {
-                                    id: progressBg
-                                    anchors.bottom: parent.bottom
-                                    anchors.left: parent.left
-                                    anchors.right: parent.right
-                                    height: parent.height * progressWrapper.pProgress
-                                    color: mockTask.cfgReady ? previewRoot.cfg_page.cfg_indicatorProgressColor : "transparent"
-                                    opacity: mockTask.cfgReady ? previewRoot.cfg_page.cfg_indicatorProgressOpacity / 100.0 : 0
-                                    visible: progressWrapper.pStyle === 1
-                                }
-
-                                // Edge progress (Style 2, 3)
-                                Rectangle {
-                                    id: edgeProgress
-                                    color: mockTask.cfgReady ? previewRoot.cfg_page.cfg_indicatorProgressColor : "transparent"
-                                    opacity: mockTask.cfgReady ? previewRoot.cfg_page.cfg_indicatorProgressOpacity / 100.0 : 0
-                                    visible: progressWrapper.pStyle === 2 || progressWrapper.pStyle === 3
-
-                                    readonly property int lineThickness: mockTask.cfgReady ? previewRoot.cfg_page.cfg_indicatorProgressThickness : 2
-
-                                    width: !previewRoot.isVertical ? parent.width * progressWrapper.pProgress : edgeProgress.lineThickness
-                                    height: previewRoot.isVertical ? parent.height * progressWrapper.pProgress : edgeProgress.lineThickness
-
-                                    states: [
-                                        State {
-                                            name: "top"
-                                            when: progressWrapper.pStyle === 2 && !previewRoot.isVertical
-                                            AnchorChanges { target: edgeProgress; anchors.top: parent.top; anchors.bottom: undefined; anchors.left: parent.left; anchors.right: undefined }
-                                        },
-                                        State {
-                                            name: "bottom"
-                                            when: progressWrapper.pStyle === 3 && !previewRoot.isVertical
-                                            AnchorChanges { target: edgeProgress; anchors.top: undefined; anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: undefined }
-                                        },
-                                        State {
-                                            name: "left"
-                                            when: progressWrapper.pStyle === 2 && previewRoot.isVertical
-                                            AnchorChanges { target: edgeProgress; anchors.left: parent.left; anchors.right: undefined; anchors.top: undefined; anchors.bottom: parent.bottom }
-                                        },
-                                        State {
-                                            name: "right"
-                                            when: progressWrapper.pStyle === 3 && previewRoot.isVertical
-                                            AnchorChanges { target: edgeProgress; anchors.left: undefined; anchors.right: parent.right; anchors.top: undefined; anchors.bottom: parent.bottom }
-                                        }
-                                    ]
-                                }
-                            }
                             
                             // 5. Mouse Pointer Canvas (Dark variant)
                             Canvas {
