@@ -153,15 +153,22 @@ Item {
                     }
                 ]
                 
-                GridLayout {
-                    id: mockTasksLayout
-                    anchors.centerIn: parent
+                Flickable {
+                    id: flickable
+                    anchors.fill: parent
+                    contentWidth: mockTasksLayout.width
+                    contentHeight: mockTasksLayout.height
+                    interactive: true
+                    clip: true
                     
-                    columns: previewRoot.isVertical ? 1 : -1
-                    rows: previewRoot.isVertical ? -1 : 1
-                    // Correct: taskSpacingSize is for the gap between buttons
-                    rowSpacing: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_taskSpacingSize : 0
-                    columnSpacing: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_taskSpacingSize : 0
+                    GridLayout {
+                        id: mockTasksLayout
+                        anchors.centerIn: parent
+                        
+                        columns: previewRoot.isVertical ? 1 : -1
+                        rows: previewRoot.isVertical ? -1 : 1
+                        rowSpacing: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_taskSpacingSize : 0
+                        columnSpacing: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_taskSpacingSize : 0
                     
 
                     Repeater {
@@ -203,16 +210,20 @@ Item {
                             readonly property real cellWidth: {
                                 if (previewRoot.isVertical) return previewRoot.simulatedThickness;
                                 if (showText) {
-                                    let baseFactor = 1.0;
-                                    if (mockTask.cfgReady) {
-                                        switch (previewRoot.cfg_page.cfg_taskMaxWidth) {
-                                            case 0: baseFactor = 1.2; break;
-                                            case 1: baseFactor = 1.6; break;
-                                            case 2: baseFactor = 2.0; break;
-                                        }
-                                    }
-                                    let minW = (previewRoot.simulatedThickness) + (Kirigami.Units.gridUnit * 8);
-                                    return Math.floor(minW * baseFactor);
+                                     let baseFactor = 1.0;
+                                     if (mockTask.cfgReady) {
+                                         switch (previewRoot.cfg_page.cfg_taskMaxWidth) {
+                                             case 0: baseFactor = 1.2; break;
+                                             case 1: baseFactor = 1.6; break;
+                                             case 2: baseFactor = 2.0; break;
+                                         }
+                                     }
+                                     const laneHeight = previewRoot.simulatedThickness;
+                                     const factorReduction = (Math.min(50, laneHeight) - 20) * 0.01;
+                                     const factor = Math.max(1, baseFactor - Math.max(0, factorReduction));
+                                     
+                                     let minW = (previewRoot.simulatedThickness) + (Kirigami.Units.gridUnit * 8);
+                                     return Math.floor(minW * factor);
                                 }
                                 return previewRoot.simulatedThickness; 
                             }
@@ -433,7 +444,9 @@ Item {
                                  verticalAlignment: previewRoot.isVertical ? Text.AlignTop : Text.AlignVCenter
                                  horizontalAlignment: previewRoot.isVertical ? Text.AlignHCenter : Text.AlignLeft
                                  maximumLineCount: 1
-                                 color: PlasmaCore.Theme.textColor
+                                 // Force white text if simulating a panel in a Light KCM, 
+                                 // or follow KCM theme if it's already Dark.
+                                 color: Kirigami.ColorUtils.brightnessForColor(Kirigami.Theme.backgroundColor) === Kirigami.ColorUtils.Dark ? Kirigami.Theme.textColor : "#ffffff"
                              }
                             
                             // 3. Indicator
