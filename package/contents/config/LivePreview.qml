@@ -328,11 +328,14 @@ Item {
                                      readonly property real iconScale: mockTask.cfgReady ? previewRoot.cfg_page.cfg_iconScale / 100 : 1.0
                                      readonly property int growSize: (mockTask.isHovered && previewRoot.cfg_page.cfg_iconOnly === 1 && previewRoot.cfg_page.cfg_taskHoverEffect) ? previewRoot.cfg_page.cfg_iconZoomFactor : 0
 
+                                     readonly property bool scaleFromEdge: mockTask.cfgReady && previewRoot.cfg_page.cfg_iconScaleFromEdge
+                                     readonly property int edgeOffset: mockTask.cfgReady ? previewRoot.cfg_page.cfg_iconEdgeOffset : 0
+
                                      readonly property int baseWidth: (sizeOverride ? fixedSize : (iconBox.width * iconScale))
                                      readonly property int baseHeight: (sizeOverride ? fixedSize : (iconBox.height * iconScale))
                                      
-                                     readonly property real edgeMarginH: (parent.width - baseWidth) / 2
-                                     readonly property real edgeMarginV: (parent.height - baseHeight) / 2
+                                     readonly property real edgeMarginH: scaleFromEdge ? edgeOffset : (parent.width - baseWidth) / 2
+                                     readonly property real edgeMarginV: scaleFromEdge ? edgeOffset : (parent.height - baseHeight) / 2
 
                                      width: baseWidth + growSize
                                      height: baseHeight + growSize
@@ -430,6 +433,7 @@ Item {
                                  verticalAlignment: previewRoot.isVertical ? Text.AlignTop : Text.AlignVCenter
                                  horizontalAlignment: previewRoot.isVertical ? Text.AlignHCenter : Text.AlignLeft
                                  maximumLineCount: 1
+                                 color: PlasmaCore.Theme.textColor
                              }
                             
                             // 3. Indicator
