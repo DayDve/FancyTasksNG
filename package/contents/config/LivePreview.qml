@@ -6,7 +6,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents3
 import org.kde.ksvg as KSvg
 
@@ -21,6 +20,11 @@ Item {
     // Allocate fixed preview playground space
     implicitHeight: 200
 
+    readonly property int locationBottom: 3
+    readonly property int locationTop: 1
+    readonly property int locationLeft: 0
+    readonly property int locationRight: 2
+
     property var cfg_page: null
     property var fallbackIcons: ["system-run", "preferences-system"]
     property var fakeNames: ["Konsole", "System Settings"]
@@ -34,14 +38,39 @@ Item {
         return fallbackIcons[index % fallbackIcons.length];
     }
     
+    function getTaskName(index) {
+        if (cfg_page && previewRoot.cfg_page.cfg_launchers && previewRoot.cfg_page.cfg_launchers.length > index) {
+            let url = previewRoot.cfg_page.cfg_launchers[index];
+            
+            // Extract from preferred URLs (e.g. preferred://browser)
+            if (url.indexOf("://") !== -1) {
+                let parts = url.split("://");
+                let name = parts[parts.length - 1];
+                return name.charAt(0).toUpperCase() + name.slice(1);
+            }
+            
+            // Extract from .desktop files
+            let match = url.match(/([^\/:]+)\.desktop$/);
+            if (match) {
+                let name = match[1];
+                // Clean up reverse DNS (e.g. org.kde.konsole -> konsole)
+                let parts = name.split('.');
+                name = parts[parts.length - 1];
+                // Capitalize
+                return name.charAt(0).toUpperCase() + name.slice(1);
+            }
+        }
+        return fakeNames[index % fakeNames.length];
+    }
+    
     // Panel Mock Settings
     // Mapped edges: 0=Bottom, 1=Top, 2=Left, 3=Right
     property int currentEdgeIdx: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_previewEdge : 0
     property bool isVertical: currentEdgeIdx === 2 || currentEdgeIdx === 3
-    property int simulatedLocation: currentEdgeIdx === 0 ? PlasmaCore.Types.BottomEdge :
-                                    currentEdgeIdx === 1 ? PlasmaCore.Types.TopEdge :
-                                    currentEdgeIdx === 2 ? PlasmaCore.Types.LeftEdge : PlasmaCore.Types.RightEdge
-    property int simulatedThickness: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_previewSize : 48
+    property int simulatedLocation: currentEdgeIdx === 0 ? locationBottom :
+                                    currentEdgeIdx === 1 ? locationTop :
+                                    currentEdgeIdx === 2 ? locationLeft : locationRight
+    property int simulatedThickness: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_previewSize : Math.round(Kirigami.Units.gridUnit * 2.5)
 
     // Mock objects for LayoutMetrics.js (must be IDs to be visible as globals)
     QtObject {
@@ -83,8 +112,8 @@ Item {
                 color: Kirigami.Theme.backgroundColor
                 border.color: Kirigami.Theme.disabledTextColor
                 radius: Kirigami.Units.smallSpacing
-                width: controlsLayout.implicitWidth + 16
-                height: controlsLayout.implicitHeight + 16
+                width: controlsLayout.implicitWidth + Kirigami.Units.largeSpacing * 2
+                height: controlsLayout.implicitHeight + Kirigami.Units.largeSpacing * 2
 
                 RowLayout {
                     id: controlsLayout
@@ -100,7 +129,7 @@ Item {
                         model: [Wrappers.i18n("Bottom"), Wrappers.i18n("Top"), Wrappers.i18n("Left"), Wrappers.i18n("Right")]
                         currentIndex: previewRoot.cfg_page && previewRoot.cfg_page.cfg_previewEdge !== undefined ? previewRoot.cfg_page.cfg_previewEdge : 0
                         onActivated: (index) => { if (previewRoot.cfg_page) previewRoot.cfg_page.cfg_previewEdge = index }
-                        Layout.preferredWidth: 120
+                        Layout.preferredWidth: Kirigami.Units.gridUnit * 6
                     }
                     Label { 
                         text: "   " + Wrappers.i18n("Size:") 
@@ -125,6 +154,12 @@ Item {
             KSvg.FrameSvgItem {
                 id: dummyPanel
                 
+                // Use Complementary colorset to ensure panel-like contrast (white text on dark bg) 
+                // regardless of whether the system theme is dark or light.
+                Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+                Kirigami.Theme.inherit: false
+                clip: false // Crucial: allow content to bleed out (zoom/badges)
+
                 width: previewRoot.isVertical ? previewRoot.simulatedThickness : parent.width
                 height: previewRoot.isVertical ? parent.height : previewRoot.simulatedThickness
                 
@@ -133,22 +168,22 @@ Item {
                 states: [
                     State {
                         name: "bottom"
-                        when: previewRoot.simulatedLocation === PlasmaCore.Types.BottomEdge
+                        when: previewRoot.simulatedLocation === previewRoot.locationBottom
                         AnchorChanges { target: dummyPanel; anchors.bottom: dummyPanel.parent.bottom; anchors.top: undefined; anchors.left: undefined; anchors.right: undefined; anchors.horizontalCenter: dummyPanel.parent.horizontalCenter; anchors.verticalCenter: undefined }
                     },
                     State {
                         name: "top"
-                        when: previewRoot.simulatedLocation === PlasmaCore.Types.TopEdge
+                        when: previewRoot.simulatedLocation === previewRoot.locationTop
                         AnchorChanges { target: dummyPanel; anchors.bottom: undefined; anchors.top: dummyPanel.parent.top; anchors.left: undefined; anchors.right: undefined; anchors.horizontalCenter: dummyPanel.parent.horizontalCenter; anchors.verticalCenter: undefined }
                     },
                     State {
                         name: "left"
-                        when: previewRoot.simulatedLocation === PlasmaCore.Types.LeftEdge
+                        when: previewRoot.simulatedLocation === previewRoot.locationLeft
                         AnchorChanges { target: dummyPanel; anchors.bottom: undefined; anchors.top: undefined; anchors.left: dummyPanel.parent.left; anchors.right: undefined; anchors.horizontalCenter: undefined; anchors.verticalCenter: dummyPanel.parent.verticalCenter }
                     },
                     State {
                         name: "right"
-                        when: previewRoot.simulatedLocation === PlasmaCore.Types.RightEdge
+                        when: previewRoot.simulatedLocation === previewRoot.locationRight
                         AnchorChanges { target: dummyPanel; anchors.bottom: undefined; anchors.top: undefined; anchors.left: undefined; anchors.right: dummyPanel.parent.right; anchors.horizontalCenter: undefined; anchors.verticalCenter: dummyPanel.parent.verticalCenter }
                     }
                 ]
@@ -159,11 +194,12 @@ Item {
                     contentWidth: mockTasksLayout.width
                     contentHeight: mockTasksLayout.height
                     interactive: true
-                    clip: true
+                    clip: false // Crucial: allow zoomed icons/badges to grow beyond the panel bounds
                     
                     GridLayout {
                         id: mockTasksLayout
                         anchors.centerIn: parent
+                        clip: false // Ensure no inner clipping
                         
                         columns: previewRoot.isVertical ? 1 : -1
                         rows: previewRoot.isVertical ? -1 : 1
@@ -209,7 +245,7 @@ Item {
 
                             readonly property real cellWidth: {
                                 if (previewRoot.isVertical) return previewRoot.simulatedThickness;
-                                if (showText) {
+                                if (mockTask.showText) {
                                      let baseFactor = 1.0;
                                      if (mockTask.cfgReady) {
                                          switch (previewRoot.cfg_page.cfg_taskMaxWidth) {
@@ -222,18 +258,20 @@ Item {
                                      const factorReduction = (Math.min(50, laneHeight) - 20) * 0.01;
                                      const factor = Math.max(1, baseFactor - Math.max(0, factorReduction));
                                      
-                                     let minW = (previewRoot.simulatedThickness) + (Kirigami.Units.gridUnit * 8);
+                                     // Sync with LayoutMetrics.preferredMinWidth()
+                                     // iconMargin * 2 + gridUnit * 8 + spacing * 2
+                                     let minW = (previewRoot.simulatedThickness) + (Kirigami.Units.gridUnit * 8) + (Kirigami.Units.smallSpacing * 2);
                                      return Math.floor(minW * factor);
                                 }
                                 return previewRoot.simulatedThickness; 
                             }
                             readonly property real cellHeight: {
-                                if (previewRoot.isVertical && showText) return Math.max(50, Kirigami.Units.gridUnit * 3);
+                                if (previewRoot.isVertical && mockTask.showText) return Math.max(50, Kirigami.Units.gridUnit * 3);
                                 return previewRoot.simulatedThickness;
                             }
 
-                            Layout.preferredWidth: cellWidth
-                            Layout.preferredHeight: cellHeight
+                            Layout.preferredWidth: mockTask.cellWidth
+                            Layout.preferredHeight: mockTask.cellHeight
                             
                             // 1. Frame background
                             KSvg.FrameSvgItem {
@@ -316,20 +354,23 @@ Item {
                              Item {
                                  id: iconBox
                                  
-                                 width: previewRoot.isVertical ? (parent.width - adjustMargin(true, parent.width, taskFrame.margins.left) - adjustMargin(true, parent.width, taskFrame.margins.right)) :
-                                                                 (showText ? Math.max(Kirigami.Units.iconSizes.sizeForLabels, Kirigami.Units.iconSizes.medium) :
-                                                                             (parent.width - adjustMargin(true, parent.width, taskFrame.margins.left) - adjustMargin(true, parent.width, taskFrame.margins.right)))
-                                 height: parent.height - adjustMargin(false, parent.height, taskFrame.margins.top) - adjustMargin(false, parent.height, taskFrame.margins.bottom)
+                                 // Mock for LayoutMetrics/TaskList.minimumWidth behavior
+                                 readonly property real simulatedMinWidth: Math.max(Kirigami.Units.iconSizes.smallMedium, previewRoot.simulatedThickness - Kirigami.Units.mediumSpacing)
+                                 
+                                 width: previewRoot.isVertical ? (parent.width - mockTask.adjustMargin(true, parent.width, taskFrame.margins.left) - mockTask.adjustMargin(true, parent.width, taskFrame.margins.right)) :
+                                                                 (mockTask.showText ? Math.max(Kirigami.Units.iconSizes.sizeForLabels, Kirigami.Units.iconSizes.medium) :
+                                                                             Math.min(simulatedMinWidth, parent.width - mockTask.adjustMargin(true, parent.width, taskFrame.margins.left) - mockTask.adjustMargin(true, parent.width, taskFrame.margins.right)))
+                                 height: parent.height - mockTask.adjustMargin(false, parent.height, taskFrame.margins.top) - mockTask.adjustMargin(false, parent.height, taskFrame.margins.bottom) - (Kirigami.Units.smallSpacing / 2)
                                  
                                  anchors {
                                      left: parent.left
                                      top: parent.top
-                                     topMargin: adjustMargin(false, parent.height, taskFrame.margins.top)
+                                     topMargin: mockTask.adjustMargin(false, parent.height, taskFrame.margins.top) + (Kirigami.Units.smallSpacing / (previewRoot.simulatedThickness > 32 ? 4 : 8))
                                  }
                                  
                                  // Horizontal Centering for Dock Mode (Icons Only)
-                                 anchors.horizontalCenter: (showText || previewRoot.isVertical) ? undefined : parent.horizontalCenter
-                                 anchors.leftMargin: (showText && !previewRoot.isVertical) ? adjustMargin(true, parent.width, taskFrame.margins.left) : (anchors.horizontalCenter ? 0 : (parent.width - width) / 2)
+                                 anchors.horizontalCenter: (mockTask.showText || previewRoot.isVertical) ? undefined : parent.horizontalCenter
+                                 anchors.leftMargin: (mockTask.showText && !previewRoot.isVertical) ? mockTask.adjustMargin(true, parent.width, taskFrame.margins.left) : (anchors.horizontalCenter ? 0 : (parent.width - width) / 2)
 
                                  // Main Icon (Inside Container)
                                  Kirigami.Icon {
@@ -359,25 +400,25 @@ Item {
                                      states: [
                                          State {
                                              name: "top"
-                                             when: previewRoot.simulatedLocation === PlasmaCore.Types.TopEdge
+                                             when: previewRoot.simulatedLocation === previewRoot.locationTop
                                              AnchorChanges { target: taskIcon; anchors.top: parent.top; anchors.bottom: undefined; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: undefined; anchors.left: undefined; anchors.right: undefined }
                                              PropertyChanges { target: taskIcon; anchors.topMargin: taskIcon.edgeMarginV; anchors.bottomMargin: 0; anchors.leftMargin: 0; anchors.rightMargin: 0 }
                                          },
                                          State {
                                              name: "left"
-                                             when: previewRoot.simulatedLocation === PlasmaCore.Types.LeftEdge
+                                             when: previewRoot.simulatedLocation === previewRoot.locationLeft
                                              AnchorChanges { target: taskIcon; anchors.left: parent.left; anchors.right: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.top: undefined; anchors.bottom: undefined }
                                              PropertyChanges { target: taskIcon; anchors.leftMargin: taskIcon.edgeMarginH; anchors.rightMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
                                          },
                                          State {
                                              name: "right"
-                                             when: previewRoot.simulatedLocation === PlasmaCore.Types.RightEdge
+                                             when: previewRoot.simulatedLocation === previewRoot.locationRight
                                              AnchorChanges { target: taskIcon; anchors.right: parent.right; anchors.left: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.top: undefined; anchors.bottom: undefined }
                                              PropertyChanges { target: taskIcon; anchors.rightMargin: taskIcon.edgeMarginH; anchors.leftMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
                                          },
                                          State {
                                              name: "bottom"
-                                             when: previewRoot.simulatedLocation === PlasmaCore.Types.BottomEdge
+                                             when: previewRoot.simulatedLocation === previewRoot.locationBottom
                                              AnchorChanges { target: taskIcon; anchors.bottom: parent.bottom; anchors.top: undefined; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: undefined; anchors.left: undefined; anchors.right: undefined }
                                              PropertyChanges { target: taskIcon; anchors.bottomMargin: taskIcon.edgeMarginV; anchors.topMargin: 0; anchors.leftMargin: 0; anchors.rightMargin: 0 }
                                          }
@@ -428,7 +469,10 @@ Item {
                              PlasmaComponents3.Label {
                                  id: label
                                  visible: mockTask.showText
-                                 text: previewRoot.fakeNames[mockTask.index]
+                                 text: previewRoot.getTaskName(mockTask.index)
+                                 // Use native theme color, ensured by parent's Complementary colorSet
+                                 color: Kirigami.Theme.textColor 
+                                 Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
                                  
                                  anchors {
                                      left: previewRoot.isVertical ? parent.left : iconBox.right
@@ -444,9 +488,8 @@ Item {
                                  verticalAlignment: previewRoot.isVertical ? Text.AlignTop : Text.AlignVCenter
                                  horizontalAlignment: previewRoot.isVertical ? Text.AlignHCenter : Text.AlignLeft
                                  maximumLineCount: 1
-                                 // Force white text if simulating a panel in a Light KCM, 
-                                 // or follow KCM theme if it's already Dark.
-                                 color: Kirigami.ColorUtils.brightnessForColor(Kirigami.Theme.backgroundColor) === Kirigami.ColorUtils.Dark ? Kirigami.Theme.textColor : "#ffffff"
+                                 // No hardcoded colors. Implicitly uses Kirigami.Theme.textColor 
+                                 // which follows the Kirigami theme context.
                              }
                             
                             // 3. Indicator
@@ -456,9 +499,9 @@ Item {
                                 
                                 readonly property int locMap: (mockTask.cfgReady && previewRoot.cfg_page.cfg_indicatorOverride) ? previewRoot.cfg_page.cfg_indicatorLocation : -1
                                 readonly property int effLoc: locMap !== -1 ? locMap : 
-                                    (previewRoot.simulatedLocation === PlasmaCore.Types.TopEdge ? 3 :
-                                    previewRoot.simulatedLocation === PlasmaCore.Types.LeftEdge ? 1 :
-                                    previewRoot.simulatedLocation === PlasmaCore.Types.RightEdge ? 2 : 0) // default bottom
+                                    (previewRoot.simulatedLocation === previewRoot.locationTop ? 3 :
+                                    previewRoot.simulatedLocation === previewRoot.locationLeft ? 1 :
+                                    previewRoot.simulatedLocation === previewRoot.locationRight ? 2 : 0) // default bottom
                                     
                                 readonly property bool isVerticalIndicator: effLoc === 1 || effLoc === 2
                                 
@@ -559,4 +602,5 @@ Item {
             }
         }
     }
+}
 }
