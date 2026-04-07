@@ -242,18 +242,6 @@ PlasmoidItem {
         }
     }
 
-    // Handle changes in source model properties (like IsMinimized) for filteredTasksModel
-    Connections {
-        target: tasksModel
-        function onDataChanged(topLeft, bottomRight, roles) {
-            if (!roles || roles.length === 0 || roles.includes(TaskManager.AbstractTasksModel.IsMinimized)) {
-                filteredTasksModel.invalidateFilter();
-            }
-        }
-        function onRowsInserted() { filteredTasksModel.invalidateFilter(); }
-        function onRowsRemoved() { filteredTasksModel.invalidateFilter(); }
-        function onModelReset() { filteredTasksModel.invalidateFilter(); }
-    }
     
     // Invalidate filter when config changes
     Connections {

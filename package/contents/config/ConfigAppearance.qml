@@ -20,8 +20,6 @@ ConfigPage {
     id: cfg_page
     
     // Silence KCM errors for legacy/removed properties
-    property bool cfg_showOnlyMinimized: false
-    property bool cfg_showOnlyNotMinimized: false
     readonly property bool plasmaPaAvailable: Qt.createComponent("../ui/PulseAudio.qml").status === Component.Ready
     readonly property bool plasmoidVertical: Plasmoid.formFactor === PlasmaCore.Types.Vertical
     readonly property bool iconOnly: Plasmoid.configuration.iconOnly

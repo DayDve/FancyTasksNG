@@ -52,9 +52,9 @@ function preferredMinWidth() {
     let width = preferredMinLauncherWidth();
 
     if (!tasks.vertical && !tasks.iconsOnly) {
-      width +=
-          (Kirigami.Units.smallSpacing * 2) +
-          (Kirigami.Units.gridUnit * 8);
+        width +=
+            (Kirigami.Units.smallSpacing * 2) +
+            (Kirigami.Units.gridUnit * 8);
     }
 
     return width;
@@ -84,15 +84,15 @@ function preferredMaxWidth() {
     const laneHeight = tasks.height / maxStripes(); // correct for multiple rows
     let baseFactor = 1; // sane default in case something goes wrong
     switch (tasks.plasmoid.configuration.taskMaxWidth) {
-    case 0: // narrow
-        baseFactor = 1.2;
-        break;
-    case 1: // medium
-        baseFactor = 1.6;
-        break;
-    case 2: // wide
-        baseFactor = 2;
-        break;
+        case 0: // narrow
+            baseFactor = 1.2;
+            break;
+        case 1: // medium
+            baseFactor = 1.6;
+            break;
+        case 2: // wide
+            baseFactor = 2;
+            break;
     }
     // For every pixel of height above 20, knock the factor down by 0.01. This
     // produces nice results for 20~50 pixels. Above 50, it suddenly feels like
@@ -117,7 +117,7 @@ function preferredMaxHeight() {
             taskPreferredSize = tasks.width / maxStripes();
         } else {
             taskPreferredSize = Math.max(Kirigami.Units.iconSizes.sizeForLabels,
-                                         Kirigami.Units.iconSizes.medium);
+                Kirigami.Units.iconSizes.medium);
         }
         return verticalMargins() +
             Math.min(
@@ -135,7 +135,7 @@ function preferredMaxHeight() {
 
 function preferredHeightInPopup() {
     return verticalMargins() + Math.max(Kirigami.Units.iconSizes.sizeForLabels,
-                                        Kirigami.Units.iconSizes.medium);
+        Kirigami.Units.iconSizes.medium);
 }
 
 function spaceRequiredToShowText() {

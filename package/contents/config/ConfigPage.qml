@@ -10,168 +10,169 @@ Kirigami.Page {
     // --- Properties to silence KCM errors ---
     // Defaults for existing aliases
     // --- General ---
-    property bool cfg_showOnlyCurrentScreen
-    property bool cfg_showOnlyCurrentScreenDefault
-    property bool cfg_showOnlyCurrentDesktop
-    property bool cfg_showOnlyCurrentDesktopDefault
-    property bool cfg_showOnlyCurrentActivity
-    property bool cfg_showOnlyCurrentActivityDefault
-    property int cfg_minimizedFilter
-    property int cfg_minimizedFilterDefault
-    property bool cfg_showOnlyMinimized
-    property bool cfg_showOnlyMinimizedDefault
-    property bool cfg_showOnlyNotMinimized
-    property bool cfg_showOnlyNotMinimizedDefault
-    property bool cfg_unhideOnAttention
-    property bool cfg_unhideOnAttentionDefault
-    property int cfg_maxStripes
-    property int cfg_maxStripesDefault
-    property int cfg_maxButtonLength
-    property int cfg_maxButtonLengthDefault
-    property bool cfg_forceStripes
-    property bool cfg_forceStripesDefault
-    property bool cfg_showToolTips
-    property bool cfg_showToolTipsDefault
-    property int cfg_taskMaxWidth
-    property int cfg_taskMaxWidthDefault
-    property bool cfg_wheelEnabled
-    property bool cfg_wheelEnabledDefault
-    property bool cfg_wheelSkipMinimized
-    property bool cfg_wheelSkipMinimizedDefault
-    property bool cfg_highlightWindows
-    property bool cfg_highlightWindowsDefault
-    property bool cfg_indicateAudioStreams
-    property bool cfg_indicateAudioStreamsDefault
-    property int cfg_iconScale
-    property int cfg_iconScaleDefault
-    property int cfg_iconSizePx
-    property int cfg_iconSizePxDefault
-    property bool cfg_iconSizeOverride
-    property bool cfg_iconSizeOverrideDefault
+    property bool cfg_showOnlyCurrentScreen: false
+    property bool cfg_showOnlyCurrentScreenDefault: false
+    property bool cfg_showOnlyCurrentDesktop: false
+    property bool cfg_showOnlyCurrentDesktopDefault: false
+    property bool cfg_showOnlyCurrentActivity: false
+    property bool cfg_showOnlyCurrentActivityDefault: false
+    property int cfg_minimizedFilter: 0
+    property int cfg_minimizedFilterDefault: 0
+    property var cfg_showOnlyMinimized: false
+    property var cfg_showOnlyMinimizedDefault: false
+    property var cfg_showOnlyNotMinimized: false
+    property var cfg_showOnlyNotMinimizedDefault: false
+    property bool cfg_unhideOnAttention: false
+    property bool cfg_unhideOnAttentionDefault: false
+    property int cfg_maxStripes: 0
+    property int cfg_maxStripesDefault: 0
+    property int cfg_maxButtonLength: 0
+    property int cfg_maxButtonLengthDefault: 0
+    property bool cfg_forceStripes: false
+    property bool cfg_forceStripesDefault: false
+    property bool cfg_showToolTips: true
+    property bool cfg_showToolTipsDefault: true
+    property int cfg_taskMaxWidth: 0
+    property int cfg_taskMaxWidthDefault: 0
+    property bool cfg_wheelEnabled: true
+    property bool cfg_wheelEnabledDefault: true
+    property bool cfg_wheelSkipMinimized: false
+    property bool cfg_wheelSkipMinimizedDefault: false
+    property bool cfg_highlightWindows: true
+    property bool cfg_highlightWindowsDefault: true
+    property bool cfg_indicateAudioStreams: true
+    property bool cfg_indicateAudioStreamsDefault: true
+    property int cfg_iconScale: 100
+    property int cfg_iconScaleDefault: 100
+    property int cfg_iconSizePx: 32
+    property int cfg_iconSizePxDefault: 32
+    property bool cfg_iconSizeOverride: false
+    property bool cfg_iconSizeOverrideDefault: false
+
     // --- Preview Config ---
     property int cfg_previewEdge: 0
     property int cfg_previewEdgeDefault: 0
     property int cfg_previewSize: 48
     property int cfg_previewSizeDefault: 48
-    property bool cfg_fill
-    property bool cfg_fillDefault
-    property bool cfg_taskHoverEffect
-    property bool cfg_taskHoverEffectDefault
-    property int cfg_maxTextLines
-    property int cfg_maxTextLinesDefault
-    property bool cfg_minimizeActiveTaskOnClick
-    property bool cfg_minimizeActiveTaskOnClickDefault
-    property bool cfg_reverseMode
-    property bool cfg_reverseModeDefault
-    property int cfg_iconSpacing
-    property int cfg_iconSpacingDefault
-    property bool cfg_useBorders
-    property bool cfg_useBordersDefault
-    property int cfg_taskSpacingSize
-    property int cfg_taskSpacingSizeDefault
-    property bool cfg_overridePlasmaButtonDirection
-    property bool cfg_overridePlasmaButtonDirectionDefault
-    property int cfg_plasmaButtonDirection
-    property int cfg_plasmaButtonDirectionDefault
-    property int cfg_iconZoomFactor
-    property int cfg_iconZoomFactorDefault
-    property int cfg_iconZoomDuration
-    property int cfg_iconZoomDurationDefault
+    property bool cfg_fill: false
+    property bool cfg_fillDefault: false
+    property bool cfg_taskHoverEffect: true
+    property bool cfg_taskHoverEffectDefault: true
+    property int cfg_maxTextLines: 1
+    property int cfg_maxTextLinesDefault: 1
+    property bool cfg_minimizeActiveTaskOnClick: true
+    property bool cfg_minimizeActiveTaskOnClickDefault: true
+    property bool cfg_reverseMode: false
+    property bool cfg_reverseModeDefault: false
+    property int cfg_iconSpacing: 4
+    property int cfg_iconSpacingDefault: 4
+    property bool cfg_useBorders: true
+    property bool cfg_useBordersDefault: true
+    property int cfg_taskSpacingSize: 0
+    property int cfg_taskSpacingSizeDefault: 0
+    property bool cfg_overridePlasmaButtonDirection: false
+    property bool cfg_overridePlasmaButtonDirectionDefault: false
+    property int cfg_plasmaButtonDirection: 0
+    property int cfg_plasmaButtonDirectionDefault: 0
+    property int cfg_iconZoomFactor: 0
+    property int cfg_iconZoomFactorDefault: 0
+    property int cfg_iconZoomDuration: 200
+    property int cfg_iconZoomDurationDefault: 200
 
     // --- Appearance / Behavior ---
-    property int cfg_groupingStrategy
-    property int cfg_groupingStrategyDefault
-    property int cfg_iconOnly
-    property int cfg_iconOnlyDefault
-    property int cfg_groupedTaskVisualization
-    property int cfg_groupedTaskVisualizationDefault
-    property bool cfg_groupPopups
-    property bool cfg_groupPopupsDefault
-    property bool cfg_onlyGroupWhenFull
-    property bool cfg_onlyGroupWhenFullDefault
-    property int cfg_sortingStrategy
-    property int cfg_sortingStrategyDefault
-    property bool cfg_separateLaunchers
-    property bool cfg_separateLaunchersDefault
-    property bool cfg_hideLauncherOnStart
-    property bool cfg_hideLauncherOnStartDefault
-    property var cfg_groupingAppIdBlacklist
-    property var cfg_groupingAppIdBlacklistDefault
-    property var cfg_groupingLauncherUrlBlacklist
-    property var cfg_groupingLauncherUrlBlacklistDefault
-    property var cfg_launchers
-    property var cfg_launchersDefault
-    property int cfg_middleClickAction
-    property int cfg_middleClickActionDefault
+    property int cfg_groupingStrategy: 0
+    property int cfg_groupingStrategyDefault: 0
+    property int cfg_iconOnly: 0
+    property int cfg_iconOnlyDefault: 0
+    property int cfg_groupedTaskVisualization: 0
+    property int cfg_groupedTaskVisualizationDefault: 0
+    property bool cfg_groupPopups: true
+    property bool cfg_groupPopupsDefault: true
+    property bool cfg_onlyGroupWhenFull: false
+    property bool cfg_onlyGroupWhenFullDefault: false
+    property int cfg_sortingStrategy: 0
+    property int cfg_sortingStrategyDefault: 0
+    property bool cfg_separateLaunchers: true
+    property bool cfg_separateLaunchersDefault: true
+    property bool cfg_hideLauncherOnStart: false
+    property bool cfg_hideLauncherOnStartDefault: false
+    property var cfg_groupingAppIdBlacklist: []
+    property var cfg_groupingAppIdBlacklistDefault: []
+    property var cfg_groupingLauncherUrlBlacklist: []
+    property var cfg_groupingLauncherUrlBlacklistDefault: []
+    property var cfg_launchers: []
+    property var cfg_launchersDefault: []
+    property int cfg_middleClickAction: 0
+    property int cfg_middleClickActionDefault: 0
 
     // --- Task Button Appearance ---
-    property bool cfg_buttonColorize
-    property bool cfg_buttonColorizeDefault
-    property bool cfg_buttonColorizeInactive
-    property bool cfg_buttonColorizeInactiveDefault
-    property bool cfg_buttonColorizeDominant
-    property bool cfg_buttonColorizeDominantDefault
-    property string cfg_buttonColorizeCustom
-    property string cfg_buttonColorizeCustomDefault
-    property bool cfg_disableButtonSvg
-    property bool cfg_disableButtonSvgDefault
-    property bool cfg_disableButtonInactiveSvg
-    property bool cfg_disableButtonInactiveSvgDefault
+    property bool cfg_buttonColorize: false
+    property bool cfg_buttonColorizeDefault: false
+    property bool cfg_buttonColorizeInactive: false
+    property bool cfg_buttonColorizeInactiveDefault: false
+    property bool cfg_buttonColorizeDominant: false
+    property bool cfg_buttonColorizeDominantDefault: false
+    property string cfg_buttonColorizeCustom: ""
+    property string cfg_buttonColorizeCustomDefault: ""
+    property bool cfg_disableButtonSvg: false
+    property bool cfg_disableButtonSvgDefault: false
+    property bool cfg_disableButtonInactiveSvg: false
+    property bool cfg_disableButtonInactiveSvgDefault: false
 
     // --- Indicators ---
-    property int cfg_indicatorsEnabled
-    property int cfg_indicatorsEnabledDefault
-    property int cfg_indicatorProgressStyle
-    property int cfg_indicatorProgressStyleDefault
-    property string cfg_indicatorProgressColor
-    property string cfg_indicatorProgressColorDefault
-    property int cfg_indicatorProgressThickness
-    property int cfg_indicatorProgressThicknessDefault
-    property int cfg_indicatorProgressOpacity
-    property int cfg_indicatorProgressOpacityDefault
-    property bool cfg_disableInactiveIndicators
-    property bool cfg_disableInactiveIndicatorsDefault
-    property bool cfg_indicatorsAnimated
-    property bool cfg_indicatorsAnimatedDefault
-    property int cfg_groupIconEnabled
-    property int cfg_groupIconEnabledDefault
-    property int cfg_indicatorLocation
-    property int cfg_indicatorLocationDefault
-    property int cfg_indicatorStyle
-    property int cfg_indicatorStyleDefault
-    property int cfg_indicatorMinLimit
-    property int cfg_indicatorMinLimitDefault
-    property int cfg_indicatorMaxLimit
-    property int cfg_indicatorMaxLimitDefault
-    property bool cfg_indicatorDesaturate
-    property bool cfg_indicatorDesaturateDefault
+    property int cfg_indicatorsEnabled: 1
+    property int cfg_indicatorsEnabledDefault: 1
+    property int cfg_indicatorProgressStyle: 0
+    property int cfg_indicatorProgressStyleDefault: 0
+    property string cfg_indicatorProgressColor: ""
+    property string cfg_indicatorProgressColorDefault: ""
+    property int cfg_indicatorProgressThickness: 2
+    property int cfg_indicatorProgressThicknessDefault: 2
+    property int cfg_indicatorProgressOpacity: 100
+    property int cfg_indicatorProgressOpacityDefault: 100
+    property bool cfg_disableInactiveIndicators: false
+    property bool cfg_disableInactiveIndicatorsDefault: false
+    property bool cfg_indicatorsAnimated: true
+    property bool cfg_indicatorsAnimatedDefault: true
+    property int cfg_groupIconEnabled: 0
+    property int cfg_groupIconEnabledDefault: 0
+    property int cfg_indicatorLocation: 0
+    property int cfg_indicatorLocationDefault: 0
+    property int cfg_indicatorStyle: 0
+    property int cfg_indicatorStyleDefault: 0
+    property int cfg_indicatorMinLimit: 0
+    property int cfg_indicatorMinLimitDefault: 0
+    property int cfg_indicatorMaxLimit: 0
+    property int cfg_indicatorMaxLimitDefault: 0
+    property bool cfg_indicatorDesaturate: false
+    property bool cfg_indicatorDesaturateDefault: false
 
-    property int cfg_indicatorEdgeOffset
-    property int cfg_indicatorEdgeOffsetDefault
-    property int cfg_indicatorSize
-    property int cfg_indicatorSizeDefault
-    property int cfg_indicatorLength
-    property int cfg_indicatorLengthDefault
-    property int cfg_indicatorRadius
-    property int cfg_indicatorRadiusDefault
-    property int cfg_indicatorShrink
-    property int cfg_indicatorShrinkDefault
-    property bool cfg_indicatorDarkenExtras
-    property bool cfg_indicatorDarkenExtrasDefault
-    property bool cfg_indicatorDominantColor
-    property bool cfg_indicatorDominantColorDefault
-    property bool cfg_indicatorAccentColor
-    property bool cfg_indicatorAccentColorDefault
-    property string cfg_indicatorCustomColor
-    property string cfg_indicatorCustomColorDefault
-    property bool cfg_indicatorReverse
-    property bool cfg_indicatorReverseDefault
-    property bool cfg_indicatorOverride
-    property bool cfg_indicatorOverrideDefault
-    property bool cfg_iconScaleFromEdge
-    property bool cfg_iconScaleFromEdgeDefault
-    property int cfg_iconEdgeOffset
-    property int cfg_iconEdgeOffsetDefault
-    property bool cfg_showBadges
-    property bool cfg_showBadgesDefault
+    property int cfg_indicatorEdgeOffset: 0
+    property int cfg_indicatorEdgeOffsetDefault: 0
+    property int cfg_indicatorSize: 0
+    property int cfg_indicatorSizeDefault: 0
+    property int cfg_indicatorLength: 0
+    property int cfg_indicatorLengthDefault: 0
+    property int cfg_indicatorRadius: 0
+    property int cfg_indicatorRadiusDefault: 0
+    property int cfg_indicatorShrink: 0
+    property int cfg_indicatorShrinkDefault: 0
+    property bool cfg_indicatorDarkenExtras: false
+    property bool cfg_indicatorDarkenExtrasDefault: false
+    property bool cfg_indicatorDominantColor: false
+    property bool cfg_indicatorDominantColorDefault: false
+    property bool cfg_indicatorAccentColor: false
+    property bool cfg_indicatorAccentColorDefault: false
+    property string cfg_indicatorCustomColor: ""
+    property string cfg_indicatorCustomColorDefault: ""
+    property bool cfg_indicatorReverse: false
+    property bool cfg_indicatorReverseDefault: false
+    property bool cfg_indicatorOverride: false
+    property bool cfg_indicatorOverrideDefault: false
+    property bool cfg_iconScaleFromEdge: false
+    property bool cfg_iconScaleFromEdgeDefault: false
+    property int cfg_iconEdgeOffset: 0
+    property int cfg_iconEdgeOffsetDefault: 0
+    property bool cfg_showBadges: true
+    property bool cfg_showBadgesDefault: true
 }

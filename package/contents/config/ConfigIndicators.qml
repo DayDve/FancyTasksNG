@@ -16,8 +16,6 @@ ConfigPage {
     id: cfg_page
 
     // Silence KCM errors for legacy/removed properties
-    property bool cfg_showOnlyMinimized: false
-    property bool cfg_showOnlyNotMinimized: false
     readonly property bool plasmaPaAvailable: Qt.createComponent("../ui/PulseAudio.qml").status === Component.Ready
 
     readonly property bool isLineStyle: cfg_page.cfg_indicatorStyle === 0
@@ -317,16 +315,19 @@ ConfigPage {
                 id: indicatorProgressStyle
                 model: [
                     Wrappers.i18n("Disabled"),
-                    Wrappers.i18n("Fill button"),
-                    Wrappers.i18n("Top edge"),
-                    Wrappers.i18n("Bottom edge")
+                    Wrappers.i18n("Fill (Left-Right)"),
+                    Wrappers.i18n("Fill (Bottom-Top)"),
+                    Wrappers.i18n("Strip (Top)"),
+                    Wrappers.i18n("Strip (Bottom)"),
+                    Wrappers.i18n("Strip (Left)"),
+                    Wrappers.i18n("Strip (Right)")
                 ]
                 currentIndex: cfg_page.cfg_indicatorProgressStyle
                 onActivated: cfg_page.cfg_indicatorProgressStyle = currentIndex
             }
 
             RowLayout {
-                visible: indicatorProgressStyle.currentIndex > 1
+                visible: indicatorProgressStyle.currentIndex > 0
                 spacing: Kirigami.Units.smallSpacing
                 Label {
                     text: Wrappers.i18n("Progress color:")
@@ -344,13 +345,15 @@ ConfigPage {
             }
 
             RowLayout {
-                visible: indicatorProgressStyle.currentIndex > 1
+                visible: indicatorProgressStyle.currentIndex > 0
                 spacing: Kirigami.Units.smallSpacing
                 Label {
                     text: Wrappers.i18n("Thickness:")
+                    visible: indicatorProgressStyle.currentIndex >= 3 // Only show label for strips
                 }
                 Slider {
                     id: indicatorProgressThickness
+                    visible: indicatorProgressStyle.currentIndex >= 3 // Thickness only for strips
                     from: 1
                     to: 10
                     stepSize: 1
@@ -360,6 +363,7 @@ ConfigPage {
 
                 Item {
                     width: Kirigami.Units.largeSpacing
+                    visible: indicatorProgressStyle.currentIndex > 0
                 }
 
                 Label {

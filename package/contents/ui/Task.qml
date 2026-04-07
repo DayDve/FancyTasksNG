@@ -696,30 +696,12 @@ Item {
 
         anchors.fill: frame
         asynchronous: true
-        active: !!(task.model && task.model.IsWindow) && !!task.smartLauncherItem && !!task.smartLauncherItem.progressVisible && Plasmoid.configuration.indicatorProgressStyle === 1
+        active: !!(task.model && task.model.IsWindow) && !!task.smartLauncherItem && !!task.smartLauncherItem.progressVisible && Plasmoid.configuration.indicatorProgressStyle > 0
 
         source: "TaskProgressOverlay.qml"
         onLoaded: item.task = task
     }
 
-    Rectangle {
-        id: edgeProgress
-        readonly property bool isVertical: task.tasksRoot.vertical
-        visible: !!(task.model && task.model.IsWindow) && !!task.smartLauncherItem && !!task.smartLauncherItem.progressVisible && (Plasmoid.configuration.indicatorProgressStyle === 2 || Plasmoid.configuration.indicatorProgressStyle === 3)
-        color: Plasmoid.configuration.indicatorProgressColor
-        opacity: Plasmoid.configuration.indicatorProgressOpacity / 100.0
-
-        readonly property int lineThickness: Plasmoid.configuration.indicatorProgressThickness
-        readonly property real currentProgress: task.smartLauncherItem ? task.smartLauncherItem.progress / 100.0 : 0
-
-        width: isVertical ? lineThickness : parent.width * currentProgress
-        height: isVertical ? parent.height * currentProgress : lineThickness
-
-        anchors.top: isVertical ? undefined : (Plasmoid.configuration.indicatorProgressStyle === 2 ? parent.top : undefined)
-        anchors.bottom: isVertical ? parent.bottom : (Plasmoid.configuration.indicatorProgressStyle === 3 ? parent.bottom : undefined)
-        anchors.left: isVertical ? (Plasmoid.configuration.indicatorProgressStyle === 2 ? parent.left : undefined) : parent.left
-        anchors.right: isVertical ? (Plasmoid.configuration.indicatorProgressStyle === 3 ? parent.right : undefined) : undefined
-    }
 
     Loader {
         id: iconBox

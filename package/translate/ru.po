@@ -269,7 +269,7 @@ msgstr "Держать значки запуска отдельно"
 
 #: ../contents/config/ConfigBehavior.qml
 msgid "Hide launchers after application startup"
-msgstr ""
+msgstr "Скрывать значки запуска после запуска приложения"
 
 #: ../contents/config/ConfigBehavior.qml
 msgid "Clicking active task minimizes the task"
@@ -1018,3 +1018,28 @@ msgstr "Доступно в %1"
 #~ msgctxt "only used for sizing, should be widest possible string"
 #~ msgid "100%"
 #~ msgstr "100%"
+
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Fill (Left-Right)"
+msgstr "Заливка (Слева направо)"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Fill (Bottom-Top)"
+msgstr "Заливка (Снизу вверх)"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Strip (Top)"
+msgstr "Полоска (Сверху)"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Strip (Bottom)"
+msgstr "Полоска (Снизу)"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Strip (Left)"
+msgstr "Полоска (Слева)"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Strip (Right)"
+msgstr "Полоска (Справа)"

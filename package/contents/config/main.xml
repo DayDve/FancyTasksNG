@@ -210,7 +210,7 @@
       <default>0</default>
     </entry>
     <entry name="indicatorProgressStyle" type="Int">
-      <label>Display progress on indicator instead of button</label>
+      <label>Display progress: 0:Disabled, 1:Fill L-R, 2:Fill B-T, 3:Top, 4:Bottom, 5:Left, 6:Right</label>
       <default>1</default>
     </entry>
     <entry name="indicatorProgressColor" type="String">
