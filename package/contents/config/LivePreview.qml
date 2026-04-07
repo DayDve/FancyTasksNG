@@ -7,6 +7,7 @@ import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.components as PlasmaComponents3
 import org.kde.ksvg as KSvg
 
 import "../ui/code/singletones"
@@ -201,11 +202,22 @@ Item {
 
                             readonly property real cellWidth: {
                                 if (previewRoot.isVertical) return previewRoot.simulatedThickness;
-                                if (showText) return 140;
+                                if (showText) {
+                                    let baseFactor = 1.0;
+                                    if (mockTask.cfgReady) {
+                                        switch (previewRoot.cfg_page.cfg_taskMaxWidth) {
+                                            case 0: baseFactor = 1.2; break;
+                                            case 1: baseFactor = 1.6; break;
+                                            case 2: baseFactor = 2.0; break;
+                                        }
+                                    }
+                                    let minW = (previewRoot.simulatedThickness) + (Kirigami.Units.gridUnit * 8);
+                                    return Math.floor(minW * baseFactor);
+                                }
                                 return previewRoot.simulatedThickness; 
                             }
                             readonly property real cellHeight: {
-                                if (previewRoot.isVertical) return (showText ? 50 : previewRoot.simulatedThickness);
+                                if (previewRoot.isVertical && showText) return Math.max(50, Kirigami.Units.gridUnit * 3);
                                 return previewRoot.simulatedThickness;
                             }
 
@@ -289,7 +301,7 @@ Item {
                                   }
                               }
 
-                             // 4. Icon Box (Badge Overlay in Task.qml)
+                             // 4. Icon & Badge Container (AUTHENTIC Task.qml logic)
                              Item {
                                  id: iconBox
                                  
@@ -300,108 +312,125 @@ Item {
                                  
                                  anchors {
                                      left: parent.left
-                                     leftMargin: adjustMargin(true, parent.width, taskFrame.margins.left)
                                      top: parent.top
                                      topMargin: adjustMargin(false, parent.height, taskFrame.margins.top)
                                  }
+                                 
+                                 // Horizontal Centering for Dock Mode (Icons Only)
+                                 anchors.horizontalCenter: (showText || previewRoot.isVertical) ? undefined : parent.horizontalCenter
+                                 anchors.leftMargin: (showText && !previewRoot.isVertical) ? adjustMargin(true, parent.width, taskFrame.margins.left) : (anchors.horizontalCenter ? 0 : (parent.width - width) / 2)
 
-                                 // Badge Demo (Task 1 only) - Anchored relative to iconBox/Badge logic
-                                 FancyUI.Badge {
+                                 // Main Icon (Inside Container)
+                                 Kirigami.Icon {
+                                     id: taskIcon
+                                     readonly property bool sizeOverride: mockTask.cfgReady && previewRoot.cfg_page.cfg_iconSizeOverride
+                                     readonly property int fixedSize: mockTask.cfgReady ? previewRoot.cfg_page.cfg_iconSizePx : 32
+                                     readonly property real iconScale: mockTask.cfgReady ? previewRoot.cfg_page.cfg_iconScale / 100 : 1.0
+                                     readonly property int growSize: (mockTask.isHovered && previewRoot.cfg_page.cfg_iconOnly === 1 && previewRoot.cfg_page.cfg_taskHoverEffect) ? previewRoot.cfg_page.cfg_iconZoomFactor : 0
+
+                                     readonly property int baseWidth: (sizeOverride ? fixedSize : (iconBox.width * iconScale))
+                                     readonly property int baseHeight: (sizeOverride ? fixedSize : (iconBox.height * iconScale))
+                                     
+                                     readonly property real edgeMarginH: (parent.width - baseWidth) / 2
+                                     readonly property real edgeMarginV: (parent.height - baseHeight) / 2
+
+                                     width: baseWidth + growSize
+                                     height: baseHeight + growSize
+                                     
+                                     // Default anchors (fallback/bottom edge)
+                                     anchors.horizontalCenter: parent.horizontalCenter
+                                     anchors.bottom: parent.bottom
+                                     anchors.bottomMargin: edgeMarginV
+
+                                     states: [
+                                         State {
+                                             name: "top"
+                                             when: previewRoot.simulatedLocation === PlasmaCore.Types.TopEdge
+                                             AnchorChanges { target: taskIcon; anchors.top: parent.top; anchors.bottom: undefined; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: undefined; anchors.left: undefined; anchors.right: undefined }
+                                             PropertyChanges { target: taskIcon; anchors.topMargin: taskIcon.edgeMarginV; anchors.bottomMargin: 0; anchors.leftMargin: 0; anchors.rightMargin: 0 }
+                                         },
+                                         State {
+                                             name: "left"
+                                             when: previewRoot.simulatedLocation === PlasmaCore.Types.LeftEdge
+                                             AnchorChanges { target: taskIcon; anchors.left: parent.left; anchors.right: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.top: undefined; anchors.bottom: undefined }
+                                             PropertyChanges { target: taskIcon; anchors.leftMargin: taskIcon.edgeMarginH; anchors.rightMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
+                                         },
+                                         State {
+                                             name: "right"
+                                             when: previewRoot.simulatedLocation === PlasmaCore.Types.RightEdge
+                                             AnchorChanges { target: taskIcon; anchors.right: parent.right; anchors.left: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.top: undefined; anchors.bottom: undefined }
+                                             PropertyChanges { target: taskIcon; anchors.rightMargin: taskIcon.edgeMarginH; anchors.leftMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
+                                         },
+                                         State {
+                                             name: "bottom"
+                                             when: previewRoot.simulatedLocation === PlasmaCore.Types.BottomEdge
+                                             AnchorChanges { target: taskIcon; anchors.bottom: parent.bottom; anchors.top: undefined; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: undefined; anchors.left: undefined; anchors.right: undefined }
+                                             PropertyChanges { target: taskIcon; anchors.bottomMargin: taskIcon.edgeMarginV; anchors.topMargin: 0; anchors.leftMargin: 0; anchors.rightMargin: 0 }
+                                         }
+                                     ]
+
+                                     source: previewRoot.getIconName(mockTask.index)
+                                     roundToIconSize: false
+                                 }
+
+                                 // Badge Overlay Simulator (Task 1 only)
+                                 Item {
+                                     id: badgeOverlay
+                                     anchors.fill: taskIcon
                                      visible: mockTask.index === 1 && mockTask.cfgReady && previewRoot.cfg_page.cfg_showBadges
-                                     anchors.right: parent.right
-                                     anchors.top: parent.top
-                                     anchors.rightMargin: -width/4
-                                     anchors.topMargin: -height/4
-                                     height: Math.round(parent.height * 0.4)
-                                     number: 3
-                                     isRound: true
+                                     z: 10
+
+                                     FancyUI.Badge {
+                                         anchors.right: parent.right
+                                         anchors.top: parent.top
+                                         anchors.rightMargin: 0
+                                         anchors.topMargin: 0
+                                         height: Math.round(parent.height * 0.4)
+                                         number: 3
+                                         isRound: true
+                                         hovered: mockTask.isHovered
+                                     }
+                                 }
+
+                                 // Audio Indicator Demo (Task 0 only)
+                                 FancyUI.Badge {
+                                     visible: mockTask.index === 0 && mockTask.cfgReady && previewRoot.cfg_page.cfg_indicateAudioStreams
+                                     anchors.left: taskIcon.left
+                                     anchors.top: taskIcon.top
+                                     
+                                     height: Math.round(iconBox.height * 0.4 * (taskIcon.width / taskIcon.baseWidth))
+                                     z: 10
+                                     
+                                     iconSource: "audio-volume-muted-symbolic"
+                                     highlightColor: Kirigami.Theme.negativeTextColor
                                      hovered: mockTask.isHovered
+                                     
+                                     anchors.leftMargin: -Math.max(Kirigami.Units.smallSpacing / 2, width / 32)
+                                     anchors.topMargin: -Math.max(Kirigami.Units.smallSpacing / 2, height / 32)
                                  }
                              }
 
-                             // 5. Main Icon (AUTHENTIC Task.qml logic)
-                             Kirigami.Icon {
-                                 id: taskIcon
-                                 readonly property bool sizeOverride: mockTask.cfgReady && previewRoot.cfg_page.cfg_iconSizeOverride
-                                 readonly property int fixedSize: mockTask.cfgReady ? previewRoot.cfg_page.cfg_iconSizePx : 32
-                                 readonly property real iconScale: mockTask.cfgReady ? previewRoot.cfg_page.cfg_iconScale / 100 : 1.0
-                                 readonly property int growSize: (mockTask.isHovered && previewRoot.cfg_page.cfg_iconOnly === 1 && previewRoot.cfg_page.cfg_taskHoverEffect) ? previewRoot.cfg_page.cfg_iconZoomFactor : 0
-
-                                 readonly property int baseWidth: (sizeOverride ? fixedSize : (iconBox.width * iconScale))
-                                 readonly property int baseHeight: (sizeOverride ? fixedSize : (iconBox.height * iconScale))
+                             // 2.5 Text label
+                             PlasmaComponents3.Label {
+                                 id: label
+                                 visible: mockTask.showText
+                                 text: previewRoot.fakeNames[mockTask.index]
                                  
-                                 readonly property real edgeMarginH: (parent.width - baseWidth) / 2
-                                 readonly property real edgeMarginV: (parent.height - baseHeight) / 2
-
-                                 width: baseWidth + growSize
-                                 height: baseHeight + growSize
+                                 anchors {
+                                     left: previewRoot.isVertical ? parent.left : iconBox.right
+                                     leftMargin: Kirigami.Units.smallSpacing
+                                     right: parent.right
+                                     rightMargin: Kirigami.Units.smallSpacing
+                                     top: previewRoot.isVertical ? iconBox.bottom : parent.top
+                                     bottom: parent.bottom
+                                 }
                                  
-                                 source: previewRoot.getIconName(mockTask.index)
-                                 roundToIconSize: false
-                                 
-                                 // Simulation of states logic from Task.qml:762
-                                 anchors.horizontalCenter: parent.horizontalCenter
-                                 anchors.bottom: parent.bottom
-                                 anchors.bottomMargin: edgeMarginV
-                                 
-                                 states: [
-                                     State {
-                                         name: "top"
-                                         when: previewRoot.simulatedLocation === PlasmaCore.Types.TopEdge
-                                         AnchorChanges { target: taskIcon; anchors.top: parent.top; anchors.bottom: undefined }
-                                         PropertyChanges { target: taskIcon; anchors.topMargin: taskIcon.edgeMarginV; anchors.bottomMargin: 0 }
-                                     },
-                                     State {
-                                         name: "left"
-                                         when: previewRoot.simulatedLocation === PlasmaCore.Types.LeftEdge
-                                         AnchorChanges { target: taskIcon; anchors.left: parent.left; anchors.right: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.bottom: undefined; anchors.top: undefined }
-                                         PropertyChanges { target: taskIcon; anchors.leftMargin: taskIcon.edgeMarginH; anchors.rightMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
-                                     },
-                                     State {
-                                         name: "right"
-                                         when: previewRoot.simulatedLocation === PlasmaCore.Types.RightEdge
-                                         AnchorChanges { target: taskIcon; anchors.right: parent.right; anchors.left: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.bottom: undefined; anchors.top: undefined }
-                                         PropertyChanges { target: taskIcon; anchors.rightMargin: taskIcon.edgeMarginH; anchors.leftMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
-                                     }
-                                 ]
+                                 wrapMode: Text.NoWrap
+                                 elide: Text.ElideRight
+                                 verticalAlignment: previewRoot.isVertical ? Text.AlignTop : Text.AlignVCenter
+                                 horizontalAlignment: previewRoot.isVertical ? Text.AlignHCenter : Text.AlignLeft
+                                 maximumLineCount: 1
                              }
-
-                            // Audio Indicator Demo (Task 0 only) - Showing "Muted" state (red)
-                            // Matched to top-left as in AudioStream.qml (x: iconBox.x + taskIcon.x)
-                            FancyUI.Badge {
-                                visible: mockTask.index === 0 && mockTask.cfgReady && previewRoot.cfg_page.cfg_indicateAudioStreams
-                                iconSource: "audio-volume-muted-symbolic"
-                                highlightColor: Kirigami.Theme.negativeTextColor
-                                hovered: mockTask.isHovered
-                                height: Math.round(iconBox.height * 0.4)
-                                width: height
-                                anchors.left: iconBox.left
-                                anchors.top: iconBox.top
-                                anchors.leftMargin: -Math.max(Kirigami.Units.smallSpacing / 2, width / 32)
-                                anchors.topMargin: -Math.max(Kirigami.Units.smallSpacing / 2, height / 32)
-                            }
-
-                            // 2.5 Text label
-                            Label {
-                                id: label
-                                visible: mockTask.showText
-                                text: previewRoot.fakeNames[mockTask.index]
-                                
-                                anchors {
-                                    left: previewRoot.isVertical ? parent.left : iconBox.right
-                                    leftMargin: Kirigami.Units.smallSpacing
-                                    right: parent.right
-                                    rightMargin: Kirigami.Units.smallSpacing
-                                    top: previewRoot.isVertical ? iconBox.bottom : parent.top
-                                    bottom: parent.bottom
-                                }
-                                
-                                wrapMode: Text.NoWrap
-                                elide: Text.ElideRight
-                                verticalAlignment: previewRoot.isVertical ? Text.AlignTop : Text.AlignVCenter
-                                horizontalAlignment: previewRoot.isVertical ? Text.AlignHCenter : Text.AlignLeft
-                                maximumLineCount: 1
-                            }
                             
                             // 3. Indicator
                             Rectangle {
