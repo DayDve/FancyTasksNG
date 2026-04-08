@@ -17,10 +17,48 @@ import "../ui/code/singletones"
 
 ConfigPage {
     id: cfg_page
-
-    ScrollView {
+    ColumnLayout {
         anchors.fill: parent
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        spacing: Kirigami.Units.largeSpacing
+
+        LivePreview {
+            cfg_page: cfg_page
+            Layout.fillWidth: true
+        }
+
+        Item {
+            id: containerWrapper
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            clip: true
+            
+            property int scrollDir: 0
+            property real _lastY: 0
+            
+            Component.onCompleted: _lastY = scrollView.contentItem.contentY
+
+            Connections {
+                target: scrollView.contentItem
+                function onContentYChanged() {
+                    let dy = scrollView.contentItem.contentY - containerWrapper._lastY
+                    if (Math.abs(dy) > 0.5) {
+                        containerWrapper.scrollDir = dy > 0 ? 1 : -1
+                        scrollDirTimer.restart()
+                    }
+                    containerWrapper._lastY = scrollView.contentItem.contentY
+                }
+            }
+            
+            Timer {
+                id: scrollDirTimer
+                interval: 150
+                onTriggered: containerWrapper.scrollDir = 0
+            }
+
+            ScrollView {
+                id: scrollView
+                anchors.fill: parent
+                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
         Kirigami.FormLayout {
             width: parent.width - Kirigami.Units.gridUnit * 2
@@ -283,6 +321,78 @@ ConfigPage {
                 }
                 ButtonGroup.group: reverseModeRadioButtonGroup
             }
+            } // FormLayout
+        } // ScrollView
+
+        // Top edge shadow (visor style)
+        Canvas {
+            z: 99
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.rightMargin: scrollView.ScrollBar.vertical.width > 0 ? scrollView.ScrollBar.vertical.width : 0
+            
+            property real activeFactor: containerWrapper.scrollDir === -1 ? 1.0 : 0.0
+            Behavior on activeFactor { NumberAnimation { duration: Kirigami.Units.shortDuration } }
+            
+            height: Kirigami.Units.largeSpacing + (Kirigami.Units.largeSpacing * 0.5 * activeFactor)
+            opacity: scrollView.ScrollBar.vertical.position > 0.01 ? 1 : 0
+            Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
+            
+            onPaint: {
+                let ctx = getContext("2d");
+                ctx.clearRect(0, 0, width, height);
+                let gradient = ctx.createLinearGradient(0, 0, 0, height);
+                let alpha = 0.20 + (0.15 * activeFactor);
+                gradient.addColorStop(0, "rgba(0, 0, 0, " + alpha.toFixed(3) + ")");
+                gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.quadraticCurveTo(width / 2, height * 2, width, 0);
+                ctx.closePath();
+                ctx.fill();
+            }
+            onWidthChanged: requestPaint()
+            onHeightChanged: requestPaint()
+            onActiveFactorChanged: requestPaint()
         }
-    }
+
+        // Bottom edge shadow (visor style)
+        Canvas {
+            z: 99
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.rightMargin: scrollView.ScrollBar.vertical.width > 0 ? scrollView.ScrollBar.vertical.width : 0
+            
+            property real activeFactor: containerWrapper.scrollDir === 1 ? 1.0 : 0.0
+            Behavior on activeFactor { NumberAnimation { duration: Kirigami.Units.shortDuration } }
+            
+            height: Kirigami.Units.largeSpacing + (Kirigami.Units.largeSpacing * 0.5 * activeFactor)
+            opacity: scrollView.ScrollBar.vertical.position < (1.0 - scrollView.ScrollBar.vertical.size) - 0.01 ? 1 : 0
+            Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
+            
+            onPaint: {
+                let ctx = getContext("2d");
+                ctx.clearRect(0, 0, width, height);
+                let gradient = ctx.createLinearGradient(0, height, 0, 0);
+                let alpha = 0.20 + (0.15 * activeFactor);
+                gradient.addColorStop(0, "rgba(0, 0, 0, " + alpha.toFixed(3) + ")");
+                gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.moveTo(0, height);
+                ctx.quadraticCurveTo(width / 2, -height, width, height);
+                ctx.closePath();
+                ctx.fill();
+            }
+            onWidthChanged: requestPaint()
+            onHeightChanged: requestPaint()
+            onActiveFactorChanged: requestPaint()
+        }
+        } // Item
+    } // ColumnLayout
 }

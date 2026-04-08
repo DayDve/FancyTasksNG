@@ -613,8 +613,8 @@ msgid "Preview"
 msgstr "Предпросмотр"
 
 #: ../contents/config/LivePreview.qml
-msgid "Location:"
-msgstr "Расположение:"
+msgid "Panel:"
+msgstr "Панель:"
 
 #: ../contents/config/LivePreview.qml
 msgid "Size:"

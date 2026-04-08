@@ -7,8 +7,6 @@ import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
 import org.kde.ksvg as KSvg
-import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.plasmoid
 
 import "../ui/code/singletones"
 import "../ui" as FancyUI
@@ -17,7 +15,10 @@ import "../ui/code/tools.js" as TaskTools
 Item {
     id: previewRoot
     Layout.fillWidth: true
-    implicitHeight: Kirigami.Units.gridUnit * 20 // Approx 360px, provides room for tooltip demo
+    Layout.maximumWidth: 650
+    Layout.alignment: Qt.AlignLeft
+    implicitHeight: cfg_page && cfg_page.cfg_showLivePreview ? 290 : titleLayout.height
+    clip: false
 
     readonly property int locationBottom: 3
     readonly property int locationTop: 1
@@ -28,7 +29,7 @@ Item {
     readonly property bool cfg_showToolTips: cfg_page ? cfg_page.cfg_showToolTips : true
 
     // Reference to the zoomed task item (Index 1) for tooltip positioning
-    property Item zoomedTaskItem: null
+    property var zoomedTaskItem: null
     property var fallbackIcons: ["system-run", "preferences-system"]
     property var fakeNames: ["Konsole", "System Settings"]
 
@@ -57,6 +58,9 @@ Item {
         }
         return fakeNames[index % fakeNames.length];
     }
+
+    // Current hover state for tooltip positioning parity
+    readonly property int effectiveGrowSize: (zoomedTaskItem && cfg_page && cfg_page.cfg_iconOnly === 1 && cfg_page.cfg_taskHoverEffect) ? cfg_page.cfg_iconZoomFactor : 0
 
     // Panel simulation
     property int currentEdgeIdx: cfg_page ? cfg_page.cfg_previewEdge : 0
@@ -94,42 +98,56 @@ Item {
     KSvg.FrameSvgItem {
         id: taskFrame
         visible: false
-        imagePath: "widgets/tasks"
         prefix: "normal"
     }
 
-    GroupBox {
-        id: groupBox
-        anchors.fill: parent
-        padding: Kirigami.Units.smallSpacing
-        topPadding: Kirigami.Units.mediumSpacing // Space for the top row of controls
+    RowLayout {
+        id: titleLayout
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+        z: 10
+        spacing: Kirigami.Units.smallSpacing
 
-        // Background / Border of the GroupBox will be handled by the theme
-        // but we need to ensure the label is on TOP of it.
+        CheckBox {
+            id: headerToggle
+            leftPadding: 0
+            checked: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_showLivePreview : true
+            onToggled: if (previewRoot.cfg_page) previewRoot.cfg_page.cfg_showLivePreview = checked
+        }
+
+        Label {
+            text: Wrappers.i18n("Preview")
+            font.pointSize: Kirigami.Theme.smallFont.pointSize
+            color: Kirigami.Theme.textColor
+        }
     }
 
-    // Standalone label positioned on the GroupBox border
-    Label {
-        id: titleLabel
-        x: groupBox.x + Kirigami.Units.gridUnit
-        y: groupBox.y - height / 2
-        z: 10
-        text: Wrappers.i18n("Preview")
-        font.pointSize: Kirigami.Theme.smallFont.pointSize
-        color: Kirigami.Theme.textColor
-
-        // Background to "cut" the border
-        Rectangle {
-            anchors.fill: parent
-            anchors.margins: -Kirigami.Units.smallSpacing / 2
-            z: -1
-            color: Kirigami.Theme.backgroundColor
-        }
+    // Background to "cut" the border - sibling to RowLayout to satisfy qmllint
+    Rectangle {
+        id: titleBackground
+        anchors.fill: titleLayout
+        anchors.margins: -Kirigami.Units.smallSpacing / 2
+        z: 9
+        color: Kirigami.Theme.backgroundColor
+        visible: groupBox.visible
+    }
+ 
+    GroupBox {
+        id: groupBox
+        anchors.top: titleLayout.verticalCenter
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        padding: Kirigami.Units.smallSpacing
+        topPadding: Kirigami.Units.mediumSpacing
+        visible: previewRoot.cfg_page && previewRoot.cfg_page.cfg_showLivePreview
     }
 
     ColumnLayout {
         anchors.fill: groupBox
         anchors.margins: Kirigami.Units.smallSpacing
+        visible: groupBox.visible
         spacing: Kirigami.Units.largeSpacing
 
         // 1. Controls at the top
@@ -139,7 +157,7 @@ Item {
             spacing: Kirigami.Units.mediumSpacing
 
             Label {
-                text: Wrappers.i18n("Location:")
+                text: Wrappers.i18n("Panel:")
                 opacity: 0.6
             }
                 ComboBox {
@@ -173,12 +191,29 @@ Item {
                 id: innerPreviewArea
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                color: Kirigami.ColorUtils.tintWithAlpha(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.05)
+                color: "transparent"
                 border.color: Kirigami.Theme.disabledTextColor
                 border.width: 1
                 radius: Kirigami.Units.smallSpacing
-
                 clip: true
+
+                // Desktop Workspace Background (Local Asset)
+                Image {
+                    anchors.fill: parent
+                    anchors.margins: 1
+                    source: Qt.resolvedUrl("../ui/assets/preview_background.png")
+                    fillMode: Image.PreserveAspectCrop
+                    opacity: 0.9 // Vibrant and "Next-gen" look
+                    z: -1 // Behind the panel
+
+                    // Safety fallback: Color if image fails to load
+                    Rectangle {
+                        anchors.fill: parent
+                        color: Kirigami.Theme.backgroundColor
+                        opacity: 0.2
+                        visible: parent.status !== Image.Ready
+                    }
+                }
 
                 // Panel background (Preserved logic)
                 KSvg.FrameSvgItem {
@@ -237,6 +272,7 @@ Item {
 
                                 readonly property var cfg: previewRoot.cfg_page
                                 readonly property bool cfgReady: cfg !== null
+                                readonly property Item taskIconItem: taskIcon
 
                                 // Task 0: minimized, progress demo, audio badge
                                 // Task 1: hovered, active, count badge
@@ -564,10 +600,10 @@ Item {
 
         visible: previewRoot.zoomedTaskItem !== null
 
-        Kirigami.Theme.colorSet: Kirigami.Theme.Tooltip
+        Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
         Kirigami.Theme.inherit: false
 
-        color: Plasmoid.theme.backgroundColor
+        color: Kirigami.Theme.backgroundColor
         radius: 4
         shadow.size: 12
         shadow.color: Qt.rgba(0, 0, 0, 0.3)
@@ -576,11 +612,16 @@ Item {
         implicitWidth: mainLayout.implicitWidth + Kirigami.Units.smallSpacing * 2
         implicitHeight: mainLayout.implicitHeight + Kirigami.Units.smallSpacing * 2
 
-        // Positioning logic based on panel location
-        readonly property real targetX: (previewRoot.zoomedTaskItem ? previewRoot.zoomedTaskItem.x : 0) + dummyPanel.x + mockTasksLayout.x
-        readonly property real targetY: (previewRoot.zoomedTaskItem ? previewRoot.zoomedTaskItem.y : 0) + dummyPanel.y + mockTasksLayout.y
-        readonly property real targetW: previewRoot.zoomedTaskItem ? previewRoot.zoomedTaskItem.width : 0
-        readonly property real targetH: previewRoot.zoomedTaskItem ? previewRoot.zoomedTaskItem.height : 0
+        // Positioning logic based on actual zoomed icon bounds
+        readonly property real targetGrow: previewRoot.effectiveGrowSize / 2
+        // Positioning logic based on actual visual icon bounds inside the button
+        readonly property var targetTask: previewRoot.zoomedTaskItem
+        readonly property var targetIcon: targetTask ? targetTask.taskIconItem : null
+        
+        readonly property real targetX: (targetTask && targetIcon) ? (dummyPanel.x + mockTasksLayout.x + targetTask.x + targetIcon.parent.x + targetIcon.x) : 0
+        readonly property real targetY: (targetTask && targetIcon) ? (dummyPanel.y + mockTasksLayout.y + targetTask.y + targetIcon.parent.y + targetIcon.y) : 0
+        readonly property real targetW: targetIcon ? targetIcon.width : 0
+        readonly property real targetH: targetIcon ? targetIcon.height : 0
 
         x: {
             let centerX = targetX + targetW / 2;
@@ -622,10 +663,10 @@ Item {
                 
                 // 1. App Name Header
                 Label {
-                    text: i18n("Dolphin")
+                    text: Wrappers.i18n("Dolphin")
                     font.bold: true
                     Layout.alignment: Qt.AlignHCenter
-                    color: Plasmoid.theme.textColor
+                    color: Kirigami.Theme.textColor
                     opacity: 1.0
                 }
 
@@ -637,8 +678,8 @@ Item {
                     
                     Rectangle {
                         anchors.fill: parent
-                        color: Kirigami.ColorUtils.tintWithAlpha(Plasmoid.theme.backgroundColor, Plasmoid.theme.textColor, 0.15)
-                        border.color: Plasmoid.theme.disabledTextColor
+                        color: Kirigami.ColorUtils.tintWithAlpha(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.15)
+                        border.color: Kirigami.Theme.disabledTextColor
                         border.width: 1
                         radius: 4
 
@@ -666,7 +707,7 @@ Item {
                         Label {
                             id: overlayText
                             anchors.centerIn: parent
-                            text: i18n("Home Folder")
+                            text: Wrappers.i18n("Home Folder")
                             color: "white"
                             font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.9
                             elide: Text.ElideRight
@@ -709,8 +750,8 @@ Item {
                 }
 
                 Label {
-                    text: i18n("%1 — %2", i18n("Home Folder"), i18n("Dolphin"))
-                    color: Plasmoid.theme.textColor
+                    text: Wrappers.i18n("%1 — %2", Wrappers.i18n("Home Folder"), Wrappers.i18n("Dolphin"))
+                    color: Kirigami.Theme.textColor
                     elide: Text.ElideRight
                 }
             }

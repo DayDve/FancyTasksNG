@@ -175,4 +175,6 @@ Kirigami.Page {
     property int cfg_iconEdgeOffsetDefault: 0
     property bool cfg_showBadges: true
     property bool cfg_showBadgesDefault: true
+    property bool cfg_showLivePreview: true
+    property bool cfg_showLivePreviewDefault: true
 }
