@@ -71,6 +71,9 @@ Item {
                                     currentEdgeIdx === 1 ? locationTop :
                                     currentEdgeIdx === 2 ? locationLeft : locationRight
     property int simulatedThickness: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_previewSize : Math.round(Kirigami.Units.gridUnit * 2.5)
+    
+    // Multistripe (multi-row) simulation logic
+    readonly property int simulatedStripeCount: (previewRoot.cfg_page && previewRoot.cfg_page.cfg_maxStripes !== undefined) ? Math.max(1, previewRoot.cfg_page.cfg_maxStripes) : 1
 
     // Mock objects for LayoutMetrics.js (must be IDs to be visible as globals)
     QtObject {
@@ -201,15 +204,18 @@ Item {
                         anchors.centerIn: parent
                         clip: false // Ensure no inner clipping
                         
-                        columns: previewRoot.isVertical ? 1 : -1
-                        rows: previewRoot.isVertical ? -1 : 1
-                        rowSpacing: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_taskSpacingSize : 0
-                        columnSpacing: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_taskSpacingSize : 0
+                        columns: previewRoot.isVertical ? previewRoot.simulatedStripeCount : -1
+                        rows: previewRoot.isVertical ? -1 : previewRoot.simulatedStripeCount
+                        
+                        // Use calculated or configured spacing, but NO DUPLICATES
+                        rowSpacing: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_taskSpacingSize : (tasks.plasmoid.configuration.iconSpacing - 1) * Kirigami.Units.smallSpacing
+                        columnSpacing: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_taskSpacingSize : (tasks.plasmoid.configuration.iconSpacing - 1) * Kirigami.Units.smallSpacing
                     
 
                     Repeater {
                         id: taskRepeater
-                        model: 2
+                        // Increase task count to show wrapping in multi-row mode
+                        model: Math.max(2, previewRoot.simulatedStripeCount * 2)
                         
                         Item {
                             id: mockTask
@@ -447,13 +453,14 @@ Item {
                                      }
                                  }
 
-                                 // Audio Indicator Demo (Task 0 only)
                                  FancyUI.Badge {
-                                     visible: mockTask.index === 0 && mockTask.cfgReady && previewRoot.cfg_page.cfg_indicateAudioStreams
+                                     visible: mockTask.index % 2 === 0 && mockTask.cfgReady && previewRoot.cfg_page.cfg_indicateAudioStreams
                                      anchors.left: taskIcon.left
                                      anchors.top: taskIcon.top
                                      
-                                     height: Math.round(iconBox.height * 0.4 * (taskIcon.width / taskIcon.baseWidth))
+                                     // Fix: scale badge height relative to the ICON height, not the CONTAINER height.
+                                     // This prevents the badge from ballooning when fixed icon sizes are used.
+                                     height: Math.round(taskIcon.height * 0.4)
                                      z: 10
                                      
                                      iconSource: "audio-volume-muted-symbolic"
