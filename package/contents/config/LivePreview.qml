@@ -251,6 +251,7 @@ Item {
                             readonly property bool isMinimized: mockTask.index === 0
                             readonly property bool isActive: mockTask.index === 1
                             readonly property bool isHovered: mockTask.index === 1
+                            readonly property bool isInactive: !mockTask.isActive && !mockTask.isHovered
                             readonly property bool cfgReady: previewRoot.cfg_page !== null
                             
                             // Geometry Logic: 1:1 Parity with Task.qml
@@ -300,24 +301,56 @@ Item {
                             }
 
                             
-                            // 1. Frame background
-                            KSvg.FrameSvgItem {
-                                id: taskBackground
-                                anchors.fill: parent
-                                imagePath: (mockTask.cfgReady && previewRoot.cfg_page.cfg_disableButtonSvg) ? "" : "widgets/tasks"
-                                enabledBorders: (mockTask.cfgReady && previewRoot.cfg_page.cfg_useBorders) ? (1 | 2 | 4 | 8) : 0
-                                
-                                readonly property string basePrefix: (mockTask.isMinimized && !(previewRoot.cfg_page.cfg_buttonColorize && previewRoot.cfg_page.cfg_buttonColorizeInactive) ? "minimized" : "normal")
-                                prefix: mockTask.isHovered ? 
-                                    TaskTools.taskPrefixHovered(basePrefix, previewRoot.simulatedLocation) : 
-                                    TaskTools.taskPrefix(basePrefix, previewRoot.simulatedLocation)
+                             // 1. Frame background
+                             KSvg.FrameSvgItem {
+                                 id: taskBackground
+                                 anchors.fill: parent
+                                 imagePath: (mockTask.cfgReady && previewRoot.cfg_page.cfg_disableButtonSvg) ? "" : "widgets/tasks"
+                                 enabledBorders: (mockTask.cfgReady && previewRoot.cfg_page.cfg_useBorders) ? (1 | 2 | 4 | 8) : 0
+                                 
+                                 readonly property string basePrefix: {
+                                     if (mockTask.isActive) return "focus";
+                                     if (mockTask.isMinimized) return "minimized";
+                                     return "normal";
+                                 }
+                                 
+                                 prefix: mockTask.isHovered ? 
+                                     TaskTools.taskPrefixHovered(basePrefix, previewRoot.simulatedLocation) : 
+                                     TaskTools.taskPrefix(basePrefix, previewRoot.simulatedLocation)
 
-                                Kirigami.ImageColors {
-                                    id: imageColors
-                                    source: "system-run" // Mock source for preview
-                                }
-                                property color dominantColor: imageColors.dominant
-                            }
+                                 Kirigami.ImageColors {
+                                     id: imageColors
+                                     source: "system-run" // Mock source for preview
+                                 }
+                                 property color dominantColor: imageColors.dominant
+                                 property color indicatorColor: Kirigami.ColorUtils.tintWithAlpha(dominantColor, "white", .38)
+                                 
+                                 // Logic for selective visibility (Parity with Task.qml)
+                                 readonly property bool hideDueToDecoration: mockTask.isInactive && mockTask.cfgReady && previewRoot.cfg_page.cfg_disableButtonInactiveSvg
+                                 readonly property bool hideDueToColorize: mockTask.cfgReady && previewRoot.cfg_page.cfg_buttonColorize && (mockTask.isActive || mockTask.isHovered || (mockTask.isInactive && previewRoot.cfg_page.cfg_buttonColorizeInactive))
+                                 
+                                 visible: !hideDueToDecoration && !hideDueToColorize
+                             }
+
+                             // 2. Color Overlay (Parity with Task.qml)
+                             MultiEffect {
+                                 id: colorOverride
+                                 anchors.fill: taskBackground
+                                 source: taskBackground
+                                 
+                                 readonly property bool canShow: mockTask.cfgReady && previewRoot.cfg_page.cfg_buttonColorize
+                                 readonly property bool isAllowedForInactive: mockTask.isActive || mockTask.isHovered || (mockTask.isInactive && previewRoot.cfg_page.cfg_buttonColorizeInactive)
+                                 
+                                 visible: canShow && isAllowedForInactive && !taskBackground.hideDueToDecoration
+                                 
+                                 colorizationColor: {
+                                     if (!mockTask.cfgReady) return "transparent";
+                                     return previewRoot.cfg_page.cfg_buttonColorizeDominant ? 
+                                         taskBackground.indicatorColor : previewRoot.cfg_page.cfg_buttonColorizeCustom;
+                                 }
+                                 colorization: 1.0
+                                 brightness: 1.0
+                             }
 
                              // 3. Progress overlay (Unified Implementation)
                               Item {

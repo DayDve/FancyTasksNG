@@ -232,8 +232,18 @@ ConfigPage {
 
             Item { height: Kirigami.Units.largeSpacing }
 
+            CheckBox {
+                id: cfg_disableButtonSvg
+                text: Wrappers.i18n("Disable plasma context decorations")
+                checked: cfg_page.cfg_disableButtonSvg
+                onToggled: cfg_page.cfg_disableButtonSvg = checked
+            }
+
+            Item { height: Kirigami.Units.largeSpacing }
+
             Label {
                 text: Wrappers.i18n("Button Colors:")
+                enabled: !cfg_disableButtonSvg.checked
             }
 
             ButtonGroup {
@@ -241,6 +251,7 @@ ConfigPage {
             }
 
             RadioButton {
+                enabled: !cfg_disableButtonSvg.checked
                 checked: !cfg_page.cfg_buttonColorize
                 text: Wrappers.i18n("Using Plasma Style/Accent")
                 ButtonGroup.group: colorizeButtonGroup
@@ -248,6 +259,7 @@ ConfigPage {
             }
 
             RadioButton {
+                enabled: !cfg_disableButtonSvg.checked
                 id: cfg_buttonColorize
                 checked: cfg_page.cfg_buttonColorize
                 onToggled: if (checked) cfg_page.cfg_buttonColorize = true
@@ -258,6 +270,7 @@ ConfigPage {
             CheckBox {
                 id: cfg_buttonColorizeDominant
                 text: Wrappers.i18n("Use dominant icon color")
+                enabled: !cfg_disableButtonSvg.checked && cfg_page.cfg_buttonColorize
                 visible: cfg_page.cfg_buttonColorize
                 checked: cfg_page.cfg_buttonColorizeDominant
                 onToggled: cfg_page.cfg_buttonColorizeDominant = checked
@@ -266,11 +279,13 @@ ConfigPage {
             Label {
                 visible: cfg_page.cfg_buttonColorize && !cfg_page.cfg_buttonColorizeDominant
                 text: Wrappers.i18n("Custom Color:")
+                enabled: !cfg_disableButtonSvg.checked
             }
             KQuickAddons.ColorButton {
                 id: cfg_buttonColorizeCustom
                 Layout.leftMargin: Kirigami.Units.gridUnit
                 showAlphaChannel: true
+                enabled: !cfg_disableButtonSvg.checked && cfg_page.cfg_buttonColorize && !cfg_page.cfg_buttonColorizeDominant
                 visible: cfg_page.cfg_buttonColorize && !cfg_page.cfg_buttonColorizeDominant
                 color: cfg_page.cfg_buttonColorizeCustom
                 onColorChanged: {
@@ -280,29 +295,27 @@ ConfigPage {
                 }
             }
 
-            CheckBox {
-                id: cfg_buttonColorizeInactive
-                text: Wrappers.i18n("Colorize inactive buttons")
-                visible: cfg_page.cfg_buttonColorize && !cfg_disableButtonInactiveSvg.checked
-                checked: cfg_page.cfg_buttonColorizeInactive
-                onToggled: cfg_page.cfg_buttonColorizeInactive = checked
-            }
-
             Item { height: Kirigami.Units.largeSpacing }
 
-            CheckBox {
-                id: cfg_disableButtonSvg
-                text: Wrappers.i18n("Disable plasma context decorations")
-                checked: cfg_page.cfg_disableButtonSvg
-                onToggled: cfg_page.cfg_disableButtonSvg = checked
+            Label {
+                text: Wrappers.i18n("For inactive buttons:")
+                enabled: !cfg_disableButtonSvg.checked
             }
 
             CheckBox {
                 id: cfg_disableButtonInactiveSvg
                 text: Wrappers.i18n("Hide backgrounds for inactive buttons")
-                visible: !cfg_disableButtonSvg.checked
+                enabled: !cfg_disableButtonSvg.checked
                 checked: cfg_page.cfg_disableButtonInactiveSvg
                 onToggled: cfg_page.cfg_disableButtonInactiveSvg = checked
+            }
+
+            CheckBox {
+                id: cfg_buttonColorizeInactive
+                text: Wrappers.i18n("Colorize inactive buttons")
+                enabled: !cfg_disableButtonSvg.checked && cfg_page.cfg_buttonColorize && !cfg_disableButtonInactiveSvg.checked
+                checked: cfg_page.cfg_buttonColorizeInactive
+                onToggled: cfg_page.cfg_buttonColorizeInactive = checked
             }
 
             Item { height: Kirigami.Units.largeSpacing }

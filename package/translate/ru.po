@@ -140,6 +140,10 @@ msgid "Hide backgrounds for inactive buttons"
 msgstr "Скрывать фон неактивных кнопок"
 
 #: ../contents/config/ConfigAppearance.qml
+msgid "For inactive buttons:"
+msgstr "Для неактивных кнопок:"
+
+#: ../contents/config/ConfigAppearance.qml
 msgid "Maximum button length (px):"
 msgstr "Макс. длина кнопки (px):"
 
