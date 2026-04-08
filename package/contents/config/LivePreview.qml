@@ -612,51 +612,103 @@ Item {
             id: mainLayout
             anchors.centerIn: parent
             spacing: Kirigami.Units.smallSpacing
-            
-            // 1. App Name
-            Label {
-                text: previewRoot.getTaskName(1)
-                font.bold: true
-                Layout.alignment: Qt.AlignHCenter
-                opacity: 0.9
-            }
 
-            // 2. Subtext (Window Title)
-            Label {
-                text: "Mozilla Firefox"
-                font.pointSize: Kirigami.Theme.smallFont.pointSize
-                opacity: 0.6
+            // MODE 1: Thumbnail + Overlays (cfg_showToolTips === true)
+            ColumnLayout {
                 visible: previewRoot.cfg_showToolTips
-                Layout.alignment: Qt.AlignHCenter
-            }
+                spacing: Kirigami.Units.smallSpacing
+                
+                // 1. App Name Header
+                Label {
+                    text: i18n("Dolphin")
+                    font.bold: true
+                    Layout.alignment: Qt.AlignHCenter
+                    opacity: 1.0
+                }
 
-            // 3. Thumbnail Mock (if enabled)
-            Rectangle {
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 10
-                Layout.preferredHeight: Kirigami.Units.gridUnit * 6
-                visible: previewRoot.cfg_showToolTips
-                color: Kirigami.ColorUtils.tintWithAlpha(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.1)
-                border.color: Kirigami.Theme.disabledTextColor
-                border.width: 1
-                radius: 2
+                // 2. Thumbnail Container with Overlays
+                Item {
+                    id: thumbnailArea
+                    Layout.preferredWidth: Kirigami.Units.gridUnit * 12
+                    Layout.preferredHeight: Math.round(Layout.preferredWidth / 1.6)
+                    
+                    Rectangle {
+                        anchors.fill: parent
+                        color: Kirigami.ColorUtils.tintWithAlpha(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.15)
+                        border.color: Kirigami.Theme.disabledTextColor
+                        border.width: 1
+                        radius: 4
 
-                Kirigami.Icon {
-                    anchors.centerIn: parent
-                    width: Kirigami.Units.iconSizes.large
-                    height: width
-                    source: previewRoot.getIconName(1)
-                    opacity: 0.5
+                        Kirigami.Icon {
+                            anchors.centerIn: parent
+                            width: Kirigami.Units.iconSizes.huge
+                            height: width
+                            source: "system-file-manager"
+                            opacity: 0.2
+                        }
+                    }
+
+                    // Overlay Title (Top-Left)
+                    Rectangle {
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        anchors.margins: Kirigami.Units.smallSpacing
+                        
+                        height: overlayText.implicitHeight + Kirigami.Units.smallSpacing
+                        width: Math.min(overlayText.implicitWidth + Kirigami.Units.mediumSpacing * 2, parent.width - Kirigami.Units.gridUnit * 3)
+                        
+                        color: Qt.rgba(0, 0, 0, 0.45)
+                        radius: 3
+
+                        Label {
+                            id: overlayText
+                            anchors.centerIn: parent
+                            text: i18n("Home Folder")
+                            color: "white"
+                            font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.9
+                            elide: Text.ElideRight
+                            width: parent.width - Kirigami.Units.smallSpacing
+                            horizontalAlignment: Text.AlignHCenter
+                        }
+                    }
+
+                    // Overlay Close Button (Top-Right)
+                    Rectangle {
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        anchors.margins: Kirigami.Units.smallSpacing
+                        width: Kirigami.Units.gridUnit * 1.2
+                        height: width
+                        color: Qt.rgba(0, 0, 0, 0.45)
+                        radius: 3
+                        
+                        Kirigami.Icon {
+                            anchors.centerIn: parent
+                            width: Kirigami.Units.iconSizes.small
+                            height: width
+                            source: "window-close"
+                            opacity: 0.9
+                            color: "white"
+                        }
+                    }
                 }
             }
 
-            // 4. Close Button Mock
-            Kirigami.Icon {
-                Layout.alignment: Qt.AlignRight
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 0.8
-                Layout.preferredHeight: Layout.preferredWidth
-                source: "window-close"
-                opacity: 0.6
-                visible: previewRoot.cfg_showToolTips
+            // MODE 2: List/Text-only (cfg_showToolTips === false)
+            RowLayout {
+                visible: !previewRoot.cfg_showToolTips
+                spacing: Kirigami.Units.mediumSpacing
+                
+                Kirigami.Icon {
+                    source: "system-file-manager"
+                    Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+                    Layout.preferredHeight: Layout.preferredWidth
+                }
+
+                Label {
+                    text: i18n("%1 — %2", i18n("Home Folder"), i18n("Dolphin"))
+                    elide: Text.ElideRight
+                }
             }
         }
     }
