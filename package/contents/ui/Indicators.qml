@@ -6,7 +6,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
+
 
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
@@ -75,7 +75,7 @@ Flow {
                 }
                 if(isFirst){//compute the size
         
-                    var mainSize = (parentSize + parentSpacingAdjust);
+                    let mainSize = (parentSize + parentSpacingAdjust);
 
                     switch(Plasmoid.configuration.indicatorStyle){
                         case 0: // Line

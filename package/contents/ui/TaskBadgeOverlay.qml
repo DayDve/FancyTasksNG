@@ -7,7 +7,7 @@
 import QtQuick
 import org.kde.kirigami as Kirigami
 import org.kde.graphicaleffects as KGraphicalEffects
-import org.kde.plasma.plasmoid
+
 
 Item {
     id: root

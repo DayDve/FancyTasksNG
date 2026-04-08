@@ -169,28 +169,28 @@ ConfigPage {
                     text: "%"
                 }
 
-                Item { width: Kirigami.Units.largeSpacing; visible: isLineStyle }
+                Item { width: Kirigami.Units.largeSpacing; visible: cfg_page.isLineStyle }
 
                 Label {
-                    visible: isLineStyle
+                    visible: cfg_page.isLineStyle
                     text: Wrappers.i18n("Side padding:")
                 }
                 SpinBox {
                     id: indicatorShrink
-                    visible: isLineStyle
+                    visible: cfg_page.isLineStyle
                     from: 0
                     to: 999
                     value: cfg_page.cfg_indicatorShrink
                     onValueModified: cfg_page.cfg_indicatorShrink = value
                 }
                 Label {
-                    visible: isLineStyle
+                    visible: cfg_page.isLineStyle
                     text: "px"
                 }
             }
 
             CheckBox {
-                visible: indicatorsEnabled.checked && isLineStyle
+                visible: indicatorsEnabled.checked && cfg_page.isLineStyle
                 text: Wrappers.i18n("Darken extra segments")
                 checked: cfg_page.cfg_indicatorDarkenExtras
                 onToggled: cfg_page.cfg_indicatorDarkenExtras = checked

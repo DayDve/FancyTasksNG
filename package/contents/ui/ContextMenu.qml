@@ -145,15 +145,15 @@ PlasmaExtras.Menu {
                     (section["group"] !== "actions") ||
                     (section["group"] === "actions" && (sections[0]["actions"].length > 0 || sections[1]["actions"].length > 0))
                 ) {
-                    var sectionHeader = newMenuItem(menu);
+                    let sectionHeader = newMenuItem(menu);
                     sectionHeader.text = section["title"];
                     sectionHeader.section = true;
                     menu.addMenuItem(sectionHeader, startNewInstanceItem);
                 }
             }
 
-            for (var i = 0; i < section["actions"].length; ++i) {
-                var item = newMenuItem(menu);
+            for (let i = 0; i < section["actions"].length; ++i) {
+                const item = newMenuItem(menu);
                 item["action"] = section["actions"][i];
 
                 textMetrics.text = item["action"].text;

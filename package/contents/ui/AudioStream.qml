@@ -1,6 +1,6 @@
 import QtQuick
 import org.kde.kirigami as Kirigami
-import "code/singletones"
+
 
 Item {
     id: audioStreamIconBox
