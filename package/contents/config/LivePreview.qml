@@ -236,6 +236,11 @@ Item {
                                 readonly property bool isHovered: mockTask.index === 1
                                 readonly property bool isInactive: !isActive && !isHovered
 
+                                // Simulated audio state: Task 0 is playing, Task 2 is muted
+                                readonly property bool playingAudio: index === 0
+                                readonly property bool isMuted: index === 2
+                                readonly property bool hasAudio: playingAudio || isMuted
+
                                 readonly property bool showText: !previewRoot.iconsOnly && (!previewRoot.isVertical || previewRoot.simulatedThickness > (Kirigami.Units.gridUnit * 4))
 
                                 function adjustMargin(size, margin) {
@@ -409,19 +414,26 @@ Item {
                                         hovered: mockTask.isHovered
                                     }
 
-                                    // Audio badge (even tasks)
-                                    FancyUI.Badge {
-                                        visible: mockTask.index % 2 === 0 && mockTask.cfgReady && mockTask.cfg.cfg_indicateAudioStreams
-                                        anchors.left: taskIcon.left
-                                        anchors.top: taskIcon.top
-                                        height: Math.round(taskIcon.height * 0.4)
-                                        z: 10
-                                        iconSource: "audio-volume-muted-symbolic"
-                                        highlightColor: Kirigami.Theme.negativeTextColor
-                                        hovered: mockTask.isHovered
-                                        anchors.leftMargin: -Math.max(Kirigami.Units.smallSpacing / 2, width / 32)
-                                        anchors.topMargin: -Math.max(Kirigami.Units.smallSpacing / 2, height / 32)
-                                    }
+                                }
+                                
+                                // 5. Audio badge (Moved out of iconBox to match production hierarchy)
+                                FancyUI.Badge {
+                                    id: audioBadge
+                                    visible: mockTask.hasAudio && mockTask.cfgReady && mockTask.cfg.cfg_indicateAudioStreams
+                                    z: 50 // Above everything
+                                    
+                                    // Visual size logic from AudioStream.qml
+                                    readonly property int visualSize: Math.round(Math.min(Math.min(iconBox.width, iconBox.height) * 0.4, Kirigami.Units.iconSizes.smallMedium))
+                                    height: visualSize
+                                    width: visualSize
+
+                                    // Clamping logic relative to mockTask, matching AudioStream.qml exactly
+                                    x: Math.max(0, Math.min(mockTask.width - visualSize, iconBox.x + taskIcon.x))
+                                    y: Math.max(0, Math.min(mockTask.height - visualSize, iconBox.y + taskIcon.y))
+
+                                    iconSource: mockTask.isMuted ? "audio-volume-muted-symbolic" : "audio-volume-high-symbolic"
+                                    highlightColor: mockTask.isMuted ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.highlightColor
+                                    hovered: mockTask.isHovered
                                 }
 
                                 // 5. Text label
