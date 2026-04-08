@@ -73,14 +73,16 @@ Item {
     property int simulatedThickness: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_previewSize : Math.round(Kirigami.Units.gridUnit * 2.5)
     
     // Multistripe (multi-row) simulation logic: match stripeCount calculation from LayoutMetrics.js
-    readonly property int taskCountDisplay: 6
+    readonly property int taskCountDisplay: 4
     readonly property int simulatedStripeCount: {
         let maxS = (previewRoot.cfg_page && previewRoot.cfg_page.cfg_maxStripes !== undefined) ? previewRoot.cfg_page.cfg_maxStripes : 1
         if (maxS <= 1) return 1
         
-        // Production threshold for 2 rows starts at ~36px, so minSize must be 18px (gridUnit)
-        let minSize = Kirigami.Units.gridUnit
-        let count = Math.max(1, Math.floor(previewRoot.simulatedThickness / minSize))
+        // Match production: 2 rows start at 36px thickness
+        if (previewRoot.simulatedThickness < 36) return 1
+        
+        // 18px per lane is the standard density
+        let count = Math.floor(previewRoot.simulatedThickness / 18)
         return Math.min(maxS, count)
     }
     readonly property int simulatedOrthogonalCount: Math.ceil(taskCountDisplay / simulatedStripeCount)
@@ -202,29 +204,17 @@ Item {
                     }
                 ]
                 
-                Flickable {
-                    id: flickable
+                GridLayout {
+                    id: mockTasksLayout
                     anchors.fill: parent
-                    contentWidth: mockTasksLayout.width
-                    contentHeight: mockTasksLayout.height
-                    interactive: true
-                    clip: false // Crucial: allow zoomed icons/badges to grow beyond the panel bounds
+                    clip: false
                     
-                    GridLayout {
-                        id: mockTasksLayout
-                        anchors.centerIn: parent
-                        clip: false
-                        
-                        // Force the grid to stay within the panel's transverse dimension
-                        width: previewRoot.isVertical ? previewRoot.simulatedThickness : (implicitWidth > 0 ? implicitWidth : parent.width)
-                        height: previewRoot.isVertical ? (implicitHeight > 0 ? implicitHeight : parent.height) : previewRoot.simulatedThickness
-                        
-                        columns: previewRoot.isVertical ? previewRoot.simulatedStripeCount : previewRoot.simulatedOrthogonalCount
-                        rows: previewRoot.isVertical ? previewRoot.simulatedOrthogonalCount : previewRoot.simulatedStripeCount
-                        
-                        // Using a smarter fallback for spacing to avoid gigantic gaps
-                        rowSpacing: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_taskSpacingSize : (tasks.plasmoid.configuration.iconSpacing - 1) * (Kirigami.Units.smallSpacing / 2)
-                        columnSpacing: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_taskSpacingSize : (tasks.plasmoid.configuration.iconSpacing - 1) * (Kirigami.Units.smallSpacing / 2)
+                    columns: previewRoot.isVertical ? previewRoot.simulatedStripeCount : previewRoot.simulatedOrthogonalCount
+                    rows: previewRoot.isVertical ? previewRoot.simulatedOrthogonalCount : previewRoot.simulatedStripeCount
+                    
+                    // Use actual setting or sane default. Fixed undefined 'tasks' reference.
+                    rowSpacing: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_taskSpacingSize : 0
+                    columnSpacing: previewRoot.cfg_page ? previewRoot.cfg_page.cfg_taskSpacingSize : 0
                     
 
                     Repeater {
@@ -234,14 +224,18 @@ Item {
                         
                         Item {
                             id: mockTask
-                            Layout.fillWidth: mockTask.showText
-                            Layout.fillHeight: true
+                            // Proportional constraints for multistripe mode and squeezing parity
+                            readonly property int maxW: (previewRoot.cfg_page ? previewRoot.cfg_page.cfg_maxButtonLength : 200)
                             
-                            // Proportional constraints for multistripe mode
-                            Layout.preferredWidth: mockTask.showText ? 200 : previewRoot.laneHeight
+                            Layout.preferredWidth: mockTask.showText ? maxW : previewRoot.laneHeight
                             Layout.preferredHeight: previewRoot.laneHeight
-                            Layout.maximumWidth: mockTask.showText ? 200 : (previewRoot.isVertical ? previewRoot.simulatedThickness : previewRoot.laneHeight)
-                            Layout.maximumHeight: previewRoot.isVertical ? (mockTask.showText ? 200 : previewRoot.laneHeight) : previewRoot.simulatedThickness
+                            Layout.maximumWidth: mockTask.showText ? maxW : (previewRoot.isVertical ? previewRoot.simulatedThickness : previewRoot.laneHeight)
+                            Layout.maximumHeight: previewRoot.isVertical ? (mockTask.showText ? maxW : previewRoot.laneHeight) : previewRoot.simulatedThickness
+                            
+                            implicitWidth: Layout.preferredWidth
+                            implicitHeight: Layout.preferredHeight
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
                             required property int index
                             
                             // Task 0: Not Hovered, Minimized, Running, Progess Demo, Badge Demo
@@ -421,12 +415,12 @@ Item {
                                  width: previewRoot.isVertical ? (parent.width - mockTask.adjustMargin(true, parent.width, taskFrame.margins.left) - mockTask.adjustMargin(true, parent.width, taskFrame.margins.right)) :
                                                                  (mockTask.showText ? Math.max(Kirigami.Units.iconSizes.sizeForLabels, Kirigami.Units.iconSizes.medium) :
                                                                              Math.min(simulatedMinWidth, parent.width - mockTask.adjustMargin(true, parent.width, taskFrame.margins.left) - mockTask.adjustMargin(true, parent.width, taskFrame.margins.right)))
-                                 height: parent.height - mockTask.adjustMargin(false, parent.height, taskFrame.margins.top) - mockTask.adjustMargin(false, parent.height, taskFrame.margins.bottom) - (Kirigami.Units.smallSpacing / 2)
+                                 height: parent.height - mockTask.adjustMargin(false, parent.height, taskFrame.margins.top) - mockTask.adjustMargin(false, parent.height, taskFrame.margins.bottom) - Kirigami.Units.smallSpacing
                                  
                                  anchors {
                                      left: parent.left
                                      top: parent.top
-                                     topMargin: mockTask.adjustMargin(false, parent.height, taskFrame.margins.top) + (Kirigami.Units.smallSpacing / (previewRoot.simulatedThickness > 32 ? 4 : 8))
+                                     topMargin: mockTask.adjustMargin(false, parent.height, taskFrame.margins.top) + (Kirigami.Units.smallSpacing / 2)
                                  }
                                  
                                  // Horizontal Centering for Dock Mode (Icons Only)
@@ -548,7 +542,7 @@ Item {
                                  wrapMode: Text.NoWrap
                                  elide: Text.ElideRight
                                  verticalAlignment: previewRoot.isVertical ? Text.AlignTop : Text.AlignVCenter
-                                 horizontalAlignment: previewRoot.isVertical ? Text.AlignHCenter : Text.AlignLeft
+                                 horizontalAlignment: (previewRoot.isVertical || mockTask.width < 100) ? Text.AlignHCenter : Text.AlignLeft
                                  maximumLineCount: 1
                                  // No hardcoded colors. Implicitly uses Kirigami.Theme.textColor 
                                  // which follows the Kirigami theme context.
@@ -664,5 +658,4 @@ Item {
             }
         }
     }
-}
 }
