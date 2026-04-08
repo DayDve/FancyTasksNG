@@ -7,6 +7,8 @@ import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
 import org.kde.ksvg as KSvg
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.plasmoid
 
 import "../ui/code/singletones"
 import "../ui" as FancyUI
@@ -565,7 +567,7 @@ Item {
         Kirigami.Theme.colorSet: Kirigami.Theme.Tooltip
         Kirigami.Theme.inherit: false
 
-        color: Kirigami.Theme.backgroundColor
+        color: Plasmoid.theme.backgroundColor
         radius: 4
         shadow.size: 12
         shadow.color: Qt.rgba(0, 0, 0, 0.3)
@@ -623,6 +625,7 @@ Item {
                     text: i18n("Dolphin")
                     font.bold: true
                     Layout.alignment: Qt.AlignHCenter
+                    color: Plasmoid.theme.textColor
                     opacity: 1.0
                 }
 
@@ -634,8 +637,8 @@ Item {
                     
                     Rectangle {
                         anchors.fill: parent
-                        color: Kirigami.ColorUtils.tintWithAlpha(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.15)
-                        border.color: Kirigami.Theme.disabledTextColor
+                        color: Kirigami.ColorUtils.tintWithAlpha(Plasmoid.theme.backgroundColor, Plasmoid.theme.textColor, 0.15)
+                        border.color: Plasmoid.theme.disabledTextColor
                         border.width: 1
                         radius: 4
 
@@ -707,6 +710,7 @@ Item {
 
                 Label {
                     text: i18n("%1 — %2", i18n("Home Folder"), i18n("Dolphin"))
+                    color: Plasmoid.theme.textColor
                     elide: Text.ElideRight
                 }
             }
