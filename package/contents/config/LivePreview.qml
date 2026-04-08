@@ -23,6 +23,10 @@ Item {
     readonly property int locationRight: 2
 
     property var cfg_page: null
+    readonly property bool cfg_showToolTips: cfg_page ? cfg_page.cfg_showToolTips : true
+
+    // Reference to the zoomed task item (Index 1) for tooltip positioning
+    property Item zoomedTaskItem: null
     property var fallbackIcons: ["system-run", "preferences-system"]
     property var fakeNames: ["Konsole", "System Settings"]
 
@@ -214,6 +218,10 @@ Item {
 
                             Item {
                                 id: mockTask
+
+                                Component.onCompleted: {
+                                    if (index === 1) previewRoot.zoomedTaskItem = mockTask;
+                                }
 
                                 readonly property int maxW: (previewRoot.cfg_page ? previewRoot.cfg_page.cfg_maxButtonLength : Kirigami.Units.gridUnit * 10)
 
@@ -543,5 +551,113 @@ Item {
                     }
                 }
             }
+    }
+
+    // --- Mock Tooltip Simulation ---
+    // Anchored to the zoomed task (Index 1)
+    Kirigami.ShadowedRectangle {
+        id: mockToolTip
+        z: 999
+        parent: innerPreviewArea
+
+        visible: previewRoot.zoomedTaskItem !== null
+
+        Kirigami.Theme.colorSet: Kirigami.Theme.Tooltip
+        Kirigami.Theme.inherit: false
+
+        color: Kirigami.Theme.backgroundColor
+        radius: 4
+        shadow.size: 12
+        shadow.color: Qt.rgba(0, 0, 0, 0.3)
+        shadow.yOffset: 2
+
+        implicitWidth: mainLayout.implicitWidth + Kirigami.Units.smallSpacing * 2
+        implicitHeight: mainLayout.implicitHeight + Kirigami.Units.smallSpacing * 2
+
+        // Positioning logic based on panel location
+        readonly property real targetX: (previewRoot.zoomedTaskItem ? previewRoot.zoomedTaskItem.x : 0) + dummyPanel.x + mockTasksLayout.x
+        readonly property real targetY: (previewRoot.zoomedTaskItem ? previewRoot.zoomedTaskItem.y : 0) + dummyPanel.y + mockTasksLayout.y
+        readonly property real targetW: previewRoot.zoomedTaskItem ? previewRoot.zoomedTaskItem.width : 0
+        readonly property real targetH: previewRoot.zoomedTaskItem ? previewRoot.zoomedTaskItem.height : 0
+
+        x: {
+            let centerX = targetX + targetW / 2;
+            if (previewRoot.isVertical) {
+                if (previewRoot.simulatedLocation === previewRoot.locationLeft) {
+                    return targetX + targetW + Kirigami.Units.smallSpacing;
+                } else {
+                    return targetX - width - Kirigami.Units.smallSpacing;
+                }
+            } else {
+                return Math.max(Kirigami.Units.smallSpacing, 
+                                Math.min(centerX - width / 2, parent.width - width - Kirigami.Units.smallSpacing));
+            }
+        }
+
+        y: {
+            let centerY = targetY + targetH / 2;
+            if (!previewRoot.isVertical) {
+                if (previewRoot.simulatedLocation === previewRoot.locationBottom) {
+                    return targetY - height - Kirigami.Units.smallSpacing;
+                } else {
+                    return targetY + targetH + Kirigami.Units.smallSpacing;
+                }
+            } else {
+                return Math.max(Kirigami.Units.smallSpacing, 
+                                Math.min(centerY - height / 2, parent.height - height - Kirigami.Units.smallSpacing));
+            }
+        }
+
+        ColumnLayout {
+            id: mainLayout
+            anchors.centerIn: parent
+            spacing: Kirigami.Units.smallSpacing
+            
+            // 1. App Name
+            Label {
+                text: previewRoot.getTaskName(1)
+                font.bold: true
+                Layout.alignment: Qt.AlignHCenter
+                opacity: 0.9
+            }
+
+            // 2. Subtext (Window Title)
+            Label {
+                text: "Mozilla Firefox"
+                font.pointSize: Kirigami.Theme.smallFont.pointSize
+                opacity: 0.6
+                visible: previewRoot.cfg_showToolTips
+                Layout.alignment: Qt.AlignHCenter
+            }
+
+            // 3. Thumbnail Mock (if enabled)
+            Rectangle {
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 10
+                Layout.preferredHeight: Kirigami.Units.gridUnit * 6
+                visible: previewRoot.cfg_showToolTips
+                color: Kirigami.ColorUtils.tintWithAlpha(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.1)
+                border.color: Kirigami.Theme.disabledTextColor
+                border.width: 1
+                radius: 2
+
+                Kirigami.Icon {
+                    anchors.centerIn: parent
+                    width: Kirigami.Units.iconSizes.large
+                    height: width
+                    source: previewRoot.getIconName(1)
+                    opacity: 0.5
+                }
+            }
+
+            // 4. Close Button Mock
+            Kirigami.Icon {
+                Layout.alignment: Qt.AlignRight
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 0.8
+                Layout.preferredHeight: Layout.preferredWidth
+                source: "window-close"
+                opacity: 0.6
+                visible: previewRoot.cfg_showToolTips
+            }
+        }
     }
 }
