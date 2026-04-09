@@ -332,12 +332,13 @@ Item {
 
                                     visible: canShow && isAllowedForInactive && !taskBackground.hideDueToDecoration
 
+                                    brightness: 1.0
+                                    colorization: 1.0
                                     colorizationColor: {
                                         if (!mockTask.cfgReady) return "transparent";
                                         return mockTask.cfg.cfg_buttonColorizeDominant ?
                                             previewRoot.indicatorColor : mockTask.cfg.cfg_buttonColorizeCustom;
                                     }
-                                    colorization: 1.0
                                 }
 
                                 // 3. Progress overlay
@@ -368,8 +369,9 @@ Item {
                                             prefix: TaskTools.taskPrefix("progress", previewRoot.simulatedLocation)
                                             layer.enabled: true
                                             layer.effect: MultiEffect {
-                                                colorizationColor: mockTask.cfg.cfg_indicatorProgressColor
+                                                brightness: 1.0
                                                 colorization: 1.0
+                                                colorizationColor: mockTask.cfg.cfg_indicatorProgressColor
                                             }
                                         }
                                     }

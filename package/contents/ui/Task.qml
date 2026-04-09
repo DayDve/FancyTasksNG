@@ -17,7 +17,7 @@ import org.kde.plasma.components as PlasmaComponents3
 import org.kde.kirigami as Kirigami
 // import org.kde.plasma.private.taskmanager as TaskManagerApplet
 import org.kde.plasma.plasmoid
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import "code/layoutmetrics.js" as LayoutMetrics
 import "code/tools.js" as TaskTools
@@ -513,15 +513,7 @@ Item {
         return HSL;
     }
 
-    ColorOverlay {
-        id: colorOverride
-        anchors.fill: frame
-        source: frame
-        color: Plasmoid.configuration.buttonColorizeDominant ?
-            frame.indicatorColor : Plasmoid.configuration.buttonColorizeCustom
-        visible: Plasmoid.configuration.buttonColorize ?
-            true : false
-    }
+
 
     Indicators {
         id: indicator
@@ -645,6 +637,14 @@ Item {
         property string basePrefix: "normal"
         prefix: isHovered ?
             TaskTools.taskPrefixHovered(basePrefix, Plasmoid.location) : TaskTools.taskPrefix(basePrefix, Plasmoid.location)
+
+        layer.enabled: false
+        layer.effect: MultiEffect {
+            brightness: 1.0
+            colorization: 1.0
+            colorizationColor: Plasmoid.configuration.buttonColorizeDominant ?
+                frame.indicatorColor : Plasmoid.configuration.buttonColorizeCustom
+        }
 
         // Avoid repositioning delegate item after dragFinished
         DragHandler {
@@ -797,16 +797,19 @@ Item {
             enabled: true
 
             source: task.model.decoration
-
             layer.enabled: task.iconOverflows
-            layer.effect: DropShadow {
-                horizontalOffset: 0
-                verticalOffset: 0
-                radius: 12
-                samples: 25
-                color: Qt.rgba(0, 0, 0, 0.5)
-                transparentBorder: true
-            }
+        }
+
+        MultiEffect {
+            anchors.fill: icon
+            source: icon
+            visible: task.iconOverflows
+            shadowEnabled: true
+            shadowBlur: 1.0
+            shadowHorizontalOffset: 0
+            shadowVerticalOffset: 0
+            shadowColor: Qt.rgba(0, 0, 0, 0.5)
+            autoPaddingEnabled: true
         }
 
         states: [
@@ -883,10 +886,8 @@ Item {
             PropertyChanges {
                 target: frame
                 basePrefix: ""
-            }
-            PropertyChanges {
-                target: colorOverride
-                visible: false
+                visible: true
+                layer.enabled: false
             }
         },
         State {
@@ -897,12 +898,8 @@ Item {
             PropertyChanges {
                 target: frame
                 basePrefix: "attention"
-                visible: (Plasmoid.configuration.buttonColorize && !frame.isHovered) ||
-                    !Plasmoid.configuration.buttonColorize
-            }
-            PropertyChanges {
-                target: colorOverride
-                visible: (Plasmoid.configuration.buttonColorize && frame.isHovered)
+                visible: true
+                layer.enabled: (Plasmoid.configuration.buttonColorize && frame.isHovered)
             }
         },
         State {
@@ -912,13 +909,8 @@ Item {
             PropertyChanges {
                 target: frame
                 basePrefix: "minimized"
-                visible: (Plasmoid.configuration.buttonColorize && Plasmoid.configuration.buttonColorizeInactive) ?
-                    false : true
-            }
-            PropertyChanges {
-                target: colorOverride
-                visible: (Plasmoid.configuration.buttonColorize && Plasmoid.configuration.buttonColorizeInactive) ?
-                    true : false
+                visible: true
+                layer.enabled: (Plasmoid.configuration.buttonColorize && Plasmoid.configuration.buttonColorizeInactive)
             }
             PropertyChanges {
                 target: indicator
@@ -933,13 +925,8 @@ Item {
             PropertyChanges {
                 target: frame
                 basePrefix: "minimized"
-                visible: Plasmoid.configuration.disableButtonInactiveSvg ?
-                    false : true
-            }
-            PropertyChanges {
-                target: colorOverride
-                visible: Plasmoid.configuration.disableButtonInactiveSvg ?
-                    false : true
+                visible: false
+                layer.enabled: false
             }
             PropertyChanges {
                 target: indicator
@@ -954,11 +941,8 @@ Item {
             PropertyChanges {
                 target: frame
                 basePrefix: "focus"
-            }
-            PropertyChanges {
-                target: colorOverride
-                visible: Plasmoid.configuration.buttonColorize ?
-                    true : false
+                visible: true
+                layer.enabled: Plasmoid.configuration.buttonColorize
             }
             PropertyChanges {
                 target: indicator
@@ -970,14 +954,9 @@ Item {
             name: "inactive"
             when: task.model.IsActive === false && !frame.isHovered && !Plasmoid.configuration.disableButtonInactiveSvg
             PropertyChanges {
-                target: colorOverride
-                visible: Plasmoid.configuration.buttonColorize && Plasmoid.configuration.buttonColorizeInactive ?
-                    true : false
-            }
-            PropertyChanges {
                 target: frame
-                visible: Plasmoid.configuration.buttonColorize && Plasmoid.configuration.buttonColorizeInactive ?
-                    false : true
+                visible: true
+                layer.enabled: Plasmoid.configuration.buttonColorize && Plasmoid.configuration.buttonColorizeInactive
             }
             PropertyChanges {
                 target: indicator
@@ -989,14 +968,9 @@ Item {
             name: "inactiveNoDecoration"
             when: (task.model.IsActive === false && !frame.isHovered) && Plasmoid.configuration.disableButtonInactiveSvg
             PropertyChanges {
-                target: colorOverride
-                visible: Plasmoid.configuration.disableButtonInactiveSvg ?
-                    false : true
-            }
-            PropertyChanges {
                 target: frame
-                visible: Plasmoid.configuration.disableButtonInactiveSvg ?
-                    false : true
+                visible: false
+                layer.enabled: false
             }
             PropertyChanges {
                 target: indicator
@@ -1008,14 +982,9 @@ Item {
             name: "hover"
             when: frame.isHovered
             PropertyChanges {
-                target: colorOverride
-                visible: Plasmoid.configuration.buttonColorize ?
-                    true : false
-            }
-            PropertyChanges {
                 target: frame
-                visible: Plasmoid.configuration.buttonColorize ?
-                    false : true
+                visible: true
+                layer.enabled: Plasmoid.configuration.buttonColorize
             }
             PropertyChanges {
                 target: indicator
