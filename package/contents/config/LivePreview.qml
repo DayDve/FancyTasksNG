@@ -305,7 +305,8 @@ Item {
                                 }
 
                                 readonly property color dominantColor: taskImageColors.dominant
-                                readonly property color indicatorColor: Kirigami.ColorUtils.tintWithAlpha(dominantColor, Kirigami.Theme.textColor, .38)
+                                readonly property color tintColor: Kirigami.ColorUtils.brightnessForColor(Kirigami.Theme.backgroundColor) === Kirigami.ColorUtils.Dark ? "#ffffff" : "#000000"
+                                readonly property color indicatorColor: Kirigami.ColorUtils.tintWithAlpha(dominantColor, tintColor, .38)
 
                                 // Task 0: minimized, progress demo, audio badge
                                 // Task 1: hovered, active, count badge
@@ -392,6 +393,7 @@ Item {
                                             anchors.bottom: parent.bottom
                                             imagePath: "widgets/tasks"
                                             prefix: TaskTools.taskPrefix("progress", previewRoot.simulatedLocation)
+                                            enabledBorders: KSvg.FrameSvg.NoBorder
                                             layer.enabled: true
                                             layer.effect: MultiEffect {
                                                 brightness: 1.0
@@ -402,21 +404,38 @@ Item {
                                     }
 
                                     // Styles 3-6: Edge strips
-                                    Rectangle {
-                                        visible: progressOverlay.pStyle >= 3 && progressOverlay.pStyle <= 6
-                                        color: mockTask.cfg.cfg_indicatorProgressColor
+                                        Rectangle {
+                                            id: progressStrip
+                                            visible: progressOverlay.pStyle >= 3 && progressOverlay.pStyle <= 6
+                                            color: mockTask.cfg.cfg_indicatorProgressColor
 
-                                        readonly property int thick: mockTask.cfg.cfg_indicatorProgressThickness
-                                        readonly property bool isHoriz: progressOverlay.pStyle === 3 || progressOverlay.pStyle === 4
-
-                                        width: isHoriz ? (parent.width * progressOverlay.pPosition) : thick
-                                        height: !isHoriz ? (parent.height * progressOverlay.pPosition) : thick
-
-                                        anchors.top: (progressOverlay.pStyle === 3 || progressOverlay.pStyle === 5 || progressOverlay.pStyle === 6) ? parent.top : undefined
-                                        anchors.bottom: (progressOverlay.pStyle === 4) ? parent.bottom : undefined
-                                        anchors.left: (progressOverlay.pStyle === 3 || progressOverlay.pStyle === 4 || progressOverlay.pStyle === 5) ? parent.left : undefined
-                                        anchors.right: (progressOverlay.pStyle === 6) ? parent.right : undefined
-                                    }
+                                            states: [
+                                                State {
+                                                    name: "top"
+                                                    when: progressOverlay.pStyle === 3
+                                                    AnchorChanges { target: progressStrip; anchors.top: parent.top; anchors.left: parent.left; anchors.bottom: undefined; anchors.right: undefined }
+                                                    PropertyChanges { target: progressStrip; width: parent.width * progressOverlay.pPosition; height: mockTask.cfg.cfg_indicatorProgressThickness }
+                                                },
+                                                State {
+                                                    name: "bottom"
+                                                    when: progressOverlay.pStyle === 4
+                                                    AnchorChanges { target: progressStrip; anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.top: undefined; anchors.right: undefined }
+                                                    PropertyChanges { target: progressStrip; width: parent.width * progressOverlay.pPosition; height: mockTask.cfg.cfg_indicatorProgressThickness }
+                                                },
+                                                State {
+                                                    name: "left"
+                                                    when: progressOverlay.pStyle === 5
+                                                    AnchorChanges { target: progressStrip; anchors.left: parent.left; anchors.bottom: parent.bottom; anchors.right: undefined; anchors.top: undefined }
+                                                    PropertyChanges { target: progressStrip; height: parent.height * progressOverlay.pPosition; width: mockTask.cfg.cfg_indicatorProgressThickness }
+                                                },
+                                                State {
+                                                    name: "right"
+                                                    when: progressOverlay.pStyle === 6
+                                                    AnchorChanges { target: progressStrip; anchors.right: parent.right; anchors.bottom: parent.bottom; anchors.left: undefined; anchors.top: undefined }
+                                                    PropertyChanges { target: progressStrip; height: parent.height * progressOverlay.pPosition; width: mockTask.cfg.cfg_indicatorProgressThickness }
+                                                }
+                                            ]
+                                        }
                                 }
 
                                 // 4. Icon & badges
@@ -585,9 +604,15 @@ Item {
 
                                     color: {
                                         if (!mockTask.cfgReady) return Kirigami.Theme.textColor;
-                                        if (mockTask.cfg.cfg_indicatorDominantColor || mockTask.cfg.cfg_indicatorAccentColor)
-                                            return Kirigami.Theme.highlightColor
-                                        let baseColor = mockTask.cfg.cfg_indicatorCustomColor
+                                        
+                                        let baseColor;
+                                        if (mockTask.cfg.cfg_indicatorAccentColor) {
+                                            baseColor = Kirigami.Theme.highlightColor;
+                                        } else if (mockTask.cfg.cfg_indicatorDominantColor) {
+                                            baseColor = mockTask.indicatorColor;
+                                        } else {
+                                            baseColor = mockTask.cfg.cfg_indicatorCustomColor;
+                                        }
 
                                         if (mockTask.cfg.cfg_indicatorDesaturate && mockTask.isMinimized) {
                                             let c = Qt.color(baseColor)

@@ -39,6 +39,7 @@ Item {
                 anchors.bottom: parent.bottom // Ensure content stays full-size
                 imagePath: "widgets/tasks"
                 prefix: TaskTools.taskPrefix("progress", Plasmoid.location)
+                enabledBorders: KSvg.FrameSvg.NoBorder
                 layer.enabled: true
                 layer.effect: MultiEffect {
                     brightness: 1.0
@@ -53,17 +54,33 @@ Item {
             id: progressStrip
             visible: control.pStyle >= 3 && control.pStyle <= 6
             color: control.pColor
-            
-            // Dynamic Geometry
-            readonly property bool isHoriz: control.pStyle === 3 || control.pStyle === 4
-            width: isHoriz ? (parent.width * control.pPosition) : control.pThick
-            height: !isHoriz ? (parent.height * control.pPosition) : control.pThick
 
-            // Dynamic Anchors
-            anchors.top: (control.pStyle === 3 || control.pStyle === 5 || control.pStyle === 6) ? parent.top : undefined
-            anchors.bottom: (control.pStyle === 4) ? parent.bottom : undefined
-            anchors.left: (control.pStyle === 3 || control.pStyle === 4 || control.pStyle === 5) ? parent.left : undefined
-            anchors.right: (control.pStyle === 6) ? parent.right : undefined
+            states: [
+                State {
+                    name: "top"
+                    when: control.pStyle === 3
+                    AnchorChanges { target: progressStrip; anchors.top: parent.top; anchors.left: parent.left; anchors.bottom: undefined; anchors.right: undefined }
+                    PropertyChanges { target: progressStrip; width: parent.width * control.pPosition; height: control.pThick }
+                },
+                State {
+                    name: "bottom"
+                    when: control.pStyle === 4
+                    AnchorChanges { target: progressStrip; anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.top: undefined; anchors.right: undefined }
+                    PropertyChanges { target: progressStrip; width: parent.width * control.pPosition; height: control.pThick }
+                },
+                State {
+                    name: "left"
+                    when: control.pStyle === 5
+                    AnchorChanges { target: progressStrip; anchors.left: parent.left; anchors.bottom: parent.bottom; anchors.right: undefined; anchors.top: undefined }
+                    PropertyChanges { target: progressStrip; height: parent.height * control.pPosition; width: control.pThick }
+                },
+                State {
+                    name: "right"
+                    when: control.pStyle === 6
+                    AnchorChanges { target: progressStrip; anchors.right: parent.right; anchors.bottom: parent.bottom; anchors.left: undefined; anchors.top: undefined }
+                    PropertyChanges { target: progressStrip; height: parent.height * control.pPosition; width: control.pThick }
+                }
+            ]
         }
     }
 }

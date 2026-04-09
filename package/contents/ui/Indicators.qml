@@ -59,19 +59,18 @@ Flow {
                 var height;
                 var width;
                 var colorCalc;
-                var colorEval = '#FFFFFF';
+                var colorEval;
                 var parentSize = !isVertical ? indicatorsFlow.frame.width : indicatorsFlow.frame.height;
                 var indicatorComputedSize;
                 var adjustment = isFirst ? adjust : 0
                 var parentSpacingAdjust = indicatorsFlow.taskCount >= 1 && maxStates >= 2 ? (spacing * 2.5) : 0 //Spacing fix for multiple items
-                if(Plasmoid.configuration.indicatorDominantColor){
-                    colorEval = decoColor
-                }
-                if(Plasmoid.configuration.indicatorAccentColor){
-                    colorEval = Kirigami.Theme.highlightColor
-                }
-                else if(!Plasmoid.configuration.indicatorDominantColor && !Plasmoid.configuration.indicatorAccentColor){
-                    colorEval = Plasmoid.configuration.indicatorCustomColor
+
+                if (Plasmoid.configuration.indicatorAccentColor) {
+                    colorEval = Kirigami.Theme.highlightColor;
+                } else if (Plasmoid.configuration.indicatorDominantColor) {
+                    colorEval = decoColor;
+                } else {
+                    colorEval = Plasmoid.configuration.indicatorCustomColor;
                 }
                 if(isFirst){//compute the size
         
