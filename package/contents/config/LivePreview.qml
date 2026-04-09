@@ -663,7 +663,7 @@ Item {
                 
                 // 1. App Name Header
                 Label {
-                    text: Wrappers.i18n("Dolphin")
+                    text: Wrappers.i18n("App name")
                     font.bold: true
                     Layout.alignment: Qt.AlignHCenter
                     color: Kirigami.Theme.textColor
@@ -682,13 +682,13 @@ Item {
                         border.color: Kirigami.Theme.disabledTextColor
                         border.width: 1
                         radius: 4
+                        clip: true
 
-                        Kirigami.Icon {
-                            anchors.centerIn: parent
-                            width: Kirigami.Units.iconSizes.huge
-                            height: width
-                            source: "system-file-manager"
-                            opacity: 0.2
+                        Image {
+                            anchors.fill: parent
+                            anchors.margins: 1
+                            source: Qt.resolvedUrl("../ui/assets/preview_thumbnail.png")
+                            fillMode: Image.PreserveAspectCrop
                         }
                     }
 
@@ -707,7 +707,7 @@ Item {
                         Label {
                             id: overlayText
                             anchors.centerIn: parent
-                            text: Wrappers.i18n("Home Folder")
+                            text: Wrappers.i18n("Window title")
                             color: "white"
                             font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.9
                             elide: Text.ElideRight
@@ -750,7 +750,7 @@ Item {
                 }
 
                 Label {
-                    text: Wrappers.i18n("%1 — %2", Wrappers.i18n("Home Folder"), Wrappers.i18n("Dolphin"))
+                    text: Wrappers.i18n("%1 — %2", Wrappers.i18n("Window title"), Wrappers.i18n("App name"))
                     color: Kirigami.Theme.textColor
                     elide: Text.ElideRight
                 }
