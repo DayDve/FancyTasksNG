@@ -10,7 +10,7 @@ Item {
     Layout.fillHeight: true
     clip: true
 
-    default property alias contentChildren: scrollView.data
+    default property alias innerContent: scrollView.contentData
 
     property int scrollDir: 0
     property real _lastY: 0
@@ -52,7 +52,7 @@ Item {
         property real activeFactor: containerWrapper.scrollDir === -1 ? 1.0 : 0.0
         Behavior on activeFactor { NumberAnimation { duration: Kirigami.Units.shortDuration } }
 
-        height: Kirigami.Units.gridUnit * 1.5 + (Kirigami.Units.gridUnit * 0.5 * activeFactor)
+        height: Kirigami.Units.gridUnit * 0.75 + (Kirigami.Units.gridUnit * 0.25 * activeFactor)
         opacity: scrollView.ScrollBar.vertical.position > 0.01 ? 1 : 0
         Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
 
@@ -65,7 +65,7 @@ Item {
             ctx.scale((width / 2) / height, 1);
 
             let gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, height);
-            let alpha = 0.08 + (0.08 * activeFactor);
+            let alpha = 0.12 + (0.10 * activeFactor);
             gradient.addColorStop(0, "rgba(0, 0, 0, " + alpha.toFixed(3) + ")");
             gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
 
@@ -89,7 +89,7 @@ Item {
         property real activeFactor: containerWrapper.scrollDir === 1 ? 1.0 : 0.0
         Behavior on activeFactor { NumberAnimation { duration: Kirigami.Units.shortDuration } }
 
-        height: Kirigami.Units.gridUnit * 1.5 + (Kirigami.Units.gridUnit * 0.5 * activeFactor)
+        height: Kirigami.Units.gridUnit * 0.75 + (Kirigami.Units.gridUnit * 0.25 * activeFactor)
         opacity: scrollView.ScrollBar.vertical.position < (1.0 - scrollView.ScrollBar.vertical.size) - 0.01 ? 1 : 0
         Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
 
@@ -102,7 +102,7 @@ Item {
             ctx.scale((width / 2) / height, 1);
 
             let gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, height);
-            let alpha = 0.08 + (0.08 * activeFactor);
+            let alpha = 0.12 + (0.10 * activeFactor);
             gradient.addColorStop(0, "rgba(0, 0, 0, " + alpha.toFixed(3) + ")");
             gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
 
