@@ -84,12 +84,45 @@ Item {
     readonly property int simulatedOrthogonalCount: Math.ceil(taskCountDisplay / simulatedStripeCount)
     readonly property int laneHeight: Math.floor(simulatedThickness / simulatedStripeCount)
 
+    // Inner padding (iconSpacing) logic
+    readonly property real spacingAdjustment: (cfg_page && cfg_page.cfg_iconSpacing !== undefined) ? cfg_page.cfg_iconSpacing : 1
+    function horizontalMargins() {
+        return (taskFrame.margins.left + taskFrame.margins.right) * (isVertical ? 1 : spacingAdjustment)
+    }
+    function verticalMargins() {
+        return (taskFrame.margins.top + taskFrame.margins.bottom) * (isVertical ? spacingAdjustment : 1)
+    }
+
+    function adjustMargin(isVert, size, margin) {
+        if (!size) return margin;
+        // Match LayoutMetrics.js: available space is checked against verticalMargins for vertical adjustment
+        // Note: Production code is a bit inconsistent here but we aim for visual parity
+        let margins = isVert ? horizontalMargins() : verticalMargins();
+        if ((size - margins) < Kirigami.Units.iconSizes.small) {
+            return Math.ceil((margin * (Kirigami.Units.iconSizes.small / size)) / 2);
+        }
+        return margin;
+    }
+
+    // Dynamic simulated sizes to match LayoutMetrics.js formulas
+    readonly property int simulatedMinLauncherWidth: {
+        let baseW = isVertical ? (Kirigami.Units.iconSizes.sizeForLabels + 4) : Math.min(simulatedThickness, Kirigami.Units.iconSizes.small * 3);
+        let hMargins = horizontalMargins();
+        let topAdj = adjustMargin(false, baseW, taskFrame.margins.top);
+        let bottomAdj = adjustMargin(false, baseW, taskFrame.margins.bottom);
+        return (baseW + hMargins) - (topAdj + bottomAdj);
+    }
+    readonly property int simulatedMinWidth: iconsOnly ? simulatedMinLauncherWidth : (simulatedMinLauncherWidth + Kirigami.Units.gridUnit * 10)
+    
+    readonly property int simulatedMaxWidth: iconsOnly ? (isVertical ? (simulatedThickness + verticalMargins()) : (simulatedThickness + horizontalMargins())) : (Kirigami.Units.gridUnit * 12)
+
     readonly property bool iconsOnly: cfg_page ? cfg_page.cfg_iconOnly === 1 : true
 
-    // Theme FrameSvg for authentic margins
+    // Theme FrameSvg for authentic margins calculation
     KSvg.FrameSvgItem {
         id: taskFrame
         visible: false
+        imagePath: "widgets/tasks"
         prefix: "normal"
     }
 
@@ -254,10 +287,10 @@ Item {
 
                                 readonly property int maxW: (previewRoot.cfg_page ? previewRoot.cfg_page.cfg_maxButtonLength : Kirigami.Units.gridUnit * 10)
 
-                                Layout.preferredWidth: mockTask.showText ? maxW : previewRoot.laneHeight
-                                Layout.preferredHeight: previewRoot.laneHeight
-                                Layout.maximumWidth: mockTask.showText ? maxW : (previewRoot.isVertical ? previewRoot.simulatedThickness : previewRoot.laneHeight)
-                                Layout.maximumHeight: previewRoot.isVertical ? (mockTask.showText ? maxW : previewRoot.laneHeight) : previewRoot.simulatedThickness
+                                Layout.preferredWidth: mockTask.showText ? maxW : previewRoot.simulatedMaxWidth
+                                Layout.preferredHeight: previewRoot.laneHeight + (previewRoot.isVertical ? (previewRoot.verticalMargins() - (previewRoot.taskFrame.margins.top + previewRoot.taskFrame.margins.bottom)) : 0)
+                                Layout.maximumWidth: previewRoot.isVertical ? previewRoot.simulatedThickness : Layout.preferredWidth
+                                Layout.maximumHeight: previewRoot.isVertical ? Layout.preferredWidth : previewRoot.simulatedThickness
                                 Layout.fillWidth: previewRoot.isVertical || mockTask.showText
                                 Layout.fillHeight: !previewRoot.isVertical || mockTask.showText
                                 required property int index
@@ -289,14 +322,6 @@ Item {
 
                                 readonly property bool showText: !previewRoot.iconsOnly && (!previewRoot.isVertical || previewRoot.simulatedThickness > (Kirigami.Units.gridUnit * 4))
 
-                                function adjustMargin(size, margin) {
-                                    if (!size) return margin;
-                                    var totalMargins = taskFrame.margins.top + taskFrame.margins.bottom;
-                                    if ((size - totalMargins) < Kirigami.Units.iconSizes.small) {
-                                        return Math.ceil((margin * (Kirigami.Units.iconSizes.small / size)) / 2);
-                                    }
-                                    return margin;
-                                }
 
                                 // 1. Frame background
                                 KSvg.FrameSvgItem {
@@ -398,24 +423,21 @@ Item {
                                 Item {
                                     id: iconBox
 
-                                    readonly property real simulatedMinWidth: previewRoot.isVertical ? iconBox.height : (previewRoot.laneHeight - (Kirigami.Units.smallSpacing / 2))
+                                    readonly property int mLeft: previewRoot.adjustMargin(true, parent.width, taskFrame.margins.left)
+                                    readonly property int mRight: previewRoot.adjustMargin(true, parent.width, taskFrame.margins.right)
+                                    readonly property int mTop: previewRoot.adjustMargin(false, parent.height, taskFrame.margins.top)
+                                    readonly property int mBottom: previewRoot.adjustMargin(false, parent.height, taskFrame.margins.bottom)
 
-                                    width: previewRoot.isVertical ? (parent.width - mockTask.adjustMargin(parent.width, taskFrame.margins.left) - mockTask.adjustMargin(parent.width, taskFrame.margins.right)) :
-                                                                    (mockTask.showText ? Math.max(Kirigami.Units.iconSizes.sizeForLabels, Kirigami.Units.iconSizes.medium) :
-                                                                                Math.min(simulatedMinWidth, parent.width - mockTask.adjustMargin(parent.width, taskFrame.margins.left) - mockTask.adjustMargin(parent.width, taskFrame.margins.right)))
-                                    height: parent.height - mockTask.adjustMargin(parent.height, taskFrame.margins.top) - mockTask.adjustMargin(parent.height, taskFrame.margins.bottom) - Kirigami.Units.smallSpacing
-
-                                    anchors {
-                                        left: parent.left
-                                        top: parent.top
-                                        topMargin: mockTask.adjustMargin(parent.height, taskFrame.margins.top) + (Kirigami.Units.smallSpacing / 2)
-                                    }
-
-                                    anchors.horizontalCenter: (mockTask.showText || previewRoot.isVertical) ? undefined : parent.horizontalCenter
-                                    anchors.leftMargin: (mockTask.showText && !previewRoot.isVertical) ? mockTask.adjustMargin(parent.width, taskFrame.margins.left) : (anchors.horizontalCenter ? 0 : (parent.width - width) / 2)
+                                    anchors.fill: parent
+                                    anchors.leftMargin: mLeft
+                                    anchors.rightMargin: mRight
+                                    anchors.topMargin: mTop
+                                    anchors.bottomMargin: mBottom
 
                                     Kirigami.Icon {
                                         id: taskIcon
+                                        // anchors.fill: parent // REMOVED: fill prevents custom width/height and zoom
+
                                         readonly property bool sizeOverride: mockTask.cfgReady && mockTask.cfg.cfg_iconSizeOverride
                                         readonly property int fixedSize: mockTask.cfgReady ? mockTask.cfg.cfg_iconSizePx : 32
                                         readonly property real iconScale: mockTask.cfgReady ? mockTask.cfg.cfg_iconScale / 100 : 1.0
@@ -424,27 +446,43 @@ Item {
                                         readonly property bool scaleFromEdge: mockTask.cfgReady && mockTask.cfg.cfg_iconScaleFromEdge
                                         readonly property int edgeOffset: mockTask.cfgReady ? mockTask.cfg.cfg_iconEdgeOffset : 0
 
-                                        readonly property int baseWidth: (sizeOverride ? fixedSize : (iconBox.width * iconScale))
-                                        readonly property int baseHeight: (sizeOverride ? fixedSize : (iconBox.height * iconScale))
-
-                                        readonly property real edgeMarginH: scaleFromEdge ? edgeOffset : (parent.width - baseWidth) / 2
-                                        readonly property real edgeMarginV: scaleFromEdge ? edgeOffset : (parent.height - baseHeight) / 2
+                                        readonly property int baseWidth: (sizeOverride ? fixedSize : (parent.width * iconScale))
+                                        readonly property int baseHeight: (sizeOverride ? fixedSize : (parent.height * iconScale))
 
                                         width: baseWidth + growSize
                                         height: baseHeight + growSize
 
-                                        x: {
-                                            let loc = previewRoot.simulatedLocation
-                                            if (loc === previewRoot.locationLeft) return edgeMarginH
-                                            if (loc === previewRoot.locationRight) return parent.width - width - edgeMarginH
-                                            return (parent.width - width) / 2
-                                        }
-                                        y: {
-                                            let loc = previewRoot.simulatedLocation
-                                            if (loc === previewRoot.locationTop) return edgeMarginV
-                                            if (loc === previewRoot.locationBottom) return parent.height - height - edgeMarginV
-                                            return (parent.height - height) / 2
-                                        }
+                                        readonly property real edgeMarginH: scaleFromEdge ? edgeOffset : (parent.width - baseWidth) / 2
+                                        readonly property real edgeMarginV: scaleFromEdge ? edgeOffset : (parent.height - baseHeight) / 2
+
+                                        // Default alignment (matches Task.qml line 758-760)
+                                        anchors.horizontalCenter: (!mockTask.showText) ? parent.horizontalCenter : undefined
+                                        anchors.left: (mockTask.showText) ? parent.left : undefined
+                                        anchors.leftMargin: (mockTask.showText) ? edgeMarginH : 0
+                                        
+                                        anchors.bottom: parent.bottom
+                                        anchors.bottomMargin: edgeMarginV
+
+                                        states: [
+                                            State {
+                                                name: "top"
+                                                when: previewRoot.simulatedLocation === previewRoot.locationTop
+                                                AnchorChanges { target: taskIcon; anchors.top: parent.top; anchors.bottom: undefined; anchors.horizontalCenter: (!mockTask.showText ? parent.horizontalCenter : undefined); anchors.verticalCenter: undefined; anchors.left: (mockTask.showText ? parent.left : undefined); anchors.right: undefined }
+                                                PropertyChanges { target: taskIcon; anchors.topMargin: taskIcon.edgeMarginV; anchors.bottomMargin: 0; anchors.leftMargin: (mockTask.showText ? taskIcon.edgeMarginH : 0); anchors.rightMargin: 0 }
+                                            },
+                                            State {
+                                                name: "left"
+                                                when: previewRoot.simulatedLocation === previewRoot.locationLeft
+                                                AnchorChanges { target: taskIcon; anchors.left: parent.left; anchors.right: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.top: undefined; anchors.bottom: undefined }
+                                                PropertyChanges { target: taskIcon; anchors.leftMargin: taskIcon.edgeMarginH; anchors.rightMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
+                                            },
+                                            State {
+                                                name: "right"
+                                                when: previewRoot.simulatedLocation === previewRoot.locationRight
+                                                AnchorChanges { target: taskIcon; anchors.right: parent.right; anchors.left: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.top: undefined; anchors.bottom: undefined }
+                                                PropertyChanges { target: taskIcon; anchors.rightMargin: taskIcon.edgeMarginH; anchors.leftMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
+                                            }
+                                        ]
 
                                         source: previewRoot.getIconName(mockTask.index)
                                         roundToIconSize: false
