@@ -316,30 +316,30 @@ Item {
                                         TaskTools.taskPrefix(basePrefix, previewRoot.simulatedLocation)
 
                                     readonly property bool hideDueToDecoration: mockTask.isInactive && mockTask.cfgReady && mockTask.cfg.cfg_disableButtonInactiveSvg
-                                    readonly property bool hideDueToColorize: mockTask.cfgReady && mockTask.cfg.cfg_buttonColorize && (mockTask.isActive || mockTask.isHovered || (mockTask.isInactive && mockTask.cfg.cfg_buttonColorizeInactive))
+                                    readonly property bool hideDueToColorize: {
+                                        if (!mockTask.cfgReady || !mockTask.cfg.cfg_buttonColorize) return false;
+                                        if (mockTask.isActive || mockTask.isHovered) return true;
+                                        // Move inactive colorization demonstration to 3rd and 4th buttons (indices 2 and 3)
+                                        if (mockTask.isInactive && mockTask.cfg.cfg_buttonColorizeInactive) {
+                                            return mockTask.index >= 2;
+                                        }
+                                        return false;
+                                    }
 
-                                    visible: !hideDueToDecoration && !hideDueToColorize
-                                }
-
-                                // 2. Color overlay
-                                MultiEffect {
-                                    id: colorOverride
-                                    anchors.fill: taskBackground
-                                    source: taskBackground
-
-                                    readonly property bool canShow: mockTask.cfgReady && mockTask.cfg.cfg_buttonColorize
-                                    readonly property bool isAllowedForInactive: mockTask.isActive || mockTask.isHovered || (mockTask.isInactive && mockTask.cfg.cfg_buttonColorizeInactive)
-
-                                    visible: canShow && isAllowedForInactive && !taskBackground.hideDueToDecoration
-
-                                    brightness: 1.0
-                                    colorization: 1.0
-                                    colorizationColor: {
-                                        if (!mockTask.cfgReady) return "transparent";
-                                        return mockTask.cfg.cfg_buttonColorizeDominant ?
-                                            mockTask.indicatorColor : mockTask.cfg.cfg_buttonColorizeCustom;
+                                    visible: !hideDueToDecoration
+                                    layer.enabled: hideDueToColorize
+                                    layer.effect: MultiEffect {
+                                        brightness: 1.0
+                                        colorization: 1.0
+                                        colorizationColor: {
+                                            if (!mockTask.cfgReady) return "transparent";
+                                            return mockTask.cfg.cfg_buttonColorizeDominant ?
+                                                mockTask.indicatorColor : mockTask.cfg.cfg_buttonColorizeCustom;
+                                        }
                                     }
                                 }
+
+
 
                                 // 3. Progress overlay
                                 Item {
