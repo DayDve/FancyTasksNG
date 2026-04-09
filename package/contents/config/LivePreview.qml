@@ -31,7 +31,7 @@ Item {
     // Reference to the zoomed task item (Index 1) for tooltip positioning
     property var zoomedTaskItem: null
     property var fallbackIcons: ["system-run", "preferences-system"]
-    property var fakeNames: ["Konsole", "System Settings"]
+    property var fakeNames: [Wrappers.i18n("App name"), Wrappers.i18n("App name")]
 
     function getIconName(index) {
         if (cfg_page && cfg_page.cfg_launchers && cfg_page.cfg_launchers.length > index) {
@@ -85,14 +85,6 @@ Item {
     readonly property int laneHeight: Math.floor(simulatedThickness / simulatedStripeCount)
 
     readonly property bool iconsOnly: cfg_page ? cfg_page.cfg_iconOnly === 1 : true
-
-    // Shared ImageColors for dominant color preview
-    Kirigami.ImageColors {
-        id: sharedImageColors
-        source: "system-run"
-    }
-    readonly property color dominantColor: sharedImageColors.dominant
-    readonly property color indicatorColor: Kirigami.ColorUtils.tintWithAlpha(dominantColor, Kirigami.Theme.textColor, .38)
 
     // Theme FrameSvg for authentic margins
     KSvg.FrameSvgItem {
@@ -274,6 +266,14 @@ Item {
                                 readonly property bool cfgReady: cfg !== null
                                 readonly property Item taskIconItem: taskIcon
 
+                                Kirigami.ImageColors {
+                                    id: taskImageColors
+                                    source: taskIcon.source
+                                }
+
+                                readonly property color dominantColor: taskImageColors.dominant
+                                readonly property color indicatorColor: Kirigami.ColorUtils.tintWithAlpha(dominantColor, Kirigami.Theme.textColor, .38)
+
                                 // Task 0: minimized, progress demo, audio badge
                                 // Task 1: hovered, active, count badge
                                 readonly property bool isRunning: true
@@ -337,7 +337,7 @@ Item {
                                     colorizationColor: {
                                         if (!mockTask.cfgReady) return "transparent";
                                         return mockTask.cfg.cfg_buttonColorizeDominant ?
-                                            previewRoot.indicatorColor : mockTask.cfg.cfg_buttonColorizeCustom;
+                                            mockTask.indicatorColor : mockTask.cfg.cfg_buttonColorizeCustom;
                                     }
                                 }
 

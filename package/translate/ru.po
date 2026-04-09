@@ -117,7 +117,7 @@ msgstr "Использовать стиль Plasma/Акцент"
 
 #: ../contents/config/ConfigAppearance.qml
 msgid "Using Color Overlay"
-msgstr "Использовать оверлей цвета"
+msgstr "Цвет оверлея"
 
 #: ../contents/config/ConfigAppearance.qml ../contents/config/ConfigIndicators.qml
 msgid "Use dominant icon color"
@@ -1047,3 +1047,11 @@ msgstr "Полоска (Слева)"
 #: ../contents/config/ConfigIndicators.qml
 msgid "Strip (Right)"
 msgstr "Полоска (Справа)"
+
+#: ../contents/config/LivePreview.qml
+msgid "Window title"
+msgstr "Заголовок окна"
+
+#: ../contents/config/LivePreview.qml
+msgid "App name"
+msgstr "Имя приложения"
