@@ -264,8 +264,8 @@ Item {
                         id: mockTasksLayout
                         anchors.left: parent.left
                         anchors.top: parent.top
-                        width: (!previewRoot.iconsOnly || previewRoot.isVertical) ? parent.width : implicitWidth
-                        height: (!previewRoot.iconsOnly || !previewRoot.isVertical) ? parent.height : implicitHeight
+                        width: previewRoot.isVertical ? parent.width : Math.min(parent.width, implicitWidth)
+                        height: previewRoot.isVertical ? Math.min(parent.height, implicitHeight) : parent.height
                         clip: false
 
                         columns: previewRoot.isVertical ? previewRoot.simulatedStripeCount : previewRoot.simulatedOrthogonalCount
@@ -280,6 +280,7 @@ Item {
 
                             Item {
                                 id: mockTask
+                                z: isHovered ? 2000 : 0
 
                                 Component.onCompleted: {
                                     if (index === 1) previewRoot.zoomedTaskItem = mockTask;
@@ -289,7 +290,9 @@ Item {
 
                                 Layout.preferredWidth: mockTask.showText ? maxW : previewRoot.simulatedMaxWidth
                                 Layout.preferredHeight: previewRoot.laneHeight + (previewRoot.isVertical ? (previewRoot.verticalMargins() - (previewRoot.taskFrame.margins.top + previewRoot.taskFrame.margins.bottom)) : 0)
-                                Layout.maximumWidth: previewRoot.isVertical ? previewRoot.simulatedThickness : Layout.preferredWidth
+                                Layout.minimumWidth: previewRoot.laneHeight
+                                Layout.minimumHeight: previewRoot.laneHeight
+                                Layout.maximumWidth: previewRoot.isVertical ? previewRoot.simulatedThickness : (mockTask.showText ? Layout.preferredWidth : Layout.preferredWidth)
                                 Layout.maximumHeight: previewRoot.isVertical ? Layout.preferredWidth : previewRoot.simulatedThickness
                                 Layout.fillWidth: previewRoot.isVertical || mockTask.showText
                                 Layout.fillHeight: !previewRoot.isVertical || mockTask.showText
@@ -597,9 +600,8 @@ Item {
                                     width: Math.round(Kirigami.Units.gridUnit * 1.5)
                                     height: width
                                     visible: mockTask.isHovered
-                                    anchors.bottom: parent.bottom
-                                    anchors.right: parent.right
-                                    anchors.margins: Kirigami.Units.smallSpacing
+                                    x: parent.width - width - Kirigami.Units.smallSpacing
+                                    y: previewRoot.multiStripe ? 0 : Math.round(parent.height * 0.3)
                                     z: 99
 
                                     source: "data:image/svg+xml;utf8," +
