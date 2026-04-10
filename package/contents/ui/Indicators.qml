@@ -12,6 +12,8 @@ import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
 
+import "code/tools.js" as TaskTools
+
 Flow {
     id: indicatorsFlow
     spacing: 10
@@ -65,13 +67,13 @@ Flow {
                 var adjustment = isFirst ? adjust : 0
                 var parentSpacingAdjust = indicatorsFlow.taskCount >= 1 && maxStates >= 2 ? (spacing * 2.5) : 0 //Spacing fix for multiple items
 
-                if (Plasmoid.configuration.indicatorAccentColor) {
-                    colorEval = Kirigami.Theme.highlightColor;
-                } else if (Plasmoid.configuration.indicatorDominantColor) {
-                    colorEval = decoColor;
-                } else {
-                    colorEval = Plasmoid.configuration.indicatorCustomColor;
-                }
+                colorEval = TaskTools.resolveIndicatorBaseColor(
+                    Plasmoid.configuration.indicatorAccentColor,
+                    Plasmoid.configuration.indicatorDominantColor,
+                    Kirigami.Theme.highlightColor,
+                    decoColor,
+                    Plasmoid.configuration.indicatorCustomColor
+                );
                 if(isFirst){//compute the size
         
                     let mainSize = (parentSize + parentSpacingAdjust);

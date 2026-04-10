@@ -699,7 +699,14 @@ Item {
         active: !!(task.model && task.model.IsWindow) && !!task.smartLauncherItem && !!task.smartLauncherItem.progressVisible && Plasmoid.configuration.indicatorProgressStyle > 0
 
         source: "TaskProgressOverlay.qml"
-        onLoaded: item.task = task
+        onLoaded: {
+            item.pStyle = Qt.binding(() => Plasmoid.configuration.indicatorProgressStyle);
+            item.pColor = Qt.binding(() => Plasmoid.configuration.indicatorProgressColor);
+            item.pOpacity = Qt.binding(() => Plasmoid.configuration.indicatorProgressOpacity / 100.0);
+            item.pThick = Qt.binding(() => Plasmoid.configuration.indicatorProgressThickness);
+            item.pPosition = Qt.binding(() => (task.smartLauncherItem?.progress ?? 0) / 100.0);
+            item.panelLocation = Qt.binding(() => Plasmoid.location);
+        }
     }
 
 

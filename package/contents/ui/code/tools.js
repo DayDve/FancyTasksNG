@@ -204,3 +204,23 @@ function taskPrefixHovered(prefix, location) {
         ...taskPrefix(prefix, location),
     ];
 }
+
+/**
+ * Resolve the base indicator color based on configuration flags.
+ * Shared between production Indicators.qml and config LivePreview.qml.
+ *
+ * @param {bool} useAccent - indicatorAccentColor config flag
+ * @param {bool} useDominant - indicatorDominantColor config flag
+ * @param {color} accentColor - Kirigami.Theme.highlightColor (or equivalent)
+ * @param {color} dominantColor - tinted icon dominant color
+ * @param {color} customColor - indicatorCustomColor config value
+ * @returns {color} The resolved base color
+ */
+function resolveIndicatorBaseColor(useAccent, useDominant, accentColor, dominantColor, customColor) {
+    if (useAccent) {
+        return accentColor;
+    } else if (useDominant) {
+        return dominantColor;
+    }
+    return customColor;
+}

@@ -1,20 +1,24 @@
+/*
+    SPDX-FileCopyrightText: 2025-2026 Vitaliy Elin <daydve@smbit.pro>
+    SPDX-License-Identifier: GPL-2.0-or-later
+*/
+
 import QtQuick
 import QtQuick.Effects
 import org.kde.ksvg as KSvg
-import org.kde.plasma.plasmoid
 import "code/tools.js" as TaskTools
 
 Item {
     id: control
     anchors.fill: parent
 
-    property var task
-
-    readonly property int pStyle: Plasmoid.configuration.indicatorProgressStyle
-    readonly property color pColor: Plasmoid.configuration.indicatorProgressColor
-    readonly property real pOpacity: Plasmoid.configuration.indicatorProgressOpacity / 100.0
-    readonly property int pThick: Plasmoid.configuration.indicatorProgressThickness
-    readonly property real pPosition: (task?.smartLauncherItem?.progress ?? 0) / 100.0
+    // Public API: set these from the parent
+    property int pStyle: 0
+    property color pColor: "#00FF00"
+    property real pOpacity: 1.0
+    property int pThick: 2
+    property real pPosition: 0.0
+    property int panelLocation: 0
 
     Item {
         id: contentItem
@@ -22,12 +26,11 @@ Item {
         opacity: control.pOpacity
 
         // Styles 1 & 2: Shape/Background Fill (SVG based)
-        // Consolidated into a single clipping container and SVG item
         Item {
             id: fillClip
             visible: control.pStyle === 1 || control.pStyle === 2
             anchors.left: parent.left
-            anchors.bottom: parent.bottom // Anchored to bottom for vertical growth
+            anchors.bottom: parent.bottom
             width: control.pStyle === 1 ? parent.width * control.pPosition : parent.width
             height: control.pStyle === 2 ? parent.height * control.pPosition : parent.height
             clip: true
@@ -36,9 +39,9 @@ Item {
                 width: control.width
                 height: control.height
                 anchors.left: parent.left
-                anchors.bottom: parent.bottom // Ensure content stays full-size
+                anchors.bottom: parent.bottom
                 imagePath: "widgets/tasks"
-                prefix: TaskTools.taskPrefix("progress", Plasmoid.location)
+                prefix: TaskTools.taskPrefix("progress", control.panelLocation)
                 enabledBorders: KSvg.FrameSvg.NoBorder
                 layer.enabled: true
                 layer.effect: MultiEffect {
@@ -49,7 +52,7 @@ Item {
             }
         }
 
-        // Styles 3, 4, 5, 6: Edge Strips (Rectangle based)
+        // Styles 3-6: Edge Strips
         Rectangle {
             id: progressStrip
             visible: control.pStyle >= 3 && control.pStyle <= 6

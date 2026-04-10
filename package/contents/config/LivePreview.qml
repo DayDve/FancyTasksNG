@@ -367,75 +367,16 @@ Item {
 
 
 
-                                // 3. Progress overlay
-                                Item {
-                                    id: progressOverlay
+                                // 3. Progress overlay (reuses production component)
+                                FancyUI.TaskProgressOverlay {
                                     anchors.fill: taskBackground
                                     visible: mockTask.index === 0 && mockTask.cfg.cfg_indicatorProgressStyle > 0
-                                    opacity: mockTask.cfg.cfg_indicatorProgressOpacity / 100.0
-
-                                    readonly property int pStyle: mockTask.cfg.cfg_indicatorProgressStyle
-                                    readonly property real pPosition: 0.7
-
-                                    // Styles 1 & 2: SVG fill
-                                    Item {
-                                        visible: progressOverlay.pStyle === 1 || progressOverlay.pStyle === 2
-                                        anchors.left: parent.left
-                                        anchors.bottom: parent.bottom
-                                        width: progressOverlay.pStyle === 1 ? parent.width * progressOverlay.pPosition : parent.width
-                                        height: progressOverlay.pStyle === 2 ? parent.height * progressOverlay.pPosition : parent.height
-                                        clip: true
-
-                                        KSvg.FrameSvgItem {
-                                            width: progressOverlay.width
-                                            height: progressOverlay.height
-                                            anchors.left: parent.left
-                                            anchors.bottom: parent.bottom
-                                            imagePath: "widgets/tasks"
-                                            prefix: TaskTools.taskPrefix("progress", previewRoot.simulatedLocation)
-                                            enabledBorders: KSvg.FrameSvg.NoBorder
-                                            layer.enabled: true
-                                            layer.effect: MultiEffect {
-                                                brightness: 1.0
-                                                colorization: 1.0
-                                                colorizationColor: mockTask.cfg.cfg_indicatorProgressColor
-                                            }
-                                        }
-                                    }
-
-                                    // Styles 3-6: Edge strips
-                                        Rectangle {
-                                            id: progressStrip
-                                            visible: progressOverlay.pStyle >= 3 && progressOverlay.pStyle <= 6
-                                            color: mockTask.cfg.cfg_indicatorProgressColor
-
-                                            states: [
-                                                State {
-                                                    name: "top"
-                                                    when: progressOverlay.pStyle === 3
-                                                    AnchorChanges { target: progressStrip; anchors.top: parent.top; anchors.left: parent.left; anchors.bottom: undefined; anchors.right: undefined }
-                                                    PropertyChanges { target: progressStrip; width: parent.width * progressOverlay.pPosition; height: mockTask.cfg.cfg_indicatorProgressThickness }
-                                                },
-                                                State {
-                                                    name: "bottom"
-                                                    when: progressOverlay.pStyle === 4
-                                                    AnchorChanges { target: progressStrip; anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.top: undefined; anchors.right: undefined }
-                                                    PropertyChanges { target: progressStrip; width: parent.width * progressOverlay.pPosition; height: mockTask.cfg.cfg_indicatorProgressThickness }
-                                                },
-                                                State {
-                                                    name: "left"
-                                                    when: progressOverlay.pStyle === 5
-                                                    AnchorChanges { target: progressStrip; anchors.left: parent.left; anchors.bottom: parent.bottom; anchors.right: undefined; anchors.top: undefined }
-                                                    PropertyChanges { target: progressStrip; height: parent.height * progressOverlay.pPosition; width: mockTask.cfg.cfg_indicatorProgressThickness }
-                                                },
-                                                State {
-                                                    name: "right"
-                                                    when: progressOverlay.pStyle === 6
-                                                    AnchorChanges { target: progressStrip; anchors.right: parent.right; anchors.bottom: parent.bottom; anchors.left: undefined; anchors.top: undefined }
-                                                    PropertyChanges { target: progressStrip; height: parent.height * progressOverlay.pPosition; width: mockTask.cfg.cfg_indicatorProgressThickness }
-                                                }
-                                            ]
-                                        }
+                                    pStyle: mockTask.cfg.cfg_indicatorProgressStyle
+                                    pColor: mockTask.cfg.cfg_indicatorProgressColor
+                                    pOpacity: mockTask.cfg.cfg_indicatorProgressOpacity / 100.0
+                                    pThick: mockTask.cfg.cfg_indicatorProgressThickness
+                                    pPosition: 0.7
+                                    panelLocation: previewRoot.simulatedLocation
                                 }
 
                                 // 4. Icon & badges
@@ -447,11 +388,42 @@ Item {
                                     readonly property int mTop: previewRoot.adjustMargin(false, parent.height, taskFrame.margins.top)
                                     readonly property int mBottom: previewRoot.adjustMargin(false, parent.height, taskFrame.margins.bottom)
 
-                                    anchors.fill: parent
-                                    anchors.leftMargin: mLeft
-                                    anchors.rightMargin: mRight
-                                    anchors.topMargin: mTop
-                                    anchors.bottomMargin: mBottom
+                                    // Content area should be a square based on the smaller dimension (height for horizontal panel)
+                                    readonly property real contentSize: (previewRoot.isVertical ? parent.width : parent.height) -
+                                                                         (previewRoot.isVertical ? (mLeft + mRight) : (mTop + mBottom))
+
+                                    width: contentSize
+                                    height: contentSize
+
+                                    states: [
+                                        State {
+                                            name: "iconsOnly"
+                                            when: !mockTask.showText
+                                            AnchorChanges {
+                                                target: iconBox
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.left: undefined
+                                                anchors.top: undefined
+                                            }
+                                        },
+                                        State {
+                                            name: "classic"
+                                            when: mockTask.showText
+                                            AnchorChanges {
+                                                target: iconBox
+                                                anchors.horizontalCenter: previewRoot.isVertical ? parent.horizontalCenter : undefined
+                                                anchors.left: previewRoot.isVertical ? undefined : parent.left
+                                                anchors.verticalCenter: previewRoot.isVertical ? undefined : parent.verticalCenter
+                                                anchors.top: previewRoot.isVertical ? parent.top : undefined
+                                            }
+                                            PropertyChanges {
+                                                target: iconBox
+                                                anchors.leftMargin: previewRoot.isVertical ? 0 : mLeft
+                                                anchors.topMargin: previewRoot.isVertical ? mTop : 0
+                                            }
+                                        }
+                                    ]
 
                                     Kirigami.Icon {
                                         id: taskIcon
@@ -474,11 +446,8 @@ Item {
                                         readonly property real edgeMarginH: scaleFromEdge ? edgeOffset : (parent.width - baseWidth) / 2
                                         readonly property real edgeMarginV: scaleFromEdge ? edgeOffset : (parent.height - baseHeight) / 2
 
-                                        // Default alignment (matches Task.qml line 758-760)
-                                        anchors.horizontalCenter: (!mockTask.showText) ? parent.horizontalCenter : undefined
-                                        anchors.left: (mockTask.showText) ? parent.left : undefined
-                                        anchors.leftMargin: (mockTask.showText) ? edgeMarginH : 0
-                                        
+                                        // Simplified alignment (matches Task.qml)
+                                        anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.bottom: parent.bottom
                                         anchors.bottomMargin: edgeMarginV
 
@@ -486,8 +455,8 @@ Item {
                                             State {
                                                 name: "top"
                                                 when: previewRoot.simulatedLocation === previewRoot.locationTop
-                                                AnchorChanges { target: taskIcon; anchors.top: parent.top; anchors.bottom: undefined; anchors.horizontalCenter: (!mockTask.showText ? parent.horizontalCenter : undefined); anchors.verticalCenter: undefined; anchors.left: (mockTask.showText ? parent.left : undefined); anchors.right: undefined }
-                                                PropertyChanges { target: taskIcon; anchors.topMargin: taskIcon.edgeMarginV; anchors.bottomMargin: 0; anchors.leftMargin: (mockTask.showText ? taskIcon.edgeMarginH : 0); anchors.rightMargin: 0 }
+                                                AnchorChanges { target: taskIcon; anchors.top: parent.top; anchors.bottom: undefined; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: undefined; anchors.left: undefined; anchors.right: undefined }
+                                                PropertyChanges { target: taskIcon; anchors.topMargin: taskIcon.edgeMarginV; anchors.bottomMargin: 0; anchors.leftMargin: 0; anchors.rightMargin: 0 }
                                             },
                                             State {
                                                 name: "left"
@@ -604,15 +573,14 @@ Item {
 
                                     color: {
                                         if (!mockTask.cfgReady) return Kirigami.Theme.textColor;
-                                        
-                                        let baseColor;
-                                        if (mockTask.cfg.cfg_indicatorAccentColor) {
-                                            baseColor = Kirigami.Theme.highlightColor;
-                                        } else if (mockTask.cfg.cfg_indicatorDominantColor) {
-                                            baseColor = mockTask.indicatorColor;
-                                        } else {
-                                            baseColor = mockTask.cfg.cfg_indicatorCustomColor;
-                                        }
+
+                                        let baseColor = TaskTools.resolveIndicatorBaseColor(
+                                            mockTask.cfg.cfg_indicatorAccentColor,
+                                            mockTask.cfg.cfg_indicatorDominantColor,
+                                            Kirigami.Theme.highlightColor,
+                                            mockTask.indicatorColor,
+                                            mockTask.cfg.cfg_indicatorCustomColor
+                                        );
 
                                         if (mockTask.cfg.cfg_indicatorDesaturate && mockTask.isMinimized) {
                                             let c = Qt.color(baseColor)
