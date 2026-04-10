@@ -660,9 +660,9 @@ Item {
             let centerX = targetX + targetW / 2;
             if (previewRoot.isVertical) {
                 if (previewRoot.simulatedLocation === previewRoot.locationLeft) {
-                    return targetX + targetW + Kirigami.Units.smallSpacing;
+                    return Math.max(targetX + targetW, dummyPanel.x + dummyPanel.width) + Kirigami.Units.smallSpacing;
                 } else {
-                    return targetX - width - Kirigami.Units.smallSpacing;
+                    return Math.min(targetX, dummyPanel.x) - width - Kirigami.Units.smallSpacing;
                 }
             } else {
                 return Math.max(Kirigami.Units.smallSpacing, 
@@ -674,9 +674,9 @@ Item {
             let centerY = targetY + targetH / 2;
             if (!previewRoot.isVertical) {
                 if (previewRoot.simulatedLocation === previewRoot.locationBottom) {
-                    return targetY - height - Kirigami.Units.smallSpacing;
+                    return Math.min(targetY, dummyPanel.y) - height - Kirigami.Units.smallSpacing;
                 } else {
-                    return targetY + targetH + Kirigami.Units.smallSpacing;
+                    return Math.max(targetY + targetH, dummyPanel.y + dummyPanel.height) + Kirigami.Units.smallSpacing;
                 }
             } else {
                 return Math.max(Kirigami.Units.smallSpacing, 
