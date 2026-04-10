@@ -657,7 +657,10 @@ Item {
         readonly property real targetH: targetIcon ? targetIcon.height : 0
 
         x: {
-            let centerX = targetX + targetW / 2;
+            let buttonX = targetTask ? (dummyPanel.x + mockTasksLayout.x + targetTask.x) : 0;
+            let buttonW = targetTask ? targetTask.width : 0;
+            let centerX = buttonX + buttonW / 2;
+
             if (previewRoot.isVertical) {
                 if (previewRoot.simulatedLocation === previewRoot.locationLeft) {
                     return Math.max(targetX + targetW, dummyPanel.x + dummyPanel.width) + Kirigami.Units.smallSpacing;
@@ -671,7 +674,10 @@ Item {
         }
 
         y: {
-            let centerY = targetY + targetH / 2;
+            let buttonY = targetTask ? (dummyPanel.y + mockTasksLayout.y + targetTask.y) : 0;
+            let buttonH = targetTask ? targetTask.height : 0;
+            let centerY = buttonY + buttonH / 2;
+
             if (!previewRoot.isVertical) {
                 if (previewRoot.simulatedLocation === previewRoot.locationBottom) {
                     return Math.min(targetY, dummyPanel.y) - height - Kirigami.Units.smallSpacing;
