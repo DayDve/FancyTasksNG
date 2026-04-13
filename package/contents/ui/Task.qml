@@ -709,6 +709,19 @@ Item {
         }
     }
 
+    Loader {
+        id: groupExpanderLoader
+        active: Plasmoid.configuration.groupIconEnabled && !task.inPopup && !!task.model && task.model.IsWindow && task.model.IsGroupParent
+        sourceComponent: Component {
+            GroupExpanderOverlay {
+                iconBox: iconBox
+                taskModel: task.model
+                parent: task
+            }
+        }
+    }
+
+
 
     Loader {
         id: iconBox
@@ -1005,14 +1018,6 @@ Item {
         task.updateSmartLauncherItem();
         
         if (!task.inPopup && task.model.IsWindow) {
-            if (Plasmoid.configuration.groupIconEnabled) {
-                const component = Qt.createComponent("GroupExpanderOverlay.qml");
-                component.createObject(task, {
-                    "iconBox": iconBox,
-                    "taskModel": task.model
-                });
-                component.destroy();
-            }
             task.updateAudioStreams({
                 delay: false
             });
