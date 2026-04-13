@@ -50,9 +50,13 @@ PlasmaExtras.Menu {
     minimumWidth: visualParentItem ? visualParentItem.width : 0
 
     onStatusChanged: {
-        if (visualParent && get(atm.LauncherUrlWithoutIcon).toString() !== "" && status === PlasmaExtras.Menu.Open) {
-            activitiesDesktopsMenuItem._activitiesDesktopsMenu.refresh();
-
+        if (status === PlasmaExtras.Menu.Open) {
+            if (activitiesDesktopsMenuItem.visible) {
+                 activitiesDesktopsMenuItem._activitiesDesktopsMenu.refresh();
+            }
+            if (virtualDesktopsMenuItem.visible) {
+                 virtualDesktopsMenuItem._virtualDesktopsMenu.refresh();
+            }
         } else if (status === PlasmaExtras.Menu.Closed) {
             menu.destroy();
         }
@@ -302,6 +306,8 @@ PlasmaExtras.Menu {
         text: Wrappers.i18n("Move to &Desktop")
         icon: "virtual-desktops"
 
+
+
         readonly property Connections virtualDesktopsMenuConnections: Connections {
             target: menu.virtualDesktopInfo
 
@@ -316,10 +322,10 @@ PlasmaExtras.Menu {
             }
         }
 
-        readonly property var _virtualDesktopsMenu: PlasmaExtras.Menu {
+        readonly property PlasmaExtras.Menu _virtualDesktopsMenu: PlasmaExtras.Menu {
             id: virtualDesktopsMenu
 
-            visualParent: virtualDesktopsMenuItem
+            visualParent: virtualDesktopsMenuItem.action
 
             function refresh(): void {
                 clearMenuItems();
@@ -389,6 +395,8 @@ PlasmaExtras.Menu {
         text: Wrappers.i18n("Show in &Activities")
         icon: "activities"
 
+
+
         readonly property Connections activityInfoConnections: Connections {
             target: menu.activityInfo
 
@@ -397,10 +405,10 @@ PlasmaExtras.Menu {
             }
         }
 
-        readonly property var _activitiesDesktopsMenu: PlasmaExtras.Menu {
+        readonly property PlasmaExtras.Menu _activitiesDesktopsMenu: PlasmaExtras.Menu {
             id: activitiesDesktopsMenu
 
-            visualParent: activitiesDesktopsMenuItem
+            visualParent: activitiesDesktopsMenuItem.action
 
             function refresh(): void {
                 clearMenuItems();
@@ -534,9 +542,9 @@ PlasmaExtras.Menu {
             }
         }
 
-        readonly property var _activitiesLaunchersMenu: PlasmaExtras.Menu {
+        readonly property PlasmaExtras.Menu _activitiesLaunchersMenu: PlasmaExtras.Menu {
             id: activitiesLaunchersMenu
-            visualParent: showLauncherInActivitiesItem
+            visualParent: showLauncherInActivitiesItem.action
 
             function refresh(): void {
                 clearMenuItems();
@@ -618,8 +626,10 @@ PlasmaExtras.Menu {
         text: Wrappers.i18n("More")
         icon: "view-more-symbolic"
 
+
+
         readonly property PlasmaExtras.Menu moreMenu: PlasmaExtras.Menu {
-            visualParent: { var i = moreActionsMenuItem; return i["action"] }
+            visualParent: moreActionsMenuItem.action
 
             PlasmaExtras.MenuItem {
                 enabled: menu.visualParent && menu.get(atm.IsMovable)
