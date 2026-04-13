@@ -404,8 +404,8 @@ Item {
     }
 
     function modelIndex(): /*QModelIndex*/ var {
-        if (typeof filteredTasksModel !== "undefined") {
-            return filteredTasksModel.mapToSource(filteredTasksModel.index(task.index, 0));
+        if (tasksRoot.filteredTasksModel) {
+            return tasksRoot.filteredTasksModel.mapToSource(tasksRoot.filteredTasksModel.index(task.index, 0));
         }
         return tasksRoot.tasksModel.makeModelIndex(task.index);
     }
@@ -564,7 +564,7 @@ Item {
     TapHandler {
         id: leftTapHandler
         acceptedButtons: Qt.LeftButton
-        onTapped: (eventPoint, button) => leftClick()
+        onTapped: leftClick()
 
         function leftClick(): void {
             task.tasksRoot.currentHoveredTask = null;
@@ -573,35 +573,42 @@ Item {
     }
 
     TapHandler {
-        acceptedButtons: Qt.MiddleButton |
-            Qt.BackButton | Qt.ForwardButton
-        onTapped: (eventPoint, button) => {
-            if (button === Qt.MiddleButton) {
-                if (Plasmoid.configuration.middleClickAction === 2 /* NewInstance */) {
-                    task.tasksRoot.tasksModel.requestNewInstance(task.modelIndex());
-                } else if (Plasmoid.configuration.middleClickAction === 1 /* Close */) {
-                    task.tasksRoot.taskClosedWithMouseMiddleButton = task.model.WinIdList.slice();
-                    task.tasksRoot.tasksModel.requestClose(task.modelIndex());
-                } else if (Plasmoid.configuration.middleClickAction === 3 /* ToggleMinimized */) {
-                    task.tasksRoot.tasksModel.requestToggleMinimized(task.modelIndex());
-                } else if (Plasmoid.configuration.middleClickAction === 4 /* ToggleGrouping */) {
-                    task.tasksRoot.tasksModel.requestToggleGrouping(task.modelIndex());
-                } else if (Plasmoid.configuration.middleClickAction === 5 /* BringToCurrentDesktop */) {
-                    task.tasksRoot.tasksModel.requestVirtualDesktops(task.modelIndex(), [task.tasksRoot.virtualDesktopInfo.currentDesktop]);
-                }
-            } else if (button === Qt.BackButton || button === Qt.ForwardButton) {
-                const playerData = task.tasksRoot.mpris2Source.playerForLauncherUrl(task.model.LauncherUrlWithoutIcon, task.model.AppPid);
-                if (playerData) {
-                    if (button === Qt.BackButton) {
-                        playerData.Previous();
-                    } else {
-                        playerData.Next();
-                    }
-                } else {
-                    eventPoint.accepted = false;
-                }
+        acceptedButtons: Qt.MiddleButton
+        onTapped: {
+            if (Plasmoid.configuration.middleClickAction === 2 /* NewInstance */) {
+                task.tasksRoot.tasksModel.requestNewInstance(task.modelIndex());
+            } else if (Plasmoid.configuration.middleClickAction === 1 /* Close */) {
+                task.tasksRoot.taskClosedWithMouseMiddleButton = task.model.WinIdList.slice();
+                task.tasksRoot.tasksModel.requestClose(task.modelIndex());
+            } else if (Plasmoid.configuration.middleClickAction === 3 /* ToggleMinimized */) {
+                task.tasksRoot.tasksModel.requestToggleMinimized(task.modelIndex());
+            } else if (Plasmoid.configuration.middleClickAction === 4 /* ToggleGrouping */) {
+                task.tasksRoot.tasksModel.requestToggleGrouping(task.modelIndex());
+            } else if (Plasmoid.configuration.middleClickAction === 5 /* BringToCurrentDesktop */) {
+                task.tasksRoot.tasksModel.requestVirtualDesktops(task.modelIndex(), [task.tasksRoot.virtualDesktopInfo.currentDesktop]);
             }
+            task.tasksRoot.cancelHighlightWindows();
+        }
+    }
 
+    TapHandler {
+        acceptedButtons: Qt.BackButton
+        onTapped: {
+            const playerData = task.tasksRoot.mpris2Source.playerForLauncherUrl(task.model.LauncherUrlWithoutIcon, task.model.AppPid);
+            if (playerData) {
+                playerData.Previous();
+            }
+            task.tasksRoot.cancelHighlightWindows();
+        }
+    }
+
+    TapHandler {
+        acceptedButtons: Qt.ForwardButton
+        onTapped: {
+            const playerData = task.tasksRoot.mpris2Source.playerForLauncherUrl(task.model.LauncherUrlWithoutIcon, task.model.AppPid);
+            if (playerData) {
+                playerData.Next();
+            }
             task.tasksRoot.cancelHighlightWindows();
         }
     }

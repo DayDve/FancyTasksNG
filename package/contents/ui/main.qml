@@ -98,6 +98,7 @@ PlasmoidItem {
     property alias mpris2Source: mpris2Source
     property alias dragHelper: dragHelper
     property alias taskFrame: taskFrame
+    property alias filteredTasksModel: filteredTasksModel
     property alias busyIndicator: busyIndicator
 
     preferredRepresentation: fullRepresentation
