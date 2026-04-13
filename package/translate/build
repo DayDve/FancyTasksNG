@@ -4,7 +4,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Version: 8 (Modular)
 
-DIR=$(dirname $(readlink -f "$0"))
+DIR="$(dirname $(readlink -f "$0"))"
+cd "${DIR}"
 
 plasmoidName=$("$DIR/get_metadata.sh" "Id")
 projectName="plasma_applet_${plasmoidName}"

@@ -24,6 +24,7 @@ Item {
     readonly property int locationTop: 1
     readonly property int locationLeft: 0
     readonly property int locationRight: 2
+    readonly property bool multiStripe: simulatedStripeCount > 1
 
     property var cfg_page: null
     readonly property bool cfg_showToolTips: cfg_page ? cfg_page.cfg_showToolTips : true
@@ -289,7 +290,7 @@ Item {
                                 readonly property int maxW: (previewRoot.cfg_page ? previewRoot.cfg_page.cfg_maxButtonLength : Kirigami.Units.gridUnit * 10)
 
                                 Layout.preferredWidth: mockTask.showText ? maxW : previewRoot.simulatedMaxWidth
-                                Layout.preferredHeight: previewRoot.laneHeight + (previewRoot.isVertical ? (previewRoot.verticalMargins() - (previewRoot.taskFrame.margins.top + previewRoot.taskFrame.margins.bottom)) : 0)
+                                Layout.preferredHeight: previewRoot.laneHeight + (previewRoot.isVertical ? (previewRoot.verticalMargins() - (taskFrame.margins.top + taskFrame.margins.bottom)) : 0)
                                 Layout.minimumWidth: previewRoot.laneHeight
                                 Layout.minimumHeight: previewRoot.laneHeight
                                 Layout.maximumWidth: previewRoot.isVertical ? previewRoot.simulatedThickness : (mockTask.showText ? Layout.preferredWidth : Layout.preferredWidth)
@@ -325,6 +326,10 @@ Item {
                                 readonly property bool hasAudio: playingAudio || isMuted
 
                                 readonly property bool showText: !previewRoot.iconsOnly && (!previewRoot.isVertical || previewRoot.simulatedThickness > (Kirigami.Units.gridUnit * 4))
+
+                                readonly property int effLoc: (previewRoot.simulatedLocation === previewRoot.locationTop ? 3 :
+                                                              previewRoot.simulatedLocation === previewRoot.locationLeft ? 1 :
+                                                              previewRoot.simulatedLocation === previewRoot.locationRight ? 2 : 0)
 
 
                                 // 1. Frame background
@@ -380,6 +385,20 @@ Item {
                                     pThick: mockTask.cfg.cfg_indicatorProgressThickness
                                     pPosition: 0.7
                                     panelLocation: previewRoot.simulatedLocation
+                                }
+
+                                // Group overlay
+                                Loader {
+                                    id: groupExpanderLoader
+                                    active: (mockTask.cfgReady && mockTask.cfg.cfg_groupIconEnabled) && mockTask.index === 3
+                                    sourceComponent: Component {
+                                         FancyUI.GroupExpanderOverlay {
+                                            iconBox: iconBox
+                                            taskModel: ({ "IsGroupParent": true, "IsWindow": false })
+                                            parent: mockTask
+                                            locationOverride: mockTask.effLoc
+                                        }
+                                    }
                                 }
 
                                 // 4. Icon & badges
@@ -538,61 +557,78 @@ Item {
                                 }
 
                                 // 6. Indicator
-                                Rectangle {
-                                    id: indicator
+                                Item {
+                                    id: indicatorArea
+                                    anchors.fill: parent
                                     visible: mockTask.cfgReady && mockTask.cfg.cfg_indicatorsEnabled && mockTask.isRunning
 
                                     readonly property int locMap: (mockTask.cfgReady && mockTask.cfg.cfg_indicatorOverride) ? mockTask.cfg.cfg_indicatorLocation : -1
-                                    readonly property int effLoc: locMap !== -1 ? locMap :
-                                        (previewRoot.simulatedLocation === previewRoot.locationTop ? 3 :
-                                        previewRoot.simulatedLocation === previewRoot.locationLeft ? 1 :
-                                        previewRoot.simulatedLocation === previewRoot.locationRight ? 2 : 0)
+                                    readonly property int effLoc: locMap !== -1 ? locMap : mockTask.effLoc
 
                                     readonly property bool isVerticalIndicator: effLoc === 1 || effLoc === 2
+                                    readonly property int spacing: 2
 
-                                    readonly property int indStyle: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorStyle : 0
-                                    readonly property int indLength: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorLength : 8
-                                    readonly property int indSize: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorSize : 2
-                                    readonly property int indShrink: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorShrink : 0
+                                    Repeater {
+                                        model: mockTask.index === 3 ? 2 : 1
+                                        Rectangle {
+                                            id: indicator
+                                            required property int index
+                                            readonly property int indStyle: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorStyle : 0
+                                            readonly property int indLength: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorLength : 8
+                                            readonly property int indSize: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorSize : 2
+                                            readonly property int indShrink: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorShrink : 0
 
-                                    readonly property real pSize: !isVerticalIndicator ? mockTask.width : mockTask.height
-                                    readonly property real computedSize: indStyle === 1 ? indLength : Math.max(8, pSize - indShrink)
+                                            readonly property real pSize: !indicatorArea.isVerticalIndicator ? mockTask.width : mockTask.height
+                                            readonly property real computedSize: indStyle === 1 ? indLength : Math.max(8, (pSize - indShrink) / (mockTask.index === 3 ? 2.5 : 1))
 
-                                    width: isVerticalIndicator ? indSize : computedSize
-                                    height: isVerticalIndicator ? computedSize : indSize
+                                            width: indicatorArea.isVerticalIndicator ? indSize : computedSize
+                                            height: indicatorArea.isVerticalIndicator ? computedSize : indSize
 
-                                    readonly property int edgeOff: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorEdgeOffset : 0
+                                            readonly property int edgeOff: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorEdgeOffset : 0
 
-                                    x: {
-                                        if (isVerticalIndicator)
-                                            return effLoc === 1 ? edgeOff : parent.width - width - edgeOff
-                                        return (parent.width - width) / 2
-                                    }
-                                    y: {
-                                        if (!isVerticalIndicator)
-                                            return effLoc === 3 ? edgeOff : parent.height - height - edgeOff
-                                        return (parent.height - height) / 2
-                                    }
+                                            // Positioning with group offset
+                                            x: {
+                                                let base = indicatorArea.isVerticalIndicator ? 
+                                                    (indicatorArea.effLoc === 1 ? edgeOff : parent.width - width - edgeOff) :
+                                                    (parent.width - (width * (mockTask.index === 3 ? 2 : 1) + (mockTask.index === 3 ? indicatorArea.spacing : 0))) / 2;
+                                                
+                                                if (!indicatorArea.isVerticalIndicator && mockTask.index === 3) {
+                                                    return base + (index * (width + indicatorArea.spacing));
+                                                }
+                                                return base;
+                                            }
+                                            y: {
+                                                let base = !indicatorArea.isVerticalIndicator ? 
+                                                    (indicatorArea.effLoc === 3 ? edgeOff : parent.height - height - edgeOff) :
+                                                    (parent.height - (height * (mockTask.index === 3 ? 2 : 1) + (mockTask.index === 3 ? indicatorArea.spacing : 0))) / 2;
+                                                
+                                                if (indicatorArea.isVerticalIndicator && mockTask.index === 3) {
+                                                    return base + (index * (height + indicatorArea.spacing));
+                                                }
+                                                return base;
+                                            }
 
-                                    color: {
-                                        if (!mockTask.cfgReady) return Kirigami.Theme.textColor;
+                                            color: {
+                                                if (!mockTask.cfgReady) return Kirigami.Theme.textColor;
 
-                                        let baseColor = TaskTools.resolveIndicatorBaseColor(
-                                            mockTask.cfg.cfg_indicatorAccentColor,
-                                            mockTask.cfg.cfg_indicatorDominantColor,
-                                            Kirigami.Theme.highlightColor,
-                                            mockTask.indicatorColor,
-                                            mockTask.cfg.cfg_indicatorCustomColor
-                                        );
+                                                let baseColor = TaskTools.resolveIndicatorBaseColor(
+                                                    mockTask.cfg.cfg_indicatorAccentColor,
+                                                    mockTask.cfg.cfg_indicatorDominantColor,
+                                                    Kirigami.Theme.highlightColor,
+                                                    mockTask.indicatorColor,
+                                                    mockTask.cfg.cfg_indicatorCustomColor
+                                                );
 
-                                        if (mockTask.cfg.cfg_indicatorDesaturate && mockTask.isMinimized) {
-                                            let c = Qt.color(baseColor)
-                                            return Qt.hsla(c.hslHue, 0.0, c.hslLightness, c.a * 0.5)
+                                                if (mockTask.cfg.cfg_indicatorDesaturate && mockTask.isMinimized) {
+                                                    let c = Qt.color(baseColor)
+                                                    return Qt.hsla(c.hslHue, 0.0, c.hslLightness, c.a * 0.5)
+                                                }
+                                                return baseColor
+                                            }
+
+                                            radius: Math.min(width, height) * ((mockTask.cfgReady ? mockTask.cfg.cfg_indicatorRadius : 0) / 200)
                                         }
-                                        return baseColor
                                     }
-
-                                    radius: Math.min(width, height) * ((mockTask.cfgReady ? mockTask.cfg.cfg_indicatorRadius : 0) / 200)
                                 }
 
                                 // 7. Hover cursor

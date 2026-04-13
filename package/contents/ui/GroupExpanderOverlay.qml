@@ -15,31 +15,32 @@ KSvg.SvgItem {
 
     required property var taskModel
     required property Item iconBox
+    property int locationOverride: -1
 
-    anchors {
-        bottom: arrow.parent.bottom
-        horizontalCenter: iconBox.horizontalCenter
-    }
+    readonly property int effLocation: (locationOverride >= 0 && locationOverride <= 3) ? locationOverride :
+        (Plasmoid.location === PlasmaCore.Types.TopEdge ? 3 :
+         Plasmoid.location === PlasmaCore.Types.LeftEdge ? 1 :
+         Plasmoid.location === PlasmaCore.Types.RightEdge ? 2 : 0)
 
     visible: taskModel.IsGroupParent
 
     states: [
         State {
-            name: "top"
-            when: Plasmoid.location === PlasmaCore.Types.TopEdge
+            name: "bottom"
+            when: arrow.effLocation === 0
             AnchorChanges {
                 target: arrow
-                anchors.top: arrow.parent.top
+                anchors.top: undefined
                 anchors.left: undefined
                 anchors.right: undefined
-                anchors.bottom: undefined
+                anchors.bottom: arrow.parent.bottom
                 anchors.horizontalCenter: iconBox.horizontalCenter
                 anchors.verticalCenter: undefined
             }
         },
         State {
             name: "left"
-            when: Plasmoid.location === PlasmaCore.Types.LeftEdge
+            when: arrow.effLocation === 1
             AnchorChanges {
                 target: arrow
                 anchors.top: undefined
@@ -52,7 +53,7 @@ KSvg.SvgItem {
         },
         State {
             name: "right"
-            when: Plasmoid.location === PlasmaCore.Types.RightEdge
+            when: arrow.effLocation === 2
             AnchorChanges {
                 target: arrow
                 anchors.top: undefined
@@ -61,6 +62,19 @@ KSvg.SvgItem {
                 anchors.bottom: undefined
                 anchors.horizontalCenter: undefined
                 anchors.verticalCenter: iconBox.verticalCenter
+            }
+        },
+        State {
+            name: "top"
+            when: arrow.effLocation === 3
+            AnchorChanges {
+                target: arrow
+                anchors.top: arrow.parent.top
+                anchors.left: undefined
+                anchors.right: undefined
+                anchors.bottom: undefined
+                anchors.horizontalCenter: iconBox.horizontalCenter
+                anchors.verticalCenter: undefined
             }
         }
     ]
@@ -72,14 +86,14 @@ KSvg.SvgItem {
     elementId: elementForLocation()
 
     function elementForLocation(): string {
-        switch (Plasmoid.location) {
-        case PlasmaCore.Types.LeftEdge:
+        switch (arrow.effLocation) {
+        case 1: // Left
             return "group-expander-left";
-        case PlasmaCore.Types.TopEdge:
+        case 3: // Top
             return "group-expander-top";
-        case PlasmaCore.Types.RightEdge:
+        case 2: // Right
             return "group-expander-right";
-        case PlasmaCore.Types.BottomEdge:
+        case 0: // Bottom
         default:
             return "group-expander-bottom";
         }
