@@ -364,6 +364,7 @@ Item {
 
     Loader {
         id: audioIndicatorLoader
+        z: 10
         active: task.hasAudioStream && audioIndicatorsEnabled
         source: "AudioStream.qml"
         onLoaded: {
