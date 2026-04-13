@@ -505,114 +505,45 @@ PlasmaExtras.Menu {
             && !get(atm.IsLauncher)
             && !get(atm.IsStartup)
             && Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable
-            && (menu.activityInfo.numberOfRunningActivities < 2)
-            && !doesBelongToCurrentActivity()
+            && !isPinned()
 
         enabled: visualParent && get(atm.LauncherUrlWithoutIcon).toString() !== ""
 
         text: Wrappers.i18n("&Pin to Task Manager")
         icon: "window-pin"
 
-        function doesBelongToCurrentActivity(): bool {
-            return menu.tasksModel.launcherActivities(get(atm.LauncherUrlWithoutIcon))
-                .some(activity => activity === menu.activityInfo.currentActivity || activity === menu.activityInfo.nullUuid);
+        function isPinned(): bool {
+            var url = get(atm.LauncherUrlWithoutIcon).toString();
+            return Plasmoid.configuration.launchers.indexOf(url) !== -1;
         }
 
         onClicked: {
-            menu.tasksModel.requestAddLauncher(get(atm.LauncherUrl));
+            var launchers = Plasmoid.configuration.launchers.slice();
+            var url = get(atm.LauncherUrlWithoutIcon).toString();
+            if (launchers.indexOf(url) === -1) {
+                launchers.push(url);
+                Plasmoid.configuration.launchers = launchers;
+            }
         }
     }
 
     PlasmaExtras.MenuItem {
-        id: showLauncherInActivitiesItem
-
-        text: Wrappers.i18n("&Pin to Task Manager")
-        icon: "window-pin"
-
         visible: visualParent
-            && !get(atm.IsStartup)
-            && Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable
-            && (menu.activityInfo.numberOfRunningActivities >= 2)
-
-        readonly property Connections activitiesLaunchersMenuConnections: Connections {
-            target: menu.activityInfo
-
-            function onNumberOfRunningActivitiesChanged(): void {
-                showLauncherInActivitiesItem._activitiesLaunchersMenu["refresh"]()
-            }
-        }
-
-        readonly property PlasmaExtras.Menu _activitiesLaunchersMenu: PlasmaExtras.Menu {
-            id: activitiesLaunchersMenu
-            visualParent: showLauncherInActivitiesItem.action
-
-            function refresh(): void {
-                clearMenuItems();
-
-                if (menu.visualParent === null) return;
-
-                const createNewItem = (id, title, iconName, url, activities) => {
-                    var result = menu.newMenuItem(showLauncherInActivitiesItem._activitiesLaunchersMenu);
-                    result.text = title;
-                    result.icon = iconName;
-
-                    result.visible = true;
-                    result.checkable = true;
-
-                    result.checked = activities.some(activity => activity === id);
-
-                    result.clicked.connect(() => {
-                        if (result.checked) {
-                            menu.tasksModel.requestAddLauncherToActivity(url, id);
-                        } else {
-                            menu.tasksModel.requestRemoveLauncherFromActivity(url, id);
-                        }
-                    });
-
-                    return result;
-                };
-
-                if (menu.visualParent === null) return;
-
-                const url = menu.get(atm.LauncherUrlWithoutIcon);
-
-                const activities = menu.tasksModel.launcherActivities(url);
-
-                createNewItem(menu.activityInfo.nullUuid, Wrappers.i18n("On All Activities"), "", url, activities);
-
-                if (menu.activityInfo.numberOfRunningActivities <= 1) {
-                    return;
-                }
-
-                createNewItem(menu.activityInfo.currentActivity, Wrappers.i18n("On The Current Activity"), menu.activityInfo.activityIcon(menu.activityInfo.currentActivity), url, activities);
-
-                menu.newSeparator(showLauncherInActivitiesItem._activitiesLaunchersMenu);
-
-                menu.activityInfo.runningActivities()
-                    .forEach(id => {
-                        createNewItem(id, menu.activityInfo.activityName(id), menu.activityInfo.activityIcon(id), url, activities);
-                    });
-            }
-
-            Component.onCompleted: {
-                menu.visualParentChanged.connect(refresh);
-                refresh();
-            }
-        }
-    }
-
-    PlasmaExtras.MenuItem {
-        visible: (visualParent
                 && get(atm.IsStartup) !== true
                 && Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable
-                && !launcherToggleAction.visible
-                && menu.activityInfo.numberOfRunningActivities < 2)
+                && (get(atm.IsLauncher) || launcherToggleAction.isPinned())
 
         text: Wrappers.i18n("Unpin from Task Manager")
         icon: "window-unpin"
 
         onClicked: {
-            menu.tasksModel.requestRemoveLauncher(get(atm.LauncherUrlWithoutIcon));
+            var launchers = Plasmoid.configuration.launchers.slice();
+            var url = get(atm.LauncherUrlWithoutIcon).toString();
+            var index = launchers.indexOf(url);
+            if (index !== -1) {
+                launchers.splice(index, 1);
+                Plasmoid.configuration.launchers = launchers;
+            }
         }
     }
 
