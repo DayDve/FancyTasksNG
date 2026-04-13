@@ -497,12 +497,13 @@ Item {
                 
                 onTriggered: {
                     if (pipeWireLoader.item) {
+                        if (pipeWireLoader.item.width <= 0 || pipeWireLoader.item.height <= 0) return;
                         pipeWireLoader.item.grabToImage(function(result) {
                             if (result && thumbnailSourceItem.winId) {
                                 // Store full result object to prevent garbage collection of the URL
                                 toolTipDelegate.thumbnailCache[thumbnailSourceItem.winId] = result;
                             }
-                        });
+                        }, Qt.size(pipeWireLoader.item.width, pipeWireLoader.item.height));
                     }
                 }
             }

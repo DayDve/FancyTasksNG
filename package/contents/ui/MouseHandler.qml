@@ -17,10 +17,12 @@ DropArea {
     signal urlsDropped(var urls)
 
     property var target
-    property Item ignoredItem
+    property int ignoredPid: -1
+    property string ignoredId: ""
+    property string ignoredLauncherUrl: ""
     property var hoveredItem
     property bool isGroupDialog: false
-    property bool moved: false
+    property bool isMoving: false
 
     property alias handleWheelEvents: wheelHandler.handleWheelEvents
 
@@ -36,7 +38,7 @@ DropArea {
     }
 
     onPositionChanged: event => {
-        if (target.animating) {
+        if (target.animating || dropArea.isMoving) {
             return;
         }
 
@@ -64,13 +66,28 @@ DropArea {
         // by tracking the cursor movement vector and allowing the drag if
         // the movement direction has reversed, establishing user intent to
         // move back.
-        if (!Plasmoid.configuration.separateLaunchers
-                && dropArea.tasks.dragSource?.model.IsLauncher
-                && !above.model.IsLauncher
-                && above === dropArea.ignoredItem) {
-            return;
-        } else {
-            dropArea.ignoredItem = null;
+        if (above.model) {
+            const dragSource = dropArea.tasks.dragSource;
+            if (dragSource && dragSource.model) {
+                // EXPLICIT GUARD: Do not allow mixing launchers and normal tasks if grouped
+                const sourceIsLauncher = !!(dragSource.model.IsLauncher || dragSource.model.IsStartup);
+                const aboveIsLauncher = !!(above.model.IsLauncher || above.model.IsStartup);
+                
+                if (sourceIsLauncher !== aboveIsLauncher) {
+                    return;
+                }
+            }
+
+            const aboveIsLauncher = !!(above.model.IsLauncher || above.model.IsStartup);
+            if (aboveIsLauncher) {
+                if (above.model.LauncherUrlWithoutIcon && above.model.LauncherUrlWithoutIcon === dropArea.ignoredLauncherUrl) {
+                    return;
+                }
+            } else if (above.model.AppPid !== -1 && above.model.AppPid === dropArea.ignoredPid) {
+                if (above.model.AppId === dropArea.ignoredId) {
+                    return;
+                }
+            }
         }
 
         if (dropArea.tasksModel.sortMode === TaskManager.TasksModel.SortManual && dropArea.tasks.dragSource) {
@@ -79,18 +96,31 @@ DropArea {
                 return;
             }
 
-            const insertAt = above.index;
+            const fromRow = dropArea.tasks.dragSource.modelRow();
+            const toRow = above.modelRow();
 
-            if (dropArea.tasks.dragSource !== above && dropArea.tasks.dragSource.index !== insertAt) {
-                if (dropArea.tasks.groupDialog) {
-                    dropArea.tasks.tasksModel.move(dropArea.tasks.dragSource.modelIndex().row, above.modelIndex().row,
-                        dropArea.tasks.tasksModel.makeModelIndex(dropArea.tasks.groupDialog.visualParent.modelIndex().row));
-                } else {
-                    dropArea.tasks.tasksModel.move(dropArea.tasks.dragSource.modelIndex().row, above.modelIndex().row);
-                }
+            if (fromRow !== toRow && fromRow !== -1 && toRow !== -1) {
+                dropArea.isMoving = true;
+                const tasksModel = dropArea.tasks.tasksModel;
+                const groupDialog = dropArea.tasks.groupDialog;
+                
+                Qt.callLater(() => {
+                    // CONTEXT GUARD: Ensure objects still exist when the deferred call runs
+                    if (!tasksModel || tasksModel.count === undefined) return;
+                    
+                    if (groupDialog && groupDialog.visualParent) {
+                        tasksModel.move(fromRow, toRow,
+                            tasksModel.makeModelIndex(groupDialog.visualParent.modelRow()));
+                    } else {
+                        tasksModel.move(fromRow, toRow);
+                    }
+                });
 
-                dropArea.ignoredItem = above;
+                dropArea.ignoredPid = (above.model && above.model.AppPid !== undefined) ? above.model.AppPid : -1;
+                dropArea.ignoredId = (above.model && above.model.AppId !== undefined) ? above.model.AppId : "";
+                dropArea.ignoredLauncherUrl = (above.model && above.model.LauncherUrlWithoutIcon !== undefined) ? above.model.LauncherUrlWithoutIcon : "";
                 ignoreItemTimer.restart();
+                moveTimer.restart();
             }
         } else if (!dropArea.tasks.dragSource && hoveredItem !== above) {
             if (hoveredItem && hoveredItem !== above && hoveredItem.toolTipOpen) {
@@ -151,7 +181,9 @@ DropArea {
 
         function onDragSourceChanged(): void {
             if (!dropArea.tasks.dragSource) {
-                dropArea.ignoredItem = null;
+                dropArea.ignoredPid = -1;
+                dropArea.ignoredId = "";
+                dropArea.ignoredLauncherUrl = "";
                 ignoreItemTimer.stop();
             }
         }
@@ -159,13 +191,20 @@ DropArea {
 
     Timer {
         id: ignoreItemTimer
-
         repeat: false
         interval: 750
-
         onTriggered: {
-            dropArea.ignoredItem = null;
+            dropArea.ignoredPid = -1;
+            dropArea.ignoredId = "";
+            dropArea.ignoredLauncherUrl = "";
         }
+    }
+
+    Timer {
+        id: moveTimer
+        repeat: false
+        interval: 150
+        onTriggered: dropArea.isMoving = false
     }
 
     Timer {

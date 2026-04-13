@@ -31,7 +31,7 @@ PipeWire.PipeWireSourceItem {
         }
     }
 
-    nodeId: waylandItem.nodeId
+    nodeId: (pipeWireSourceItem.winId !== undefined && pipeWireSourceItem.winId !== null && waylandItem.nodeId > 0) ? waylandItem.nodeId : 0
 
     TaskManager.ScreencastingRequest {
         id: waylandItem

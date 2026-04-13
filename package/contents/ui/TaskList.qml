@@ -45,8 +45,8 @@ GridLayout {
         const effectiveHeight = Math.max(1, tasks.height);
 
         const stripeSizeLimit = tasks.vertical
-            ? Math.floor(effectiveWidth / firstChild.implicitWidth)
-            : Math.floor(effectiveHeight / firstChild.implicitHeight)
+            ? Math.floor(effectiveWidth / LayoutMetrics.preferredMinWidth())
+            : Math.floor(effectiveHeight / LayoutMetrics.preferredMinHeight())
         const maxStripes = Math.min(configMaxStripes, Math.max(1, stripeSizeLimit))
 
         if (tasks.plasmoid.configuration.forceStripes) {

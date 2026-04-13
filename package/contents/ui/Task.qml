@@ -98,7 +98,7 @@ Item {
         (!task.inPopup && containsMouse) || (tasksRoot.currentHoveredTask === task) || 
         (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open)
 
-    property int itemIndex: task.index 
+    property int itemIndex: index
 
     property bool isAudioHovered: false
     readonly property bool containsMouse: hoverHandler.hovered || isAudioHovered
@@ -362,24 +362,16 @@ Item {
         updateSmartLauncherItem();
     }
 
-    onHasAudioStreamChanged: {
-        const audioStreamIconActive = task.hasAudioStream && audioIndicatorsEnabled;
-        if (!audioStreamIconActive) {
-            if (audioStreamIcon !== null) {
-                audioStreamIcon.destroy();
-                audioStreamIcon = null;
-            }
-            return;
+    Loader {
+        id: audioIndicatorLoader
+        active: task.hasAudioStream && audioIndicatorsEnabled
+        source: "AudioStream.qml"
+        onLoaded: {
+            item.iconBox = iconBox;
+            item.task = task;
+            item.frame = frame;
         }
-        const component = Qt.createComponent("AudioStream.qml");
-        audioStreamIcon = component.createObject(task, {
-            "iconBox": iconBox,
-            "task": task,
-            "frame": frame
-        });
-        component.destroy();
     }
-    onAudioIndicatorsEnabledChanged: task.hasAudioStreamChanged()
 
     Keys.onMenuPressed: event => contextMenuTimer.start()
     Keys.onReturnPressed: event => TaskTools.activateTask(task.modelIndex(), task.model, event.modifiers, task, Plasmoid, tasksRoot, tasksRoot.effectWatcher.registered)
@@ -404,10 +396,19 @@ Item {
     }
 
     function modelIndex(): /*QModelIndex*/ var {
-        if (tasksRoot.filteredTasksModel) {
-            return tasksRoot.filteredTasksModel.mapToSource(tasksRoot.filteredTasksModel.index(task.index, 0));
+        if (tasksRoot && tasksRoot.filteredTasksModel) {
+            const proxyIdx = tasksRoot.filteredTasksModel.index(task.index, 0);
+            return tasksRoot.filteredTasksModel.mapToSource(proxyIdx);
         }
         return tasksRoot.tasksModel.makeModelIndex(task.index);
+    }
+
+    function modelRow(): int {
+        if (tasksRoot && tasksRoot.filteredTasksModel) {
+            const proxyIdx = tasksRoot.filteredTasksModel.index(task.index, 0);
+            return tasksRoot.filteredTasksModel.mapToSource(proxyIdx).row;
+        }
+        return task.index;
     }
 
     function closeTooltip(): void {
@@ -673,22 +674,42 @@ Item {
 
             onActiveChanged: {
                 if (active) {
-                    icon.grabToImage(result => {
-                        if (!dragHandler.active) {
-                            // BUG 466675 grabToImage is async, so avoid updating dragSource when active is false
+                        const grabWidth = Math.floor(icon.width);
+                        const grabHeight = Math.floor(icon.height);
+                        if (!isFinite(grabWidth) || !isFinite(grabHeight) || grabWidth <= 0 || grabHeight <= 0) {
                             return;
                         }
-                        setRequestedInhibitDnd(true);
-                        task.tasksRoot.dragSource = task;
-                        task.tasksRoot.dragHelper.Drag.imageSource = result.url;
-                        
-                        task.tasksRoot.dragHelper.Drag.mimeData = {
-                            "text/x-orgkdeplasmataskmanager_taskurl": task.tasksRoot.backend.tryDecodeApplicationsUrl(task.model.LauncherUrlWithoutIcon).toString(),
-                            [task.model.MimeType]: task.model.MimeData,
-                            "application/x-orgkdeplasmataskmanager_taskbuttonitem": task.model.MimeData
-                        };
-                        task.tasksRoot.dragHelper.Drag.active = dragHandler.active;
-                    });
+
+                        icon.grabToImage(result => {
+                            if (!dragHandler || !dragHandler.active || !task || !task.tasksRoot || !task.tasksRoot.dragHelper) {
+                                return;
+                            }
+                            setRequestedInhibitDnd(true);
+                            task.tasksRoot.dragSource = task;
+                            task.tasksRoot.dragHelper.Drag.imageSource = ""; // Reset to prevent engine warnings
+                            task.tasksRoot.dragHelper.Drag.imageSource = result.url;
+                            
+                            let data = {
+                                "text/x-orgkdeplasmataskmanager_taskurl": task.tasksRoot.backend.tryDecodeApplicationsUrl(task.model.LauncherUrlWithoutIcon || "").toString()
+                            };
+
+                            const mimeType = task.model.MimeType;
+                            const mimeData = task.model.MimeData;
+
+                            if (mimeType && mimeData !== undefined && mimeData !== null) {
+                                data[mimeType] = mimeData;
+                            }
+
+                            if (mimeData !== undefined && mimeData !== null) {
+                                data["application/x-orgkdeplasmataskmanager_taskbuttonitem"] = mimeData;
+                            } else {
+                                // Provide a dummy value for internal identification if model data is missing
+                                data["application/x-orgkdeplasmataskmanager_taskbuttonitem"] = "true";
+                            }
+
+                            task.tasksRoot.dragHelper.Drag.mimeData = data;
+                            task.tasksRoot.dragHelper.Drag.active = dragHandler.active;
+                        }, Qt.size(grabWidth, grabHeight));
                 } else {
                     setRequestedInhibitDnd(false);
                     task.tasksRoot.dragHelper.Drag.active = false;

@@ -183,15 +183,23 @@ PlasmoidItem {
             tasks.tasksModel.syncLaunchers();
     }
 
+    property bool _isInternalLauncherUpdate: false
+    property bool _isPublishingGeometries: false
     function publishIconGeometries(taskItems: var): void {
-        if (!backend) return;
+        if (!backend || _isPublishingGeometries) return;
         if (TaskTools.taskManagerInstanceCount >= 2)
             return;
-        for (let i = 0; i < taskItems.length - 1; ++i) {
-            const task = taskItems[i];
-            if (!task.model.IsLauncher && !task.model.IsStartup && tasks.tasksModel) {
-                tasks.tasksModel.requestPublishDelegateGeometry(tasks.tasksModel.makeModelIndex(task.index), tasks.backend.globalRect(task), task);
+        
+        _isPublishingGeometries = true;
+        try {
+            for (let i = 0; i < taskItems.length - 1; ++i) {
+                const task = taskItems[i];
+                if (task.model && !task.model.IsLauncher && !task.model.IsStartup && tasks.tasksModel) {
+                    tasks.tasksModel.requestPublishDelegateGeometry(tasks.tasksModel.makeModelIndex(task.index), tasks.backend.globalRect(task), task);
+                }
             }
+        } finally {
+            _isPublishingGeometries = false;
         }
     }
 
@@ -204,7 +212,10 @@ PlasmoidItem {
 
         onLauncherListChanged: {
             if (!tasks._isApplyingConfig) {
+                tasks._isInternalLauncherUpdate = true;
                 Plasmoid.configuration.launchers = launcherList;
+                // Defer reset to ensure the config change signal has finished propagating
+                Qt.callLater(() => { if (tasks) tasks._isInternalLauncherUpdate = false; });
             }
         }
         onGroupingAppIdBlacklistChanged: {
@@ -416,7 +427,7 @@ PlasmoidItem {
         Connections {
             target: Plasmoid.configuration
             function onLaunchersChanged(): void {
-                if (tasks.tasksModel) {
+                if (tasks.tasksModel && !tasks._isInternalLauncherUpdate) {
                     tasks.tasksModel.launcherList = Plasmoid.configuration.launchers;
                     tasks.tasksModel.syncLaunchers();
                 }
@@ -449,7 +460,7 @@ PlasmoidItem {
             anchors.fill: parent
             target: taskList
             tasks: tasks
-            tasksModel: filteredTasksModel
+            tasksModel: tasks.tasksModel
             onUrlsDropped: urls => {
                 if (!tasks.backend) return;
                 const createLaunchers = urls.every(item => tasks.backend.isApplication(item));
@@ -509,7 +520,7 @@ PlasmoidItem {
                 height: tasks.shouldShrinkToZero ? 0 : (tasks.vertical ? Math.min(tasks.height, Layout.maximumHeight) : tasks.height * Math.min(1, heightOccupation))
                 flow: tasks.vertical ? (Plasmoid.configuration.forceStripes ? Grid.LeftToRight : Grid.TopToBottom) : (Plasmoid.configuration.forceStripes ? Grid.TopToBottom : Grid.LeftToRight)
                 onAnimatingChanged: if (!animating)
-                    tasks.publishIconGeometries(children, tasks)
+                    iconGeometryTimer.restart()
 
                 Repeater {
                     id: taskRepeater
