@@ -31,6 +31,8 @@ import "code/FloatingLogic.js" as FloatingLogic
 PlasmoidItem {
     id: tasks
 
+    Plasmoid.backgroundHints: PlasmaCore.Types.DefaultBackground | PlasmaCore.Types.ConfigurableBackground
+
     rotation: Plasmoid.configuration.reverseMode && tasks.vertical ? 180 : 0
 
     readonly property bool shouldShrinkToZero: !!tasks.tasksModel && tasks.tasksModel.count === 0
