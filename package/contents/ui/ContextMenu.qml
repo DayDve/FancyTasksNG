@@ -296,7 +296,7 @@ PlasmaExtras.Menu {
     PlasmaExtras.MenuItem {
         id: virtualDesktopsMenuItem
 
-        visible: menu.virtualDesktopInfo.numberOfDesktops > 1
+        visible: (menu.virtualDesktopInfo.numberOfDesktops > 1 || !Plasmoid.configuration.hideMoveToDesktopMenuWithOneDesktop)
             && (menu.visualParent && !menu.get(menu.atm.IsLauncher)
             && !menu.get(menu.atm.IsStartup)
             && menu.get(menu.atm.IsVirtualDesktopsChangeable))
@@ -330,7 +330,7 @@ PlasmaExtras.Menu {
             function refresh(): void {
                 clearMenuItems();
 
-                if (menu.virtualDesktopInfo.numberOfDesktops <= 1 || !virtualDesktopsMenuItem.enabled) {
+                if (!virtualDesktopsMenuItem.enabled) {
                     return;
                 }
 

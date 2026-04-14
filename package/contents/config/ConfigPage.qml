@@ -24,6 +24,8 @@ Kirigami.Page {
     property var cfg_showOnlyNotMinimizedDefault: false
     property bool cfg_unhideOnAttention: false
     property bool cfg_unhideOnAttentionDefault: false
+    property bool cfg_hideMoveToDesktopMenuWithOneDesktop: true
+    property bool cfg_hideMoveToDesktopMenuWithOneDesktopDefault: true
     property int cfg_maxStripes: 0
     property int cfg_maxStripesDefault: 0
     property int cfg_maxButtonLength: 0

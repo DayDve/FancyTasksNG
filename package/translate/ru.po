@@ -372,6 +372,14 @@ msgid "Unhide when a window wants attention"
 msgstr "Показывать, если окно требует внимания"
 
 #: ../contents/config/ConfigBehavior.qml
+msgid "Context menu:"
+msgstr "Контекстное меню:"
+
+#: ../contents/config/ConfigBehavior.qml
+msgid "Hide 'Move to Desktop' if only one virtual desktop is used"
+msgstr "Скрывать «Переместить на рабочий стол»,\nесли используется только один рабочий стол"
+
+#: ../contents/config/ConfigBehavior.qml
 msgid "New tasks appear:"
 msgstr "Новые задачи появляются:"
 

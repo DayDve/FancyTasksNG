@@ -362,6 +362,10 @@
       <label i18n-label="Show notification badges">Whether to show notification badges on task icons and in tooltips.</label>
       <default>true</default>
     </entry>
+    <entry name="hideMoveToDesktopMenuWithOneDesktop" type="Bool">
+      <label>Hide the 'Move to Desktop' context menu item when only one virtual desktop is used.</label>
+      <default>true</default>
+    </entry>
   </group>
 
 </kcfg>

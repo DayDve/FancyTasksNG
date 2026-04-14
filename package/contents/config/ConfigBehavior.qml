@@ -212,6 +212,7 @@ ConfigPage {
                 onToggled: cfg_page.cfg_showOnlyCurrentActivity = checked
             }
 
+
             ButtonGroup {
                 id: minimizedFilterButtonGroup
             }
@@ -244,6 +245,30 @@ ConfigPage {
                 text: Wrappers.i18n("Unhide when a window wants attention")
                 checked: cfg_page.cfg_unhideOnAttention
                 onToggled: cfg_page.cfg_unhideOnAttention = checked
+            }
+
+            Item { height: Kirigami.Units.largeSpacing }
+
+            Label {
+                text: Wrappers.i18n("Context menu:")
+            }
+
+            CheckBox {
+                id: cfg_hideMoveToDesktopMenuWithOneDesktop
+                text: Wrappers.i18n("Hide 'Move to Desktop' if only one virtual desktop is used")
+                checked: cfg_page.cfg_hideMoveToDesktopMenuWithOneDesktop
+                onToggled: cfg_page.cfg_hideMoveToDesktopMenuWithOneDesktop = checked
+
+                Layout.fillWidth: true
+
+                contentItem: Text {
+                    text: cfg_hideMoveToDesktopMenuWithOneDesktop.text
+                    font: cfg_hideMoveToDesktopMenuWithOneDesktop.font
+                    color: Kirigami.Theme.textColor
+                    wrapMode: Text.WordWrap
+                    verticalAlignment: Text.AlignVCenter
+                    leftPadding: cfg_hideMoveToDesktopMenuWithOneDesktop.indicator.width + cfg_hideMoveToDesktopMenuWithOneDesktop.spacing
+                }
             }
 
             Item { height: Kirigami.Units.largeSpacing }
