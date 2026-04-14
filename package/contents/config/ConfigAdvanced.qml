@@ -23,7 +23,7 @@ ConfigPage {
             
             Kirigami.InlineMessage {
                 Layout.fillWidth: true
-                visible: Plasmoid.location !== PlasmaCore.Types.Floating
+                visible: plasmoid.location !== PlasmaCore.Types.Floating
                 type: Kirigami.MessageType.Information
                 text: Wrappers.i18n("This option is disabled when the widget is on a panel.")
             }
@@ -31,13 +31,13 @@ ConfigPage {
             Label {
                 text: Wrappers.i18n("Floating Mode Settings:")
                 font.bold: true
-                opacity: Plasmoid.location === PlasmaCore.Types.Floating ? 1.0 : 0.6
+                opacity: plasmoid.location === PlasmaCore.Types.Floating ? 1.0 : 0.6
             }
 
             CheckBox {
                 id: overridePlasmaButtonDirection
                 text: Wrappers.i18n("Override system direction")
-                enabled: Plasmoid.location === PlasmaCore.Types.Floating
+                enabled: plasmoid.location === PlasmaCore.Types.Floating
                 checked: cfg_page.cfg_overridePlasmaButtonDirection
                 onToggled: cfg_page.cfg_overridePlasmaButtonDirection = checked
             }
