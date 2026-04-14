@@ -100,9 +100,10 @@
       <min>1</min>
     </entry>
     <entry name="maxButtonLength" type="Int">
-      <label>The max legnth of a task button.</label>
+      <label>The max length of a task button.</label>
       <default>200</default>
-      <min>1</min>
+      <min>40</min>
+      <max>1000</max>
     </entry>
     <entry name="forceStripes" type="Bool">
       <label
@@ -112,15 +113,6 @@
     <entry name="showToolTips" type="Bool">
       <label>Whether to show tooltips when hovering task buttons.</label>
       <default>true</default>
-    </entry>
-    <entry name="taskMaxWidth" type="Enum">
-      <label>Tune the max width of task items.</label>
-      <choices>
-        <choice name="Narrow" />
-        <choice name="Medium" />
-        <choice name="Wide" />
-      </choices>
-      <default>1</default>
     </entry>
     <entry name="wheelEnabled" type="Bool">
       <label

@@ -53,10 +53,12 @@ Item {
     rotation: Plasmoid.configuration.reverseMode && tasksRoot.vertical ?
         180 : 0
 
-    implicitHeight: task.inPopup ?
-        LayoutMetrics.preferredHeightInPopup() : Math.max(tasksRoot.height / Plasmoid.configuration.maxStripes, LayoutMetrics.preferredMinHeight())
-    implicitWidth: tasksRoot.vertical ?
-        Math.max(LayoutMetrics.preferredMinWidth(), Math.min(LayoutMetrics.preferredMaxWidth(), tasksRoot.width / Plasmoid.configuration.maxStripes)) : 0
+    implicitHeight: task.inPopup ? LayoutMetrics.preferredHeightInPopup() : (
+        tasksRoot.vertical ? LayoutMetrics.preferredMaxHeight() : Math.max(tasksRoot.height / Plasmoid.configuration.maxStripes, LayoutMetrics.preferredMinHeight())
+    )
+    implicitWidth: tasksRoot.vertical ? (
+        Math.max(LayoutMetrics.preferredMinWidth(), Math.min(LayoutMetrics.preferredMaxWidth(), tasksRoot.width / Plasmoid.configuration.maxStripes))
+    ) : LayoutMetrics.preferredMaxWidth()
 
     Layout.fillWidth: true
     Layout.fillHeight: !task.inPopup
@@ -642,7 +644,7 @@ Item {
             "" : "widgets/tasks"
         enabledBorders: Plasmoid.configuration.useBorders ? 1 | 2 | 4 |
             8 : 0
-        property bool isHovered: task.highlighted && tasksRoot.iconsOnly && Plasmoid.configuration.taskHoverEffect
+        property bool isHovered: task.highlighted && Plasmoid.configuration.taskHoverEffect
         property string basePrefix: "normal"
         prefix: isHovered ?
             TaskTools.taskPrefixHovered(basePrefix, tasks.effectiveLocation) : TaskTools.taskPrefix(basePrefix, tasks.effectiveLocation)
@@ -757,15 +759,15 @@ Item {
 
         anchors {
             left: parent.left
-            leftMargin: adjustMargin(true, parent.width, task.tasksRoot.taskFrame.margins.left)
+            leftMargin: adjustMargin(true, parent.width, LayoutMetrics.leftMargin())
             top: parent.top
-            topMargin: adjustMargin(false, parent.height, task.tasksRoot.taskFrame.margins.top)
+            topMargin: adjustMargin(false, parent.height, LayoutMetrics.topMargin())
         }
 
         width: task.inPopup ?
             Math.max(Kirigami.Units.iconSizes.sizeForLabels, Kirigami.Units.iconSizes.medium) : Math.min((task.parent as TaskList)?.minimumWidth ?? 0, task.height)
         height: task.inPopup ?
-            width : (parent.height - adjustMargin(false, parent.height, task.tasksRoot.taskFrame.margins.top) - adjustMargin(false, parent.height, task.tasksRoot.taskFrame.margins.bottom))
+            width : (parent.height - adjustMargin(false, parent.height, LayoutMetrics.rawTopMargin()) - adjustMargin(false, parent.height, LayoutMetrics.rawBottomMargin()))
 
         asynchronous: true
         active: plasmoid.configuration.showBadges && height >= Kirigami.Units.iconSizes.small && task.smartLauncherItem && task.smartLauncherItem["countVisible"]
@@ -898,11 +900,11 @@ Item {
 
         anchors {
             fill: parent
-            leftMargin: task.tasksRoot.taskFrame.margins.left + iconBox.width + LayoutMetrics.labelMargin
-            topMargin: task.tasksRoot.taskFrame.margins.top
-            rightMargin: task.tasksRoot.taskFrame.margins.right + (task.audioStreamIcon !== null && task.audioStreamIcon.visible ?
+            leftMargin: LayoutMetrics.leftMargin() + iconBox.width + LayoutMetrics.labelMargin
+            topMargin: LayoutMetrics.topMargin()
+            rightMargin: LayoutMetrics.rightMargin() + (task.audioStreamIcon !== null && task.audioStreamIcon.visible ?
                 (task.audioStreamIcon.width + LayoutMetrics.labelMargin) : 0)
-            bottomMargin: task.tasksRoot.taskFrame.margins.bottom
+            bottomMargin: LayoutMetrics.bottomMargin()
         }
 
         wrapMode: (maximumLineCount === 1) ?

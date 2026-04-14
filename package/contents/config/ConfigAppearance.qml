@@ -176,19 +176,19 @@ ConfigPage {
 
             Item { 
                 height: Kirigami.Units.largeSpacing 
-                visible: cfg_page.cfg_iconOnly == 1
+                visible: cfg_page.cfg_iconOnly === 1
             }
 
             CheckBox {
                 id: cfg_taskHoverEffect
                 text: Wrappers.i18n("Icon hover effects")
-                visible: cfg_page.cfg_iconOnly == 1
+                visible: cfg_page.cfg_iconOnly === 1
                 checked: cfg_page.cfg_taskHoverEffect
                 onToggled: cfg_page.cfg_taskHoverEffect = checked
             }
 
             RowLayout {
-                visible: cfg_page.cfg_iconOnly == 1 && cfg_taskHoverEffect.checked
+                visible: cfg_page.cfg_iconOnly === 1 && cfg_taskHoverEffect.checked
                 spacing: Kirigami.Units.smallSpacing
                 Label {
                     text: Wrappers.i18n("Icon zoom factor (px):")
@@ -208,7 +208,7 @@ ConfigPage {
             }
 
             RowLayout {
-                visible: cfg_page.cfg_iconOnly == 1 && cfg_taskHoverEffect.checked
+                visible: cfg_page.cfg_iconOnly === 1 && cfg_taskHoverEffect.checked
                 spacing: Kirigami.Units.smallSpacing
                 Label {
                     text: Wrappers.i18n("Zoom animation duration (ms):")
@@ -318,14 +318,14 @@ ConfigPage {
             Item { height: Kirigami.Units.largeSpacing }
 
             Label {
-                visible: !cfg_page.plasmoidVertical && !cfg_page.iconOnly
-                text: Wrappers.i18n("Maximum button length (px):")
+                visible: cfg_page.cfg_iconOnly === 0 && !cfg_page.plasmoidVertical
+                text: Wrappers.i18n("Maximum button width (px):")
             }
             SpinBox {
                 id: maxButtonLength
-                visible: !cfg_page.plasmoidVertical && !cfg_page.iconOnly
-                from: 1
-                to: 9999
+                visible: cfg_page.cfg_iconOnly === 0 && !cfg_page.plasmoidVertical
+                from: 40
+                to: 1000
                 value: cfg_page.cfg_maxButtonLength
                 onValueModified: cfg_page.cfg_maxButtonLength = value
             }
@@ -345,18 +345,6 @@ ConfigPage {
             }
 
             Item { height: Kirigami.Units.largeSpacing }
-
-            Label {
-                visible: !cfg_page.iconOnly && !cfg_page.plasmoidVertical
-                text: Wrappers.i18n("Maximum task width:")
-            }
-            ComboBox {
-                id: taskMaxWidth
-                visible: !cfg_page.iconOnly && !cfg_page.plasmoidVertical
-                model: [Wrappers.i18n("Narrow"), Wrappers.i18n("Medium"), Wrappers.i18n("Wide")]
-                currentIndex: cfg_page.cfg_taskMaxWidth
-                onActivated: (index) => cfg_page.cfg_taskMaxWidth = index
-            }
 
             Item { height: Kirigami.Units.largeSpacing }
 
@@ -414,7 +402,7 @@ ConfigPage {
             Item { height: Kirigami.Units.largeSpacing }
 
             RowLayout {
-                visible: cfg_page.cfg_iconOnly == 1
+                visible: true
                 spacing: Kirigami.Units.smallSpacing
                 Label {
                     text: Wrappers.i18n("Inner padding:")

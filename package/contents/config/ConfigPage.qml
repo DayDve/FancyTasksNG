@@ -34,8 +34,6 @@ Kirigami.Page {
     property bool cfg_forceStripesDefault: false
     property bool cfg_showToolTips: true
     property bool cfg_showToolTipsDefault: true
-    property int cfg_taskMaxWidth: 0
-    property int cfg_taskMaxWidthDefault: 0
     property bool cfg_wheelEnabled: true
     property bool cfg_wheelEnabledDefault: true
     property bool cfg_wheelSkipMinimized: false

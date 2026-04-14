@@ -102,7 +102,8 @@ Item {
         if ((size - margins) < Kirigami.Units.iconSizes.small) {
             return Math.ceil((margin * (Kirigami.Units.iconSizes.small / size)) / 2);
         }
-        return margin;
+        let multiplier = (isVert !== isVertical) ? spacingAdjustment : 1;
+        return margin * multiplier;
     }
 
     // Dynamic simulated sizes to match LayoutMetrics.js formulas
@@ -412,7 +413,7 @@ Item {
 
                                     // Content area should be a square based on the smaller dimension (height for horizontal panel)
                                     readonly property real contentSize: (previewRoot.isVertical ? parent.width : parent.height) -
-                                                                         (previewRoot.isVertical ? (mLeft + mRight) : (mTop + mBottom))
+                                                                         (previewRoot.isVertical ? (taskFrame.margins.left + taskFrame.margins.right) : (taskFrame.margins.top + taskFrame.margins.bottom))
 
                                     width: contentSize
                                     height: contentSize
