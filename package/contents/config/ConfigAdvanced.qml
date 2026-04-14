@@ -30,7 +30,6 @@ ConfigPage {
 
             Label {
                 text: Wrappers.i18n("Floating Mode Settings:")
-                font.bold: true
                 opacity: plasmoid.location === PlasmaCore.Types.Floating ? 1.0 : 0.6
             }
 

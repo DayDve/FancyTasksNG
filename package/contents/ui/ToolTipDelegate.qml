@@ -129,7 +129,7 @@ Loader {
         return name;
     }
 
-    readonly property bool isVerticalPanel: Plasmoid.formFactor === PlasmaCore.Types.Vertical
+    readonly property bool isVerticalPanel: tasks.vertical
     readonly property int tooltipInstanceMaximumWidth: Kirigami.Units.gridUnit * 14
 
     readonly property Mpris.PlayerContainer playerData: mpris2Model && mpris2Model.playerForLauncherUrl ? mpris2Model.playerForLauncherUrl(launcherUrl, pidParent) : null

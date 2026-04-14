@@ -50,7 +50,7 @@ Item {
     property string tintColor: Kirigami.ColorUtils.brightnessForColor(Kirigami.Theme.backgroundColor) === Kirigami.ColorUtils.Dark ?
         "#ffffff" : "#000000"
 
-    rotation: Plasmoid.configuration.reverseMode && Plasmoid.formFactor === PlasmaCore.Types.Vertical ?
+    rotation: Plasmoid.configuration.reverseMode && tasksRoot.vertical ?
         180 : 0
 
     implicitHeight: task.inPopup ?
@@ -645,7 +645,7 @@ Item {
         property bool isHovered: task.highlighted && tasksRoot.iconsOnly && Plasmoid.configuration.taskHoverEffect
         property string basePrefix: "normal"
         prefix: isHovered ?
-            TaskTools.taskPrefixHovered(basePrefix, Plasmoid.location, Plasmoid.configuration) : TaskTools.taskPrefix(basePrefix, Plasmoid.location, Plasmoid.configuration)
+            TaskTools.taskPrefixHovered(basePrefix, tasks.effectiveLocation) : TaskTools.taskPrefix(basePrefix, tasks.effectiveLocation)
 
         layer.enabled: false
         layer.effect: MultiEffect {
@@ -734,7 +734,7 @@ Item {
             item.pOpacity = Qt.binding(() => Plasmoid.configuration.indicatorProgressOpacity / 100.0);
             item.pThick = Qt.binding(() => Plasmoid.configuration.indicatorProgressThickness);
             item.pPosition = Qt.binding(() => (task.smartLauncherItem?.progress ?? 0) / 100.0);
-            item.panelLocation = Qt.binding(() => Plasmoid.location);
+            item.panelLocation = Qt.binding(() => tasks.effectiveLocation);
         }
     }
 
@@ -811,25 +811,25 @@ Item {
             states: [
                 State {
                     name: "top"
-                    when: Plasmoid.location === PlasmaCore.Types.TopEdge
+                    when: tasks.effectiveLocation === PlasmaCore.Types.TopEdge
                     AnchorChanges { target: icon; anchors.top: parent.top; anchors.bottom: undefined; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: undefined; anchors.left: undefined; anchors.right: undefined }
                     PropertyChanges { target: icon; anchors.topMargin: icon.edgeMarginV; anchors.bottomMargin: 0; anchors.leftMargin: 0; anchors.rightMargin: 0 }
                 },
                 State {
                     name: "left"
-                    when: Plasmoid.location === PlasmaCore.Types.LeftEdge
+                    when: tasks.effectiveLocation === PlasmaCore.Types.LeftEdge
                     AnchorChanges { target: icon; anchors.left: parent.left; anchors.right: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.top: undefined; anchors.bottom: undefined }
                     PropertyChanges { target: icon; anchors.leftMargin: icon.edgeMarginH; anchors.rightMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
                 },
                 State {
                     name: "right"
-                    when: Plasmoid.location === PlasmaCore.Types.RightEdge
+                    when: tasks.effectiveLocation === PlasmaCore.Types.RightEdge
                     AnchorChanges { target: icon; anchors.right: parent.right; anchors.left: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.top: undefined; anchors.bottom: undefined }
                     PropertyChanges { target: icon; anchors.rightMargin: icon.edgeMarginH; anchors.leftMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
                 },
                 State {
                     name: "bottom"
-                    when: Plasmoid.location === PlasmaCore.Types.BottomEdge
+                    when: tasks.effectiveLocation === PlasmaCore.Types.BottomEdge
                     AnchorChanges { target: icon; anchors.bottom: parent.bottom; anchors.top: undefined; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: undefined; anchors.left: undefined; anchors.right: undefined }
                     PropertyChanges { target: icon; anchors.bottomMargin: icon.edgeMarginV; anchors.topMargin: 0; anchors.leftMargin: 0; anchors.rightMargin: 0 }
                 }

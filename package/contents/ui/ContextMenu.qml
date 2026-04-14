@@ -34,11 +34,11 @@ PlasmaExtras.Menu {
     property bool showAllPlaces: false
 
     placement: {
-        if (Plasmoid.location === PlasmaCore.Types.LeftEdge) {
+        if (tasks.effectiveLocation === PlasmaCore.Types.LeftEdge) {
             return PlasmaExtras.Menu.RightPosedTopAlignedPopup;
-        } else if (Plasmoid.location === PlasmaCore.Types.TopEdge) {
+        } else if (tasks.effectiveLocation === PlasmaCore.Types.TopEdge) {
             return PlasmaExtras.Menu.BottomPosedLeftAlignedPopup;
-        } else if (Plasmoid.location === PlasmaCore.Types.RightEdge) {
+        } else if (tasks.effectiveLocation === PlasmaCore.Types.RightEdge) {
             return PlasmaExtras.Menu.LeftPosedTopAlignedPopup;
         } else {
             return PlasmaExtras.Menu.TopPosedLeftAlignedPopup;

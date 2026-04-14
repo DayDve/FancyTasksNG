@@ -26,17 +26,22 @@ import org.kde.kitemmodels as KItemModels
 
 import "code/layoutmetrics.js" as LayoutMetrics
 import "code/tools.js" as TaskTools
+import "code/FloatingLogic.js" as FloatingLogic
 
 PlasmoidItem {
     id: tasks
 
-    rotation: Plasmoid.configuration.reverseMode && Plasmoid.formFactor === PlasmaCore.Types.Vertical ? 180 : 0
+    rotation: Plasmoid.configuration.reverseMode && tasks.vertical ? 180 : 0
 
     readonly property bool shouldShrinkToZero: !!tasks.tasksModel && tasks.tasksModel.count === 0
+    readonly property int effectiveLocation: FloatingLogic.getEffectiveLocation(Plasmoid.location, Plasmoid.configuration, PlasmaCore.Types)
+
     readonly property bool vertical: {
-        if (Plasmoid.configuration.overridePlasmaButtonDirection && Plasmoid.location === PlasmaCore.Types.Floating) {
-            // indices 2 and 3 correspond to West (Left) and East (Right) in the ComboBox model
-            return (Plasmoid.configuration.plasmaButtonDirection === 2 || Plasmoid.configuration.plasmaButtonDirection === 3);
+        if (effectiveLocation === PlasmaCore.Types.LeftEdge || effectiveLocation === PlasmaCore.Types.RightEdge) {
+            return true;
+        }
+        if (effectiveLocation === PlasmaCore.Types.TopEdge || effectiveLocation === PlasmaCore.Types.BottomEdge) {
+            return false;
         }
         return Plasmoid.formFactor === PlasmaCore.Types.Vertical;
     }
@@ -131,13 +136,17 @@ PlasmoidItem {
     Layout.preferredWidth: {
         if (shouldShrinkToZero)
             return 0.01;
+        if (Plasmoid.location === PlasmaCore.Types.Floating)
+            return -1; // Let Plasma manage and persist manual resizes
         if (vertical)
-            return Kirigami.Units.gridUnit * 10;
+            return Kirigami.Units.gridUnit * (iconsOnly ? 2.5 : 10);
         return taskList.Layout.maximumWidth;
     }
     Layout.preferredHeight: {
         if (shouldShrinkToZero)
             return 0.01;
+        if (Plasmoid.location === PlasmaCore.Types.Floating)
+            return -1; // Let Plasma manage and persist manual resizes
         if (vertical)
             return taskList.Layout.maximumHeight;
         return Kirigami.Units.gridUnit * 2;
@@ -458,7 +467,7 @@ PlasmoidItem {
             id: taskFrame
             visible: false
             imagePath: "widgets/tasks"
-            prefix: TaskTools.taskPrefix("normal", Plasmoid.location, Plasmoid.configuration)
+            prefix: TaskTools.taskPrefix("normal", tasks.effectiveLocation)
         }
 
         MouseHandler {
@@ -600,8 +609,8 @@ PlasmoidItem {
 
         // Use lastTooltipParent to keep position during FadeOut (Fallback, overridden by visualParent binding below)
 
-        location: Plasmoid.location
-        type: PlasmaCore.Dialog.Tooltip
+        location: tasks.effectiveLocation
+        type: PlasmaCore.Dialog.AppletPopup
 
         backgroundHints: PlasmaCore.Types.NoBackground
         flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WA_TranslucentBackground | Qt.BypassWindowManagerHint
@@ -615,24 +624,25 @@ PlasmoidItem {
         mainItem: Item {
             id: winContainer
 
-            readonly property real targetWidth: toolTipInstance.implicitWidth + winBgFrame.margins.left + winBgFrame.margins.right
-            readonly property real targetHeight: toolTipInstance.implicitHeight + winBgFrame.margins.top + winBgFrame.margins.bottom
+            readonly property real targetWidth: (toolTipInstance.item ? toolTipInstance.item.implicitWidth : 0) + winBgFrame.margins.left + winBgFrame.margins.right
+            readonly property real targetHeight: (toolTipInstance.item ? toolTipInstance.item.implicitHeight : 0) + winBgFrame.margins.top + winBgFrame.margins.bottom
 
-            readonly property int gapSize: 5
+            readonly property bool isBottom: tasks.effectiveLocation === PlasmaCore.Types.BottomEdge
+            readonly property bool isTop: tasks.effectiveLocation === PlasmaCore.Types.TopEdge
+            readonly property bool isLeft: tasks.effectiveLocation === PlasmaCore.Types.LeftEdge
+            readonly property bool isRight: tasks.effectiveLocation === PlasmaCore.Types.RightEdge
 
-            readonly property bool isBottom: Plasmoid.location === PlasmaCore.Types.BottomEdge
-            readonly property bool isTop: Plasmoid.location === PlasmaCore.Types.TopEdge
-            readonly property bool isLeft: Plasmoid.location === PlasmaCore.Types.LeftEdge
-            readonly property bool isRight: Plasmoid.location === PlasmaCore.Types.RightEdge
+            readonly property int gapSize: 2
 
-            // Uniform small gap
-            readonly property int marginTop: gapSize
-            readonly property int marginBottom: gapSize
-            readonly property int marginLeft: gapSize
-            readonly property int marginRight: gapSize
+            readonly property int marginTop: isTop ? gapSize : 0
+            readonly property int marginBottom: isBottom ? gapSize : 0
+            readonly property int marginLeft: isLeft ? gapSize : 0
+            readonly property int marginRight: isRight ? gapSize : 0
 
-            width: Math.max(winBgFrame.width, targetWidth) + marginLeft + marginRight
-            height: Math.max(winBgFrame.height, targetHeight) + marginTop + marginBottom
+            implicitWidth: targetWidth + marginLeft + marginRight
+            implicitHeight: targetHeight + marginTop + marginBottom
+            width: implicitWidth
+            height: implicitHeight
 
             opacity: windowTooltipDialog.shouldShow ? 1 : 0
             Behavior on opacity {
@@ -659,7 +669,11 @@ PlasmoidItem {
                 shadow.xOffset: 0
                 shadow.yOffset: 2
 
-                anchors.centerIn: parent
+                anchors.fill: parent
+                anchors.topMargin: winContainer.marginTop
+                anchors.bottomMargin: winContainer.marginBottom
+                anchors.leftMargin: winContainer.marginLeft
+                anchors.rightMargin: winContainer.marginRight
 
                 // Emulate SVG margins for layout logic
                 readonly property int tooltipFramePadding: 4
@@ -672,7 +686,8 @@ PlasmoidItem {
 
                 ToolTipDelegate {
                     id: toolTipInstance
-                    anchors.centerIn: parent
+                    anchors.fill: parent
+                    anchors.margins: winBgFrame.tooltipFramePadding
 
                     onContainsMouseChanged: tasks.isTooltipHovered = containsMouse
 

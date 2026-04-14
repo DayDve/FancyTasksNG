@@ -178,29 +178,10 @@ function activateTask(index, model, modifiers, task, plasmoid, tasks, windowView
     }
 }
 
-function taskPrefix(prefix, location, config) {
-    let effectiveLocation = location;
-
-    if (config && config.overridePlasmaButtonDirection) {
-        switch (config.plasmaButtonDirection) {
-            case 0: // Top
-                effectiveLocation = PlasmaCore.Types.TopEdge;
-                break;
-            case 1: // Bottom
-                effectiveLocation = PlasmaCore.Types.BottomEdge;
-                break;
-            case 2: // Left
-                effectiveLocation = PlasmaCore.Types.LeftEdge;
-                break;
-            case 3: // Right
-                effectiveLocation = PlasmaCore.Types.RightEdge;
-                break;
-        }
-    }
-
+function taskPrefix(prefix, location) {
     let effectivePrefix;
 
-    switch (effectiveLocation) {
+    switch (location) {
         case PlasmaCore.Types.LeftEdge:
             effectivePrefix = "west-" + prefix;
             break;

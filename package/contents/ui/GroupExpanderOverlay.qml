@@ -18,9 +18,9 @@ KSvg.SvgItem {
     property int locationOverride: -1
 
     readonly property int effLocation: (locationOverride >= 0 && locationOverride <= 3) ? locationOverride :
-        (Plasmoid.location === PlasmaCore.Types.TopEdge ? 3 :
-         Plasmoid.location === PlasmaCore.Types.LeftEdge ? 1 :
-         Plasmoid.location === PlasmaCore.Types.RightEdge ? 2 : 0)
+        (tasks.effectiveLocation === PlasmaCore.Types.TopEdge ? 3 :
+         tasks.effectiveLocation === PlasmaCore.Types.LeftEdge ? 1 :
+         tasks.effectiveLocation === PlasmaCore.Types.RightEdge ? 2 : 0)
 
     visible: taskModel.IsGroupParent
 

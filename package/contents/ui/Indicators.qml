@@ -47,15 +47,14 @@ Flow {
             readonly property int indicatorLength: Plasmoid.configuration.indicatorLength
             readonly property int spacing: Kirigami.Units.smallSpacing
             readonly property bool isVertical: {
-                if(Plasmoid.formFactor === PlasmaCore.Types.Vertical && !Plasmoid.configuration.indicatorOverride)
-                return true;
-                if(Plasmoid.formFactor == PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorOverride && (Plasmoid.configuration.indicatorLocation === 1 || Plasmoid.configuration.indicatorLocation === 2))
-                return  true;
-                if(Plasmoid.configuration.indicatorOverride && (Plasmoid.configuration.indicatorLocation === 1 || Plasmoid.configuration.indicatorLocation === 2))
-                return  true;
-                else{
-                    return false;
+                if (tasks.vertical && !Plasmoid.configuration.indicatorOverride) {
+                    return true;
                 }
+                // Legacy override logic (still supported for now)
+                if (Plasmoid.configuration.indicatorOverride && (Plasmoid.configuration.indicatorLocation === 1 || Plasmoid.configuration.indicatorLocation === 2)) {
+                    return true;
+                }
+                return false;
             }
             readonly property var computedVar: {
                 var height;
@@ -127,10 +126,10 @@ Flow {
         State {
             name: "bottom"
             when: (Plasmoid.configuration.indicatorOverride && Plasmoid.configuration.indicatorLocation === 0)
-                || (!Plasmoid.configuration.indicatorOverride && Plasmoid.location === PlasmaCore.Types.BottomEdge && !Plasmoid.configuration.indicatorReverse)
-                || (!Plasmoid.configuration.indicatorOverride && Plasmoid.location === PlasmaCore.Types.TopEdge && Plasmoid.configuration.indicatorReverse)
-                || (Plasmoid.location === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorLocation === 0)
-                || (Plasmoid.location === PlasmaCore.Types.Floating && !Plasmoid.configuration.indicatorOverride && !Plasmoid.configuration.indicatorReverse)
+                || (!Plasmoid.configuration.indicatorOverride && tasks.effectiveLocation === PlasmaCore.Types.BottomEdge && !Plasmoid.configuration.indicatorReverse)
+                || (!Plasmoid.configuration.indicatorOverride && tasks.effectiveLocation === PlasmaCore.Types.TopEdge && Plasmoid.configuration.indicatorReverse)
+                || (tasks.effectiveLocation === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorLocation === 0)
+                || (tasks.effectiveLocation === PlasmaCore.Types.Floating && !Plasmoid.configuration.indicatorOverride && !Plasmoid.configuration.indicatorReverse)
 
             AnchorChanges {
                 target: indicatorsFlow
@@ -151,9 +150,9 @@ Flow {
         State {
             name: "left"
             when: (Plasmoid.configuration.indicatorOverride && Plasmoid.configuration.indicatorLocation === 1)
-                || (!Plasmoid.configuration.indicatorOverride && Plasmoid.location === PlasmaCore.Types.LeftEdge && !Plasmoid.configuration.indicatorReverse)
-                || (!Plasmoid.configuration.indicatorOverride && Plasmoid.location === PlasmaCore.Types.RightEdge && Plasmoid.configuration.indicatorReverse)
-                || (Plasmoid.location === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorLocation === 1 && Plasmoid.configuration.indicatorOverride)
+                || (!Plasmoid.configuration.indicatorOverride && tasks.effectiveLocation === PlasmaCore.Types.LeftEdge && !Plasmoid.configuration.indicatorReverse)
+                || (!Plasmoid.configuration.indicatorOverride && tasks.effectiveLocation === PlasmaCore.Types.RightEdge && Plasmoid.configuration.indicatorReverse)
+                || (tasks.effectiveLocation === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorLocation === 1 && Plasmoid.configuration.indicatorOverride)
 
             AnchorChanges {
                 target: indicatorsFlow
@@ -173,9 +172,9 @@ Flow {
         State {
             name: "right"
             when: (Plasmoid.configuration.indicatorOverride && Plasmoid.configuration.indicatorLocation === 2)
-                || (!Plasmoid.configuration.indicatorOverride && Plasmoid.location === PlasmaCore.Types.RightEdge && !Plasmoid.configuration.indicatorReverse)
-                || (!Plasmoid.configuration.indicatorOverride && Plasmoid.location === PlasmaCore.Types.LeftEdge && Plasmoid.configuration.indicatorReverse)
-                || (Plasmoid.location === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorLocation === 2 && Plasmoid.configuration.indicatorOverride)
+                || (!Plasmoid.configuration.indicatorOverride && tasks.effectiveLocation === PlasmaCore.Types.RightEdge && !Plasmoid.configuration.indicatorReverse)
+                || (!Plasmoid.configuration.indicatorOverride && tasks.effectiveLocation === PlasmaCore.Types.LeftEdge && Plasmoid.configuration.indicatorReverse)
+                || (tasks.effectiveLocation === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorLocation === 2 && Plasmoid.configuration.indicatorOverride)
 
             AnchorChanges {
                 target: indicatorsFlow
@@ -195,10 +194,10 @@ Flow {
         State {
             name: "top"
             when: (Plasmoid.configuration.indicatorOverride && Plasmoid.configuration.indicatorLocation === 3)
-                || (!Plasmoid.configuration.indicatorOverride && Plasmoid.location === PlasmaCore.Types.TopEdge && !Plasmoid.configuration.indicatorReverse)
-                || (!Plasmoid.configuration.indicatorOverride && Plasmoid.location === PlasmaCore.Types.BottomEdge && Plasmoid.configuration.indicatorReverse)
-                || (Plasmoid.location === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorLocation === 3 && Plasmoid.configuration.indicatorOverride)
-                || (Plasmoid.location === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorReverse && !Plasmoid.configuration.indicatorOverride)
+                || (!Plasmoid.configuration.indicatorOverride && tasks.effectiveLocation === PlasmaCore.Types.TopEdge && !Plasmoid.configuration.indicatorReverse)
+                || (!Plasmoid.configuration.indicatorOverride && tasks.effectiveLocation === PlasmaCore.Types.BottomEdge && Plasmoid.configuration.indicatorReverse)
+                || (tasks.effectiveLocation === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorLocation === 3 && Plasmoid.configuration.indicatorOverride)
+                || (tasks.effectiveLocation === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorReverse && !Plasmoid.configuration.indicatorOverride)
 
             AnchorChanges {
                 target: indicatorsFlow
