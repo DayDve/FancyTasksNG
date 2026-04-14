@@ -33,7 +33,13 @@ PlasmoidItem {
     rotation: Plasmoid.configuration.reverseMode && Plasmoid.formFactor === PlasmaCore.Types.Vertical ? 180 : 0
 
     readonly property bool shouldShrinkToZero: !!tasks.tasksModel && tasks.tasksModel.count === 0
-    readonly property bool vertical: Plasmoid.formFactor === PlasmaCore.Types.Vertical
+    readonly property bool vertical: {
+        if (Plasmoid.configuration.overridePlasmaButtonDirection && Plasmoid.location === PlasmaCore.Types.Floating) {
+            // indices 2 and 3 correspond to West (Left) and East (Right) in the ComboBox model
+            return (Plasmoid.configuration.plasmaButtonDirection === 2 || Plasmoid.configuration.plasmaButtonDirection === 3);
+        }
+        return Plasmoid.formFactor === PlasmaCore.Types.Vertical;
+    }
     readonly property bool iconsOnly: Plasmoid.configuration.iconOnly
     property bool showBadges: Plasmoid.configuration.showBadges
 
@@ -452,7 +458,7 @@ PlasmoidItem {
             id: taskFrame
             visible: false
             imagePath: "widgets/tasks"
-            prefix: TaskTools.taskPrefix("normal", Plasmoid.location)
+            prefix: TaskTools.taskPrefix("normal", Plasmoid.location, Plasmoid.configuration)
         }
 
         MouseHandler {

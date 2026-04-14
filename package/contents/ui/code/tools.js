@@ -178,10 +178,29 @@ function activateTask(index, model, modifiers, task, plasmoid, tasks, windowView
     }
 }
 
-function taskPrefix(prefix, location) {
+function taskPrefix(prefix, location, config) {
+    let effectiveLocation = location;
+
+    if (config && config.overridePlasmaButtonDirection) {
+        switch (config.plasmaButtonDirection) {
+            case 0: // Top
+                effectiveLocation = PlasmaCore.Types.TopEdge;
+                break;
+            case 1: // Bottom
+                effectiveLocation = PlasmaCore.Types.BottomEdge;
+                break;
+            case 2: // Left
+                effectiveLocation = PlasmaCore.Types.LeftEdge;
+                break;
+            case 3: // Right
+                effectiveLocation = PlasmaCore.Types.RightEdge;
+                break;
+        }
+    }
+
     let effectivePrefix;
 
-    switch (location) {
+    switch (effectiveLocation) {
         case PlasmaCore.Types.LeftEdge:
             effectivePrefix = "west-" + prefix;
             break;
@@ -197,11 +216,11 @@ function taskPrefix(prefix, location) {
     return [effectivePrefix, prefix];
 }
 
-function taskPrefixHovered(prefix, location) {
+function taskPrefixHovered(prefix, location, config) {
     return [
-        ...taskPrefix((prefix || "launcher") + "-hover", location),
-        ...prefix ? taskPrefix("hover", location) : [],
-        ...taskPrefix(prefix, location),
+        ...taskPrefix((prefix || "launcher") + "-hover", location, config),
+        ...prefix ? taskPrefix("hover", location, config) : [],
+        ...taskPrefix(prefix, location, config),
     ];
 }
 

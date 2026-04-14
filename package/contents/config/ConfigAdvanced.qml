@@ -7,6 +7,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
+import org.kde.plasma.core as PlasmaCore
 
 import "../ui/code/singletones"
 
@@ -20,13 +21,23 @@ ConfigPage {
         Kirigami.FormLayout {
             width: parent.width - Kirigami.Units.gridUnit * 2
             
+            Kirigami.InlineMessage {
+                Layout.fillWidth: true
+                visible: Plasmoid.location !== PlasmaCore.Types.Floating
+                type: Kirigami.MessageType.Information
+                text: Wrappers.i18n("This option is disabled when the widget is on a panel.")
+            }
+
             Label {
-                text: Wrappers.i18n("Button Direction:")
+                text: Wrappers.i18n("Floating Mode Settings:")
+                font.bold: true
+                opacity: Plasmoid.location === PlasmaCore.Types.Floating ? 1.0 : 0.6
             }
 
             CheckBox {
                 id: overridePlasmaButtonDirection
                 text: Wrappers.i18n("Override system direction")
+                enabled: Plasmoid.location === PlasmaCore.Types.Floating
                 checked: cfg_page.cfg_overridePlasmaButtonDirection
                 onToggled: cfg_page.cfg_overridePlasmaButtonDirection = checked
             }
@@ -34,8 +45,14 @@ ConfigPage {
             ComboBox {
                 id: plasmaButtonDirection
                 Layout.fillWidth: true
+                enabled: overridePlasmaButtonDirection.enabled && overridePlasmaButtonDirection.checked
                 visible: overridePlasmaButtonDirection.checked
-                model: [Wrappers.i18n("North"), Wrappers.i18n("South"), Wrappers.i18n("West"), Wrappers.i18n("East")]
+                model: [
+                    Wrappers.i18n("As on top panel"),
+                    Wrappers.i18n("As on bottom panel"),
+                    Wrappers.i18n("As on left panel"),
+                    Wrappers.i18n("As on right panel")
+                ]
                 currentIndex: cfg_page.cfg_plasmaButtonDirection
                 onActivated: (index) => cfg_page.cfg_plasmaButtonDirection = index
             }

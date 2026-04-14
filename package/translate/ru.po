@@ -25,19 +25,19 @@ msgstr "Переопределить системное направление"
 
 #: ../contents/config/ConfigAdvanced.qml
 msgid "North"
-msgstr "Север"
+msgstr "Как панель сверху"
 
 #: ../contents/config/ConfigAdvanced.qml
 msgid "South"
-msgstr "Юг"
+msgstr "Как панель снизу"
 
 #: ../contents/config/ConfigAdvanced.qml
 msgid "West"
-msgstr "Запад"
+msgstr "Как панель слева"
 
 #: ../contents/config/ConfigAdvanced.qml
 msgid "East"
-msgstr "Восток"
+msgstr "Как панель справа"
 
 #: ../contents/config/ConfigAdvanced.qml
 msgid "Layout settings:"
@@ -1063,3 +1063,26 @@ msgstr "Заголовок окна"
 #: ../contents/config/LivePreview.qml
 msgid "App name"
 msgstr "Имя приложения"
+#: ../contents/config/ConfigAdvanced.qml
+msgid "Floating Mode Settings:"
+msgstr "Настройки плавающего режима:"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "As on top panel"
+msgstr "Как панель сверху"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "As on bottom panel"
+msgstr "Как панель снизу"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "As on left panel"
+msgstr "Как панель слева"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "As on right panel"
+msgstr "Как панель справа"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "This option is disabled when the widget is on a panel."
+msgstr "Эта опция недоступна, когда виджет находится на панели."

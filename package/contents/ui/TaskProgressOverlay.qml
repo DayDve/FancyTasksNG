@@ -41,7 +41,7 @@ Item {
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
                 imagePath: "widgets/tasks"
-                prefix: TaskTools.taskPrefix("progress", control.panelLocation)
+                prefix: TaskTools.taskPrefix("progress", control.panelLocation, Plasmoid.configuration)
                 enabledBorders: KSvg.FrameSvg.NoBorder
                 layer.enabled: true
                 layer.effect: MultiEffect {

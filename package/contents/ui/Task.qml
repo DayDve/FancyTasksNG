@@ -645,7 +645,7 @@ Item {
         property bool isHovered: task.highlighted && tasksRoot.iconsOnly && Plasmoid.configuration.taskHoverEffect
         property string basePrefix: "normal"
         prefix: isHovered ?
-            TaskTools.taskPrefixHovered(basePrefix, Plasmoid.location) : TaskTools.taskPrefix(basePrefix, Plasmoid.location)
+            TaskTools.taskPrefixHovered(basePrefix, Plasmoid.location, Plasmoid.configuration) : TaskTools.taskPrefix(basePrefix, Plasmoid.location, Plasmoid.configuration)
 
         layer.enabled: false
         layer.effect: MultiEffect {
