@@ -767,7 +767,7 @@ Item {
         width: task.inPopup ?
             Math.max(Kirigami.Units.iconSizes.sizeForLabels, Kirigami.Units.iconSizes.medium) : Math.min((task.parent as TaskList)?.minimumWidth ?? 0, task.height)
         height: task.inPopup ?
-            width : (parent.height - adjustMargin(false, parent.height, LayoutMetrics.rawTopMargin()) - adjustMargin(false, parent.height, LayoutMetrics.rawBottomMargin()))
+            width : (parent.height - adjustMargin(false, parent.height, LayoutMetrics.topMargin()) - adjustMargin(false, parent.height, LayoutMetrics.bottomMargin()))
 
         asynchronous: true
         active: plasmoid.configuration.showBadges && height >= Kirigami.Units.iconSizes.small && task.smartLauncherItem && task.smartLauncherItem["countVisible"]

@@ -8,7 +8,6 @@
 
 const iconMargin = Math.round(Kirigami.Units.smallSpacing / 4);
 const labelMargin = Kirigami.Units.smallSpacing;
-
 function leftMargin() {
     return taskFrame.margins.left * (tasks.vertical ? 1 : (Kirigami.Settings.tabletMode ? 1.5 : tasks.plasmoid.configuration.iconSpacing));
 }
