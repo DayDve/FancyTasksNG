@@ -8,6 +8,8 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.plasmoid
 import org.kde.kquickcontrols as KQuickAddons
 
 import "../ui/code/singletones"
@@ -27,6 +29,7 @@ ConfigPage {
         LivePreview {
             cfg_page: cfg_page
             Layout.fillWidth: true
+            visible: plasmoid.location !== PlasmaCore.Types.Floating
         }
 
         ConfigScrollView {

@@ -119,6 +119,7 @@ Item {
     readonly property int simulatedMaxWidth: iconsOnly ? (isVertical ? (simulatedThickness + verticalMargins()) : (simulatedThickness + horizontalMargins())) : (Kirigami.Units.gridUnit * 12)
 
     readonly property bool iconsOnly: cfg_page ? cfg_page.cfg_iconOnly === 1 : true
+    readonly property bool centerAlign: iconsOnly && cfg_page && cfg_page.cfg_fill && cfg_page.cfg_fillAlignment === 1
 
     // Theme FrameSvg for authentic margins calculation
     KSvg.FrameSvgItem {
@@ -264,8 +265,13 @@ Item {
 
                     GridLayout {
                         id: mockTasksLayout
-                        anchors.left: parent.left
-                        anchors.top: parent.top
+                        
+                        x: previewRoot.centerAlign && !previewRoot.isVertical ? Math.round((parent.width - width) / 2) : 0
+                        y: previewRoot.centerAlign && previewRoot.isVertical ? Math.round((parent.height - height) / 2) : 0
+                        
+                        anchors.left: (!previewRoot.centerAlign || previewRoot.isVertical) ? parent.left : undefined
+                        anchors.top: (!previewRoot.centerAlign || !previewRoot.isVertical) ? parent.top : undefined
+                        
                         width: previewRoot.isVertical ? parent.width : Math.min(parent.width, implicitWidth)
                         height: previewRoot.isVertical ? Math.min(parent.height, implicitHeight) : parent.height
                         clip: false
