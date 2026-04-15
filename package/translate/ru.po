@@ -1088,8 +1088,12 @@ msgid "This option is disabled when the widget is on a panel."
 msgstr "Эта опция недоступна, когда виджет находится на панели."
 
 #: ../contents/config/ConfigAdvanced.qml
-msgid "These options are only available in icon-only mode on a panel."
-msgstr "Эти опции доступны только в режиме «Только значки» на панели."
+msgid "These options are only available when the widget is on a panel."
+msgstr "Эти опции доступны только тогда, когда виджет находится на панели."
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "These options are only available in icon-only mode."
+msgstr "Эти опции доступны только в режиме «Только значки»."
 
 #: ../contents/config/ConfigAdvanced.qml
 msgid "Alignment:"

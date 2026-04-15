@@ -67,9 +67,16 @@ ConfigPage {
 
             Kirigami.InlineMessage {
                 Layout.fillWidth: true
-                visible: plasmoid.location === PlasmaCore.Types.Floating || !cfg_page.cfg_iconOnly
+                visible: plasmoid.location === PlasmaCore.Types.Floating
                 type: Kirigami.MessageType.Information
-                text: Wrappers.i18n("These options are only available in icon-only mode on a panel.")
+                text: Wrappers.i18n("These options are only available when the widget is on a panel.")
+            }
+
+            Kirigami.InlineMessage {
+                Layout.fillWidth: true
+                visible: plasmoid.location !== PlasmaCore.Types.Floating && !cfg_page.cfg_iconOnly
+                type: Kirigami.MessageType.Information
+                text: Wrappers.i18n("These options are only available in icon-only mode.")
             }
 
             CheckBox {
