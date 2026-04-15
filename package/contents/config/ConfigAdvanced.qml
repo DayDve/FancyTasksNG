@@ -60,13 +60,43 @@ ConfigPage {
 
             Label {
                 text: Wrappers.i18n("Layout settings:")
+                opacity: fillEnabled ? 1.0 : 0.6
+
+                readonly property bool fillEnabled: plasmoid.location !== PlasmaCore.Types.Floating && cfg_page.cfg_iconOnly
+            }
+
+            Kirigami.InlineMessage {
+                Layout.fillWidth: true
+                visible: plasmoid.location === PlasmaCore.Types.Floating || !cfg_page.cfg_iconOnly
+                type: Kirigami.MessageType.Information
+                text: Wrappers.i18n("These options are only available in icon-only mode on a panel.")
             }
 
             CheckBox {
                 id: fill
                 text: Wrappers.i18n("Fill free space on panel")
+                enabled: plasmoid.location !== PlasmaCore.Types.Floating && cfg_page.cfg_iconOnly
                 checked: cfg_page.cfg_fill
                 onToggled: cfg_page.cfg_fill = checked
+            }
+
+            RowLayout {
+                visible: fill.checked && fill.enabled
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+
+                Label {
+                    text: Wrappers.i18n("Alignment:")
+                }
+                ComboBox {
+                    id: fillAlignment
+                    Layout.fillWidth: true
+                    model: [
+                        Wrappers.i18n("Edge"),
+                        Wrappers.i18n("Center")
+                    ]
+                    currentIndex: cfg_page.cfg_fillAlignment
+                    onActivated: (index) => cfg_page.cfg_fillAlignment = index
+                }
             }
         }
     }

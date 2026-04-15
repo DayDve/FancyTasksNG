@@ -1086,3 +1086,19 @@ msgstr "Как панель справа"
 #: ../contents/config/ConfigAdvanced.qml
 msgid "This option is disabled when the widget is on a panel."
 msgstr "Эта опция недоступна, когда виджет находится на панели."
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "These options are only available in icon-only mode on a panel."
+msgstr "Эти опции доступны только в режиме «Только значки» на панели."
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "Alignment:"
+msgstr "Выравнивание:"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "Edge"
+msgstr "По краю"
+
+#: ../contents/config/ConfigAdvanced.qml
+msgid "Center"
+msgstr "По центру"

@@ -176,6 +176,10 @@
       <label>Whether task manager should occupy all available space.</label>
       <default>true</default>
     </entry>
+    <entry name="fillAlignment" type="Int">
+      <label>Alignment of tasks when fill is enabled: 0 = Edge, 1 = Center</label>
+      <default>0</default>
+    </entry>
     <entry name="taskHoverEffect" type="Bool">
       <label
             >Whether task buttons should change in appearance when the mouse pointer is above them.</label>

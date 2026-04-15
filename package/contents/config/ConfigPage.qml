@@ -56,6 +56,8 @@ Kirigami.Page {
     property int cfg_previewSizeDefault: 48
     property bool cfg_fill: false
     property bool cfg_fillDefault: false
+    property int cfg_fillAlignment: 0
+    property int cfg_fillAlignmentDefault: 0
     property bool cfg_taskHoverEffect: true
     property bool cfg_taskHoverEffectDefault: true
     property int cfg_maxTextLines: 1

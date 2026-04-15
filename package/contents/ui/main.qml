@@ -512,11 +512,10 @@ PlasmoidItem {
                     return Qt.TopEdge;
                 }
             }
+            readonly property bool centerAlign: tasks.iconsOnly && Plasmoid.configuration.fill && Plasmoid.configuration.fillAlignment === 1
             LayoutMirroring.enabled: tasks.shouldBeMirrored(Plasmoid.configuration.reverseMode, Qt.locale().textDirection, tasks.vertical)
-            anchors {
-                left: parent.left
-                top: parent.top
-            }
+            x: centerAlign && !tasks.vertical ? Math.round((parent.width - width) / 2) : 0
+            y: centerAlign && tasks.vertical ? Math.round((parent.height - height) / 2) : 0
             height: taskList.childrenRect.height
             width: taskList.childrenRect.width
 
