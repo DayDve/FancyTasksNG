@@ -266,11 +266,10 @@ Item {
                     GridLayout {
                         id: mockTasksLayout
                         
-                        x: previewRoot.centerAlign && !previewRoot.isVertical ? Math.round((parent.width - width) / 2) : 0
-                        y: previewRoot.centerAlign && previewRoot.isVertical ? Math.round((parent.height - height) / 2) : 0
-                        
-                        anchors.left: (!previewRoot.centerAlign || previewRoot.isVertical) ? parent.left : undefined
-                        anchors.top: (!previewRoot.centerAlign || !previewRoot.isVertical) ? parent.top : undefined
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        anchors.leftMargin: (previewRoot.centerAlign && !previewRoot.isVertical) ? Math.max(0, Math.round((parent.width - width) / 2)) : 0
+                        anchors.topMargin: (previewRoot.centerAlign && previewRoot.isVertical) ? Math.max(0, Math.round((parent.height - height) / 2)) : 0
                         
                         width: previewRoot.isVertical ? parent.width : Math.min(parent.width, implicitWidth)
                         height: previewRoot.isVertical ? Math.min(parent.height, implicitHeight) : parent.height
