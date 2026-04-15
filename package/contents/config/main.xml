@@ -110,10 +110,14 @@
       </choices>
       <default>1</default>
     </entry>
-    <entry name="wheelEnabled" type="Bool">
-      <label
-            >Whether using the mouse wheel with the mouse pointer above the widget should switch between tasks.</label>
-      <default>true</default>
+    <entry name="wheelAction" type="Enum">
+      <label>How the mouse wheel should interact with the hovered task.</label>
+      <choices>
+        <choice name="None" />
+        <choice name="CycleHoveredTask" />
+        <choice name="AdjustVolume" />
+      </choices>
+      <default>1</default>
     </entry>
     <entry name="wheelSkipMinimized" type="Bool">
       <label

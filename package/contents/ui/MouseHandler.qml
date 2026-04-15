@@ -192,7 +192,7 @@ DropArea {
 
         property bool handleWheelEvents: true
 
-        enabled: handleWheelEvents && Plasmoid.configuration.wheelEnabled
+        enabled: handleWheelEvents && Plasmoid.configuration.wheelAction !== 0
 
         onWheel: event => {
             // magic number 15 for common "one scroll"
@@ -207,9 +207,29 @@ DropArea {
                 increment--;
             }
             const anchor = dropArea.target.childAt(event.x, event.y);
-            while (increment !== 0) {
-                TaskTools.activateNextPrevTask(anchor, increment < 0, Plasmoid.configuration.wheelSkipMinimized, dropArea.tasks);
-                increment += (increment < 0) ? 1 : -1;
+
+            if (Plasmoid.configuration.wheelAction === 1) {
+                while (increment !== 0) {
+                    // TaskTools.activateNextPrevTask(anchor, increment < 0, Plasmoid.configuration.wheelSkipMinimized, (Plasmoid.configuration.wheelAction !== 0), tasks);
+                    TaskTools.activateNextPrevTask(anchor, increment < 0, Plasmoid.configuration.wheelSkipMinimized, dropArea.tasks);
+                    increment += (increment < 0) ? 1 : -1;
+                }
+            }
+            // explicit in case of adding more options in future
+            else if (Plasmoid.configuration.wheelAction === 2) {
+                const loudest = anchor?.audioStreams?.reduce((loudest, stream) => Math.max(loudest, stream.volume), 0)
+                const step = (pulseAudio.item.normalVolume - pulseAudio.item.minimalVolume) * pulseAudio.item.globalConfig.volumeStep / 100;
+                anchor?.audioStreams?.forEach((stream) => {
+                    let delta = step * increment;
+                    if (loudest > 0) {
+                        delta *= stream.volume / loudest;
+                    }
+                    const volume = stream.volume + delta;
+                    console.log(volume, Math.max(pulseAudio.item.minimalVolume, Math.min(volume, pulseAudio.item.normalVolume)));
+                    stream.model.Volume = Math.max(pulseAudio.item.minimalVolume, Math.min(volume, pulseAudio.item.normalVolume));
+                    stream.model.Muted = volume === 0
+                })
+            return;
             }
         }
     }

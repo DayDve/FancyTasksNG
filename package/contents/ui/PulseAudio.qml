@@ -16,6 +16,8 @@ QtObject {
     
     Component.onCompleted: {
     }
+    // Allow using user configured volume step size
+    readonly property QtObject globalConfig: GlobalConfig { }
     
     // QtObject has no default property, hence adding the Instantiator to one explicitly.
     readonly property Instantiator instantiator: Instantiator {
