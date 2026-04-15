@@ -30,8 +30,9 @@ ConfigPage {
 
         LivePreview {
             cfg_page: cfg_page
+            location: Plasmoid.location
             Layout.fillWidth: true
-            visible: plasmoid.location !== PlasmaCore.Types.Floating
+            visible: Plasmoid.location !== PlasmaCore.Types.Floating
         }
 
         ConfigScrollView {

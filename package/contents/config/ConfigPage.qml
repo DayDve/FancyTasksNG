@@ -50,8 +50,6 @@ Kirigami.Page {
     property bool cfg_iconSizeOverrideDefault: false
 
     // --- Preview Config ---
-    property int cfg_previewEdge: 0
-    property int cfg_previewEdgeDefault: 0
     property int cfg_previewSize: 48
     property int cfg_previewSizeDefault: 48
     property bool cfg_fill: false

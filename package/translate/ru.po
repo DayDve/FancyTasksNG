@@ -1106,3 +1106,11 @@ msgstr "По краю"
 #: ../contents/config/ConfigAdvanced.qml
 msgid "Center"
 msgstr "По центру"
+
+#: ../contents/config/LivePreview.qml
+msgid "Panel thickness (preview):"
+msgstr "Толщина панели (превью):"
+
+#: ../contents/config/LivePreview.qml
+msgid "This setting only changes the appearance of this preview and does not affect your actual system panel."
+msgstr "Этот параметр меняет только вид предпросмотра и не влияет на реальную системную панель."

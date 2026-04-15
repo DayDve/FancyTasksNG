@@ -11,6 +11,8 @@ import org.kde.ksvg as KSvg
 import "../ui/code/singletones"
 import "../ui" as FancyUI
 import "../ui/code/tools.js" as TaskTools
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.plasmoid
 
 Item {
     id: previewRoot
@@ -20,13 +22,15 @@ Item {
     implicitHeight: cfg_page && cfg_page.cfg_showLivePreview ? 290 : titleLayout.height
     clip: false
 
-    readonly property int locationBottom: 3
-    readonly property int locationTop: 1
-    readonly property int locationLeft: 0
-    readonly property int locationRight: 2
+    readonly property int locationBottom: PlasmaCore.Types.BottomEdge
+    readonly property int locationTop: PlasmaCore.Types.TopEdge
+    readonly property int locationLeft: PlasmaCore.Types.LeftEdge
+    readonly property int locationRight: PlasmaCore.Types.RightEdge
     readonly property bool multiStripe: simulatedStripeCount > 1
 
     property var cfg_page: null
+    property int location: PlasmaCore.Types.BottomEdge
+
     readonly property bool cfg_showToolTips: cfg_page ? cfg_page.cfg_showToolTips : true
 
     // Reference to the zoomed task item (Index 1) for tooltip positioning
@@ -63,9 +67,17 @@ Item {
     // Current hover state for tooltip positioning parity
     readonly property int effectiveGrowSize: (zoomedTaskItem && cfg_page && cfg_page.cfg_iconOnly === 1 && cfg_page.cfg_taskHoverEffect) ? cfg_page.cfg_iconZoomFactor : 0
 
-    // Panel simulation
-    property int currentEdgeIdx: cfg_page ? cfg_page.cfg_previewEdge : 0
+    readonly property int currentEdgeIdx: {
+        switch (location) {
+            case PlasmaCore.Types.TopEdge: return 1;
+            case PlasmaCore.Types.LeftEdge: return 2;
+            case PlasmaCore.Types.RightEdge: return 3;
+            case PlasmaCore.Types.BottomEdge:
+            default: return 0;
+        }
+    }
     property bool isVertical: currentEdgeIdx === 2 || currentEdgeIdx === 3
+
     property int simulatedLocation: currentEdgeIdx === 0 ? locationBottom :
                                     currentEdgeIdx === 1 ? locationTop :
                                     currentEdgeIdx === 2 ? locationLeft : locationRight
@@ -151,19 +163,10 @@ Item {
         }
     }
 
-    // Background to "cut" the border - sibling to RowLayout to satisfy qmllint
-    Rectangle {
-        id: titleBackground
-        anchors.fill: titleLayout
-        anchors.margins: -Kirigami.Units.smallSpacing / 2
-        z: 9
-        color: Kirigami.Theme.backgroundColor
-        visible: groupBox.visible
-    }
  
     GroupBox {
         id: groupBox
-        anchors.top: titleLayout.verticalCenter
+        anchors.top: titleLayout.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -178,52 +181,86 @@ Item {
         visible: groupBox.visible
         spacing: Kirigami.Units.largeSpacing
 
-        // 1. Controls at the top
-        RowLayout {
-            id: controlsLayout
-            Layout.alignment: Qt.AlignHCenter
-            spacing: Kirigami.Units.mediumSpacing
+        // Inner workspace area
+        Rectangle {
+            id: innerPreviewArea
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            color: "transparent"
+            border.color: Kirigami.Theme.disabledTextColor
+            border.width: 1
+            radius: Kirigami.Units.smallSpacing
+            clip: true
 
-            Label {
-                text: Wrappers.i18n("Panel:")
-                opacity: 0.6
-            }
-                ComboBox {
-                    id: localEdgeCombo
-                    model: [Wrappers.i18n("Bottom"), Wrappers.i18n("Top"), Wrappers.i18n("Left"), Wrappers.i18n("Right")]
-                    currentIndex: previewRoot.cfg_page && previewRoot.cfg_page.cfg_previewEdge !== undefined ? previewRoot.cfg_page.cfg_previewEdge : 0
-                    onActivated: (index) => { if (previewRoot.cfg_page) previewRoot.cfg_page.cfg_previewEdge = index }
-                    Layout.preferredWidth: Kirigami.Units.gridUnit * 7
+            // 1. Controls Overlay (Space-saving & Context-aware)
+            Kirigami.ShadowedRectangle {
+                id: controlsOverlay
+                z: 100
+                anchors {
+                    top: location === PlasmaCore.Types.TopEdge ? undefined : parent.top
+                    bottom: location === PlasmaCore.Types.TopEdge ? parent.bottom : undefined
+                    right: location === PlasmaCore.Types.RightEdge ? undefined : parent.right
+                    left: location === PlasmaCore.Types.RightEdge ? parent.left : undefined
+                    margins: Kirigami.Units.largeSpacing
                 }
-                Label {
-                    text: "   " + Wrappers.i18n("Size:")
-                    opacity: 0.6
-                }
-                SpinBox {
-                    id: localSizeSpinner
-                    from: 24
-                    to: 128
-                    value: previewRoot.cfg_page && previewRoot.cfg_page.cfg_previewSize !== undefined ? previewRoot.cfg_page.cfg_previewSize : 48
-                    onValueModified: { if (previewRoot.cfg_page) previewRoot.cfg_page.cfg_previewSize = value }
-                    stepSize: 2
-                    editable: true
-                }
-                Label {
-                    text: "px"
-                    opacity: 0.6
-                }
-            }
-
-            // 2. Inner workspace area
-            Rectangle {
-                id: innerPreviewArea
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: "transparent"
-                border.color: Kirigami.Theme.disabledTextColor
-                border.width: 1
+                
+                width: overlayLayout.implicitWidth + Kirigami.Units.mediumSpacing * 2
+                height: overlayLayout.implicitHeight + Kirigami.Units.smallSpacing * 2
+                
                 radius: Kirigami.Units.smallSpacing
-                clip: true
+                color: Kirigami.Theme.backgroundColor
+                opacity: 0.85
+                
+                shadow {
+                    size: Kirigami.Units.smallSpacing
+                    color: Qt.rgba(0, 0, 0, 0.3)
+                }
+
+                RowLayout {
+                    id: overlayLayout
+                    anchors.centerIn: parent
+                    spacing: Kirigami.Units.mediumSpacing
+
+                    Label {
+                        text: Wrappers.i18n("Panel thickness (preview):")
+                        opacity: 0.7
+                        font.pointSize: Kirigami.Theme.smallFont.pointSize
+                    }
+                    SpinBox {
+                        id: localSizeSpinner
+                        from: 24
+                        to: 128
+                        value: previewRoot.cfg_page && previewRoot.cfg_page.cfg_previewSize !== undefined ? previewRoot.cfg_page.cfg_previewSize : 48
+                        onValueModified: { if (previewRoot.cfg_page) previewRoot.cfg_page.cfg_previewSize = value }
+                        stepSize: 2
+                        editable: true
+
+                        ToolTip.text: Wrappers.i18n("This setting only changes the appearance of this preview and does not affect your actual system panel.")
+                        ToolTip.visible: hovered
+                        ToolTip.delay: Kirigami.Units.toolTipDelay
+
+                        // Smaller SpinBox for overlay
+                        contentItem: TextInput {
+                            z: 2
+                            text: localSizeSpinner.textFromValue(localSizeSpinner.value, localSizeSpinner.locale)
+                            font: localSizeSpinner.font
+                            color: Kirigami.Theme.textColor
+                            selectionColor: Kirigami.Theme.highlightColor
+                            selectedTextColor: Kirigami.Theme.highlightedTextColor
+                            horizontalAlignment: Qt.AlignHCenter
+                            verticalAlignment: Qt.AlignVCenter
+                            readOnly: !localSizeSpinner.editable
+                            validator: localSizeSpinner.validator
+                            inputMethodHints: Qt.ImhDigitsOnly
+                        }
+                    }
+                    Label {
+                        text: "px"
+                        opacity: 0.5
+                        font.pointSize: Kirigami.Theme.smallFont.pointSize
+                    }
+                }
+            }
 
                 // Desktop Workspace Background (Local Asset)
                 Image {

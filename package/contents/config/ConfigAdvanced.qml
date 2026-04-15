@@ -21,8 +21,9 @@ ConfigPage {
 
         LivePreview {
             cfg_page: cfg_page
+            location: Plasmoid.location
             Layout.fillWidth: true
-            visible: plasmoid.location !== PlasmaCore.Types.Floating
+            visible: Plasmoid.location !== PlasmaCore.Types.Floating
         }
 
         ConfigScrollView {
@@ -32,20 +33,20 @@ ConfigPage {
                 
                 Kirigami.InlineMessage {
                     Layout.fillWidth: true
-                    visible: plasmoid.location !== PlasmaCore.Types.Floating
+                    visible: Plasmoid.location !== PlasmaCore.Types.Floating
                     type: Kirigami.MessageType.Information
                     text: Wrappers.i18n("This option is disabled when the widget is on a panel.")
                 }
 
                 Label {
                     text: Wrappers.i18n("Floating Mode Settings:")
-                    opacity: plasmoid.location === PlasmaCore.Types.Floating ? 1.0 : 0.6
+                    opacity: Plasmoid.location === PlasmaCore.Types.Floating ? 1.0 : 0.6
                 }
 
                 CheckBox {
                     id: overridePlasmaButtonDirection
                     text: Wrappers.i18n("Override system direction")
-                    enabled: plasmoid.location === PlasmaCore.Types.Floating
+                    enabled: Plasmoid.location === PlasmaCore.Types.Floating
                     checked: cfg_page.cfg_overridePlasmaButtonDirection
                     onToggled: cfg_page.cfg_overridePlasmaButtonDirection = checked
                 }
@@ -71,19 +72,19 @@ ConfigPage {
                     text: Wrappers.i18n("Layout settings:")
                     opacity: fillEnabled ? 1.0 : 0.6
 
-                    readonly property bool fillEnabled: plasmoid.location !== PlasmaCore.Types.Floating && cfg_page.cfg_iconOnly
+                    readonly property bool fillEnabled: Plasmoid.location !== PlasmaCore.Types.Floating && cfg_page.cfg_iconOnly
                 }
 
                 Kirigami.InlineMessage {
                     Layout.fillWidth: true
-                    visible: plasmoid.location === PlasmaCore.Types.Floating
+                    visible: Plasmoid.location === PlasmaCore.Types.Floating
                     type: Kirigami.MessageType.Information
                     text: Wrappers.i18n("These options are only available when the widget is on a panel.")
                 }
 
                 Kirigami.InlineMessage {
                     Layout.fillWidth: true
-                    visible: plasmoid.location !== PlasmaCore.Types.Floating && !cfg_page.cfg_iconOnly
+                    visible: Plasmoid.location !== PlasmaCore.Types.Floating && !cfg_page.cfg_iconOnly
                     type: Kirigami.MessageType.Information
                     text: Wrappers.i18n("These options are only available in icon-only mode.")
                 }
@@ -91,7 +92,7 @@ ConfigPage {
                 CheckBox {
                     id: fill
                     text: Wrappers.i18n("Fill free space on panel")
-                    enabled: plasmoid.location !== PlasmaCore.Types.Floating && cfg_page.cfg_iconOnly
+                    enabled: Plasmoid.location !== PlasmaCore.Types.Floating && cfg_page.cfg_iconOnly
                     checked: cfg_page.cfg_fill
                     onToggled: cfg_page.cfg_fill = checked
                 }

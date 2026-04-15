@@ -41,10 +41,6 @@
             >How tasks are display: 0 = Classic Panel, 1 = Show Icons Only</label>
       <default>1</default>
     </entry>
-    <entry name="previewEdge" type="Int">
-      <default>0</default>
-      <label>Edge setting for the preview panel: 0=Bottom, 1=Top, 2=Left, 3=Right</label>
-    </entry>
     <entry name="previewSize" type="Int">
       <default>48</default>
       <label>Size of the mock panel in the preview.</label>
