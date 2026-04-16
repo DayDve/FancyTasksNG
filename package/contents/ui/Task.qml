@@ -27,6 +27,10 @@ Item {
     id: task
 
     activeFocusOnTab: true
+    opacity: tasksRoot.dragSource === task ? (task.inPopup ? 1.0 : 0.5) : 1.0
+    Behavior on opacity {
+        NumberAnimation { duration: Kirigami.Units.shortDuration }
+    }
 
     readonly property bool isMetro: Plasmoid.configuration.indicatorStyle === 0
     readonly property bool isCiliora: Plasmoid.configuration.indicatorStyle === 1
@@ -302,7 +306,7 @@ Item {
              tasksRoot.currentHoveredTask = null;
         }
 
-        if (!task.inPopup && !tasksRoot.vertical && !Plasmoid.configuration.separateLaunchers) {
+        if (!task.inPopup && !tasksRoot.vertical) {
             tasksRoot.requestLayout();
         }
     }

@@ -17,17 +17,14 @@ DropArea {
     signal urlsDropped(var urls)
 
     property var target
-    property int ignoredPid: -1
-    property string ignoredId: ""
-    property string ignoredLauncherUrl: ""
     property var hoveredItem
     property bool isGroupDialog: false
-    property bool isMoving: false
 
     property alias handleWheelEvents: wheelHandler.handleWheelEvents
 
     required property var tasks
     required property var tasksModel
+    required property var proxyModel
 
     //ignore anything that is neither internal to TaskManager or a URL list
     onEntered: event => {
@@ -38,10 +35,6 @@ DropArea {
     }
 
     onPositionChanged: event => {
-        if (target.animating || dropArea.isMoving) {
-            return;
-        }
-
         let above;
         if (isGroupDialog) {
             above = target.itemAt(event.x, event.y);
@@ -56,73 +49,48 @@ DropArea {
             return;
         }
 
-        // If we're mixing launcher tasks with other tasks and are moving
-        // a (small) launcher task across a non-launcher task, don't allow
-        // the latter to be the move target twice in a row for a while, as
-        // it will naturally be moved underneath the cursor as result of the
-        // initial move, due to being far larger than the launcher delegate.
-        // TODO: This restriction (minus the timer, which improves things)
-        // has been proven out in the EITM fork, but could be improved later
-        // by tracking the cursor movement vector and allowing the drag if
-        // the movement direction has reversed, establishing user intent to
-        // move back.
         if (above.model) {
             const dragSource = dropArea.tasks.dragSource;
             if (dragSource && dragSource.model) {
-                // EXPLICIT GUARD: Do not allow mixing launchers and normal tasks if grouped
-                const sourceIsLauncher = !!(dragSource.model.IsLauncher || dragSource.model.IsStartup);
-                const aboveIsLauncher = !!(above.model.IsLauncher || above.model.IsStartup);
+                const tasks = dropArea.tasks;
+                const dropIndicator = tasks.dropIndicator;
                 
-                if (sourceIsLauncher !== aboveIsLauncher) {
-                    return;
+                // Map event to targetItem's coordinates to decide left/right side
+                const pos = above.mapFromItem(dropArea, event.x, event.y);
+                
+                // Map items to indicator's parent coordinates
+                const indicatorPos = tasks.mapFromItem(above, 0, 0);
+                
+                let dropIndex;
+                if (tasks.vertical) {
+                    if (pos.y < above.height / 2) {
+                        dropIndex = above.index;
+                        dropIndicator.x = indicatorPos.x;
+                        dropIndicator.y = indicatorPos.y;
+                    } else {
+                        dropIndex = above.index + 1;
+                        dropIndicator.x = indicatorPos.x;
+                        dropIndicator.y = indicatorPos.y + above.height;
+                    }
+                } else {
+                    if (pos.x < above.width / 2) {
+                        dropIndex = above.index;
+                        dropIndicator.x = indicatorPos.x;
+                        dropIndicator.y = indicatorPos.y;
+                    } else {
+                        dropIndex = above.index + 1;
+                        dropIndicator.x = indicatorPos.x + above.width;
+                        dropIndicator.y = indicatorPos.y;
+                    }
                 }
-            }
-
-            const aboveIsLauncher = !!(above.model.IsLauncher || above.model.IsStartup);
-            if (aboveIsLauncher) {
-                if (above.model.LauncherUrlWithoutIcon && above.model.LauncherUrlWithoutIcon === dropArea.ignoredLauncherUrl) {
-                    return;
-                }
-            } else if (above.model.AppPid !== -1 && above.model.AppPid === dropArea.ignoredPid) {
-                if (above.model.AppId === dropArea.ignoredId) {
-                    return;
-                }
+                
+                tasks.dropIndex = dropIndex;
+                dropIndicator.visible = true;
+                return; // Don't process normal hover when dragging
             }
         }
 
-        if (dropArea.tasksModel.sortMode === TaskManager.TasksModel.SortManual && dropArea.tasks.dragSource) {
-            // Reject drags between different TaskList instances.
-            if (dropArea.tasks.dragSource.parent !== above.parent) {
-                return;
-            }
-
-            const fromRow = dropArea.tasks.dragSource.modelRow();
-            const toRow = above.modelRow();
-
-            if (fromRow !== toRow && fromRow !== -1 && toRow !== -1) {
-                dropArea.isMoving = true;
-                const tasksModel = dropArea.tasks.tasksModel;
-                const groupDialog = dropArea.tasks.groupDialog;
-                
-                Qt.callLater(() => {
-                    // CONTEXT GUARD: Ensure objects still exist when the deferred call runs
-                    if (!tasksModel || tasksModel.count === undefined) return;
-                    
-                    if (groupDialog && groupDialog.visualParent) {
-                        tasksModel.move(fromRow, toRow,
-                            tasksModel.makeModelIndex(groupDialog.visualParent.modelRow()));
-                    } else {
-                        tasksModel.move(fromRow, toRow);
-                    }
-                });
-
-                dropArea.ignoredPid = (above.model && above.model.AppPid !== undefined) ? above.model.AppPid : -1;
-                dropArea.ignoredId = (above.model && above.model.AppId !== undefined) ? above.model.AppId : "";
-                dropArea.ignoredLauncherUrl = (above.model && above.model.LauncherUrlWithoutIcon !== undefined) ? above.model.LauncherUrlWithoutIcon : "";
-                ignoreItemTimer.restart();
-                moveTimer.restart();
-            }
-        } else if (!dropArea.tasks.dragSource && hoveredItem !== above) {
+        if (!dropArea.tasks.dragSource && hoveredItem !== above) {
             if (hoveredItem && hoveredItem !== above && hoveredItem.toolTipOpen) {
                 let oldHovered = hoveredItem;
                 hideTooltipTimer.itemToHide = oldHovered;
@@ -134,6 +102,7 @@ DropArea {
     }
 
     onExited: {
+        dropArea.tasks.dropIndicator.visible = false;
         if (hoveredItem && hoveredItem.toolTipOpen) {
             hideTooltipTimer.itemToHide = hoveredItem;
             hideTooltipTimer.restart();
@@ -158,9 +127,25 @@ DropArea {
     }
 
     onDropped: event => {
-        // Reject internal drops.
+        // Handle internal task reordering
         if (event.formats.indexOf("application/x-orgkdeplasmataskmanager_taskbuttonitem") >= 0) {
-            event.accepted = false;
+            const dragSource = dropArea.tasks.dragSource;
+            if (dragSource && dropArea.tasks.dropIndex !== -1) {
+                let targetProxyIndex = dropArea.tasks.dropIndex;
+                if (targetProxyIndex >= dropArea.proxyModel.count) {
+                    targetProxyIndex = dropArea.proxyModel.count - 1;
+                }
+
+                // Get the source indices from the proxy model
+                const fromIdx = dropArea.proxyModel.mapToSource(dropArea.proxyModel.index(dragSource.index, 0));
+                const toIdx = dropArea.proxyModel.mapToSource(dropArea.proxyModel.index(targetProxyIndex, 0));
+
+                if (fromIdx.row !== -1 && toIdx.row !== -1 && fromIdx.row !== toIdx.row) {
+                    dropArea.tasksModel.move(fromIdx.row, toIdx.row);
+                }
+            }
+            dropArea.tasks.dropIndicator.visible = false;
+            event.accepted = true;
             return;
         }
 
@@ -181,31 +166,12 @@ DropArea {
 
         function onDragSourceChanged(): void {
             if (!dropArea.tasks.dragSource) {
-                dropArea.ignoredPid = -1;
-                dropArea.ignoredId = "";
-                dropArea.ignoredLauncherUrl = "";
-                ignoreItemTimer.stop();
+                dropArea.tasks.dropIndicator.visible = false;
             }
         }
     }
 
-    Timer {
-        id: ignoreItemTimer
-        repeat: false
-        interval: 750
-        onTriggered: {
-            dropArea.ignoredPid = -1;
-            dropArea.ignoredId = "";
-            dropArea.ignoredLauncherUrl = "";
-        }
-    }
 
-    Timer {
-        id: moveTimer
-        repeat: false
-        interval: 150
-        onTriggered: dropArea.isMoving = false
-    }
 
     Timer {
         id: activationTimer

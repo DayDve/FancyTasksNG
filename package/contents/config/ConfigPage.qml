@@ -92,10 +92,7 @@ Kirigami.Page {
     property bool cfg_onlyGroupWhenFullDefault: false
     property int cfg_sortingStrategy: 0
     property int cfg_sortingStrategyDefault: 0
-    property bool cfg_separateLaunchers: true
-    property bool cfg_separateLaunchersDefault: true
-    property bool cfg_hideLauncherOnStart: false
-    property bool cfg_hideLauncherOnStartDefault: false
+
     property var cfg_groupingAppIdBlacklist: []
     property var cfg_groupingAppIdBlacklistDefault: []
     property var cfg_groupingLauncherUrlBlacklist: []

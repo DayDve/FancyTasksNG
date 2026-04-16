@@ -91,21 +91,7 @@ ConfigPage {
                 onActivated: (index) => cfg_page.cfg_sortingStrategy = index
             }
 
-            CheckBox {
-                id: cfg_separateLaunchers
-                visible: (!cfg_page.cfg_iconOnly) && cfg_sortingStrategy.currentIndex === 1
-                text: Wrappers.i18n("Keep launchers separate")
-                checked: cfg_page.cfg_separateLaunchers
-                onToggled: cfg_page.cfg_separateLaunchers = checked
-            }
 
-            CheckBox {
-                id: cfg_hideLauncherOnStart
-                visible: (!cfg_page.cfg_iconOnly)
-                text: Wrappers.i18n("Hide launchers after application startup")
-                checked: cfg_page.cfg_hideLauncherOnStart
-                onToggled: cfg_page.cfg_hideLauncherOnStart = checked
-            }
 
             Item { height: Kirigami.Units.largeSpacing }
 

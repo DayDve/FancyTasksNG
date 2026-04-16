@@ -50,6 +50,10 @@ PlasmoidItem {
     readonly property bool iconsOnly: Plasmoid.configuration.iconOnly
     property bool showBadges: Plasmoid.configuration.showBadges
 
+    property Item dropIndicator: dropIndicator
+    property int dropIndex: -1
+    property Item dragSource: null
+
     property int _modelUpdatePhase: 0
     property bool _isApplyingConfig: false
 
@@ -153,8 +157,6 @@ PlasmoidItem {
             return taskList.Layout.maximumHeight;
         return Kirigami.Units.gridUnit * 2;
     }
-
-    property Item dragSource
 
     signal requestLayout
     signal windowsHovered(var winIds, bool hovered)
@@ -304,7 +306,7 @@ PlasmoidItem {
         tasks.tasksModel.hideActivatedLaunchers = (tasks.iconsOnly || Plasmoid.configuration.hideLauncherOnStart);
         tasks.tasksModel.sortMode = tasks.sortModeEnumValue(Plasmoid.configuration.sortingStrategy);
         tasks.tasksModel.launchInPlace = (tasks.iconsOnly && Plasmoid.configuration.sortingStrategy === 1);
-        tasks.tasksModel.separateLaunchers = (!tasks.iconsOnly && !Plasmoid.configuration.separateLaunchers && Plasmoid.configuration.sortingStrategy === 1 ? false : true);
+        tasks.tasksModel.separateLaunchers = false;
 
         tasks.tasksModel.groupMode = tasks.groupModeEnumValue(Plasmoid.configuration.groupingStrategy);
         tasks.tasksModel.groupInline = !Plasmoid.configuration.groupPopups && !tasks.iconsOnly;
@@ -462,6 +464,25 @@ PlasmoidItem {
             Drag.supportedActions: Qt.CopyAction | Qt.MoveAction | Qt.LinkAction
             Drag.onDragFinished: dropAction => {
                 tasks.dragSource = null;
+                tasks.dropIndicator.visible = false;
+            }
+        }
+
+        Rectangle {
+            id: dropIndicator
+            color: Kirigami.Theme.highlightColor
+            width: tasks.vertical ? parent.width : 2
+            height: tasks.vertical ? 2 : parent.height
+            visible: false
+            z: 999
+            
+            Behavior on x {
+                enabled: dropIndicator.visible
+                NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutQuad }
+            }
+            Behavior on y {
+                enabled: dropIndicator.visible
+                NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutQuad }
             }
         }
 
@@ -478,6 +499,7 @@ PlasmoidItem {
             target: taskList
             tasks: tasks
             tasksModel: tasks.tasksModel
+            proxyModel: filteredTasksModel
             onUrlsDropped: urls => {
                 if (!tasks.backend) return;
                 const createLaunchers = urls.every(item => tasks.backend.isApplication(item));
