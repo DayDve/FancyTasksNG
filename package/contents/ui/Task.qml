@@ -67,9 +67,9 @@ Item {
     Layout.fillWidth: true
     Layout.fillHeight: !task.inPopup
     Layout.maximumWidth: tasksRoot.vertical ?
-        -1 : ((task.model?.IsLauncher && !tasksRoot.iconsOnly) ? tasksRoot.height / tasksRoot.taskList.rows : LayoutMetrics.preferredMaxWidth())
+        -1 : ((task.model?.IsLauncher && !tasksRoot.iconsOnly) ? (tasksRoot.height / tasksRoot.taskList.rows) + LayoutMetrics.horizontalMargins() : LayoutMetrics.preferredMaxWidth())
     Layout.maximumHeight: tasksRoot.vertical ?
-        LayoutMetrics.preferredMaxHeight() : -1
+        ((task.model?.IsLauncher && !tasksRoot.iconsOnly) ? (tasksRoot.width / tasksRoot.taskList.columns) + LayoutMetrics.verticalMargins() : LayoutMetrics.preferredMaxHeight()) : -1
 
     required property var model
     required property int index
@@ -883,7 +883,10 @@ Item {
                 PropertyChanges {
                     target: iconBox
                     anchors.leftMargin: 0
-                    width: Math.min((task.parent as TaskList).minimumWidth, task.tasksRoot.height) - adjustMargin(true, task.width, task.tasksRoot.taskFrame.margins.left) - adjustMargin(true, task.width, task.tasksRoot.taskFrame.margins.right)
+                    // Ensure iconBox width doesn't limit the icon size in classic mode launcher buttons
+                    width: (task.model.IsLauncher && !tasksRoot.iconsOnly) ?
+                        (task.parent as TaskList).minimumWidth :
+                        Math.min((task.parent as TaskList).minimumWidth, task.tasksRoot.height) - adjustMargin(true, task.width, task.tasksRoot.taskFrame.margins.left) - adjustMargin(true, task.width, task.tasksRoot.taskFrame.margins.right)
                 }
             }
         ]

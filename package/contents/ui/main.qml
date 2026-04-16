@@ -313,10 +313,10 @@ PlasmoidItem {
         // The above is now handled by filteredTasksModel proxy to prevent crashes.
         tasks.tasksModel.filterNotMinimized = false;
         
-        tasks.tasksModel.hideActivatedLaunchers = tasks.iconsOnly;
+        tasks.tasksModel.hideActivatedLaunchers = tasks.iconsOnly || tasks.tasksModel.launchInPlace;
         tasks.tasksModel.sortMode = tasks.sortModeEnumValue(Plasmoid.configuration.sortingStrategy);
         tasks.tasksModel.launchInPlace = (Plasmoid.configuration.sortingStrategy === 1);
-        tasks.tasksModel.separateLaunchers = (Plasmoid.configuration.sortingStrategy === 0 || tasks._initialStartup);
+        tasks.tasksModel.separateLaunchers = (Plasmoid.configuration.sortingStrategy === 0);
 
         tasks.tasksModel.groupMode = tasks.groupModeEnumValue(Plasmoid.configuration.groupingStrategy);
         tasks.tasksModel.groupInline = !Plasmoid.configuration.groupPopups && !tasks.iconsOnly;
