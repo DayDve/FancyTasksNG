@@ -75,9 +75,8 @@
       <default />
     </entry>
     <entry name="sortingStrategy" type="Int">
-      <label
-            >How to sort tasks: 0 = Do Not Sort, 1 = Manually, 2 = Alphabetically, 3 = By Desktop, 4 = By Activity</label>
-      <default>1</default>
+      <label>How to sort tasks: 0 = Automatic, 1 = Manually</label>
+      <default>0</default>
     </entry>
 
     <entry name="maxStripes" type="Int">

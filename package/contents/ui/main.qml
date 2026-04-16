@@ -54,8 +54,18 @@ PlasmoidItem {
     property int dropIndex: -1
     property Item dragSource: null
 
-    property int _modelUpdatePhase: 0
     property bool _isApplyingConfig: false
+    property bool _initialStartup: true
+
+    Timer {
+        id: startupTimer
+        interval: 1500
+        repeat: false
+        onTriggered: {
+            tasks._initialStartup = false;
+            tasks.applyModelConfiguration();
+        }
+    }
 
     Connections {
         target: Plasmoid.configuration
@@ -67,12 +77,10 @@ PlasmoidItem {
         function onShowOnlyCurrentScreenChanged() { modelUpdateTimer.restart() }
         function onShowOnlyCurrentActivityChanged() { modelUpdateTimer.restart() }
         function onShowOnlyMinimizedChanged() { modelUpdateTimer.restart() }
-        function onHideLauncherOnStartChanged() { modelUpdateTimer.restart() }
         function onSortingStrategyChanged() { modelUpdateTimer.restart() }
         function onGroupingStrategyChanged() { modelUpdateTimer.restart() }
         function onGroupPopupsChanged() { modelUpdateTimer.restart() }
         function onOnlyGroupWhenFullChanged() { modelUpdateTimer.restart() }
-        function onSeparateLaunchersChanged() { modelUpdateTimer.restart() }
     }
 
     property Task toolTipOpenedByClick
@@ -233,6 +241,7 @@ PlasmoidItem {
             if (!tasks._isApplyingConfig) {
                 tasks._isInternalLauncherUpdate = true;
                 Plasmoid.configuration.launchers = launcherList;
+                Plasmoid.configuration.writeConfig(); // Force save to disk for KCM sync
                 // Defer reset to ensure the config change signal has finished propagating
                 Qt.callLater(() => { if (tasks) tasks._isInternalLauncherUpdate = false; });
             }
@@ -253,6 +262,7 @@ PlasmoidItem {
             groupingAppIdBlacklist = Plasmoid.configuration.groupingAppIdBlacklist;
             groupingLauncherUrlBlacklist = Plasmoid.configuration.groupingLauncherUrlBlacklist;
             tasks.applyModelConfiguration();
+            startupTimer.start();
         }
     }
 
@@ -303,10 +313,10 @@ PlasmoidItem {
         // The above is now handled by filteredTasksModel proxy to prevent crashes.
         tasks.tasksModel.filterNotMinimized = false;
         
-        tasks.tasksModel.hideActivatedLaunchers = (tasks.iconsOnly || Plasmoid.configuration.hideLauncherOnStart);
+        tasks.tasksModel.hideActivatedLaunchers = tasks.iconsOnly;
         tasks.tasksModel.sortMode = tasks.sortModeEnumValue(Plasmoid.configuration.sortingStrategy);
-        tasks.tasksModel.launchInPlace = (tasks.iconsOnly && Plasmoid.configuration.sortingStrategy === 1);
-        tasks.tasksModel.separateLaunchers = false;
+        tasks.tasksModel.launchInPlace = (Plasmoid.configuration.sortingStrategy === 1);
+        tasks.tasksModel.separateLaunchers = (Plasmoid.configuration.sortingStrategy === 0 || tasks._initialStartup);
 
         tasks.tasksModel.groupMode = tasks.groupModeEnumValue(Plasmoid.configuration.groupingStrategy);
         tasks.tasksModel.groupInline = !Plasmoid.configuration.groupPopups && !tasks.iconsOnly;
@@ -317,14 +327,7 @@ PlasmoidItem {
 
 
     function sortModeEnumValue(index) {
-        switch (index) {
-            case 0: return TaskManager.TasksModel.SortDisabled;
-            case 1: return TaskManager.TasksModel.SortManual;
-            case 2: return TaskManager.TasksModel.SortAlpha;
-            case 3: return TaskManager.TasksModel.SortVirtualDesktop;
-            case 4: return TaskManager.TasksModel.SortActivity;
-            default: return TaskManager.TasksModel.SortDisabled;
-        }
+        return (index === 1) ? TaskManager.TasksModel.SortManual : TaskManager.TasksModel.SortDisabled;
     }
 
     function groupModeEnumValue(index) {

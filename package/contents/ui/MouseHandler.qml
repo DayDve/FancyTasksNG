@@ -49,7 +49,7 @@ DropArea {
             return;
         }
 
-        if (above.model) {
+        if (above.model && Plasmoid.configuration.sortingStrategy === 1) {
             const dragSource = dropArea.tasks.dragSource;
             if (dragSource && dragSource.model) {
                 const tasks = dropArea.tasks;
@@ -132,9 +132,15 @@ DropArea {
             const dragSource = dropArea.tasks.dragSource;
             if (dragSource && dropArea.tasks.dropIndex !== -1) {
                 let targetProxyIndex = dropArea.tasks.dropIndex;
-                if (targetProxyIndex >= dropArea.proxyModel.count) {
-                    targetProxyIndex = dropArea.proxyModel.count - 1;
+
+                // If moving forward, adjust the target index to account for the gap left by the moved item.
+                // This ensures that "dropping between items" lands the item in the expected spot.
+                if (targetProxyIndex > dragSource.index) {
+                    targetProxyIndex--;
                 }
+
+                // Safety clamp
+                targetProxyIndex = Math.max(0, Math.min(targetProxyIndex, dropArea.proxyModel.count - 1));
 
                 // Get the source indices from the proxy model
                 const fromIdx = dropArea.proxyModel.mapToSource(dropArea.proxyModel.index(dragSource.index, 0));

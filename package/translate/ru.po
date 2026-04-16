@@ -244,36 +244,12 @@ msgid "Group only when the Task Manager is full"
 msgstr "Группировать только при заполнении панели"
 
 #: ../contents/config/ConfigBehavior.qml
-msgid "Sort:"
-msgstr "Сортировка:"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Do not sort"
-msgstr "Не сортировать"
+msgid "Allow manual task reordering"
+msgstr "Разрешить ручную сортировку задач"
 
 #: ../contents/config/ConfigBehavior.qml
 msgid "Manually"
 msgstr "Вручную"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Alphabetically"
-msgstr "По алфавиту"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "By desktop"
-msgstr "По рабочим столам"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "By activity"
-msgstr "По комнатам"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Keep launchers separate"
-msgstr "Держать значки запуска отдельно"
-
-#: ../contents/config/ConfigBehavior.qml
-msgid "Hide launchers after application startup"
-msgstr "Скрывать значки запуска после запуска приложения"
 
 #: ../contents/config/ConfigBehavior.qml
 msgid "Clicking active task minimizes the task"
