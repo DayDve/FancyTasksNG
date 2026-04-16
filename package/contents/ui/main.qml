@@ -625,8 +625,8 @@ PlasmoidItem {
         mainItem: Item {
             id: winContainer
 
-            readonly property real targetWidth: (toolTipInstance.item ? toolTipInstance.item.implicitWidth : 0) + winBgFrame.margins.left + winBgFrame.margins.right
-            readonly property real targetHeight: (toolTipInstance.item ? toolTipInstance.item.implicitHeight : 0) + winBgFrame.margins.top + winBgFrame.margins.bottom
+            readonly property real targetWidth: toolTipInstance.implicitWidth + winBgFrame.margins.left + winBgFrame.margins.right
+            readonly property real targetHeight: toolTipInstance.implicitHeight + winBgFrame.margins.top + winBgFrame.margins.bottom
 
             readonly property bool isBottom: tasks.effectiveLocation === PlasmaCore.Types.BottomEdge
             readonly property bool isTop: tasks.effectiveLocation === PlasmaCore.Types.TopEdge

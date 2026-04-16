@@ -170,13 +170,15 @@ Loader {
 
             ColumnLayout {
                 id: singleLayout
-                anchors.fill: parent
                 spacing: Kirigami.Units.smallSpacing
                 
                 Item {
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillWidth: true
-                    Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
+                    Layout.leftMargin: Kirigami.Units.gridUnit / 2
+                    Layout.rightMargin: Kirigami.Units.gridUnit / 2
+                    Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth - Layout.leftMargin - Layout.rightMargin
+                    implicitWidth: nameLabel.implicitWidth + (badge.visible ? badge.implicitWidth + Kirigami.Units.smallSpacing : 0)
                     implicitHeight: nameLabel.implicitHeight
                     visible: toolTipDelegate.calculatedAppName.length > 0 && (!toolTipDelegate.isWin || toolTipDelegate.showThumbnails)
                     opacity: 0.8
@@ -184,8 +186,6 @@ Loader {
                     PlasmaComponents3.Label {
                         id: nameLabel
                         anchors.horizontalCenter: parent.horizontalCenter
-                        // Ensure it stays centered by leaving space on both sides for the badge.
-                        width: Math.min(implicitWidth, parent.width - (badge.visible ? (badge.implicitWidth + Kirigami.Units.smallSpacing) * 2 : 0))
                         
                         text: toolTipDelegate.calculatedAppName
                         font.bold: true
@@ -210,7 +210,9 @@ Loader {
             PlasmaComponents3.Label {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
-                Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
+                Layout.leftMargin: Kirigami.Units.gridUnit / 2
+                Layout.rightMargin: Kirigami.Units.gridUnit / 2
+                Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth - Layout.leftMargin - Layout.rightMargin
                 horizontalAlignment: Text.AlignHCenter
                 
                 text: toolTipDelegate.generateSubText()
@@ -280,7 +282,6 @@ Loader {
 
             ColumnLayout {
                 id: groupLayout
-                anchors.fill: parent
                 spacing: Kirigami.Units.smallSpacing
                 
                 readonly property int safeCount: toolTipDelegate.windows.length > 0 ? toolTipDelegate.windows.length : 1
@@ -295,7 +296,10 @@ Loader {
                 Item {
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillWidth: true
-                    Layout.maximumWidth: groupLayout.contentTargetWidth
+                    Layout.leftMargin: Kirigami.Units.gridUnit / 2
+                    Layout.rightMargin: Kirigami.Units.gridUnit / 2
+                    Layout.maximumWidth: groupLayout.contentTargetWidth - Layout.leftMargin - Layout.rightMargin
+                    implicitWidth: groupNameLabel.implicitWidth + (groupBadge.visible ? groupBadge.implicitWidth + Kirigami.Units.smallSpacing : 0)
                     implicitHeight: groupNameLabel.implicitHeight
                     visible: toolTipDelegate.calculatedAppName.length > 0 && toolTipDelegate.showThumbnails
                     opacity: 0.8
@@ -303,7 +307,6 @@ Loader {
                     PlasmaComponents3.Label {
                         id: groupNameLabel
                         anchors.horizontalCenter: parent.horizontalCenter
-                        width: Math.min(implicitWidth, parent.width - (groupBadge.visible ? (groupBadge.implicitWidth + Kirigami.Units.smallSpacing) * 2 : 0))
                         
                         text: toolTipDelegate.calculatedAppName
                         font.bold: true
@@ -328,7 +331,9 @@ Loader {
             PlasmaComponents3.Label {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
-                Layout.maximumWidth: groupLayout.contentTargetWidth
+                Layout.leftMargin: Kirigami.Units.gridUnit / 2
+                Layout.rightMargin: Kirigami.Units.gridUnit / 2
+                Layout.maximumWidth: groupLayout.contentTargetWidth - Layout.leftMargin - Layout.rightMargin
                 horizontalAlignment: Text.AlignHCenter
                 
                 text: toolTipDelegate.generateSubText()
