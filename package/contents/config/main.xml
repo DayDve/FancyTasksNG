@@ -31,6 +31,10 @@
       <label>Whether to unhide if a window wants attention.</label>
       <default>true</default>
     </entry>
+    <entry name="animateAttentionStatus" type="Bool">
+      <label>Animate jumping icon when requesting attention</label>
+      <default>true</default>
+    </entry>
     <entry name="groupingStrategy" type="Enum">
       <label
             >How tasks are grouped: 0 = Do Not Group, 1 = By Program Name</label>

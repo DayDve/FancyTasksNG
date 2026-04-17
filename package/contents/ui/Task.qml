@@ -850,6 +850,35 @@ Item {
                     easing.type: Easing.InOutQuad
                 }
             }
+
+            transform: Translate {
+                id: attentionTranslate
+                y: 0
+            }
+
+            SequentialAnimation {
+                id: attentionAnimation
+                running: task.model && task.model.IsDemandingAttention && tasksRoot.iconsOnly && Plasmoid.configuration.animateAttentionStatus
+                loops: Animation.Infinite
+
+                NumberAnimation {
+                    target: attentionTranslate
+                    property: "y"
+                    to: -Kirigami.Units.gridUnit / 3.5
+                    duration: 300
+                    easing.type: Easing.OutQuad
+                }
+                NumberAnimation {
+                    target: attentionTranslate
+                    property: "y"
+                    to: 0
+                    duration: 400
+                    easing.type: Easing.OutBounce
+                }
+                PauseAnimation {
+                    duration: 1500
+                }
+            }
             roundToIconSize: false
             active: task.highlighted
             enabled: true

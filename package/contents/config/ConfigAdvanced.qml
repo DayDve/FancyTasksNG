@@ -69,6 +69,32 @@ ConfigPage {
                 Item { height: Kirigami.Units.largeSpacing }
 
                 Label {
+                    text: Wrappers.i18n("Panel Settings:")
+                    opacity: panelSettingsEnabled ? 1.0 : 0.6
+
+                    readonly property bool panelSettingsEnabled: Plasmoid.location !== PlasmaCore.Types.Floating
+                }
+
+                CheckBox {
+                    id: cfg_unhideOnAttention
+                    text: Wrappers.i18n("Unhide when a window wants attention")
+                    enabled: Plasmoid.location !== PlasmaCore.Types.Floating
+                    checked: cfg_page.cfg_unhideOnAttention
+                    onToggled: cfg_page.cfg_unhideOnAttention = checked
+                }
+
+                CheckBox {
+                    id: cfg_animateAttentionStatus
+                    text: Wrappers.i18n("Animate task icon when a window wants attention")
+                    enabled: Plasmoid.location !== PlasmaCore.Types.Floating
+                    checked: cfg_page.cfg_animateAttentionStatus
+                    onToggled: cfg_page.cfg_animateAttentionStatus = checked
+                    visible: cfg_page.cfg_iconOnly === 1
+                }
+
+                Item { height: Kirigami.Units.largeSpacing }
+
+                Label {
                     text: Wrappers.i18n("Layout settings:")
                     opacity: fillEnabled ? 1.0 : 0.6
 
@@ -113,6 +139,30 @@ ConfigPage {
                         ]
                         currentIndex: cfg_page.cfg_fillAlignment
                         onActivated: (index) => cfg_page.cfg_fillAlignment = index
+                    }
+                }
+
+                Item { height: Kirigami.Units.largeSpacing }
+
+                Label {
+                    text: Wrappers.i18n("Context menu:")
+                }
+
+                CheckBox {
+                    id: cfg_hideMoveToDesktopMenuWithOneDesktop
+                    text: Wrappers.i18n("Hide 'Move to Desktop' if only one virtual desktop is used")
+                    checked: cfg_page.cfg_hideMoveToDesktopMenuWithOneDesktop
+                    onToggled: cfg_page.cfg_hideMoveToDesktopMenuWithOneDesktop = checked
+
+                    Layout.fillWidth: true
+
+                    contentItem: Text {
+                        text: cfg_hideMoveToDesktopMenuWithOneDesktop.text
+                        font: cfg_hideMoveToDesktopMenuWithOneDesktop.font
+                        color: Kirigami.Theme.textColor
+                        wrapMode: Text.WordWrap
+                        verticalAlignment: Text.AlignVCenter
+                        leftPadding: cfg_hideMoveToDesktopMenuWithOneDesktop.indicator.width + cfg_hideMoveToDesktopMenuWithOneDesktop.spacing
                     }
                 }
             } // FormLayout
