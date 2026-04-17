@@ -625,6 +625,7 @@ Item {
 
         // Title Overlay (Top-Left)
         Item {
+            id: titleOverlayContainer
             z: 9999
             visible: root.useOverlayStyle && toolTipDelegate.isWin && titleOverlayLabel.text.length > 0
             
@@ -708,8 +709,8 @@ Item {
             icon.name: "window-close"
             display: PlasmaComponents3.AbstractButton.IconOnly
             
-            width: Kirigami.Units.iconSizes.smallMedium
-            height: Kirigami.Units.iconSizes.smallMedium
+            width: height
+            height: titleOverlayContainer.height
 
             background: Item {
                 Rectangle {
