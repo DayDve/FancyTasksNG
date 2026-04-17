@@ -419,12 +419,15 @@ Item {
     }
 
     function closeTooltip(): void {
-        tasksRoot.currentHoveredTask = null;
         task.toolTipOpen = false;
-        tasksRoot.toolTipOpenedByClick = null;
+        
+        // Use immediate hide if available to prevent animation from stealing focus
         // qmllint disable missing-property
-        if (typeof task.hideImmediately === "function") {
-            task.hideImmediately();
+        if (typeof tasksRoot.hideTooltipImmediately === "function") {
+            tasksRoot.hideTooltipImmediately();
+        } else {
+            tasksRoot.currentHoveredTask = null;
+            tasksRoot.toolTipOpenedByClick = null;
         }
         // qmllint enable missing-property
     }

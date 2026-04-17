@@ -92,6 +92,19 @@ PlasmoidItem {
     // PERSIST PARENT FOR FADE-OUT ANIMATION
     property Item lastTooltipParent: null
 
+    property bool tooltipAnimationEnabled: true
+
+    function hideTooltipImmediately() {
+        tasks.tooltipAnimationEnabled = false;
+        tasks.currentHoveredTask = null;
+        tasks.toolTipOpenedByClick = null;
+        Qt.callLater(() => {
+            if (tasks) {
+                tasks.tooltipAnimationEnabled = true;
+            }
+        });
+    }
+
     // Key: WinId, Value: ItemGrabResult
     property var thumbnailCache: ({})
 
@@ -636,7 +649,7 @@ PlasmoidItem {
         // Use lastTooltipParent to keep position during FadeOut (Fallback, overridden by visualParent binding below)
 
         location: tasks.effectiveLocation
-        type: PlasmaCore.Dialog.AppletPopup
+        type: PlasmaCore.Dialog.Tooltip
 
         backgroundHints: PlasmaCore.Types.NoBackground
         flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WA_TranslucentBackground | Qt.BypassWindowManagerHint
@@ -672,6 +685,7 @@ PlasmoidItem {
 
             opacity: windowTooltipDialog.shouldShow ? 1 : 0
             Behavior on opacity {
+                enabled: tasks.tooltipAnimationEnabled
                 NumberAnimation {
                     duration: Kirigami.Units.longDuration
                     easing.type: Easing.OutCubic
