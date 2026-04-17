@@ -33,30 +33,22 @@ ConfigPage {
         Kirigami.FormLayout {
             width: parent.width - Kirigami.Units.gridUnit * 2
 
-            Label {
-                text: Wrappers.i18n("Group:")
-            }
-            ComboBox {
+            CheckBox {
                 id: cfg_groupingStrategy
-                Layout.fillWidth: true
-                Layout.minimumWidth: Kirigami.Units.gridUnit * 14
-                model: [
-                    Wrappers.i18n("Do not group"),
-                    Wrappers.i18n("By program name")
-                ]
-                currentIndex: cfg_page.cfg_groupingStrategy
-                onActivated: (index) => cfg_page.cfg_groupingStrategy = index
+                text: Wrappers.i18n("Group windows by program name")
+                checked: cfg_page.cfg_groupingStrategy === 1
+                onToggled: cfg_page.cfg_groupingStrategy = checked ? 1 : 0
             }
 
             Item { height: Kirigami.Units.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Clicking group button:")
-                visible: (!cfg_page.cfg_iconOnly) && cfg_groupingStrategy.currentIndex > 0
+                visible: (!cfg_page.cfg_iconOnly) && cfg_groupingStrategy.checked
             }
             CheckBox {
                 id: cfg_groupPopups
-                visible: (!cfg_page.cfg_iconOnly) && cfg_groupingStrategy.currentIndex > 0
+                visible: (!cfg_page.cfg_iconOnly) && cfg_groupingStrategy.checked
                 text: Wrappers.i18n("Combine into single button")
                 checked: cfg_page.cfg_groupPopups
                 onToggled: cfg_page.cfg_groupPopups = checked
@@ -64,7 +56,7 @@ ConfigPage {
 
             CheckBox {
                 id: cfg_onlyGroupWhenFull
-                visible: (!cfg_page.cfg_iconOnly) && cfg_groupingStrategy.currentIndex > 0 && cfg_groupPopups.checked
+                visible: (!cfg_page.cfg_iconOnly) && cfg_groupingStrategy.checked && cfg_groupPopups.checked
                 text: Wrappers.i18n("Group only when the Task Manager is full")
                 Accessible.onPressAction: toggle()
                 checked: cfg_page.cfg_onlyGroupWhenFull

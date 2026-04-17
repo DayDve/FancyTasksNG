@@ -1096,3 +1096,6 @@ msgstr "Анимация кнопки окна требующего вниман
 
 msgid "Panel Settings:"
 msgstr "Настройки панели:"
+
+msgid "Group windows by program name"
+msgstr "Группировать окна по имени программы"
