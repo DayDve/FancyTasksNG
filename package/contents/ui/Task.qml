@@ -32,6 +32,21 @@ Item {
         NumberAnimation { duration: Kirigami.Units.shortDuration }
     }
 
+    Behavior on x {
+        enabled: !task.tasksRoot.dragSource
+        NumberAnimation {
+            duration: 500
+            easing.type: Easing.OutCubic
+        }
+    }
+    Behavior on y {
+        enabled: !task.tasksRoot.dragSource
+        NumberAnimation {
+            duration: 500
+            easing.type: Easing.OutCubic
+        }
+    }
+
     readonly property bool isMetro: Plasmoid.configuration.indicatorStyle === 0
     readonly property bool isCiliora: Plasmoid.configuration.indicatorStyle === 1
     readonly property bool isDashes: Plasmoid.configuration.indicatorStyle === 2
@@ -98,6 +113,8 @@ Item {
         bool audioIndicatorsEnabled: Plasmoid.configuration.indicateAudioStreams
     readonly property bool hasAudioStream: task.audioStreams.length > 0
     readonly property bool playingAudio: task.hasAudioStream && task.audioStreams.some(item => !item.corked)
+    readonly property var winIdList: (task.model && task.model.WinIdList) ? task.model.WinIdList.slice() : []
+    property bool wasMiddleClicked: false
     readonly property bool muted: task.hasAudioStream && task.audioStreams.every(item => item.muted)
 
     readonly property bool highlighted: (task.inPopup && activeFocus) ||
@@ -200,11 +217,19 @@ Item {
                 --task.tasksRoot.taskList.animationsRunning;
             }
         }
+        ScriptAction {
+            script: {
+                translateTransform.x = moveAnim.x;
+                translateTransform.y = moveAnim.y;
+            }
+        }
+        PauseAnimation {
+            duration: 250
+        }
         ParallelAnimation {
             NumberAnimation {
                 target: translateTransform
                 properties: "x"
-                from: moveAnim.x
                 to: 0
                 easing.type: Easing.OutQuad
                 duration: Kirigami.Units.longDuration
@@ -212,7 +237,6 @@ Item {
             NumberAnimation {
                 target: translateTransform
                 properties: "y"
-                from: moveAnim.y
                 to: 0
                 easing.type: Easing.OutQuad
                 duration: Kirigami.Units.longDuration
@@ -589,7 +613,7 @@ Item {
             if (Plasmoid.configuration.middleClickAction === 2 /* NewInstance */) {
                 task.tasksRoot.tasksModel.requestNewInstance(task.modelIndex());
             } else if (Plasmoid.configuration.middleClickAction === 1 /* Close */) {
-                task.tasksRoot.taskClosedWithMouseMiddleButton = task.model.WinIdList.slice();
+                task.wasMiddleClicked = true;
                 task.tasksRoot.tasksModel.requestClose(task.modelIndex());
             } else if (Plasmoid.configuration.middleClickAction === 3 /* ToggleMinimized */) {
                 task.tasksRoot.tasksModel.requestToggleMinimized(task.modelIndex());

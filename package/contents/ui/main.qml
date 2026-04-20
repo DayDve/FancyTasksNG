@@ -1,18 +1,16 @@
 /*
-    SPDX-FileCopyrightText: 2012-2016 Eike Hein <hein@kde.org>
+    SPDX-FileCopyrightText: 2012-2013 Eike Hein <hein@kde.org>
     SPDX-FileCopyrightText: 2025-2026 Vitaliy Elin <daydve@smbit.pro>
 
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-pragma ComponentBehavior: Bound
-
 import QtQuick
 import QtQuick.Layouts
-
+import QtQuick.Templates as T
 import org.kde.plasma.plasmoid
-import org.kde.plasma.components as PlasmaComponents3
 import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.components as PlasmaComponents3
 import org.kde.ksvg as KSvg
 import org.kde.plasma.private.mpris as Mpris
 import org.kde.kirigami as Kirigami
@@ -70,17 +68,33 @@ PlasmoidItem {
     Connections {
         target: Plasmoid.configuration
         function onShowBadgesChanged() {
-            tasks.showBadges = Plasmoid.configuration.showBadges
+            tasks.showBadges = Plasmoid.configuration.showBadges;
         }
 
-        function onShowOnlyCurrentDesktopChanged() { modelUpdateTimer.restart() }
-        function onShowOnlyCurrentScreenChanged() { modelUpdateTimer.restart() }
-        function onShowOnlyCurrentActivityChanged() { modelUpdateTimer.restart() }
-        function onShowOnlyMinimizedChanged() { modelUpdateTimer.restart() }
-        function onSortingStrategyChanged() { modelUpdateTimer.restart() }
-        function onGroupingStrategyChanged() { modelUpdateTimer.restart() }
-        function onGroupPopupsChanged() { modelUpdateTimer.restart() }
-        function onOnlyGroupWhenFullChanged() { modelUpdateTimer.restart() }
+        function onShowOnlyCurrentDesktopChanged() {
+            modelUpdateTimer.restart();
+        }
+        function onShowOnlyCurrentScreenChanged() {
+            modelUpdateTimer.restart();
+        }
+        function onShowOnlyCurrentActivityChanged() {
+            modelUpdateTimer.restart();
+        }
+        function onShowOnlyMinimizedChanged() {
+            modelUpdateTimer.restart();
+        }
+        function onSortingStrategyChanged() {
+            modelUpdateTimer.restart();
+        }
+        function onGroupingStrategyChanged() {
+            modelUpdateTimer.restart();
+        }
+        function onGroupPopupsChanged() {
+            modelUpdateTimer.restart();
+        }
+        function onOnlyGroupWhenFullChanged() {
+            modelUpdateTimer.restart();
+        }
     }
 
     property Task toolTipOpenedByClick
@@ -129,7 +143,7 @@ PlasmoidItem {
     readonly property Component pulseAudioComponent: Qt.createComponent("PulseAudio.qml")
 
     property bool needLayoutRefresh: false
-    property var taskClosedWithMouseMiddleButton: []
+
     property alias taskList: taskList
     property alias effectWatcher: effectWatcher
     property alias pulseAudio: pulseAudio
@@ -138,6 +152,7 @@ PlasmoidItem {
     property alias taskFrame: taskFrame
     property alias filteredTasksModel: filteredTasksModel
     property alias busyIndicator: busyIndicator
+    readonly property Component explosionComponent: Qt.createComponent("ExplosionEffect.qml")
 
     preferredRepresentation: fullRepresentation
     Plasmoid.constraintHints: Plasmoid.CanFillArea
@@ -182,7 +197,8 @@ PlasmoidItem {
     signal requestLayout
     signal windowsHovered(var winIds, bool hovered)
     function activateWindowView(winIds) {
-        if (!effectWatcher.registered) return;
+        if (!effectWatcher.registered)
+            return;
         cancelHighlightWindows();
         return DBus.SessionBus.asyncCall({
             service: "org.kde.KWin.Effect.WindowView1",
@@ -226,10 +242,11 @@ PlasmoidItem {
     property bool _isInternalLauncherUpdate: false
     property bool _isPublishingGeometries: false
     function publishIconGeometries(taskItems: var): void {
-        if (!backend || _isPublishingGeometries) return;
+        if (!backend || _isPublishingGeometries)
+            return;
         if (TaskTools.taskManagerInstanceCount >= 2)
             return;
-        
+
         _isPublishingGeometries = true;
         try {
             for (let i = 0; i < taskItems.length - 1; ++i) {
@@ -256,7 +273,10 @@ PlasmoidItem {
                 Plasmoid.configuration.launchers = launcherList;
                 Plasmoid.configuration.writeConfig(); // Force save to disk for KCM sync
                 // Defer reset to ensure the config change signal has finished propagating
-                Qt.callLater(() => { if (tasks) tasks._isInternalLauncherUpdate = false; });
+                Qt.callLater(() => {
+                    if (tasks)
+                        tasks._isInternalLauncherUpdate = false;
+                });
             }
         }
         onGroupingAppIdBlacklistChanged: {
@@ -296,7 +316,6 @@ PlasmoidItem {
         }
     }
 
-    
     // Invalidate filter when config changes
     Connections {
         target: Plasmoid.configuration
@@ -315,7 +334,8 @@ PlasmoidItem {
     }
 
     function applyModelConfiguration() {
-        if (!tasks.tasksModel) return;
+        if (!tasks.tasksModel)
+            return;
 
         tasks._isApplyingConfig = true;
 
@@ -325,7 +345,7 @@ PlasmoidItem {
         // tasks.tasksModel.filterNotMinimized = Plasmoid.configuration.showOnlyMinimized;
         // The above is now handled by filteredTasksModel proxy to prevent crashes.
         tasks.tasksModel.filterNotMinimized = false;
-        
+
         tasks.tasksModel.hideActivatedLaunchers = tasks.iconsOnly || tasks.tasksModel.launchInPlace;
         tasks.tasksModel.sortMode = tasks.sortModeEnumValue(Plasmoid.configuration.sortingStrategy);
         tasks.tasksModel.launchInPlace = (Plasmoid.configuration.sortingStrategy === 1);
@@ -338,19 +358,20 @@ PlasmoidItem {
         tasks._isApplyingConfig = false;
     }
 
-
     function sortModeEnumValue(index) {
         return (index === 1) ? TaskManager.TasksModel.SortManual : TaskManager.TasksModel.SortDisabled;
     }
 
     function groupModeEnumValue(index) {
         switch (index) {
-            case 0: return TaskManager.TasksModel.GroupDisabled;
-            case 1: return TaskManager.TasksModel.GroupApplications;
-            default: return TaskManager.TasksModel.GroupDisabled;
+        case 0:
+            return TaskManager.TasksModel.GroupDisabled;
+        case 1:
+            return TaskManager.TasksModel.GroupApplications;
+        default:
+            return TaskManager.TasksModel.GroupDisabled;
         }
     }
-
 
     Loader {
         id: backendLoader
@@ -368,7 +389,7 @@ PlasmoidItem {
         target: tasks.backend
         ignoreUnknownSignals: true
         function onAddLauncher(url) {
-            tasks.addLauncher(url)
+            tasks.addLauncher(url);
         }
     }
 
@@ -409,6 +430,107 @@ PlasmoidItem {
 
     Mpris.Mpris2Model {
         id: mpris2Source
+    }
+
+    readonly property Component ghostIconComponent: Component {
+        Kirigami.Icon {
+            id: ghost
+            opacity: 1
+            Timer {
+                interval: 200
+                running: true
+                onTriggered: ghost.opacity = 0
+            }
+            Behavior on opacity { NumberAnimation { duration: 150 } }
+            Timer {
+                interval: 350
+                running: true
+                onTriggered: ghost.destroy()
+            }
+        }
+    }
+
+    function handleItemRemoval(taskItem) {
+        if (!taskItem) return;
+
+        const w = taskItem.width;
+        const h = taskItem.height;
+        const decoration = taskItem.model.decoration; 
+        const isMiddleClick = taskItem.wasMiddleClicked;
+        
+        let pos = taskItem.mapToItem(tasks, 0, 0);
+
+        // Always create Ghost Icon to fill the hole while buttons wait for transition delay
+        ghostIconComponent.createObject(tasks, {
+            x: pos.x,
+            y: pos.y,
+            width: w,
+            height: h,
+            source: decoration
+        });
+
+        // Only explode if it was a middle-click
+        if (isMiddleClick && Plasmoid.configuration.smokeExplosionOnClose) {
+            const ew = w + 10;
+            const eh = h + 10;
+            let cx = pos.x + w / 2;
+            let cy = pos.y + h / 2;
+
+            if (tasks.effectiveLocation === PlasmaCore.Types.BottomEdge) {
+                cy = pos.y + h - eh / 2;
+            } else if (tasks.effectiveLocation === PlasmaCore.Types.TopEdge) {
+                cy = pos.y + eh / 2;
+            } else if (tasks.effectiveLocation === PlasmaCore.Types.LeftEdge) {
+                cx = pos.x + ew / 2;
+            } else if (tasks.effectiveLocation === PlasmaCore.Types.RightEdge) {
+                cx = pos.x + w - ew / 2;
+            }
+
+            tasks.explosionComponent.createObject(tasks, {
+                centerX: cx,
+                centerY: cy,
+                width: ew,
+                height: eh
+            });
+        }
+    }
+
+    function hasLauncher(url: url): bool {
+        return tasks.tasksModel ? tasks.tasksModel.launcherPosition(url) !== -1 : false;
+    }
+    function addLauncher(url: url): void {
+        if (Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable && tasks.tasksModel)
+            tasks.tasksModel.requestAddLauncher(url);
+    }
+    function removeLauncher(url: url): void {
+        if (Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable && tasks.tasksModel)
+            tasks.tasksModel.requestRemoveLauncher(url);
+    }
+    function activateTaskAtIndex(index: var): void {
+        if (typeof index !== "number")
+            return;
+        const task = taskRepeater.itemAt(index) as Task;
+        if (task)
+            TaskTools.activateTask(task.modelIndex(), task.model, null, task, Plasmoid, tasks, effectWatcher.registered);
+    }
+    function createContextMenu(rootTask, modelIndex, args = {}) {
+        const initialArgs = Object.assign(args, {
+            visualParent: rootTask,
+            modelIndex,
+            mpris2Source,
+            backend,
+            tasksModel: tasks.tasksModel,
+            virtualDesktopInfo,
+            activityInfo
+        });
+        return tasks.contextMenuComponent.createObject(rootTask, initialArgs);
+    }
+    function shouldBeMirrored(reverseMode, layoutDirection, vertical): bool {
+        if (vertical)
+            return layoutDirection === Qt.RightToLeft;
+        if (layoutDirection === Qt.LeftToRight)
+            return reverseMode;
+        return !reverseMode;
     }
 
     Item {
@@ -491,14 +613,20 @@ PlasmoidItem {
             height: tasks.vertical ? 2 : parent.height
             visible: false
             z: 999
-            
+
             Behavior on x {
                 enabled: dropIndicator.visible
-                NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutQuad }
+                NumberAnimation {
+                    duration: Kirigami.Units.shortDuration
+                    easing.type: Easing.OutQuad
+                }
             }
             Behavior on y {
                 enabled: dropIndicator.visible
-                NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutQuad }
+                NumberAnimation {
+                    duration: Kirigami.Units.shortDuration
+                    easing.type: Easing.OutQuad
+                }
             }
         }
 
@@ -517,7 +645,8 @@ PlasmoidItem {
             tasksModel: tasks.tasksModel
             proxyModel: filteredTasksModel
             onUrlsDropped: urls => {
-                if (!tasks.backend) return;
+                if (!tasks.backend)
+                    return;
                 const createLaunchers = urls.every(item => tasks.backend.isApplication(item));
                 if (createLaunchers) {
                     urls.forEach(item => tasks.addLauncher(item));
@@ -583,58 +712,20 @@ PlasmoidItem {
                         tasksRoot: tasks
                     }
                     onItemRemoved: (index, item) => {
-                        const task = item as Task;
-                        if (rootHoverHandler.hovered && index !== taskRepeater.count && 
-                            task.model.WinIdList && task.model.WinIdList.length > 0 && 
-                            tasks.taskClosedWithMouseMiddleButton.includes(task.model.WinIdList[0])) {
-                            tasks.needLayoutRefresh = true;
+                        tasks.needLayoutRefresh = true;
+                    }
+                }
+
+                Connections {
+                    target: filteredTasksModel
+                    function onRowsAboutToBeRemoved(parent, first, last) {
+                        for (let i = first; i <= last; ++i) {
+                            tasks.handleItemRemoval(taskRepeater.itemAt(i));
                         }
-                        tasks.taskClosedWithMouseMiddleButton = [];
                     }
                 }
             }
         }
-    }
-
-    // groupDialogComponent has been entirely replaced by ToolTip text mode
-    readonly property bool supportsLaunchers: true
-
-    function hasLauncher(url: url): bool {
-        return tasks.tasksModel ? tasks.tasksModel.launcherPosition(url) !== -1 : false;
-    }
-    function addLauncher(url: url): void {
-        if (Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable && tasks.tasksModel)
-            tasks.tasksModel.requestAddLauncher(url);
-    }
-    function removeLauncher(url: url): void {
-        if (Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable && tasks.tasksModel)
-            tasks.tasksModel.requestRemoveLauncher(url);
-    }
-    function activateTaskAtIndex(index: var): void {
-        if (typeof index !== "number")
-            return;
-        const task = taskRepeater.itemAt(index) as Task;
-        if (task)
-            TaskTools.activateTask(task.modelIndex(), task.model, null, task, Plasmoid, this, effectWatcher.registered);
-    }
-    function createContextMenu(rootTask, modelIndex, args = {}) {
-        const initialArgs = Object.assign(args, {
-            visualParent: rootTask,
-            modelIndex,
-            mpris2Source,
-            backend,
-            tasksModel: tasks.tasksModel,
-            virtualDesktopInfo,
-            activityInfo
-        });
-        return contextMenuComponent.createObject(rootTask, initialArgs);
-    }
-    function shouldBeMirrored(reverseMode, layoutDirection, vertical): bool {
-        if (vertical)
-            return layoutDirection === Qt.RightToLeft;
-        if (layoutDirection === Qt.LeftToRight)
-            return reverseMode;
-        return !reverseMode;
     }
 
     Component.onCompleted: {
@@ -646,8 +737,6 @@ PlasmoidItem {
     PlasmaCore.Dialog {
         id: windowTooltipDialog
 
-        // Use lastTooltipParent to keep position during FadeOut (Fallback, overridden by visualParent binding below)
-
         location: tasks.effectiveLocation
         type: PlasmaCore.Dialog.Tooltip
 
@@ -657,7 +746,6 @@ PlasmoidItem {
 
         readonly property bool shouldShow: tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup
         visible: shouldShow || winContainer.opacity > 0
-        // Removed explicit latch for Unified Dialog as it prevents moving to new tasks.
         visualParent: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : tasks.lastTooltipParent
 
         mainItem: Item {
@@ -715,7 +803,6 @@ PlasmoidItem {
                 anchors.leftMargin: winContainer.marginLeft
                 anchors.rightMargin: winContainer.marginRight
 
-                // Emulate SVG margins for layout logic
                 readonly property int tooltipFramePadding: 4
                 readonly property var margins: ({
                         left: tooltipFramePadding,
@@ -758,10 +845,7 @@ PlasmoidItem {
                     isPlayingAudio: taskModel ? (taskModel.IsPlayingAudio === true) : false
                     isMuted: taskModel ? (taskModel.IsMuted === true) : false
 
-                    // Force text-only mode when tooltip was opened by clicking a group
-                    // and the visualization mode is NOT "show thumbnails" (option 1)
-                    forceTextMode: tasks.toolTipOpenedByClick !== null
-                                   && Plasmoid.configuration.groupedTaskVisualization !== 1
+                    forceTextMode: tasks.toolTipOpenedByClick !== null && Plasmoid.configuration.groupedTaskVisualization !== 1
                 }
             }
         }
