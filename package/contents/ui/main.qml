@@ -152,7 +152,9 @@ PlasmoidItem {
     property alias taskFrame: taskFrame
     property alias filteredTasksModel: filteredTasksModel
     property alias busyIndicator: busyIndicator
-    readonly property Component explosionComponent: Qt.createComponent("ExplosionEffect.qml")
+    ExplosionEffect {
+        id: removalManager
+    }
 
     preferredRepresentation: fullRepresentation
     Plasmoid.constraintHints: Plasmoid.CanFillArea
@@ -432,66 +434,9 @@ PlasmoidItem {
         id: mpris2Source
     }
 
-    readonly property Component ghostIconComponent: Component {
-        Kirigami.Icon {
-            id: ghost
-            opacity: 1
-            Timer {
-                interval: 200
-                running: true
-                onTriggered: ghost.opacity = 0
-            }
-            Behavior on opacity { NumberAnimation { duration: 150 } }
-            Timer {
-                interval: 350
-                running: true
-                onTriggered: ghost.destroy()
-            }
-        }
-    }
-
     function handleItemRemoval(taskItem) {
-        if (!taskItem) return;
-
-        const w = taskItem.width;
-        const h = taskItem.height;
-        const decoration = taskItem.model.decoration; 
-        const isMiddleClick = taskItem.wasMiddleClicked;
-        
-        let pos = taskItem.mapToItem(tasks, 0, 0);
-
-        // Always create Ghost Icon to fill the hole while buttons wait for transition delay
-        ghostIconComponent.createObject(tasks, {
-            x: pos.x,
-            y: pos.y,
-            width: w,
-            height: h,
-            source: decoration
-        });
-
-        // Only explode if it was a middle-click
-        if (isMiddleClick && Plasmoid.configuration.smokeExplosionOnClose) {
-            const ew = w + 10;
-            const eh = h + 10;
-            let cx = pos.x + w / 2;
-            let cy = pos.y + h / 2;
-
-            if (tasks.effectiveLocation === PlasmaCore.Types.BottomEdge) {
-                cy = pos.y + h - eh / 2;
-            } else if (tasks.effectiveLocation === PlasmaCore.Types.TopEdge) {
-                cy = pos.y + eh / 2;
-            } else if (tasks.effectiveLocation === PlasmaCore.Types.LeftEdge) {
-                cx = pos.x + ew / 2;
-            } else if (tasks.effectiveLocation === PlasmaCore.Types.RightEdge) {
-                cx = pos.x + w - ew / 2;
-            }
-
-            tasks.explosionComponent.createObject(tasks, {
-                centerX: cx,
-                centerY: cy,
-                width: ew,
-                height: eh
-            });
+        if (Plasmoid.configuration.smokeExplosionOnClose) {
+            removalManager.spawn(tasks, taskItem, taskItem.wasMiddleClicked);
         }
     }
 

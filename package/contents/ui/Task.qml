@@ -224,7 +224,7 @@ Item {
             }
         }
         PauseAnimation {
-            duration: 250
+            duration: Plasmoid.configuration.smokeExplosionOnClose ? 250 : 0
         }
         ParallelAnimation {
             NumberAnimation {
