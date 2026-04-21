@@ -1,12 +1,7 @@
-/*
-    SPDX-FileCopyrightText: 2018 Kai Uwe Broulik <kde@privat.broulik.de>
-    SPDX-License-Identifier: GPL-2.0-or-later
-*/
-
 import QtQuick
 import org.kde.plasma.components as PlasmaComponents
-import org.kde.plasma.extras as PlasmaExtras
 import org.kde.kirigami as Kirigami
+import org.kde.plasma.plasmoid
 import "code/singletones"
 
 Rectangle {
@@ -16,83 +11,92 @@ Rectangle {
     property alias textColor: label.color
     property int number: 0
     property bool isRound: true
-    property real fontPointSize: 1024
+    property real fontPointSize: 8 // Reduced for better fit in small circles
     property string iconSource: ""
     property bool hovered: false
+    property bool isUrgent: false
+    property bool showFullNumber: false
+    property bool showBackground: true
+    property bool isBold: false
+    property real fontFactor: 0.85
 
-    // Allow overriding the main highlight color (e.g. for muted state)
+    readonly property string defaultNotificationIcon: "notifications-symbolic"
+
+    // Visual state coloring - Bound to theme palette
     property color highlightColor: Kirigami.Theme.highlightColor
+    property color themeTextColor: showBackground ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
+    property color themeBgColor: Kirigami.Theme.backgroundColor
 
-    implicitHeight: Kirigami.Units.gridUnit
-    implicitWidth: {
-        if (iconSource !== "") {
-            return height > 0 ? height : implicitHeight; 
-        }
-        const padding = Math.round(Kirigami.Units.smallSpacing * 1.5);
-        const textWidth = Math.round(label.contentWidth + padding);
-        return isRound ? Math.max(height > 0 ? height : implicitHeight, textWidth) : textWidth;
+    implicitHeight: Math.round(Kirigami.Units.gridUnit * 0.9)
+    
+    width: {
+        if (!showFullNumber) return height;
+        const padding = Math.round(Kirigami.Units.smallSpacing * 2);
+        return Math.max(height, Math.round(label.contentWidth + padding));
     }
 
-    width: isRound ? Math.max(height, implicitWidth) : implicitWidth
-    radius: isRound ? height / 2 : Kirigami.Units.smallSpacing / 2
-    color: Kirigami.Theme.backgroundColor
+    radius: height / 2
+    // Theme-aware background: uses system background color, but stays red for urgent items
+    color: showBackground ? (isUrgent ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.backgroundColor) : "transparent"
 
-    // Background Layer: The colored semi-transparent surface
-    Rectangle {
-        id: coloredBackground
-        anchors.fill: parent
-        radius: parent.radius
-        
-        // Use the custom highlightColor property
-        color: badgeRect.hovered ? Qt.alpha(badgeRect.highlightColor, 0.8) : Qt.alpha(badgeRect.highlightColor, 0.3)
-        border.color: badgeRect.hovered ? badgeRect.highlightColor : Qt.alpha(badgeRect.highlightColor, 0.6)
-        border.width: badgeRect.hovered ? 2 : 1
+    // Bright border using highlight color
+    border.color: showBackground ? (isUrgent ? "transparent" : highlightColor) : "transparent"
+    border.width: hovered ? 2 : 1
+    
+    visible: (number > 0) || (iconSource !== "")
 
-        Behavior on color { ColorAnimation { duration: Kirigami.Units.shortDuration } }
-        Behavior on border.width { NumberAnimation { duration: Kirigami.Units.shortDuration } }
-    }
+    Behavior on color { ColorAnimation { duration: Kirigami.Units.shortDuration } }
+    Behavior on width { NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic } }
 
-    // Plasma Glow Effect
-    PlasmaExtras.Highlight {
-        anchors.fill: parent
-        visible: badgeRect.hovered
-        enabled: visible
-    }
-
-    // Icon (for audio indicator)
+    // Icon Layer: Using Kirigami.Icon
     Kirigami.Icon {
         id: icon
         anchors.centerIn: parent
-        width: Math.round(parent.width * 0.65)
+        // Scale up the icon if there is no background to keep it visible
+        width: Math.round(parent.height * (badgeRect.showBackground ? 0.65 : 0.85))
         height: width
-        source: badgeRect.iconSource
-        visible: badgeRect.iconSource !== ""
         
-        // Make the icon follow the text color or be high-contrast
-        color: Kirigami.Theme.textColor
+        source: badgeRect.iconSource
+        visible: (badgeRect.iconSource !== "") && (badgeRect.number <= 0)
+        
+        smooth: true
+        roundToIconSize: false
+        // Adaptive icon color: white on red background, theme-aware otherwise
+        color: badgeRect.isUrgent ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
+        
+        // Visual feedback for interaction
+        scale: badgeRect.hovered ? 1.2 : 1.0
+        Behavior on scale { NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic } }
     }
 
-    // Number (for original badges)
-    PlasmaComponents.Label {
+    // Text Layer: Using Text with NativeRendering
+    Text {
         id: label
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: text === "…" ? -Math.round(parent.height * 0.22) : 0
+        
         width: implicitWidth
-        height: Math.min(Kirigami.Units.gridUnit * 2, Math.round(parent.height))
+        height: parent.height
+        
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        fontSizeMode: Text.VerticalFit
-        font.pointSize: badgeRect.fontPointSize
-        minimumPointSize: 4
-        visible: badgeRect.iconSource === ""
+        
+        font.pointSize: badgeRect.fontPointSize * badgeRect.fontFactor
+        font.bold: badgeRect.isBold
+        
+        renderType: Text.NativeRendering
+        // Adaptive text color: white on red background, theme-aware otherwise
+        color: badgeRect.isUrgent ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
+        visible: badgeRect.number > 0
+        
         text: {
             if (badgeRect.number < 0) {
-                return Wrappers.i18nc("Invalid number of new messages, overlay, keep short", "—");
-            } else if (badgeRect.number > 9999) {
-                return Wrappers.i18nc("Over 9999 new messages, overlay, keep short", "9,999+");
-            } else {
-                return badgeRect.number.toLocaleString(Qt.locale(), 'f', 0);
+                return Wrappers.i18nc("Invalid", "—");
             }
+            if (!badgeRect.showFullNumber && badgeRect.number > 99) {
+                return "…";
+            }
+            return badgeRect.number.toLocaleString(Qt.locale(), 'f', 0);
         }
-        textFormat: Text.PlainText
     }
 }

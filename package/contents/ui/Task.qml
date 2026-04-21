@@ -25,6 +25,7 @@ import "code/singletones"
 
 Item {
     id: task
+    z: highlighted ? 10 : 0
 
     activeFocusOnTab: true
     opacity: tasksRoot.dragSource === task ? (task.inPopup ? 1.0 : 0.5) : 1.0
@@ -98,12 +99,25 @@ Item {
     property bool inPopup: false
     property bool isStartup: !!(task.model && task.model.IsStartup)
     property bool isWindow: !!(task.model && task.model.IsWindow)
+    readonly property bool isHovered: (tasksRoot && tasksRoot.mouseHandler) ? (tasksRoot.mouseHandler.hoveredItem === task) : false
     property int childCount: (task.model && task.model.ChildCount) ? task.model.ChildCount : 0
     property int previousChildCount: 0
     property alias labelText: label.text
     property var contextMenu: null
     readonly property bool smartLauncherEnabled: !task.inPopup && task.model && !task.model.IsStartup
     property var smartLauncherItem: null
+    property int lastSeenCount: 0
+    property bool hasUnseenNotifications: false
+
+    Connections {
+        target: task.smartLauncherItem
+        function onCountChanged() {
+            if (task.smartLauncherItem.count > task.lastSeenCount) {
+                task.hasUnseenNotifications = true;
+            }
+            task.lastSeenCount = task.smartLauncherItem.count;
+        }
+    }
 
     property Item audioStreamIcon: null
     property var audioStreams: []
@@ -118,7 +132,7 @@ Item {
     readonly property bool muted: task.hasAudioStream && task.audioStreams.every(item => item.muted)
 
     readonly property bool highlighted: (task.inPopup && activeFocus) ||
-        (!task.inPopup && containsMouse) || (tasksRoot.currentHoveredTask === task) || 
+        (!task.inPopup && (containsMouse || isHovered)) || (tasksRoot.currentHoveredTask === task) || 
         (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open)
 
     property int itemIndex: index
@@ -395,7 +409,7 @@ Item {
     Loader {
         id: audioIndicatorLoader
         z: 10
-        active: task.hasAudioStream && audioIndicatorsEnabled
+        active: false // Disabled in favor of unified overlay inside icon
         source: "AudioStream.qml"
         onLoaded: {
             item.iconBox = iconBox;
@@ -650,6 +664,11 @@ Item {
 
     KSvg.FrameSvgItem {
         id: frame
+        onIsHoveredChanged: {
+            if (isHovered) {
+                task.hasUnseenNotifications = false;
+            }
+        }
 
         Kirigami.ImageColors {
             id: imageColors
@@ -785,24 +804,83 @@ Item {
 
 
 
-    Loader {
+    Item {
         id: iconBox
 
         anchors {
-            left: parent.left
-            leftMargin: adjustMargin(true, parent.width, LayoutMetrics.leftMargin())
-            top: parent.top
+            fill: tasksRoot.iconsOnly ? parent : undefined
+            left: tasksRoot.iconsOnly ? undefined : parent.left
+            top: tasksRoot.iconsOnly ? undefined : parent.top
+            bottom: tasksRoot.iconsOnly ? undefined : parent.bottom
+            leftMargin: adjustMargin(true, tasksRoot.iconsOnly ? parent.width : parent.height, LayoutMetrics.leftMargin())
             topMargin: adjustMargin(false, parent.height, LayoutMetrics.topMargin())
+            rightMargin: tasksRoot.iconsOnly ? adjustMargin(true, parent.width, LayoutMetrics.rightMargin()) : 0
+            bottomMargin: adjustMargin(false, parent.height, LayoutMetrics.bottomMargin())
+        }
+        width: tasksRoot.iconsOnly ? undefined : height
+
+        property int growSize: ((task.containsMouse || (tasksRoot.currentHoveredTask === task && tasksRoot.isTooltipHovered) || (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open)) && tasksRoot.iconsOnly && Plasmoid.configuration.taskHoverEffect) ?
+            Plasmoid.configuration.iconZoomFactor : 0
+
+        Behavior on growSize {
+            NumberAnimation {
+                duration: Plasmoid.configuration.iconZoomDuration
+                easing.type: Easing.InOutQuad
+            }
         }
 
-        width: task.inPopup ?
-            Math.max(Kirigami.Units.iconSizes.sizeForLabels, Kirigami.Units.iconSizes.medium) : Math.min((task.parent as TaskList)?.minimumWidth ?? 0, task.height)
-        height: task.inPopup ?
-            width : (parent.height - adjustMargin(false, parent.height, LayoutMetrics.topMargin()) - adjustMargin(false, parent.height, LayoutMetrics.bottomMargin()))
+        // Unified transform for jump and zoom
+        transform: [
+            Translate {
+                id: attentionTranslate
+                y: 0
+            },
+            Scale {
+                id: zoomScale
+                // To keep the margin constant, the origin must be at the icon's edge nearest to the panel
+                origin.x: {
+                    if (Plasmoid.configuration.iconScaleFromEdge) {
+                        if (tasks.effectiveLocation === PlasmaCore.Types.LeftEdge) return icon.anchors.leftMargin;
+                        if (tasks.effectiveLocation === PlasmaCore.Types.RightEdge) return iconBox.width - icon.anchors.rightMargin;
+                    }
+                    return iconBox.width / 2;
+                }
+                origin.y: {
+                    if (Plasmoid.configuration.iconScaleFromEdge) {
+                        if (tasks.effectiveLocation === PlasmaCore.Types.TopEdge) return icon.anchors.topMargin;
+                        if (tasks.effectiveLocation === PlasmaCore.Types.BottomEdge) return iconBox.height - icon.anchors.bottomMargin;
+                    }
+                    return iconBox.height / 2;
+                }
+                xScale: 1 + (iconBox.growSize / Math.max(1, iconBox.height))
+                yScale: xScale
+            }
+        ]
 
-        asynchronous: true
-        active: plasmoid.configuration.showBadges && height >= Kirigami.Units.iconSizes.small && task.smartLauncherItem && task.smartLauncherItem["countVisible"]
-        source: "TaskBadgeOverlay.qml"
+        SequentialAnimation {
+            id: attentionAnimation
+            running: task.model && task.model.IsDemandingAttention && tasksRoot.iconsOnly && Plasmoid.configuration.animateAttentionStatus && !task.highlighted
+            loops: Animation.Infinite
+            onRunningChanged: if (!running) attentionTranslate.y = 0
+
+            NumberAnimation {
+                target: attentionTranslate
+                property: "y"
+                to: -Kirigami.Units.gridUnit / 3.5
+                duration: 300
+                easing.type: Easing.OutQuad
+            }
+            NumberAnimation {
+                target: attentionTranslate
+                property: "y"
+                to: 0
+                duration: 400
+                easing.type: Easing.OutBounce
+            }
+            PauseAnimation {
+                duration: 1500
+            }
+        }
 
         function adjustMargin(isVertical: bool, size: real, margin: real): real {
             if (!size) {
@@ -819,9 +897,7 @@ Item {
 
         Kirigami.Icon {
             id: icon
-            property int growSize: (active && tasksRoot.iconsOnly && Plasmoid.configuration.taskHoverEffect) ?
-                Plasmoid.configuration.iconZoomFactor : 0
-
+            
             property bool sizeOverride: Plasmoid.configuration.iconSizeOverride
             property int fixedSize: Plasmoid.configuration.iconSizePx
             property real iconScale: Plasmoid.configuration.iconScale / 100
@@ -833,10 +909,10 @@ Item {
             readonly property real edgeMarginH: scaleFromEdge ? edgeOffset : (parent.width - baseWidth) / 2
             readonly property real edgeMarginV: scaleFromEdge ? edgeOffset : (parent.height - baseHeight) / 2
 
-            width: baseWidth + growSize
-            height: baseHeight + growSize
+            // Icon size is now stable, the container scales instead
+            width: baseWidth
+            height: baseHeight
 
-            // Default anchors (fallback/bottom)
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: edgeMarginV
@@ -868,41 +944,6 @@ Item {
                 }
             ]
 
-            Behavior on growSize {
-                NumberAnimation {
-                    duration: Plasmoid.configuration.iconZoomDuration
-                    easing.type: Easing.InOutQuad
-                }
-            }
-
-            transform: Translate {
-                id: attentionTranslate
-                y: 0
-            }
-
-            SequentialAnimation {
-                id: attentionAnimation
-                running: task.model && task.model.IsDemandingAttention && tasksRoot.iconsOnly && Plasmoid.configuration.animateAttentionStatus
-                loops: Animation.Infinite
-
-                NumberAnimation {
-                    target: attentionTranslate
-                    property: "y"
-                    to: -Kirigami.Units.gridUnit / 3.5
-                    duration: 300
-                    easing.type: Easing.OutQuad
-                }
-                NumberAnimation {
-                    target: attentionTranslate
-                    property: "y"
-                    to: 0
-                    duration: 400
-                    easing.type: Easing.OutBounce
-                }
-                PauseAnimation {
-                    duration: 1500
-                }
-            }
             roundToIconSize: false
             active: task.highlighted
             enabled: true
@@ -923,30 +964,6 @@ Item {
             autoPaddingEnabled: true
         }
 
-        states: [
-            // Using a state transition avoids a binding loop between label.visible and
-            // the text label margin, which derives from the icon width.
-            State {
-                name: "standalone"
-                when: !label.visible && task.parent
-
-                AnchorChanges {
-                    target: iconBox
-                    anchors.left: undefined
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-
-                PropertyChanges {
-                    target: iconBox
-                    anchors.leftMargin: 0
-                    // Ensure iconBox width doesn't limit the icon size in classic mode launcher buttons
-                    width: (task.model.IsLauncher && !tasksRoot.iconsOnly) ?
-                        (task.parent as TaskList).minimumWidth :
-                        Math.min((task.parent as TaskList).minimumWidth, task.tasksRoot.height) - adjustMargin(true, task.width, task.tasksRoot.taskFrame.margins.left) - adjustMargin(true, task.width, task.tasksRoot.taskFrame.margins.right)
-                }
-            }
-        ]
-
         Loader {
             anchors.centerIn: parent
             width: Math.min(parent.width, parent.height)
@@ -954,6 +971,44 @@ Item {
             active: !!(task.model && task.model.IsStartup)
             sourceComponent: task.tasksRoot.busyIndicator
         }
+
+        states: [
+            State {
+                name: "standalone"
+                when: !label.visible && task.parent
+                AnchorChanges { target: iconBox; anchors.left: undefined; anchors.horizontalCenter: parent.horizontalCenter }
+                PropertyChanges {
+                    target: iconBox; anchors.leftMargin: 0
+                    width: (task.model.IsLauncher && !tasksRoot.iconsOnly) ? (task.parent as TaskList).minimumWidth :
+                        Math.min((task.parent as TaskList).minimumWidth, task.tasksRoot.height) - adjustMargin(true, task.width, task.tasksRoot.taskFrame.margins.left) - adjustMargin(true, task.width, task.tasksRoot.taskFrame.margins.right)
+                }
+            }
+        ]
+    }
+
+    // Loader for Icons-Only mode: inside iconBox so badges scale and move with the icon
+    Loader {
+        id: iconsOnlyBadgeLoader
+        parent: iconBox
+        anchors.fill: parent
+        active: task.tasksRoot.iconsOnly && (plasmoid.configuration.showBadges || audioIndicatorsEnabled)
+        source: "TaskBadgeOverlay.qml"
+        onLoaded: {
+            item.parentTask = task;
+        }
+        z: 999
+    }
+
+    // Loader for Classic mode: in root Item to align with wide button edges
+    Loader {
+        id: classicBadgeLoader
+        anchors.fill: parent
+        active: !task.tasksRoot.iconsOnly && (plasmoid.configuration.showBadges || audioIndicatorsEnabled)
+        source: "TaskBadgeOverlay.qml"
+        onLoaded: {
+            item.parentTask = task;
+        }
+        z: 999
     }
 
     PlasmaComponents3.Label {
@@ -1111,6 +1166,10 @@ Item {
     Component.onCompleted: {
         task.updateSmartLauncherItem();
         
+        if (task.smartLauncherItem) {
+            task.lastSeenCount = task.smartLauncherItem.count;
+        }
+
         if (!task.inPopup && task.model.IsWindow) {
             task.updateAudioStreams({
                 delay: false

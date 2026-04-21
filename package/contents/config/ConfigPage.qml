@@ -174,6 +174,12 @@ Kirigami.Page {
     property int cfg_iconEdgeOffsetDefault: 0
     property bool cfg_showBadges: true
     property bool cfg_showBadgesDefault: true
+    property bool cfg_badgeShowPlusOnLargeNumbers: true
+    property bool cfg_badgeShowPlusOnLargeNumbersDefault: true
+    property bool cfg_badgeHighlightNew: true
+    property bool cfg_badgeHighlightNewDefault: true
     property bool cfg_showLivePreview: true
     property bool cfg_showLivePreviewDefault: true
+    property bool cfg_smokeExplosionOnClose: false
+    property bool cfg_smokeExplosionOnCloseDefault: false
 }

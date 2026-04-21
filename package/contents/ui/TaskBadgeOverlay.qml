@@ -1,78 +1,112 @@
 /*
-    SPDX-FileCopyrightText: 2016 Kai Uwe Broulik <kde@privat.broulik.de>
-
+    SPDX-FileCopyrightText: 2026 Vitaliy Elin <daydve@smbit.pro>
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
 import QtQuick
 import org.kde.kirigami as Kirigami
-import org.kde.graphicaleffects as KGraphicalEffects
-
+import org.kde.plasma.plasmoid
 
 Item {
     id: root
-    property var parentTask: parent.parent
+    property var parentTask: null // Set by Loader in Task.qml
+    
+    // This overlay now fills the contentWrapper which fills the whole button.
+    // It inherits the jump animation and zoom from contentWrapper.
+    anchors.fill: parent
 
-    // Fix: Anchor directly to the icon to sync scaling and position automatically
-    anchors.fill: root.parentTask.taskIcon
+    // Audio Indicator (Top-Left)
+    Badge {
+        id: audioBadge
+        anchors.left: parent.left
+        anchors.top: parent.top
+        // Diving deeper and moving closer to center when hovered
+        anchors.topMargin: (root.parentTask && root.parentTask.tasksRoot.iconsOnly && root.parentTask.highlighted) 
+            ? Math.round(height / 4) 
+            : 0
+        anchors.leftMargin: (root.parentTask && root.parentTask.tasksRoot.iconsOnly && root.parentTask.highlighted) 
+            ? Math.round(width / 6) 
+            : 0
+        
+        Behavior on anchors.topMargin {
+            enabled: root.parentTask && root.parentTask.tasksRoot.iconsOnly
+            NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
+        }
+        Behavior on anchors.leftMargin {
+            enabled: root.parentTask && root.parentTask.tasksRoot.iconsOnly
+            NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
+        }
+        
+        width: Math.min(Math.round(parent.height * 0.45), Kirigami.Units.gridUnit)
+        height: width
+        
+        visible: root.parentTask ? (root.parentTask.playingAudio || root.parentTask.muted) : false
+        
+        iconSource: root.parentTask?.muted ? "audio-volume-muted-symbolic" : "audio-volume-high-symbolic"
+        highlightColor: root.parentTask?.muted ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.highlightColor
+        
+        showFullNumber: false
+        showBackground: root.parentTask ? root.parentTask.muted : false
+        hovered: !!audioMouseArea.containsMouse
+        isRound: true
 
-    // Stable offset calculation
-    readonly property int badgeOffset: Math.round(Math.max(Kirigami.Units.smallSpacing / 2, root.width / 32))
+        MouseArea {
+            id: audioMouseArea
+            anchors.fill: parent
+            hoverEnabled: true
+            acceptedButtons: Qt.LeftButton | Qt.MiddleButton
+            
+            onContainsMouseChanged: {
+                if (root.parentTask) {
+                    root.parentTask.isAudioHovered = audioMouseArea.containsMouse;
+                }
+            }
+            
+            onExited: {
+                if (root.parentTask) {
+                    root.parentTask.isAudioHovered = false;
+                }
+            }
 
-    Item {
-        id: badgeMask
-        anchors.fill: parent
-
-        Rectangle {
-            anchors.right: parent.right
-            anchors.rightMargin: -root.badgeOffset
-            anchors.top: parent.top
-            anchors.topMargin: -root.badgeOffset
-
-            visible: root.parentTask.smartLauncherItem.countVisible
-            width: badgeRect.width + root.badgeOffset * 2
-            height: badgeRect.height + root.badgeOffset * 2
-            radius: height / 2
-
-            // Force update the shader mask when geometry changes
-            onWidthChanged: maskShaderSource.scheduleUpdate()
-            onHeightChanged: maskShaderSource.scheduleUpdate()
-            onVisibleChanged: maskShaderSource.scheduleUpdate()
+            onClicked: (mouse) => {
+                mouse.accepted = true;
+                if (root.parentTask) {
+                    root.parentTask.toggleMuted();
+                }
+            }
         }
     }
 
-    ShaderEffectSource {
-        id: iconShaderSource
-        sourceItem: root.parentTask.taskIcon
-        hideSource: GraphicsInfo.api !== GraphicsInfo.Software
-    }
-
-    ShaderEffectSource {
-        id: maskShaderSource
-        sourceItem: badgeMask
-        hideSource: true
-        live: false
-    }
-
-    KGraphicalEffects.BadgeEffect {
-        id: shader
-
-        anchors.fill: parent
-        source: iconShaderSource
-        mask: maskShaderSource
-
-        onWidthChanged: maskShaderSource.scheduleUpdate()
-        onHeightChanged: maskShaderSource.scheduleUpdate()
-    }
-
+    // Notification Badge (Top-Right)
     Badge {
-        id: badgeRect
-
+        id: notificationBadge
         anchors.right: parent.right
         anchors.top: parent.top
+        anchors.topMargin: (root.parentTask && root.parentTask.tasksRoot.iconsOnly && root.parentTask.highlighted) 
+            ? Math.round(height / 4) 
+            : 0
+        anchors.rightMargin: (root.parentTask && root.parentTask.tasksRoot.iconsOnly && root.parentTask.highlighted) 
+            ? Math.round(width / 6) 
+            : 0
 
-        height: Math.round(parent.height * 0.4)
-        visible: root.parentTask.smartLauncherItem.countVisible
-        number: root.parentTask.smartLauncherItem.count
+        Behavior on anchors.topMargin {
+            enabled: root.parentTask && root.parentTask.tasksRoot.iconsOnly
+            NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
+        }
+        Behavior on anchors.rightMargin {
+            enabled: root.parentTask && root.parentTask.tasksRoot.iconsOnly
+            NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
+        }
+
+        height: Math.min(Math.round(parent.height * 0.45), Kirigami.Units.gridUnit)
+        
+        visible: (root.parentTask?.smartLauncherItem) ? !!root.parentTask.smartLauncherItem.countVisible : false
+        number: (root.parentTask?.smartLauncherItem) ? root.parentTask.smartLauncherItem.count : 0
+        
+        showFullNumber: false
+        isUrgent: !!root.parentTask?.hasUnseenNotifications
+        isRound: true
+        isBold: false
+        fontFactor: 0.85
     }
 }

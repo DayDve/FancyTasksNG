@@ -280,6 +280,10 @@ msgid "Toggles grouping"
 msgstr "Переключает группировку"
 
 #: ../contents/config/ConfigBehavior.qml
+msgid "Animation of closing/removing an icon from the panel"
+msgstr "Анимация закрытия/удаления значка с панели"
+
+#: ../contents/config/ConfigBehavior.qml
 msgid "Brings it to the current virtual desktop"
 msgstr "Переносит на текущий рабочий стол"
 
@@ -484,6 +488,14 @@ msgid "Show badges"
 msgstr "Счётчики на значках"
 
 #: ../contents/config/ConfigIndicators.qml
+msgid "Use '99+' for large numbers (reveal on hover)"
+msgstr "Сокращать большие числа до «99+» (полное число при наведении)"
+
+#: ../contents/config/ConfigIndicators.qml
+msgid "Highlight new notifications"
+msgstr "Подсвечивать новые уведомления"
+
+#: ../contents/config/ConfigIndicators.qml
 msgid "Mark applications playing audio"
 msgstr "Отмечать приложения со звуком"
 
@@ -613,6 +625,11 @@ msgstr "—"
 msgctxt "Over 9999 new messages, overlay, keep short"
 msgid "9,999+"
 msgstr "9,999+"
+
+#: ../contents/ui/Badge.qml
+msgctxt "Over 99 new messages, overlay, keep short"
+msgid "99+"
+msgstr "99+"
 
 # --- ContextMenu.qml ---
 #: ../contents/ui/ContextMenu.qml

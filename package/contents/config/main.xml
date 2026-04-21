@@ -352,6 +352,18 @@
       <label>Hide the 'Move to Desktop' context menu item when only one virtual desktop is used.</label>
       <default>true</default>
     </entry>
+    <entry name="smokeExplosionOnClose" type="Bool">
+      <label>Enable smoke explosion animation when closing a task via middle-click.</label>
+      <default>false</default>
+    </entry>
+    <entry name="badgeShowPlusOnLargeNumbers" type="Bool">
+      <label>Show '99+' instead of large numbers on notification badges.</label>
+      <default>true</default>
+    </entry>
+    <entry name="badgeHighlightNew" type="Bool">
+      <label>Highlight the badge color when the notification count increases.</label>
+      <default>true</default>
+    </entry>
   </group>
 
 </kcfg>
