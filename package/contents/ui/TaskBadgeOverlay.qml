@@ -45,7 +45,6 @@ Item {
         iconSource: root.parentTask?.muted ? "audio-volume-muted-symbolic" : "audio-volume-high-symbolic"
         highlightColor: root.parentTask?.muted ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.highlightColor
         
-        showFullNumber: false
         showBackground: root.parentTask ? root.parentTask.muted : false
         hovered: !!audioMouseArea.containsMouse
         isRound: true
@@ -103,7 +102,6 @@ Item {
         visible: (root.parentTask?.smartLauncherItem) ? !!root.parentTask.smartLauncherItem.countVisible : false
         number: (root.parentTask?.smartLauncherItem) ? root.parentTask.smartLauncherItem.count : 0
         
-        showFullNumber: false
         isUrgent: !!root.parentTask?.hasUnseenNotifications
         isRound: true
         isBold: false

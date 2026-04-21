@@ -303,12 +303,6 @@ ConfigPage {
                 Item { implicitWidth: Kirigami.Units.gridUnit }
                 ColumnLayout {
                     CheckBox {
-                        id: cfg_badgeShowPlusOnLargeNumbers
-                        text: Wrappers.i18n("Use '99+' for large numbers (reveal on hover)")
-                        checked: cfg_page.cfg_badgeShowPlusOnLargeNumbers
-                        onToggled: cfg_page.cfg_badgeShowPlusOnLargeNumbers = checked
-                    }
-                    CheckBox {
                         id: cfg_badgeHighlightNew
                         text: Wrappers.i18n("Highlight new notifications")
                         checked: cfg_page.cfg_badgeHighlightNew

@@ -102,6 +102,14 @@ ConfigPage {
                 onActivated: (index) => cfg_page.cfg_middleClickAction = index
             }
 
+            CheckBox {
+                id: cfg_smokeExplosionOnClose
+                visible: cfg_page.cfg_iconOnly === 1 && cfg_middleClickAction.currentIndex === 1
+                text: Wrappers.i18n("Animation of closing/removing an icon from the panel")
+                checked: cfg_page.cfg_smokeExplosionOnClose
+                onToggled: cfg_page.cfg_smokeExplosionOnClose = checked
+            }
+
             Item { height: Kirigami.Units.largeSpacing }
 
             CheckBox {

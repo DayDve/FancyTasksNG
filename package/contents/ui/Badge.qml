@@ -15,7 +15,6 @@ Rectangle {
     property string iconSource: ""
     property bool hovered: false
     property bool isUrgent: false
-    property bool showFullNumber: false
     property bool showBackground: true
     property bool isBold: false
     property real fontFactor: 0.85
@@ -30,12 +29,12 @@ Rectangle {
     implicitHeight: Math.round(Kirigami.Units.gridUnit * 0.9)
     
     width: {
-        if (!showFullNumber) return height;
         const padding = Math.round(Kirigami.Units.smallSpacing * 2);
         return Math.max(height, Math.round(label.contentWidth + padding));
     }
 
     radius: height / 2
+    antialiasing: true
     // Theme-aware background: uses system background color, but stays red for urgent items
     color: showBackground ? (isUrgent ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.backgroundColor) : "transparent"
 
@@ -84,7 +83,8 @@ Rectangle {
         font.pointSize: badgeRect.fontPointSize * badgeRect.fontFactor
         font.bold: badgeRect.isBold
         
-        renderType: Text.NativeRendering
+        renderType: Text.QtRendering
+        antialiasing: true
         // Adaptive text color: white on red background, theme-aware otherwise
         color: badgeRect.isUrgent ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
         visible: badgeRect.number > 0
@@ -93,7 +93,8 @@ Rectangle {
             if (badgeRect.number < 0) {
                 return Wrappers.i18nc("Invalid", "—");
             }
-            if (!badgeRect.showFullNumber && badgeRect.number > 99) {
+            // Show full number up to 999, then ellipsis as requested
+            if (badgeRect.number > 999) {
                 return "…";
             }
             return badgeRect.number.toLocaleString(Qt.locale(), 'f', 0);

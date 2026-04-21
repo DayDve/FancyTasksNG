@@ -152,8 +152,8 @@ PlasmoidItem {
     property alias taskFrame: taskFrame
     property alias filteredTasksModel: filteredTasksModel
     property alias busyIndicator: busyIndicator
-    ExplosionEffect {
-        id: removalManager
+    FancyTasksExplosion {
+        id: explosionManager
     }
 
     preferredRepresentation: fullRepresentation
@@ -436,7 +436,7 @@ PlasmoidItem {
 
     function handleItemRemoval(taskItem) {
         if (Plasmoid.configuration.smokeExplosionOnClose) {
-            removalManager.spawn(tasks, taskItem, taskItem.wasMiddleClicked);
+            explosionManager.spawn(tasks, taskItem, taskItem.wasMiddleClicked);
         }
     }
 
