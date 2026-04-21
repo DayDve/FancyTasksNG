@@ -11,9 +11,13 @@ Item {
 
     z: 5000 // Topmost
 
+    // Check if notification badge is visible to avoid overlap
+    readonly property bool hasNotificationBadge: task && task.smartLauncherItem && task.smartLauncherItem.countVisible
+
     // Clamping coordinates to keep the indicator within the task item bounds
+    // Shift to bottom-left if notification badge is visible in the top-right
     x: (task && iconBox && task.taskIcon) ? Math.max(0, Math.min(task.width - visualSize, iconBox.x + task.taskIcon.x)) : 0
-    y: (task && iconBox && task.taskIcon) ? Math.max(0, Math.min(task.height - visualSize, iconBox.y + task.taskIcon.y)) : 0
+    y: (task && iconBox && task.taskIcon) ? Math.max(0, Math.min(task.height - visualSize, iconBox.y + task.taskIcon.y + (hasNotificationBadge ? (task.taskIcon.height - visualSize) : 0))) : 0
 
     width: visualSize
     height: visualSize

@@ -61,8 +61,8 @@ Item {
     Item {
         id: tooltipAnchor
         anchors.centerIn: parent
-        width: task.tasksRoot.vertical ? (Math.max(task.tasksRoot.width, task._maxIconSize)) : parent.width
-        height: !task.tasksRoot.vertical ? (Math.max(task.tasksRoot.height, task._maxIconSize)) : parent.height
+        width: task.tasksRoot.vertical ? (Math.max(task.tasksRoot.width, task._maxIconSize) + Kirigami.Units.smallSpacing * 2) : parent.width
+        height: !task.tasksRoot.vertical ? (Math.max(task.tasksRoot.height, task._maxIconSize) + Kirigami.Units.smallSpacing * 2) : parent.height
         visible: false
     }
     property alias tooltipAnchor: tooltipAnchor
