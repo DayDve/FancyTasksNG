@@ -353,7 +353,7 @@
       <default>true</default>
     </entry>
     <entry name="smokeExplosionOnClose" type="Bool">
-      <label>Enable smoke explosion animation when closing a task via middle-click.</label>
+      <label>Enable smoke explosion animation when closing a task via middle-click (Icons Only mode only).</label>
       <default>false</default>
     </entry>
     <entry name="badgeHighlightNew" type="Bool">

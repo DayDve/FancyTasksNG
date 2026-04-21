@@ -435,7 +435,7 @@ PlasmoidItem {
     }
 
     function handleItemRemoval(taskItem) {
-        if (Plasmoid.configuration.smokeExplosionOnClose) {
+        if (Plasmoid.configuration.smokeExplosionOnClose && Plasmoid.configuration.iconOnly === 1) {
             explosionManager.spawn(tasks, taskItem, taskItem.wasMiddleClicked);
         }
     }
