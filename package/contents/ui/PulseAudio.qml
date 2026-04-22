@@ -46,6 +46,9 @@ QtObject {
             function mute(): void {
                 model.Muted = true;
             }
+            function unmute(): void {
+                model.Muted = false;
+            }
             function setVolume(vol): void {
                 model.Volume = vol;
             }
