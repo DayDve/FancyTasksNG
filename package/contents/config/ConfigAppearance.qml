@@ -391,5 +391,17 @@ ConfigPage {
             text: Wrappers.i18n("Automatically set to Large when in Touch mode")
             font: Kirigami.Theme.smallFont
         }
+
+        Item {
+            Kirigami.FormData.isSection: true
+        }
+
+        CheckBox {
+            id: disableMediaControls
+            Kirigami.FormData.label: Wrappers.i18n("Window Previews:")
+            text: Wrappers.i18n("Disable media controls in window previews")
+            checked: cfg_page.cfg_disableMediaControls
+            onToggled: cfg_page.cfg_disableMediaControls = checked
+        }
     }
 }

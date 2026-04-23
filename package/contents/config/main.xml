@@ -342,6 +342,10 @@
         <label>Icon zoom animation duration</label>
         <tooltip>Duration of the zoom animation in milliseconds</tooltip>
     </entry>
+    <entry name="disableMediaControls" type="Bool">
+      <label>Disables showing media controls in window previews.</label>
+      <default>false</default>
+    </entry>
   </group>
 
 </kcfg>

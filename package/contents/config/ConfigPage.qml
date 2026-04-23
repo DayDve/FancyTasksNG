@@ -94,6 +94,8 @@ KCMUtils.SimpleKCM {
     property var cfg_launchersDefault
     property int cfg_middleClickAction
     property int cfg_middleClickActionDefault
+    property bool cfg_disableMediaControls
+    property bool cfg_disableMediaControlsDefault
 
     // --- Task Button Appearance ---
     property bool cfg_buttonColorize

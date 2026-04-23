@@ -749,7 +749,7 @@ Item {
 
     readonly property bool showVolumeControls: index !== -1 && pulseAudio.item !== null && audioIndicatorsEnabled && (isPlayingAudio || hasAudioStream)
     
-    property bool controlsAreEffective: showPlayerControls || showVolumeControls
+    property bool controlsAreEffective: !Plasmoid.configuration.disableMediaControls && (showPlayerControls || showVolumeControls)
     property bool delayedControlsActive: false
     
     onControlsAreEffectiveChanged: {
