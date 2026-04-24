@@ -37,7 +37,7 @@ Item {
             NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
         }
         
-        width: Math.min(Math.round(parent.height * 0.45), Kirigami.Units.gridUnit)
+        width: Math.min(Math.round(parent.height * 0.35), Kirigami.Units.gridUnit)
         height: width
         
         visible: root.parentTask ? (root.parentTask.playingAudio || root.parentTask.muted) : false
@@ -97,12 +97,12 @@ Item {
             NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
         }
 
-        height: Math.min(Math.round(parent.height * 0.45), Kirigami.Units.gridUnit)
+        height: Math.min(Math.round(parent.height * 0.35), Kirigami.Units.gridUnit)
         
         visible: !!root.parentTask?.badgeVisible
         number: root.parentTask?.badgeCount || 0
         
-        isUrgent: !!root.parentTask?.hasUnseenNotifications
+        isUrgent: !!root.parentTask?.demandsAttention
         isRound: true
         isBold: false
         fontFactor: 0.85

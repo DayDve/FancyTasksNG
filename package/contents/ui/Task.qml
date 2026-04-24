@@ -115,6 +115,12 @@ Item {
     }
     readonly property bool badgeVisible: badgeCount > 0
     
+    function getGlobalRect() {
+        if (!icon) return Qt.rect(0, 0, 0, 0);
+        var p = icon.mapToGlobal(0, 0);
+        return Qt.rect(p.x, p.y, icon.width, icon.height);
+    }
+
 
     Connections {
         target: task
@@ -341,8 +347,8 @@ Item {
     }
 
     onChildCountChanged: {
-        if (TaskTools.taskManagerInstanceCount < 2 && task.childCount > task.previousChildCount && tasksRoot.backend) {
-            tasksRoot.tasksModel.requestPublishDelegateGeometry(task.modelIndex(), tasksRoot.backend.globalRect(task), task);
+        if (TaskTools.taskManagerInstanceCount < 2 && task.childCount > task.previousChildCount) {
+            tasksRoot.tasksModel.requestPublishDelegateGeometry(task.modelIndex(), task.getGlobalRect(), task);
         }
 
         task.previousChildCount = task.childCount;
@@ -694,7 +700,7 @@ Item {
                             task.tasksRoot.dragHelper.Drag.imageSource = result.url;
                             
                             let data = {
-                                "text/x-orgkdeplasmataskmanager_taskurl": task.tasksRoot.backend.tryDecodeApplicationsUrl(task.model.LauncherUrlWithoutIcon || "").toString()
+                                "text/x-orgkdeplasmataskmanager_taskurl": (task.model.LauncherUrlWithoutIcon || "").toString()
                             };
 
                             const mimeType = task.model.MimeType;

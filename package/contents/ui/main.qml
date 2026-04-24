@@ -243,18 +243,20 @@ PlasmoidItem {
 
     property bool _isInternalLauncherUpdate: false
     property bool _isPublishingGeometries: false
+
     function publishIconGeometries(taskItems: var): void {
-        if (!backend || _isPublishingGeometries)
+        if (_isPublishingGeometries)
             return;
         if (TaskTools.taskManagerInstanceCount >= 2)
             return;
 
         _isPublishingGeometries = true;
         try {
-            for (let i = 0; i < taskItems.length - 1; ++i) {
+            for (let i = 0; i < taskItems.length; ++i) {
                 const task = taskItems[i];
-                if (task.model && !task.model.IsLauncher && !task.model.IsStartup && tasks.tasksModel) {
-                    tasks.tasksModel.requestPublishDelegateGeometry(tasks.tasksModel.makeModelIndex(task.index), tasks.backend.globalRect(task), task);
+                // Check if it's a Task delegate and has the method
+                if (task.getGlobalRect && task.model && !task.model.IsLauncher && !task.model.IsStartup && tasks.tasksModel) {
+                    tasks.tasksModel.requestPublishDelegateGeometry(task.modelIndex(), task.getGlobalRect(), task);
                 }
             }
         } finally {
@@ -371,27 +373,6 @@ PlasmoidItem {
         case 1:
             return TaskManager.TasksModel.GroupApplications;
         default:
-            return TaskManager.TasksModel.GroupDisabled;
-        }
-    }
-
-    Loader {
-        id: backendLoader
-        active: true
-        source: "TaskBackendPublic.qml"
-        onStatusChanged: {
-            if (status === Loader.Error) {
-                source = "TaskBackendPrivate.qml";
-            }
-        }
-    }
-    readonly property var backend: backendLoader.item
-
-    Connections {
-        target: tasks.backend
-        ignoreUnknownSignals: true
-        function onAddLauncher(url) {
-            tasks.addLauncher(url);
         }
     }
 
@@ -402,16 +383,7 @@ PlasmoidItem {
     }
 
     readonly property Component taskInitComponent: Component {
-        Timer {
-            interval: Kirigami.Units.longDuration
-            running: true
-            onTriggered: {
-                const task = parent as Task;
-                if (task && tasks.backend)
-                    tasks.tasksModel.requestPublishDelegateGeometry(task.modelIndex(), tasks.backend.globalRect(task), task);
-                destroy();
-            }
-        }
+        Item {}
     }
 
     Connections {
@@ -463,7 +435,6 @@ PlasmoidItem {
             visualParent: rootTask,
             modelIndex,
             mpris2Source,
-            backend,
             tasksModel: tasks.tasksModel,
             virtualDesktopInfo,
             activityInfo
@@ -497,17 +468,15 @@ PlasmoidItem {
             id: pulseAudio
             sourceComponent: tasks.pulseAudioComponent
             active: tasks.pulseAudioComponent.status === Component.Ready
-            onLoaded: {
-                item.backend = Qt.binding(() => tasks.backend);
-            }
         }
 
         Timer {
             id: iconGeometryTimer
             interval: 500
             repeat: false
-            onTriggered: tasks.publishIconGeometries(taskList.children, tasks)
+            onTriggered: tasks.publishIconGeometries(taskList.children)
         }
+
         Timer {
             id: startupSortFixTimer
             interval: 2000
@@ -590,9 +559,11 @@ PlasmoidItem {
             tasksModel: tasks.tasksModel
             proxyModel: filteredTasksModel
             onUrlsDropped: urls => {
-                if (!tasks.backend)
-                    return;
-                const createLaunchers = urls.every(item => tasks.backend.isApplication(item));
+                const isApp = (url) => {
+                    let s = url.toString();
+                    return s.endsWith(".desktop") || s.startsWith("applications:") || s.startsWith("application://");
+                };
+                const createLaunchers = urls.every(isApp);
                 if (createLaunchers) {
                     urls.forEach(item => tasks.addLauncher(item));
                     return;
@@ -647,8 +618,7 @@ PlasmoidItem {
                 width: tasks.shouldShrinkToZero ? 0 : (tasks.vertical ? tasks.width * Math.min(1, widthOccupation) : Math.min(tasks.width, Layout.maximumWidth))
                 height: tasks.shouldShrinkToZero ? 0 : (tasks.vertical ? Math.min(tasks.height, Layout.maximumHeight) : tasks.height * Math.min(1, heightOccupation))
                 flow: tasks.vertical ? (Plasmoid.configuration.forceStripes ? Grid.LeftToRight : Grid.TopToBottom) : (Plasmoid.configuration.forceStripes ? Grid.TopToBottom : Grid.LeftToRight)
-                onAnimatingChanged: if (!animating)
-                    iconGeometryTimer.restart()
+                onAnimatingChanged: if (!animating) iconGeometryTimer.restart()
 
                 Repeater {
                     id: taskRepeater

@@ -22,7 +22,6 @@ import "code/singletones"
 PlasmaExtras.Menu {
     id: menu
 
-    required property var backend
     required property Mpris.Mpris2Model mpris2Source
     required property /*QModelIndex*/var modelIndex
     required property TaskManager.TasksModel tasksModel
@@ -63,12 +62,9 @@ PlasmaExtras.Menu {
     }
 
     Component.onCompleted: {
-        // Cannot have "Connections" as child of PlasmaExtras.Menu.
-        backend.showAllPlaces.connect(showContextMenuWithAllPlaces);
     }
 
     Component.onDestruction: {
-        backend.showAllPlaces.disconnect(showContextMenuWithAllPlaces);
     }
 
     function showContextMenuWithAllPlaces(): void {
@@ -104,68 +100,7 @@ PlasmaExtras.Menu {
     }
 
     function loadDynamicLaunchActions(launcherUrl: url): void {
-        const sections = [];
 
-        const placesActions = menu.backend.placesActions(launcherUrl, menu.showAllPlaces, menu);
-
-        if (placesActions.length > 0) {
-            sections.push({
-                title: Wrappers.i18n("Places"),
-                group: "places",
-                actions: placesActions
-            });
-        } else {
-            sections.push({
-                title:   Wrappers.i18n("Recent Files"),
-                group:   "recents",
-                actions: menu.backend.recentDocumentActions(launcherUrl, menu)
-            });
-        }
-
-        sections.push({
-            title: Wrappers.i18n("Actions"),
-            group: "actions",
-            actions: menu.backend.jumpListActions(launcherUrl, menu)
-        });
-
-        // C++ can override section heading by returning a QString as first action
-        sections.forEach((section) => {
-            if (typeof section.actions[0] === "string") {
-                section.title = section.actions.shift(); // take first
-            }
-        });
-
-        // QMenu does not limit its width automatically. Even if we set a maximumWidth
-        // it would just cut off text rather than eliding. So we do this manually.
-        const textMetrics = Qt.createQmlObject("import QtQuick; TextMetrics {}", menu);
-        textMetrics.elide = Qt.ElideRight;
-        textMetrics.elideWidth = LayoutMetrics.maximumContextMenuTextWidth();
-
-        sections.forEach(section => {
-            if (section["actions"].length > 0 || section["group"] === "actions") {
-                // Don't add the "Actions" header if the menu has nothing but actions
-                // in it, because then it's redundant (all menus have actions)
-                if (
-                    (section["group"] !== "actions") ||
-                    (section["group"] === "actions" && (sections[0]["actions"].length > 0 || sections[1]["actions"].length > 0))
-                ) {
-                    let sectionHeader = newMenuItem(menu);
-                    sectionHeader.text = section["title"];
-                    sectionHeader.section = true;
-                    menu.addMenuItem(sectionHeader, startNewInstanceItem);
-                }
-            }
-
-            for (let i = 0; i < section["actions"].length; ++i) {
-                const item = newMenuItem(menu);
-                item["action"] = section["actions"][i];
-
-                textMetrics.text = item["action"].text;
-                item["action"].text = textMetrics.elidedText;
-
-                menu.addMenuItem(item, startNewInstanceItem);
-            }
-        });
 
         // Add Media Player control actions
         const playerData = menu.mpris2Source.playerForLauncherUrl(launcherUrl, menu.get(menu.atm.AppPid));
@@ -352,7 +287,6 @@ PlasmaExtras.Menu {
                 menuItem.clicked.connect(() => {
                     menu.tasksModel.requestVirtualDesktops(menu.modelIndex, []);
                 });
-                menu.backend.setActionGroup(menuItem["action"]);
 
                 menu.newSeparator(virtualDesktopsMenuItem._virtualDesktopsMenu);
 
@@ -366,7 +300,6 @@ PlasmaExtras.Menu {
                     menuItem.clicked.connect((i => {
                         return () => menu.tasksModel.requestVirtualDesktops(menu.modelIndex, [menu.virtualDesktopInfo.desktopIds[i]]);
                     })(i));
-                    menu.backend.setActionGroup(menuItem["action"]);
                 }
 
                 menu.newSeparator(virtualDesktopsMenuItem._virtualDesktopsMenu);

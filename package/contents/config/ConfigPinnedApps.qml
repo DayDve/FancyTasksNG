@@ -1047,7 +1047,7 @@ ConfigPage {
         // pinnedLaunchers binding should update automatically from cfg_launchers
     }
 
-    // Direct synchronization with the backend when launchers are moved on the panel
+    // Synchronize with the Plasmoid configuration when launchers are moved on the panel
     Connections {
         target: Plasmoid.configuration
         function onLaunchersChanged() {

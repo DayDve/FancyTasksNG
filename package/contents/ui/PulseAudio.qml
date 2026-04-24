@@ -10,7 +10,6 @@ import org.kde.plasma.private.volume
 
 QtObject {
     id: pulseAudio
-    property var backend
 
     signal streamsChanged()
     
@@ -92,18 +91,6 @@ QtObject {
         // 1. Try direct PID match
         let streams = findStreams(stream => stream.pid === pid && !stream.portalAppId);
         
-        // 2. If no streams found, try checking parent PID (legacy/complex apps)
-        // DISABLED: Causes anomaly where file managers (Dolphin) claim streams of launched apps (VLC).
-        /*
-        if (streams.length === 0) {
-             streams = findStreams(stream => {
-                // If the stream has no PID or we can't find it, try to resolve parent PID via backend
-                // Note: Calling backend.parentPid might be expensive if done repeatedly, but we only do it on miss.
-                let parentPid = backend.parentPid(stream.pid);
-                return parentPid === pid;
-             });
-        }
-        */
         
         return streams;
     }
