@@ -319,7 +319,7 @@ PlasmaExtras.Menu {
         readonly property var _virtualDesktopsMenu: PlasmaExtras.Menu {
             id: virtualDesktopsMenu
 
-            visualParent: virtualDesktopsMenuItem
+            visualParent: virtualDesktopsMenuItem.action
 
             function refresh(): void {
                 clearMenuItems();
