@@ -180,4 +180,6 @@ Kirigami.Page {
     property bool cfg_showLivePreviewDefault: true
     property bool cfg_smokeExplosionOnClose: false
     property bool cfg_smokeExplosionOnCloseDefault: false
+    property bool cfg_showBadgesOnLaunchers: true
+    property bool cfg_showBadgesOnLaunchersDefault: true
 }

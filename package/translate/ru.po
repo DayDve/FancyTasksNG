@@ -1116,3 +1116,9 @@ msgstr "Настройки панели:"
 
 msgid "Group windows by program name"
 msgstr "Группировать окна по имени программы"
+
+msgid "Show badges on pinned application icons"
+msgstr "Показывать счётчики на значках закреплённых приложений"
+
+msgid "Show counters even when the application has no windows in the current view (e.g., minimized to tray or on another screen/desktop/activity)."
+msgstr "Отображать счётчики для запущенных приложений при отсутствии видимых окон (например, если приложение свёрнуто в трей или находится на другом рабочем столе/экране/в другой комнате)."

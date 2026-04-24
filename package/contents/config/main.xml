@@ -360,6 +360,10 @@
       <label>Highlight the badge color when the notification count increases.</label>
       <default>true</default>
     </entry>
+    <entry name="showBadgesOnLaunchers" type="Bool">
+      <label>Show notification badges on pinned application icons.</label>
+      <default>true</default>
+    </entry>
   </group>
 
 </kcfg>

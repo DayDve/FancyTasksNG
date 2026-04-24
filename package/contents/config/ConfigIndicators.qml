@@ -308,6 +308,28 @@ ConfigPage {
                         checked: cfg_page.cfg_badgeHighlightNew
                         onToggled: cfg_page.cfg_badgeHighlightNew = checked
                     }
+                    RowLayout {
+                        spacing: Kirigami.Units.smallSpacing
+                        CheckBox {
+                            id: cfg_showBadgesOnLaunchers
+                            text: Wrappers.i18n("Show badges on pinned application icons")
+                            checked: cfg_page.cfg_showBadgesOnLaunchers
+                            onToggled: cfg_page.cfg_showBadgesOnLaunchers = checked
+                        }
+                        Kirigami.Icon {
+                            source: "help-about"
+                            implicitWidth: Kirigami.Units.gridUnit
+                            implicitHeight: Kirigami.Units.gridUnit
+                            opacity: 0.6
+                            ToolTip.text: Wrappers.i18n("Show counters even when the application has no windows in the current view (e.g., minimized to tray or on another screen/desktop/activity).")
+                            ToolTip.visible: infoMouseArea.containsMouse
+                            MouseArea {
+                                id: infoMouseArea
+                                anchors.fill: parent
+                                hoverEnabled: true
+                            }
+                        }
+                    }
                 }
             }
 

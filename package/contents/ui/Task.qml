@@ -108,12 +108,39 @@ Item {
     // standalone notification counting (BadgeManager singleton)
     property int lastSeenCount: 0
     property bool hasUnseenNotifications: false
+    onToolTipOpenChanged: {
+        if (toolTipOpen) {
+            task.hasUnseenNotifications = false;
+        }
+    }
+    onModelChanged: {
+        if (task.model && task.model.IsActive) {
+            task.hasUnseenNotifications = false;
+        }
+    }
+    
+    Connections {
+        target: task.model
+        enabled: !!task.model
+        ignoreUnknownSignals: true
+        function onIsActiveChanged() {
+            if (task.model.IsActive) {
+                task.hasUnseenNotifications = false;
+            }
+        }
+    }
     
     readonly property int badgeCount: {
         if (!task.model) return 0;
         return (BadgeManager.countVersion >= 0) ? BadgeManager.getUnreadCount(task.model.AppId) : 0;
     }
-    readonly property bool badgeVisible: badgeCount > 0
+    readonly property bool badgeVisible: {
+        if (badgeCount <= 0) return false;
+        if (!Plasmoid.configuration.showBadgesOnLaunchers && task.winIdList.length === 0) {
+            return false;
+        }
+        return true;
+    }
     
     function getGlobalRect() {
         if (!icon) return Qt.rect(0, 0, 0, 0);
