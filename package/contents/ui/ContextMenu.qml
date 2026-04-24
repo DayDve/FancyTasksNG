@@ -114,7 +114,26 @@ PlasmaExtras.Menu {
         });
         _dynamicDesktopItems = [];
 
-        // Add Recent Documents
+        // 1. Add Jump List Actions (Desktop Actions)
+        if (result.jumpList && result.jumpList.length > 0) {
+            result.jumpList.forEach((action) => {
+                let menuItem = menu.newMenuItem(menu);
+                menuItem.text = action.name;
+                menuItem.icon = action.icon;
+                menuItem.clicked.connect(() => {
+                    let cleanExec = action.exec.replace(/%[uUfF]/g, "").trim();
+                    DesktopActionsManager.executeCommand(cleanExec);
+                });
+                menu.addMenuItem(menuItem, insertItem);
+                _dynamicDesktopItems.push(menuItem);
+            });
+
+            let sep2 = menu.newSeparator(menu);
+            menu.addMenuItem(sep2, insertItem);
+            _dynamicDesktopItems.push(sep2);
+        }
+
+        // 2. Add Recent Documents
         if (result.recentDocs && result.recentDocs.length > 0) {
             // First, add the section header using the native Plasma menu item
             let title = menu.newMenuItem(menu);
@@ -182,25 +201,6 @@ PlasmaExtras.Menu {
             let sep = menu.newSeparator(menu);
             menu.addMenuItem(sep, insertItem);
             _dynamicDesktopItems.push(sep);
-        }
-
-        // Add Jump List Actions
-        if (result.jumpList && result.jumpList.length > 0) {
-            result.jumpList.forEach((action) => {
-                let menuItem = menu.newMenuItem(menu);
-                menuItem.text = action.name;
-                menuItem.icon = action.icon;
-                menuItem.clicked.connect(() => {
-                    let cleanExec = action.exec.replace(/%[uUfF]/g, "").trim();
-                    DesktopActionsManager.executeCommand(cleanExec);
-                });
-                menu.addMenuItem(menuItem, insertItem);
-                _dynamicDesktopItems.push(menuItem);
-            });
-
-            let sep2 = menu.newSeparator(menu);
-            menu.addMenuItem(sep2, insertItem);
-            _dynamicDesktopItems.push(sep2);
         }
     }
 
