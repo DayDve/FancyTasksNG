@@ -4,8 +4,9 @@
 # Script to extract values from metadata.json
 # Usage: ./get_metadata.sh "Key"
 
-DIR=$(dirname $(readlink -f "$0"))
-METADATA_FILE="$DIR/../metadata.json"
+SCRIPT_DIR=$(dirname $(readlink -f "$0"))
+PACKAGE_DIR="$SCRIPT_DIR/../../package"
+METADATA_FILE="$PACKAGE_DIR/metadata.json"
 KEY="$1"
 
 if [ -z "$KEY" ] || [ ! -f "$METADATA_FILE" ]; then

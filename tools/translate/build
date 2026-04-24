@@ -4,10 +4,12 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Version: 8 (Modular)
 
-DIR="$(dirname $(readlink -f "$0"))"
-cd "${DIR}"
+SCRIPT_DIR="$(dirname $(readlink -f "$0"))"
+PACKAGE_DIR="$(readlink -f "$SCRIPT_DIR/../../package")"
 
-plasmoidName=$("$DIR/get_metadata.sh" "Id")
+cd "${SCRIPT_DIR}"
+
+plasmoidName=$("./get_metadata.sh" "Id")
 projectName="plasma_applet_${plasmoidName}"
 
 if [ -z "$plasmoidName" ]; then
@@ -23,7 +25,7 @@ fi
 
 echo "[build] Compiling messages for $projectName"
 
-rm -rf "$DIR/../contents/locale"
+rm -rf "$PACKAGE_DIR/contents/locale"
 
 catalogs=$(find . -name '*.po' | sort)
 for cat in $catalogs; do
@@ -31,7 +33,7 @@ for cat in $catalogs; do
 	catLocale=$(basename "${cat%.*}")
 	msgfmt -o "${catLocale}.mo" "$cat"
 
-	installPath="$DIR/../contents/locale/${catLocale}/LC_MESSAGES/${projectName}.mo"
+	installPath="$PACKAGE_DIR/contents/locale/${catLocale}/LC_MESSAGES/${projectName}.mo"
 
 	echo "[build] Install to ${installPath}"
 	mkdir -p "$(dirname "$installPath")"

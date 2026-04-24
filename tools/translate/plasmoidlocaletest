@@ -160,8 +160,7 @@ echo "LANGUAGE=\"${lang}\""
 echo "LANG=\"${l1}\""
 
 SCRIPT_DIR=$(dirname $(readlink -f "$0"))
-# Absolute path to package
-PACKAGE_DIR=$(readlink -f "$SCRIPT_DIR/..")
+PACKAGE_DIR=$(readlink -f "$SCRIPT_DIR/../../package")
 
 # Build local translations
 bash "${SCRIPT_DIR}/build"

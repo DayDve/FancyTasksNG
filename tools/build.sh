@@ -7,13 +7,14 @@
 set -e
 
 SCRIPT_DIR=$(dirname $(readlink -f "$0"))
+PACKAGE_DIR="$(readlink -f "$SCRIPT_DIR/../package")"
 
 # Configuration
 PACKAGE_NAME="FancyTasksNG"
 ICON_NAME="icon" # Standardized KPackage icon name
 
 BUILD_DIR="$SCRIPT_DIR/build"
-RELEASE_DIR="$SCRIPT_DIR/release"
+RELEASE_DIR="$(readlink -f "$SCRIPT_DIR/../release")"
 
 # ANSI Colors
 RED='\033[0;31m'
@@ -41,7 +42,7 @@ trap cleanup EXIT
 
 # Run translation scripts in a subshell
 (
-  cd "$SCRIPT_DIR/package/translate/"
+  cd "$SCRIPT_DIR/translate/"
   bash ./merge
   bash ./build
 )
@@ -53,7 +54,7 @@ mkdir -p "$BUILD_DIR"
 mkdir -p "$RELEASE_DIR"
 
 # Copy package files
-cp -r "$SCRIPT_DIR/package"/{contents,metadata.json,"${ICON_NAME}.svg"} "$BUILD_DIR"
+cp -r "$PACKAGE_DIR"/{contents,metadata.json,"${ICON_NAME}.svg"} "$BUILD_DIR"
 
 # Create archive
 cd "$BUILD_DIR"
