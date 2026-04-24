@@ -79,8 +79,9 @@ PlasmaExtras.Menu {
     function show(): void {
         Plasmoid.contextualActionsAboutToShow();
 
-        loadDynamicLaunchActions(get(atm.LauncherUrlWithoutIcon));
-        openRelative();
+        loadDynamicLaunchActions(get(atm.LauncherUrlWithoutIcon), () => {
+            openRelative();
+        });
     }
 
     function newMenuItem(parent: QtObject): var {
@@ -99,7 +100,117 @@ PlasmaExtras.Menu {
             `, parent);
     }
 
-    function loadDynamicLaunchActions(launcherUrl: url): void {
+
+
+    property var _dynamicDesktopItems: []
+
+    function _insertDesktopActions(result, launcherUrl) {
+        // Find where to insert (before startNewInstanceItem)
+        let insertItem = startNewInstanceItem;
+
+        // Clean up any previously added dynamic items to avoid duplicates on re-open
+        _dynamicDesktopItems.forEach((item) => {
+            if (item) item.destroy();
+        });
+        _dynamicDesktopItems = [];
+
+        // Add Recent Documents
+        if (result.recentDocs && result.recentDocs.length > 0) {
+            // First, add the section header using the native Plasma menu item
+            let title = menu.newMenuItem(menu);
+            title.text = Wrappers.i18n("Recent Documents");
+            title.section = true;
+            menu.addMenuItem(title, insertItem);
+            _dynamicDesktopItems.push(title);
+
+            // Add the files
+            result.recentDocs.forEach((doc) => {
+                let menuItem = menu.newMenuItem(menu);
+                
+                // Format name visually for virtual paths using plaintext
+                if (doc.url.startsWith("trash:/")) {
+                    menuItem.text = Wrappers.i18n("Trash");
+                    menuItem.icon = "user-trash-full";
+                } else if (doc.url.startsWith("zip://") || doc.url.startsWith("tar://") || doc.url.startsWith("krarc://")) {
+                    // Extract archive name safely without regex
+                    let protoIdx = doc.url.indexOf("://");
+                    let pathWithoutProto = protoIdx !== -1 ? doc.url.substring(protoIdx + 3) : doc.url;
+                    
+                    let insidePath = "";
+                    let archiveName = doc.name;
+                    
+                    // The path is usually /foo/bar/archive.zip/inner/path
+                    // In the screenshot, doc.name is the full path "zip:///..." for some reason!
+                    // Let's format it properly:
+                    let match = pathWithoutProto.match(/([^\/]+\.(?:zip|tar|gz|xz|bz2|rar|7z))(?:\/|$)(.*)/i);
+                    if (match) {
+                        archiveName = match[1];
+                        insidePath = match[2];
+                        if (insidePath) {
+                            menuItem.text = "[" + archiveName + "] /" + insidePath;
+                        } else {
+                            menuItem.text = archiveName;
+                        }
+                    } else {
+                        // Fallback to name but stripping the long URL prefix if name is an URL
+                        menuItem.text = doc.name.startsWith("zip://") ? pathWithoutProto : doc.name;
+                    }
+                    menuItem.icon = "application-x-archive";
+                } else {
+                    menuItem.text = doc.name;
+                    menuItem.icon = doc.icon;
+                }
+                
+                menuItem.clicked.connect(() => {
+                    DesktopActionsManager.openUrl(doc.url);
+                });
+                menu.addMenuItem(menuItem, insertItem);
+                _dynamicDesktopItems.push(menuItem);
+            });
+
+            // Add "Clear recent files list" button
+            let clearItem = menu.newMenuItem(menu);
+            clearItem.text = Wrappers.i18n("Forget Recent Files");
+            clearItem.icon = "edit-clear-history";
+            clearItem.clicked.connect(() => {
+                DesktopActionsManager.clearRecentDocuments(launcherUrl); // fixed reference error
+            });
+            menu.addMenuItem(clearItem, insertItem);
+            _dynamicDesktopItems.push(clearItem);
+
+            // Separator after recent documents
+            let sep = menu.newSeparator(menu);
+            menu.addMenuItem(sep, insertItem);
+            _dynamicDesktopItems.push(sep);
+        }
+
+        // Add Jump List Actions
+        if (result.jumpList && result.jumpList.length > 0) {
+            result.jumpList.forEach((action) => {
+                let menuItem = menu.newMenuItem(menu);
+                menuItem.text = action.name;
+                menuItem.icon = action.icon;
+                menuItem.clicked.connect(() => {
+                    let cleanExec = action.exec.replace(/%[uUfF]/g, "").trim();
+                    DesktopActionsManager.executeCommand(cleanExec);
+                });
+                menu.addMenuItem(menuItem, insertItem);
+                _dynamicDesktopItems.push(menuItem);
+            });
+
+            let sep2 = menu.newSeparator(menu);
+            menu.addMenuItem(sep2, insertItem);
+            _dynamicDesktopItems.push(sep2);
+        }
+    }
+
+    function loadDynamicLaunchActions(launcherUrl: url, onReady: var): void {
+
+        // Query desktop file actions and recent documents
+        DesktopActionsManager.query(launcherUrl, (result) => {
+            _insertDesktopActions(result, launcherUrl);
+            if (onReady) onReady();
+        });
 
 
         // Add Media Player control actions

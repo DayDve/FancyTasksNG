@@ -4,6 +4,20 @@ import dbus.service
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 import sys
+import ctypes
+import signal
+
+def set_pdeathsig():
+    """Ensure the process dies when its parent (plasmashell) dies."""
+    try:
+        libc = ctypes.CDLL("libc.so.6")
+        libc.prctl(1, signal.SIGTERM) # 1 is PR_SET_PDEATHSIG
+    except Exception:
+        pass
+
+class NullDevice:
+    def write(self, s): pass
+    def flush(self): pass
 
 """
 Unity Bridge Sniffer - DBus Re-emitter

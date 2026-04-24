@@ -4,10 +4,12 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 SCRIPT_DIR=$(dirname $(readlink -f "$0"))
-PACKAGE_DIR=$(readlink -f "$SCRIPT_DIR/../../package")
+# Use relative path so xgettext writes relative paths to .po files!
+cd "${SCRIPT_DIR}/../.."
+PACKAGE_DIR="package"
 
 # Use a unified script to retrieve data
-plasmoidName=$("$SCRIPT_DIR/get_metadata.sh" "Id")
+plasmoidName=$("tools/translate/get_metadata.sh" "Id")
 widgetName="${plasmoidName##*.}"
 bugAddress=$("$SCRIPT_DIR/get_metadata.sh" "Website")
 
@@ -28,11 +30,11 @@ echo "[merge] Extracting messages"
 potArgs="--from-code=UTF-8 --width=200 --add-location=file"
 
 find "${PACKAGE_DIR}" -name '*.cpp' -o -name '*.h' -o -name '*.c' -o -name '*.qml' -o -name '*.js' | \
-sort > "${SCRIPT_DIR}/infiles.list"
+sort > "tools/translate/infiles.list"
 
 xgettext \
 	${potArgs} \
-	--files-from="${SCRIPT_DIR}/infiles.list" \
+	--files-from="tools/translate/infiles.list" \
 	-C -kde \
 	-ci18n \
 	-ki18n:1 -ki18nc:1c,2 -ki18np:1,2 -ki18ncp:1c,2,3 \
@@ -46,17 +48,18 @@ xgettext \
 	-kaliasLocale \
 	--package-name="${widgetName}" \
 	--msgid-bugs-address="${bugAddress}" \
-	-D "${PACKAGE_DIR}" \
-	-D "${SCRIPT_DIR}" \
-	-o "template.pot.new"
+	-D "." \
+	-o "tools/translate/template.pot.new"
 
 if [ $? -ne 0 ]; then
 	echo "[merge] error while calling xgettext. aborting."
 	exit 1
 fi
 
-sed -i 's/# SOME DESCRIPTIVE TITLE./'"# Translation of ${widgetName} in LANGUAGE"'/' "template.pot.new"
-sed -i 's/# Copyright (C) YEAR THE PACKAGE'"'"'S COPYRIGHT HOLDER/'"# Copyright (C) $(date +%Y)"'/' "template.pot.new"
+sed -i 's/# SOME DESCRIPTIVE TITLE./'"# Translation of ${widgetName} in LANGUAGE"'/' "tools/translate/template.pot.new"
+sed -i 's/# Copyright (C) YEAR THE PACKAGE'"'"'S COPYRIGHT HOLDER/'"# Copyright (C) $(date +%Y)"'/' "tools/translate/template.pot.new"
+
+cd "tools/translate"
 
 if [ -f "template.pot" ]; then
 	newPotDate=$(grep "POT-Creation-Date:" template.pot.new | sed 's/.\{3\}$//')
@@ -75,7 +78,7 @@ else
 	mv "template.pot.new" "template.pot"
 fi
 
-rm "${SCRIPT_DIR}/infiles.list"
+rm "infiles.list"
 echo "[merge] Done extracting messages"
 
 echo "[merge] Merging messages"

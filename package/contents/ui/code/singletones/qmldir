@@ -1,2 +1,3 @@
 singleton Wrappers 1.0 Wrappers.qml
 singleton BadgeManager 1.0 BadgeManager.qml
+singleton DesktopActionsManager 1.0 DesktopActionsManager.qml
