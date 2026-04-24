@@ -189,7 +189,7 @@ Loader {
                         id: badge
                         visible: plasmoid.configuration.showBadges && (parentTask ? parentTask.badgeVisible : false)
                         appId: toolTipDelegate.appId
-                        isUrgent: parentTask ? parentTask.hasUnseenNotifications : false
+                        isUrgent: (Plasmoid.configuration.badgeHighlightNew && parentTask) ? parentTask.hasUnseenNotifications : false
                         height: Math.round(Kirigami.Units.gridUnit * 0.85)
                         isRound: false
                         fontPointSize: 8
@@ -301,7 +301,7 @@ Loader {
                         id: groupBadge
                         visible: plasmoid.configuration.showBadges && (parentTask ? parentTask.badgeVisible : false)
                         appId: toolTipDelegate.appId
-                        isUrgent: parentTask ? parentTask.hasUnseenNotifications : false
+                        isUrgent: (Plasmoid.configuration.badgeHighlightNew && parentTask) ? parentTask.hasUnseenNotifications : false
                         height: Math.round(Kirigami.Units.gridUnit * 0.85)
                         isRound: false
                         fontPointSize: 8

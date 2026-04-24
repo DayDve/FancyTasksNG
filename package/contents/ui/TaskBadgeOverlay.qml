@@ -106,7 +106,7 @@ Item {
         visible: !!root.parentTask?.badgeVisible
         appId: root.parentTask?.model?.AppId || ""
         
-        isUrgent: !!root.parentTask?.hasUnseenNotifications || !!root.parentTask?.model?.DemandsAttention
+        isUrgent: (Plasmoid.configuration.badgeHighlightNew && !!root.parentTask?.hasUnseenNotifications) || !!root.parentTask?.model?.DemandsAttention
         isRound: true
         isBold: false
         fontFactor: 0.7
