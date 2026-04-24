@@ -4,14 +4,17 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 SCRIPT_DIR=$(dirname $(readlink -f "$0"))
-# Use relative path so xgettext writes relative paths to .po files!
-cd "${SCRIPT_DIR}/../.."
-PACKAGE_DIR="package"
+source "${SCRIPT_DIR}/../functions.sh"
 
-# Use a unified script to retrieve data
-plasmoidName=$("tools/translate/get_metadata.sh" "Id")
+# Use relative path so xgettext writes relative paths to .po files!
+cd "$(readlink -f "${SCRIPT_DIR}/../../")"
+PACKAGE_DIR="package"
+METADATA_FILE="${PACKAGE_DIR}/metadata.json"
+
+# Use a unified function to retrieve data
+plasmoidName=$(get_metadata "Id" "${METADATA_FILE}")
 widgetName="${plasmoidName##*.}"
-bugAddress=$("$SCRIPT_DIR/get_metadata.sh" "Website")
+bugAddress=$(get_metadata "Website" "${METADATA_FILE}")
 
 projectName="plasma_applet_${plasmoidName}"
 

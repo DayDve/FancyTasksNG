@@ -5,11 +5,12 @@
 # Version: 8 (Modular)
 
 SCRIPT_DIR="$(dirname $(readlink -f "$0"))"
+source "${SCRIPT_DIR}/../functions.sh"
 PACKAGE_DIR="$(readlink -f "$SCRIPT_DIR/../../package")"
 
 cd "${SCRIPT_DIR}"
 
-plasmoidName=$("./get_metadata.sh" "Id")
+plasmoidName=$(get_metadata "Id" "${PACKAGE_DIR}/metadata.json")
 projectName="plasma_applet_${plasmoidName}"
 
 if [ -z "$plasmoidName" ]; then

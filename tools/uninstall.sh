@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-PLASMOID_ID=$("$SCRIPT_DIR/translate/get_metadata.sh" "Id")
+source "${SCRIPT_DIR}/functions.sh"
+PLASMOID_ID=$(get_metadata "Id" "${SCRIPT_DIR}/../package/metadata.json")
 
 if [ -z "$PLASMOID_ID" ]; then
     echo "Error: Could not determine Plasmoid ID from metadata.json."
