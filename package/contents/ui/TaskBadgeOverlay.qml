@@ -99,8 +99,8 @@ Item {
 
         height: Math.min(Math.round(parent.height * 0.45), Kirigami.Units.gridUnit)
         
-        visible: (root.parentTask?.smartLauncherItem) ? !!root.parentTask.smartLauncherItem.countVisible : false
-        number: (root.parentTask?.smartLauncherItem) ? root.parentTask.smartLauncherItem.count : 0
+        visible: !!root.parentTask?.badgeVisible
+        number: root.parentTask?.badgeCount || 0
         
         isUrgent: !!root.parentTask?.hasUnseenNotifications
         isRound: true

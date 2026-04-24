@@ -105,17 +105,26 @@ Item {
     property alias labelText: label.text
     property var contextMenu: null
     readonly property bool smartLauncherEnabled: !task.inPopup && task.model && !task.model.IsStartup
-    property var smartLauncherItem: null
+    // standalone notification counting (BadgeManager singleton)
     property int lastSeenCount: 0
     property bool hasUnseenNotifications: false
+    
+    readonly property int badgeCount: {
+        if (!task.model) return 0;
+        return (BadgeManager.countVersion >= 0) ? BadgeManager.getUnreadCount(task.model.AppId) : 0;
+    }
+    readonly property bool badgeVisible: badgeCount > 0
+    
 
     Connections {
-        target: task.smartLauncherItem
-        function onCountChanged() {
-            if (task.smartLauncherItem.count > task.lastSeenCount) {
+        target: task
+        function onBadgeCountChanged() {
+            if (task.badgeCount > task.lastSeenCount) {
                 task.hasUnseenNotifications = true;
+            } else if (task.badgeCount === 0) {
+                task.hasUnseenNotifications = false;
             }
-            task.lastSeenCount = task.smartLauncherItem.count;
+            task.lastSeenCount = task.badgeCount;
         }
     }
 
@@ -273,7 +282,7 @@ Item {
 
         let smartLauncherDescription = "";
         if (task.model && iconBox.active) {
-            smartLauncherDescription += Wrappers.i18ncp("@info:tooltip", "There is %1 new message.", "There are %1 new messages.", task.smartLauncherItem ? task.smartLauncherItem.count : 0);
+            smartLauncherDescription += Wrappers.i18ncp("@info:tooltip", "There is %1 new message.", "There are %1 new messages.", task.badgeCount);
         }
 
         if (task.model.IsGroupParent) {
@@ -349,62 +358,7 @@ Item {
         }
     }
 
-    function updateSmartLauncherItem() {
-        if (task.smartLauncherEnabled && !task.smartLauncherItem) {
-            let smartLauncher = null;
-            
-            // Plasma 6.6 approach
-            try {
-                let component = Qt.createComponent("plasma.applet.org.kde.plasma.taskmanager", "SmartLauncherItem");
-                if (component) {
-                    if (component.status === Component.Ready) {
-                        smartLauncher = component.createObject(task);
-                    }
-                    component.destroy();
-                }
-            } catch(e) {}
 
-            // Plasma 6.5 and older fallbacks
-            if (!smartLauncher) {
-                try {
-                    smartLauncher = Qt.createQmlObject('import org.kde.plasma.private.taskmanager; SmartLauncherItem {}', task);
-                } catch (e) {
-                    try {
-                        smartLauncher = Qt.createQmlObject('import org.kde.taskmanager; SmartLauncherItem {}', task);
-                    } catch (e2) {
-                        // console.warn("FancyTasks: Could not create SmartLauncherItem. Unread badges may not work.");
-                        return;
-                    }
-                }
-            }
-
-            if (smartLauncher && task.model) {
-                smartLauncher.launcherUrl = Qt.binding(() => {
-                    if (!task.model) return "";
-                    if (task.model.LauncherUrlWithoutIcon) {
-                         return task.model.LauncherUrlWithoutIcon;
-                    }
-                    // Fallback 1: Cleaned LauncherUrl (remove all params)
-                    if (task.model.LauncherUrl) {
-                         return task.model.LauncherUrl.toString().split('?')[0];
-                    }
-                    // Fallback 2: Construct from AppId
-                    if (task.model.AppId) {
-                         const appId = task.model.AppId;
-                         if (appId.indexOf("applications:") === 0) return appId;
-                         return "applications:" + appId;
-                    }
-                    return "";
-                });
-
-                task.smartLauncherItem = smartLauncher;
-            }
-        }
-    }
-
-    onSmartLauncherEnabledChanged: {
-        updateSmartLauncherItem();
-    }
 
     Loader {
         id: audioIndicatorLoader
@@ -665,9 +619,6 @@ Item {
     KSvg.FrameSvgItem {
         id: frame
         onIsHoveredChanged: {
-            if (isHovered) {
-                task.hasUnseenNotifications = false;
-            }
         }
 
         Kirigami.ImageColors {
@@ -777,7 +728,7 @@ Item {
 
         anchors.fill: frame
         asynchronous: true
-        active: !!(task.model && task.model.IsWindow) && !!task.smartLauncherItem && !!task.smartLauncherItem.progressVisible && Plasmoid.configuration.indicatorProgressStyle > 0
+        active: !!(task.model && task.model.IsWindow) && !!(task.model && task.model.Progress > 0) && Plasmoid.configuration.indicatorProgressStyle > 0
 
         source: "TaskProgressOverlay.qml"
         onLoaded: {
@@ -785,7 +736,7 @@ Item {
             item.pColor = Qt.binding(() => Plasmoid.configuration.indicatorProgressColor);
             item.pOpacity = Qt.binding(() => Plasmoid.configuration.indicatorProgressOpacity / 100.0);
             item.pThick = Qt.binding(() => Plasmoid.configuration.indicatorProgressThickness);
-            item.pPosition = Qt.binding(() => (task.smartLauncherItem?.progress ?? 0) / 100.0);
+            item.pPosition = Qt.binding(() => (task.model?.Progress ?? 0) / 100.0);
             item.panelLocation = Qt.binding(() => tasks.effectiveLocation);
         }
     }
@@ -1050,7 +1001,7 @@ Item {
     states: [
         State {
             name: "launcher"
-            when: task.model.IsLauncher === true
+            when: task.model && task.model.IsLauncher === true
 
             PropertyChanges {
                 target: frame
@@ -1061,8 +1012,7 @@ Item {
         },
         State {
             name: "attention"
-            when: task.model.IsDemandingAttention === true ||
-                (task.smartLauncherItem && task.smartLauncherItem["urgent"])
+            when: (task.model && task.model.IsDemandingAttention === true)
 
             PropertyChanges {
                 target: frame
@@ -1073,7 +1023,7 @@ Item {
         },
         State {
             name: "minimized"
-            when: task.model.IsMinimized === true && !frame.isHovered && !Plasmoid.configuration.disableButtonInactiveSvg
+            when: task.model && task.model.IsMinimized === true && !frame.isHovered && !Plasmoid.configuration.disableButtonInactiveSvg
 
             PropertyChanges {
                 target: frame
@@ -1164,12 +1114,7 @@ Item {
     ]
 
     Component.onCompleted: {
-        task.updateSmartLauncherItem();
-        
-        if (task.smartLauncherItem) {
-            task.lastSeenCount = task.smartLauncherItem.count;
-        }
-
+        task.lastSeenCount = task.badgeCount;
         if (!task.inPopup && task.model.IsWindow) {
             task.updateAudioStreams({
                 delay: false
