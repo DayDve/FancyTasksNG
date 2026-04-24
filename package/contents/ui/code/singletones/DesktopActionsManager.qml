@@ -32,11 +32,29 @@ Item {
     function query(launcherUrl, callback) {
         const key = String(launcherUrl);
 
-        if (key in cache) {
-            if (callback) callback(cache[key]);
+        // Always do a background query to keep data fresh, 
+        // but if we have cache, we can return it immediately for instant UI
+        if (key in cache && callback) {
+            callback(cache[key]);
+            // If we already have a callback, we might not want to re-trigger UI 
+            // but we SHOULD update the cache in background.
+            _doQuery(key, null); 
             return;
         }
 
+        _doQuery(key, callback);
+    }
+
+    function prefetch(launcherUrl) {
+        if (!launcherUrl) return;
+        const key = String(launcherUrl);
+        // Only prefetch if NOT in cache to avoid spam
+        if (!(key in cache)) {
+            _doQuery(key, null);
+        }
+    }
+
+    function _doQuery(key, callback) {
         const pendingReply = DBus.SessionBus.asyncCall({
             "service": "io.github.daydve.fancytasksng.DesktopActions",
             "path": "/DesktopActions",

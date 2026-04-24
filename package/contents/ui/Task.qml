@@ -1158,6 +1158,10 @@ Item {
             tasksRoot.taskInitComponent.createObject(task);
         }
         task.completed = true;
+
+        if (task.model && task.model.LauncherUrlWithoutIcon) {
+            DesktopActionsManager.prefetch(task.model.LauncherUrlWithoutIcon);
+        }
     }
     Component.onDestruction: {
         if (moveAnim.running) {
