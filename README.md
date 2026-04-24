@@ -40,21 +40,28 @@ Compared to the previous versions, Fancy Tasks NG includes the following major c
    ```bash
    git clone https://github.com/daydve/FancyTasksNG.git
    ```
-2. Enter the directory and install using the provided script:
+2. Enter the directory and install using the provided Makefile:
    ```bash
    cd FancyTasksNG
-   ./install.sh
+   make install
    ```
-   *(If you are updating an existing installation, run `./update.sh`)*
+   *(If you are updating an existing installation, run `make update`)*
 3. Restart your Plasma session or run `plasmashell --replace > /dev/null 2>&1 & disown` to apply the new plasmoid.
 4. Right-click your panel, select "Add Widgets," and search for "Fancy Tasks NG".
 
 ## Updating
 To update easily from the cloned repository, simply run:
 ```bash
-./update.sh
+make update
 ```
-This script will compile translations, update the plasmoid via `kpackagetool6`, and gracefully restart Plasma.
+This command will compile translations, update the plasmoid via `kpackagetool6`, and gracefully restart Plasma.
+
+### Other Commands
+- `make build`: Prepare a `.plasmoid` package in the `release/` directory.
+- `make test`: Run the plasmoid in a standalone `plasmawindowed` instance for testing.
+- `make translate`: Extract new strings and compile existing translations.
+- `make clean`: Remove build artifacts and compiled translations.
+- `make uninstall`: Remove the plasmoid from the system.
 
 ## Credits & Acknowledgements
 
@@ -66,7 +73,7 @@ Fancy Tasks NG is built upon the great work of previous developers:
 - Additional contributions by ziomek64 and others to the original repository.
 
 ## Translation
-Translations are handled via gettext `.po` files located in the `package/translate` directory. Contributions to translations are welcome via pull requests!
+Translations are handled via gettext `.po` files located in the `tools/translate` directory. Contributions to translations are welcome via pull requests!
 
 ## Contact & Bug Reports
 For bug reports, feature requests, or contributions, please use the [GitHub Issues tracker](https://github.com/daydve/FancyTasksNG/issues).

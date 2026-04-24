@@ -12,6 +12,9 @@ build:
 install:
 	@bash tools/install.sh
 
+uninstall:
+	@bash tools/uninstall.sh
+
 update:
 	@bash tools/update.sh
 
