@@ -101,8 +101,7 @@ Loader {
     property var virtualDesktops: []
     property bool isOnAllVirtualDesktops
     property list<string> activities: []
-    property bool smartLauncherCountVisible
-    property int smartLauncherCount
+    property string appId: (tasksModel && rootIndex.valid) ? tasksModel.data(rootIndex, TaskManager.AbstractTasksModel.AppId) : ""
     property bool isPlayingAudio
     property bool isMuted
 
@@ -171,39 +170,30 @@ Loader {
             ColumnLayout {
                 id: singleLayout
                 spacing: Kirigami.Units.smallSpacing
-                
-                Item {
+
+                Row {
                     Layout.alignment: Qt.AlignHCenter
-                    Layout.fillWidth: true
-                    Layout.leftMargin: Kirigami.Units.gridUnit / 2
-                    Layout.rightMargin: Kirigami.Units.gridUnit / 2
-                    Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth - Layout.leftMargin - Layout.rightMargin
-                    implicitWidth: nameLabel.implicitWidth + (badge.visible ? badge.implicitWidth + Kirigami.Units.smallSpacing : 0)
-                    implicitHeight: nameLabel.implicitHeight
                     visible: toolTipDelegate.calculatedAppName.length > 0 && (!toolTipDelegate.isWin || toolTipDelegate.showThumbnails)
                     opacity: 0.8
+                    spacing: Kirigami.Units.smallSpacing
 
                     PlasmaComponents3.Label {
                         id: nameLabel
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        
                         text: toolTipDelegate.calculatedAppName
                         font.bold: true
                         elide: Text.ElideRight
-                        horizontalAlignment: Text.AlignHCenter
+                        width: Math.min(implicitWidth, toolTipDelegate.tooltipInstanceMaximumWidth - (badge.visible ? badge.width + parent.spacing : 0) - Kirigami.Units.gridUnit)
                     }
 
                     Badge {
                         id: badge
-                        anchors.left: nameLabel.right
-                        anchors.leftMargin: Kirigami.Units.smallSpacing
-                        anchors.verticalCenter: nameLabel.verticalCenter
-                        
-                        visible: plasmoid.configuration.showBadges && toolTipDelegate.smartLauncherCountVisible && toolTipDelegate.smartLauncherCount > 0
-                        number: toolTipDelegate.smartLauncherCount
-                        height: Math.round(Kirigami.Units.gridUnit * 0.8)
+                        visible: plasmoid.configuration.showBadges && (parentTask ? parentTask.badgeVisible : false)
+                        appId: toolTipDelegate.appId
+                        isUrgent: parentTask ? parentTask.hasUnseenNotifications : false
+                        height: Math.round(Kirigami.Units.gridUnit * 0.85)
                         isRound: false
                         fontPointSize: 8
+                        maxNumber: 0
                     }
                 }
 
@@ -292,39 +282,30 @@ Loader {
                      const count = (!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ? 1 : safeCount;
                      return Math.ceil(count * toolTipDelegate.tooltipInstanceMaximumWidth + Math.max(0, count - 1) * Kirigami.Units.smallSpacing);
                 }
-
-                Item {
+                
+                Row {
                     Layout.alignment: Qt.AlignHCenter
-                    Layout.fillWidth: true
-                    Layout.leftMargin: Kirigami.Units.gridUnit / 2
-                    Layout.rightMargin: Kirigami.Units.gridUnit / 2
-                    Layout.maximumWidth: groupLayout.contentTargetWidth - Layout.leftMargin - Layout.rightMargin
-                    implicitWidth: groupNameLabel.implicitWidth + (groupBadge.visible ? groupBadge.implicitWidth + Kirigami.Units.smallSpacing : 0)
-                    implicitHeight: groupNameLabel.implicitHeight
                     visible: toolTipDelegate.calculatedAppName.length > 0 && toolTipDelegate.showThumbnails
                     opacity: 0.8
+                    spacing: Kirigami.Units.smallSpacing
 
                     PlasmaComponents3.Label {
                         id: groupNameLabel
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        
                         text: toolTipDelegate.calculatedAppName
                         font.bold: true
                         elide: Text.ElideRight
-                        horizontalAlignment: Text.AlignHCenter
+                        width: Math.min(implicitWidth, groupLayout.contentTargetWidth - (groupBadge.visible ? groupBadge.width + parent.spacing : 0) - Kirigami.Units.gridUnit)
                     }
 
                     Badge {
                         id: groupBadge
-                        anchors.left: groupNameLabel.right
-                        anchors.leftMargin: Kirigami.Units.smallSpacing
-                        anchors.verticalCenter: groupNameLabel.verticalCenter
-                        
-                        visible: plasmoid.configuration.showBadges && toolTipDelegate.smartLauncherCountVisible && toolTipDelegate.smartLauncherCount > 0
-                        number: toolTipDelegate.smartLauncherCount
-                        height: Math.round(Kirigami.Units.gridUnit * 0.8)
+                        visible: plasmoid.configuration.showBadges && (parentTask ? parentTask.badgeVisible : false)
+                        appId: toolTipDelegate.appId
+                        isUrgent: parentTask ? parentTask.hasUnseenNotifications : false
+                        height: Math.round(Kirigami.Units.gridUnit * 0.85)
                         isRound: false
                         fontPointSize: 8
+                        maxNumber: 0
                     }
                 }
 

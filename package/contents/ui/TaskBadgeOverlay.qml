@@ -15,20 +15,25 @@ Item {
     // It inherits the jump animation and zoom from contentWrapper.
     anchors.fill: parent
 
+    // Common height calculation to keep both badges perfectly aligned
+    readonly property real badgeHeight: 14
+    // Common diving offset when task is highlighted
+    readonly property real divingMargin: (root.parentTask && root.parentTask.tasksRoot.iconsOnly && root.parentTask.highlighted) 
+        ? Math.round(badgeHeight / 6) 
+        : 0
+    // Shared Y coordinate for perfect alignment
+    readonly property real badgeY: root.divingMargin
+ 
     // Audio Indicator (Top-Left)
     Badge {
         id: audioBadge
         anchors.left: parent.left
-        anchors.top: parent.top
-        // Diving deeper and moving closer to center when hovered
-        anchors.topMargin: (root.parentTask && root.parentTask.tasksRoot.iconsOnly && root.parentTask.highlighted) 
-            ? Math.round(height / 4) 
-            : 0
-        anchors.leftMargin: (root.parentTask && root.parentTask.tasksRoot.iconsOnly && root.parentTask.highlighted) 
-            ? Math.round(width / 6) 
-            : 0
+        y: root.badgeY
         
-        Behavior on anchors.topMargin {
+        // Horizontal shift when task is highlighted
+        anchors.leftMargin: 0
+        
+        Behavior on y {
             enabled: root.parentTask && root.parentTask.tasksRoot.iconsOnly
             NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
         }
@@ -37,18 +42,20 @@ Item {
             NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
         }
         
-        width: Math.min(Math.round(parent.height * 0.45), Kirigami.Units.gridUnit)
-        height: width
-        
+        height: root.badgeHeight
         visible: root.parentTask ? (root.parentTask.playingAudio || root.parentTask.muted) : false
         
-        iconSource: root.parentTask?.muted ? "audio-volume-muted-symbolic" : "audio-volume-high-symbolic"
-        highlightColor: root.parentTask?.muted ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.highlightColor
-        
-        showBackground: root.parentTask ? root.parentTask.muted : false
+        textSource: "🕪"
+        mirrorText: true
+        overlaySource: root.parentTask?.muted ? "⦸" : ""
+        opacity: root.parentTask?.muted ? 0.7 : 1.0
         hovered: !!audioMouseArea.containsMouse
+        
+        textIconColor: Kirigami.Theme.textColor
+        showBackground: false
+        shadowEnabled: true 
         isRound: true
-
+ 
         MouseArea {
             id: audioMouseArea
             anchors.fill: parent
@@ -66,7 +73,7 @@ Item {
                     root.parentTask.isAudioHovered = false;
                 }
             }
-
+ 
             onClicked: (mouse) => {
                 mouse.accepted = true;
                 if (root.parentTask) {
@@ -75,20 +82,17 @@ Item {
             }
         }
     }
-
+ 
     // Notification Badge (Top-Right)
     Badge {
         id: notificationBadge
         anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.topMargin: (root.parentTask && root.parentTask.tasksRoot.iconsOnly && root.parentTask.highlighted) 
-            ? Math.round(height / 4) 
-            : 0
-        anchors.rightMargin: (root.parentTask && root.parentTask.tasksRoot.iconsOnly && root.parentTask.highlighted) 
-            ? Math.round(width / 6) 
-            : 0
-
-        Behavior on anchors.topMargin {
+        y: root.badgeY
+ 
+        // Horizontal shift when task is highlighted
+        anchors.rightMargin: 0
+ 
+        Behavior on y {
             enabled: root.parentTask && root.parentTask.tasksRoot.iconsOnly
             NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
         }
@@ -96,15 +100,14 @@ Item {
             enabled: root.parentTask && root.parentTask.tasksRoot.iconsOnly
             NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
         }
-
-        height: Math.min(Math.round(parent.height * 0.45), Kirigami.Units.gridUnit)
-        
+ 
+        height: root.badgeHeight
         visible: !!root.parentTask?.badgeVisible
-        number: root.parentTask?.badgeCount || 0
+        appId: root.parentTask?.model?.AppId || ""
         
         isUrgent: !!root.parentTask?.hasUnseenNotifications || !!root.parentTask?.model?.DemandsAttention
         isRound: true
         isBold: false
-        fontFactor: 0.85
+        fontFactor: 0.7
     }
 }
