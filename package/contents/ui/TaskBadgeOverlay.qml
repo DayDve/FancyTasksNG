@@ -15,8 +15,8 @@ Item {
     // It inherits the jump animation and zoom from contentWrapper.
     anchors.fill: parent
 
-    // Common height calculation to keep both badges perfectly aligned
-    readonly property real badgeHeight: 14
+    // Dynamic height based on grid unit to ensure legibility on High-DPI screens
+    readonly property real badgeHeight: Math.max(14, Math.round(Kirigami.Units.gridUnit * 0.85))
     // Common diving offset when task is highlighted
     readonly property real divingMargin: (root.parentTask && root.parentTask.tasksRoot.iconsOnly && root.parentTask.highlighted) 
         ? Math.round(badgeHeight / 6) 
@@ -55,6 +55,7 @@ Item {
         showBackground: false
         shadowEnabled: true 
         isRound: true
+        fontFactor: 0.85
  
         MouseArea {
             id: audioMouseArea

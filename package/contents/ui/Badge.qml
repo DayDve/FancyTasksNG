@@ -155,7 +155,7 @@ Rectangle {
         text: badgeRect.textSource
         visible: badgeRect.textSource !== ""
         
-        font.pixelSize: Math.round(parent.height * 0.7)
+        font.pixelSize: Math.round(parent.height * badgeRect.fontFactor)
         color: badgeRect.textIconColor
         
         renderType: Text.QtRendering 
@@ -219,7 +219,7 @@ Rectangle {
         verticalAlignment: Text.AlignVCenter
         
         font.bold: badgeRect.isBold
-        font.pixelSize: Math.round(parent.height * 0.7)
+        font.pixelSize: Math.round(parent.height * badgeRect.fontFactor)
         
         renderType: Text.QtRendering
         antialiasing: true
