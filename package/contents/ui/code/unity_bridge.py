@@ -42,6 +42,24 @@ if __name__ == '__main__':
     emitter = BridgeEmitter()
     
     bus = dbus.SessionBus()
+
+    # Register as Unity service so KDE apps (KMail, Kontact) know we're listening.
+    # These apps check for "com.canonical.Unity" before sending badge updates.
+    # DBUS_NAME_FLAG_DO_NOT_QUEUE: if the name is already taken (e.g. by the
+    # standard Plasma Task Manager), just skip — signals will still be received
+    # via the wildcard signal_receiver below.
+    try:
+        reply = bus.request_name(
+            'com.canonical.Unity',
+            dbus.bus.NAME_FLAG_DO_NOT_QUEUE
+        )
+        if reply == dbus.bus.REQUEST_NAME_REPLY_PRIMARY_OWNER:
+            print("Bridge: Registered as com.canonical.Unity (primary owner)")
+        else:
+            print("Bridge: com.canonical.Unity already owned, listening passively")
+    except Exception as e:
+        print(f"Bridge: Could not request com.canonical.Unity: {e}")
+
     bus.add_signal_receiver(
         handle_unity_update,
         signal_name="Update",
