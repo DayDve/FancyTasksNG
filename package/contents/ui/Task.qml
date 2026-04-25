@@ -609,17 +609,15 @@ Item {
         property color dominantColor: imageColors.dominant
         property color indicatorColor: Kirigami.ColorUtils.tintWithAlpha(dominantColor, task.tintColor, .38)
 
+        readonly property int _vMargin: (!task.tasksRoot.vertical && task.tasksRoot.taskList.rows > 1) ? LayoutMetrics.iconMargin : 0
+        readonly property int _hMargin: ((task.inPopup || task.tasksRoot.vertical) && task.tasksRoot.taskList.columns > 1) ? LayoutMetrics.iconMargin : 0
+
         anchors {
             fill: parent
-
-            topMargin: (!task.tasksRoot.vertical && task.tasksRoot.taskList.rows > 1) ?
-                LayoutMetrics.iconMargin : 0
-            bottomMargin: (!task.tasksRoot.vertical && task.tasksRoot.taskList.rows > 1) ?
-                LayoutMetrics.iconMargin : 0
-            leftMargin: ((task.inPopup || task.tasksRoot.vertical) && task.tasksRoot.taskList.columns > 1) ?
-                LayoutMetrics.iconMargin : 0
-            rightMargin: ((task.inPopup || task.tasksRoot.vertical) && task.tasksRoot.taskList.columns > 1) ?
-                LayoutMetrics.iconMargin : 0
+            topMargin: _vMargin
+            bottomMargin: _vMargin
+            leftMargin: _hMargin
+            rightMargin: _hMargin
         }
 
         imagePath: Plasmoid.configuration.disableButtonSvg ?
@@ -628,31 +626,22 @@ Item {
             8 : 0
         property bool isHovered: task.highlighted && Plasmoid.configuration.taskHoverEffect
         
-        property string basePrefix: {
-            if (!task.model) return "normal";
-            if (task.model.IsLauncher) return "";
-            if (task.model.IsDemandingAttention) return "attention";
-            if (task.model.IsMinimized) return "minimized";
-            if (task.model.IsActive) return "focus";
-            return "normal";
-        }
+        property string basePrefix: !task.model ? "normal" :
+                                    task.model.IsLauncher ? "" :
+                                    task.model.IsDemandingAttention ? "attention" :
+                                    task.model.IsMinimized ? "minimized" :
+                                    task.model.IsActive ? "focus" : "normal"
         
         prefix: isHovered ?
             TaskTools.taskPrefixHovered(basePrefix, tasks.effectiveLocation) : TaskTools.taskPrefix(basePrefix, tasks.effectiveLocation)
 
-        visible: {
-            if (!task.model || task.model.IsLauncher || task.model.IsDemandingAttention || task.model.IsActive || frame.isHovered) {
-                return true;
-            }
-            return !Plasmoid.configuration.disableButtonInactiveSvg;
-        }
+        visible: (!task.model || task.model.IsLauncher || task.model.IsDemandingAttention || task.model.IsActive || frame.isHovered) ?
+            true : !Plasmoid.configuration.disableButtonInactiveSvg
 
-        layer.enabled: {
-            if (!task.model || task.model.IsLauncher || !Plasmoid.configuration.buttonColorize) return false;
-            if (task.model.IsDemandingAttention && !frame.isHovered) return false;
-            if (task.model.IsActive || frame.isHovered) return true;
-            return !Plasmoid.configuration.disableButtonInactiveSvg && Plasmoid.configuration.buttonColorizeInactive;
-        }
+        layer.enabled: (!task.model || task.model.IsLauncher || !Plasmoid.configuration.buttonColorize) ? false :
+                       (task.model.IsDemandingAttention && !frame.isHovered) ? false :
+                       (task.model.IsActive || frame.isHovered) ? true :
+                       (!Plasmoid.configuration.disableButtonInactiveSvg && Plasmoid.configuration.buttonColorizeInactive)
 
         layer.effect: MultiEffect {
             brightness: 1.0
