@@ -492,8 +492,11 @@ Item {
         taskCount: task.childCount
         task: task
         frame: frame
-        visible: Plasmoid.configuration.indicatorsEnabled ?
-            true : false
+        visible: {
+            if (!Plasmoid.configuration.indicatorsEnabled || !task.model) return false;
+            if (task.model.IsLauncher || task.model.IsDemandingAttention || task.model.IsActive) return true;
+            return !Plasmoid.configuration.disableInactiveIndicators;
+        }
         flow: Flow.LeftToRight
         spacing: Kirigami.Units.smallSpacing
         clip: true
@@ -615,11 +618,33 @@ Item {
         enabledBorders: Plasmoid.configuration.useBorders ? 1 | 2 | 4 |
             8 : 0
         property bool isHovered: task.highlighted && Plasmoid.configuration.taskHoverEffect
-        property string basePrefix: "normal"
+        
+        property string basePrefix: {
+            if (!task.model) return "normal";
+            if (task.model.IsLauncher) return "";
+            if (task.model.IsDemandingAttention) return "attention";
+            if (task.model.IsMinimized) return "minimized";
+            if (task.model.IsActive) return "focus";
+            return "normal";
+        }
+        
         prefix: isHovered ?
             TaskTools.taskPrefixHovered(basePrefix, tasks.effectiveLocation) : TaskTools.taskPrefix(basePrefix, tasks.effectiveLocation)
 
-        layer.enabled: false
+        visible: {
+            if (!task.model || task.model.IsLauncher || task.model.IsDemandingAttention || task.model.IsActive || frame.isHovered) {
+                return true;
+            }
+            return !Plasmoid.configuration.disableButtonInactiveSvg;
+        }
+
+        layer.enabled: {
+            if (!task.model || task.model.IsLauncher || !Plasmoid.configuration.buttonColorize) return false;
+            if (task.model.IsDemandingAttention && !frame.isHovered) return false;
+            if (task.model.IsActive || frame.isHovered) return true;
+            return !Plasmoid.configuration.disableButtonInactiveSvg && Plasmoid.configuration.buttonColorizeInactive;
+        }
+
         layer.effect: MultiEffect {
             brightness: 1.0
             colorization: 1.0
@@ -953,120 +978,6 @@ Item {
         }
     }
 
-    states: [
-        State {
-            name: "launcher"
-            when: task.model && task.model.IsLauncher === true
-
-            PropertyChanges {
-                target: frame
-                basePrefix: ""
-                visible: true
-                layer.enabled: false
-            }
-        },
-        State {
-            name: "attention"
-            when: (task.model && task.model.IsDemandingAttention === true)
-
-            PropertyChanges {
-                target: frame
-                basePrefix: "attention"
-                visible: true
-                layer.enabled: (Plasmoid.configuration.buttonColorize && frame.isHovered)
-            }
-        },
-        State {
-            name: "minimized"
-            when: task.model && task.model.IsMinimized === true && !frame.isHovered && !Plasmoid.configuration.disableButtonInactiveSvg
-
-            PropertyChanges {
-                target: frame
-                basePrefix: "minimized"
-                visible: true
-                layer.enabled: (Plasmoid.configuration.buttonColorize && Plasmoid.configuration.buttonColorizeInactive)
-            }
-            PropertyChanges {
-                target: indicator
-                visible: Plasmoid.configuration.disableInactiveIndicators ?
-                    false : true
-            }
-        },
-        State {
-            name: "minimizedNodecoration"
-            when: (task.model.IsMinimized === true && !frame.isHovered) && Plasmoid.configuration.disableButtonInactiveSvg
-
-            PropertyChanges {
-                target: frame
-                basePrefix: "minimized"
-                visible: false
-                layer.enabled: false
-            }
-            PropertyChanges {
-                target: indicator
-                visible: Plasmoid.configuration.disableInactiveIndicators ?
-                    false : true
-            }
-        },
-        State {
-            name: "active"
-            when: task.model.IsActive === true
-
-            PropertyChanges {
-                target: frame
-                basePrefix: "focus"
-                visible: true
-                layer.enabled: Plasmoid.configuration.buttonColorize
-            }
-            PropertyChanges {
-                target: indicator
-                visible: Plasmoid.configuration.indicatorsEnabled ?
-                    true : false
-            }
-        },
-        State {
-            name: "inactive"
-            when: task.model.IsActive === false && !frame.isHovered && !Plasmoid.configuration.disableButtonInactiveSvg
-            PropertyChanges {
-                target: frame
-                visible: true
-                layer.enabled: Plasmoid.configuration.buttonColorize && Plasmoid.configuration.buttonColorizeInactive
-            }
-            PropertyChanges {
-                target: indicator
-                visible: Plasmoid.configuration.disableInactiveIndicators ?
-                    false : true
-            }
-        },
-        State {
-            name: "inactiveNoDecoration"
-            when: (task.model.IsActive === false && !frame.isHovered) && Plasmoid.configuration.disableButtonInactiveSvg
-            PropertyChanges {
-                target: frame
-                visible: false
-                layer.enabled: false
-            }
-            PropertyChanges {
-                target: indicator
-                visible: Plasmoid.configuration.disableInactiveIndicators ?
-                    false : true
-            }
-        },
-        State {
-            name: "hover"
-            when: frame.isHovered
-            PropertyChanges {
-                target: frame
-                visible: true
-                layer.enabled: Plasmoid.configuration.buttonColorize
-            }
-            PropertyChanges {
-                target: indicator
-                visible: Plasmoid.configuration.disableInactiveIndicators ?
-                    false : true
-            }
-        }
-    ]
 
     Component.onCompleted: {
         task.lastSeenCount = task.badgeCount;
