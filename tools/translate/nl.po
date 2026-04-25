@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-04-25 00:21+0300\n"
+"POT-Creation-Date: 2026-04-25 02:53+0300\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -655,7 +655,19 @@ msgid "—"
 msgstr ""
 
 #: package/contents/ui/ContextMenu.qml
+msgid "Places"
+msgstr ""
+
+#: package/contents/ui/ContextMenu.qml
 msgid "Recent Documents"
+msgstr ""
+
+#: package/contents/ui/ContextMenu.qml
+msgid "Trash"
+msgstr ""
+
+#: package/contents/ui/ContextMenu.qml
+msgid "Forget Recent Files"
 msgstr ""
 
 #: package/contents/ui/ContextMenu.qml
@@ -845,4 +857,3 @@ msgstr "Ook actief op %1"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Actief op %1"
-

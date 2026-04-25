@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-04-25 00:21+0300\n"
+"POT-Creation-Date: 2026-04-25 02:53+0300\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -655,9 +655,18 @@ msgctxt "Invalid"
 msgid "—"
 msgstr ""
 
+# --- ContextMenu.qml ---
+#: package/contents/ui/ContextMenu.qml
+msgid "Places"
+msgstr "Точки входа"
+
 #: package/contents/ui/ContextMenu.qml
 msgid "Recent Documents"
 msgstr "Недавние документы"
+
+#: package/contents/ui/ContextMenu.qml
+msgid "Trash"
+msgstr ""
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Forget Recent Files"
@@ -851,29 +860,3 @@ msgstr "Также доступно в %1"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Доступно в %1"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# --- ContextMenu.qml ---
-

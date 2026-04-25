@@ -100,8 +100,6 @@ PlasmaExtras.Menu {
             `, parent);
     }
 
-
-
     property var _dynamicDesktopItems: []
 
     function _insertDesktopActions(result, launcherUrl) {
@@ -131,6 +129,30 @@ PlasmaExtras.Menu {
             let sep2 = menu.newSeparator(menu);
             menu.addMenuItem(sep2, insertItem);
             _dynamicDesktopItems.push(sep2);
+        }
+
+        // 1.5 Add Places Submenu (for Dolphin / File Managers)
+        if (result.places && result.places.length > 0) {
+            let placesSubItem = Qt.createQmlObject('import "."; PlacesSubMenu {}', menu);
+            placesSubItem.text = Wrappers.i18n("Places");
+            let placesSubMenu = placesSubItem.subMenu;
+
+            result.places.forEach((place) => {
+                let menuItem = menu.newMenuItem(placesSubMenu);
+                menuItem.text = place.name;
+                menuItem.icon = place.icon;
+                menuItem.clicked.connect(() => {
+                    DesktopActionsManager.openUrl(place.url);
+                });
+                placesSubMenu.addMenuItem(menuItem);
+            });
+
+            menu.addMenuItem(placesSubItem, insertItem);
+            _dynamicDesktopItems.push(placesSubItem);
+
+            let sep3 = menu.newSeparator(menu);
+            menu.addMenuItem(sep3, insertItem);
+            _dynamicDesktopItems.push(sep3);
         }
 
         // 2. Add Recent Documents

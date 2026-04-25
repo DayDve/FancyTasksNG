@@ -18,6 +18,7 @@ import os
 import sqlite3
 import subprocess
 import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
@@ -297,6 +298,56 @@ def clear_recent_documents(desktop_path):
         return False
 
 
+def get_kde_places():
+    """Parse ~/.local/share/user-places.xbel to get KDE Places."""
+    places = []
+    xbel_path = Path.home() / ".local/share/user-places.xbel"
+    if not xbel_path.exists():
+        return places
+
+    try:
+        # Standard XBEL doesn't use namespaces for title/bookmark, 
+        # but KDE adds metadata in its own namespaces.
+        tree = ET.parse(xbel_path)
+        root = tree.getroot()
+        
+        for bookmark in root.findall('bookmark'):
+            href = bookmark.get('href')
+            title_node = bookmark.find('title')
+            title = title_node.text if title_node is not None else href
+            
+            icon = "folder"
+            is_hidden = False
+            
+            # Metadata for icon and hidden state
+            # Metadata nodes can have owner="http://freedesktop.org" or "http://www.kde.org"
+            for info in bookmark.findall('info'):
+                for metadata in info.findall('metadata'):
+                    owner = metadata.get('owner')
+                    if owner == "http://freedesktop.org":
+                        # Look for <bookmark:icon name="..."/>
+                        # XBEL spec uses http://www.freedesktop.org/standards/desktop-bookmarks namespace
+                        icon_node = metadata.find('{http://www.freedesktop.org/standards/desktop-bookmarks}icon')
+                        if icon_node is not None:
+                            icon = icon_node.get('name')
+                    elif owner == "http://www.kde.org":
+                        hidden_node = metadata.find('IsHidden')
+                        if hidden_node is not None and hidden_node.text == "true":
+                            is_hidden = True
+
+            if not is_hidden:
+                places.append({
+                    "name": title,
+                    "url": href,
+                    "icon": icon
+                })
+    except Exception as e:
+        # print(f"XBEL error: {e}", file=sys.stderr)
+        pass
+
+    return places
+
+
 import dbus
 import dbus.service
 from dbus.mainloop.glib import DBusGMainLoop
@@ -329,9 +380,15 @@ class DesktopActionsService(dbus.service.Object):
         desktop_path = resolve_launcher_url(launcher_url)
         jump_list = get_jump_list_actions(desktop_path) if desktop_path else []
         recent_docs = get_recent_documents(desktop_path) if desktop_path else []
+        
+        places = []
+        if desktop_path and "dolphin" in desktop_path.lower():
+            places = get_kde_places()
+
         data = {
             "jumpList": jump_list,
             "recentDocs": recent_docs,
+            "places": places,
             "desktopPath": desktop_path or "",
         }
         return json.dumps(data)
