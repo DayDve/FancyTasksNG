@@ -116,7 +116,7 @@ Rectangle {
         text: badgeRect.overlaySource
         visible: badgeRect.overlaySource !== ""
         
-        font.pixelSize: Math.round(parent.height * 1.2) // Larger overlay for better impact
+        font.pixelSize: Math.round(parent.height * 1.1) // Slightly larger than parent but not overwhelming
         font.bold: true
         color: Kirigami.Theme.negativeTextColor
         
@@ -126,9 +126,9 @@ Rectangle {
         
         Behavior on scale { NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic } }
         
-        // Optical centering fine-tuning - lowered for better alignment
-        anchors.verticalCenterOffset: Math.round(parent.height * 0.2)
-        anchors.horizontalCenterOffset: badgeRect.mirrorText ? 1 : -1
+        // Reset offsets to zero for perfect mathematical centering
+        anchors.verticalCenterOffset: 0
+        anchors.horizontalCenterOffset: 0
         
         renderType: Text.QtRendering
         antialiasing: true
