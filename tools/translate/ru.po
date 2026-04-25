@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-04-25 02:53+0300\n"
+"POT-Creation-Date: 2026-04-25 03:22+0300\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -92,6 +92,14 @@ msgid "Hide 'Move to Desktop' if only one virtual desktop is used"
 msgstr ""
 "Скрывать «Переместить на рабочий стол»,\n"
 "если используется только один рабочий стол"
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Show browsing history in the context menu of web browsers"
+msgstr "Отображать историю браузеров в контекстном меню"
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Number of browser history items:"
+msgstr "Количество элементов истории:"
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Use plasma borders"
@@ -659,6 +667,10 @@ msgstr ""
 #: package/contents/ui/ContextMenu.qml
 msgid "Places"
 msgstr "Точки входа"
+
+#: package/contents/ui/ContextMenu.qml
+msgid "Recent Pages"
+msgstr "Недавние страницы"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Recent Documents"

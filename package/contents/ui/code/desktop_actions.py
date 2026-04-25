@@ -15,6 +15,9 @@ import configparser
 import json
 import mimetypes
 import os
+import re
+import shlex
+import shutil
 import sqlite3
 import subprocess
 import sys
@@ -264,6 +267,101 @@ def get_recent_documents(desktop_path):
     return docs
 
 
+def get_firefox_recent(limit=10):
+    """Fetch recent Firefox history from places.sqlite with robust profile discovery."""
+    search_dirs = [
+        Path.home() / ".mozilla" / "firefox",
+        Path.home() / ".var" / "app" / "org.mozilla.firefox" / ".mozilla" / "firefox",
+        Path.home() / ".var" / "app" / "org.mozilla.firefox-trunk" / ".mozilla" / "firefox",
+        Path.home() / "snap" / "firefox" / "common" / ".mozilla" / "firefox"
+    ]
+    
+    candidates = []
+    for d in search_dirs:
+        if d.exists() and (d / "profiles.ini").exists():
+            try:
+                config = configparser.ConfigParser()
+                config.read(d / "profiles.ini")
+                for section in config.sections():
+                    p_dir = config[section].get("Path") if section.startswith("Profile") else config[section].get("Default") if section.startswith("Install") else None
+                    if p_dir:
+                        full_path = d / p_dir if config[section].get("IsRelative", "1") == "1" else Path(p_dir)
+                        if (full_path / "places.sqlite").exists():
+                            candidates.append(full_path / "places.sqlite")
+            except Exception: continue
+
+    if not candidates: return []
+    
+    # Pick most recent
+    db_path = max(candidates, key=lambda p: p.stat().st_mtime)
+    
+    query = """
+        SELECT DISTINCT url, title FROM moz_places 
+        WHERE last_visit_date IS NOT NULL AND title IS NOT NULL AND url LIKE 'http%'
+        ORDER BY last_visit_date DESC LIMIT ?
+    """
+    return fetch_sqlite_history(db_path, query, "places_ff_recent.sqlite", limit)
+
+
+def get_chromium_recent(browser_name, limit=10):
+    """Fetch recent history for Chromium-based browsers."""
+    configs = {
+        "chrome": [Path.home() / ".config" / "google-chrome"],
+        "chromium": [Path.home() / ".config" / "chromium"],
+        "brave": [Path.home() / ".config" / "BraveSoftware" / "Brave-Browser"],
+        "vivaldi": [Path.home() / ".config" / "vivaldi"],
+        "edge": [Path.home() / ".config" / "microsoft-edge"],
+        "opera": [Path.home() / ".config" / "opera"],
+    }
+    
+    base_dirs = configs.get(browser_name, [])
+    candidates = []
+    for base in base_dirs:
+        if not base.exists(): continue
+        # Common profile names
+        for profile in ["Default", "Profile 1", "Profile 2", "."]:
+            history_db = base / profile / "History"
+            if history_db.exists():
+                candidates.append(history_db)
+
+    if not candidates: return []
+    
+    db_path = max(candidates, key=lambda p: p.stat().st_mtime)
+    query = """
+        SELECT DISTINCT url, title FROM urls 
+        WHERE last_visit_time IS NOT NULL AND title IS NOT NULL AND url LIKE 'http%'
+        ORDER BY last_visit_time DESC LIMIT ?
+    """
+    return fetch_sqlite_history(db_path, query, "places_chrome_recent.sqlite", limit)
+
+
+def fetch_sqlite_history(db_path, query, temp_name, limit=10):
+    """Generic helper to fetch history from a SQLite DB."""
+    docs = []
+    temp_db = Path("/tmp") / temp_name
+    try:
+        shutil.copy2(db_path, temp_db)
+        conn = sqlite3.connect(temp_db)
+        cursor = conn.cursor()
+        cursor.execute(query, (limit * 3,))
+        
+        seen_urls = set()
+        seen_titles = set()
+        for url, title in cursor.fetchall():
+            norm_url = url.split('#')[0].rstrip('/')
+            if norm_url in seen_urls or title in seen_titles:
+                continue
+            seen_urls.add(norm_url)
+            seen_titles.add(title)
+            docs.append({"name": title, "url": url, "icon": "internet-services", "mimeType": "text/html"})
+            if len(docs) >= limit: break
+        conn.close()
+    except Exception: pass
+    finally:
+        if temp_db.exists(): temp_db.unlink()
+    return docs
+
+
 def clear_recent_documents(desktop_path):
     """Clear recent documents for this application from the database."""
     if not KACTIVITIES_DB.is_file():
@@ -375,11 +473,37 @@ class DesktopActionsService(dbus.service.Object):
             print(f"DesktopActionsService error: {e}", file=sys.stderr)
             sys.exit(1)
 
-    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='s', out_signature='s')
-    def Query(self, launcher_url):
+    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='sbi', out_signature='s')
+    def Query(self, launcher_url, show_history, limit):
         desktop_path = resolve_launcher_url(launcher_url)
         jump_list = get_jump_list_actions(desktop_path) if desktop_path else []
-        recent_docs = get_recent_documents(desktop_path) if desktop_path else []
+        
+        browser_history = []
+        if desktop_path and show_history:
+            d_lower = desktop_path.lower()
+            if "firefox" in d_lower or "mozilla" in d_lower:
+                browser_history = get_firefox_recent(limit)
+            elif "chrome" in d_lower:
+                browser_history = get_chromium_recent("chrome", limit)
+            elif "brave" in d_lower:
+                browser_history = get_chromium_recent("brave", limit)
+            elif "vivaldi" in d_lower:
+                browser_history = get_chromium_recent("vivaldi", limit)
+            elif "chromium" in d_lower:
+                browser_history = get_chromium_recent("chromium", limit)
+            elif "edge" in d_lower:
+                browser_history = get_chromium_recent("edge", limit)
+            elif "opera" in d_lower:
+                browser_history = get_chromium_recent("opera", limit)
+        
+        raw_recent = get_recent_documents(desktop_path) if desktop_path else []
+        
+        # Deduplicate recentDocs against browserHistory
+        recent_docs = []
+        browser_urls = {item['url'] for item in browser_history}
+        for doc in raw_recent:
+            if doc['url'] not in browser_urls:
+                recent_docs.append(doc)
         
         places = []
         if desktop_path and "dolphin" in desktop_path.lower():
@@ -388,6 +512,7 @@ class DesktopActionsService(dbus.service.Object):
         data = {
             "jumpList": jump_list,
             "recentDocs": recent_docs,
+            "browserHistory": browser_history,
             "places": places,
             "desktopPath": desktop_path or "",
         }
@@ -406,12 +531,34 @@ class DesktopActionsService(dbus.service.Object):
         except Exception as e:
             print(f"Execute error: {e}", file=sys.stderr)
 
-    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='s', out_signature='')
-    def OpenUrl(self, url):
+    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='ss', out_signature='')
+    def OpenUrl(self, url, preferred_app):
         try:
-            subprocess.Popen(["kioclient", "exec", url], start_new_session=True)
-        except Exception as e:
-            print(f"OpenUrl error: {e}", file=sys.stderr)
+            desktop_path = resolve_launcher_url(preferred_app)
+            if desktop_path:
+                exec_cmd = get_desktop_exec(desktop_path)
+                if exec_cmd:
+                    # Replace %u, %U, %f, %F with the actual URL
+                    clean_exec = re.sub(r'%[uUfF]', url, exec_cmd)
+                    if url not in clean_exec:
+                        clean_exec += f" {url}"
+                    subprocess.Popen(shlex.split(clean_exec))
+                    return
+            
+            # Fallback to default browser
+            subprocess.Popen(['xdg-open', url])
+        except Exception: pass
+
+
+def get_desktop_exec(desktop_path):
+    """Helper to get the Exec line from a desktop file."""
+    try:
+        config = configparser.ConfigParser(interpolation=None)
+        config.read(desktop_path)
+        if 'Desktop Entry' in config:
+            return config['Desktop Entry'].get('Exec')
+    except Exception: pass
+    return None
 
 def main():
     set_pdeathsig()

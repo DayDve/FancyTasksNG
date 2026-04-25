@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-04-25 02:53+0300\n"
+"POT-Creation-Date: 2026-04-25 03:22+0300\n"
 "PO-Revision-Date: 2023-09-21 16:18-0300\n"
 "Last-Translator:  Douglas Guimarães <<dg2003gh@gmail.com>>\n"
 "Language-Team: \n"
@@ -91,6 +91,14 @@ msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Hide 'Move to Desktop' if only one virtual desktop is used"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Show browsing history in the context menu of web browsers"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Number of browser history items:"
 msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml
@@ -656,6 +664,10 @@ msgstr ""
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Places"
+msgstr ""
+
+#: package/contents/ui/ContextMenu.qml
+msgid "Recent Pages"
 msgstr ""
 
 #: package/contents/ui/ContextMenu.qml

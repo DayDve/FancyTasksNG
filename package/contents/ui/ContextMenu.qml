@@ -142,7 +142,7 @@ PlasmaExtras.Menu {
                 menuItem.text = place.name;
                 menuItem.icon = place.icon;
                 menuItem.clicked.connect(() => {
-                    DesktopActionsManager.openUrl(place.url);
+                    DesktopActionsManager.openUrl(place.url, launcherUrl);
                 });
                 placesSubMenu.addMenuItem(menuItem);
             });
@@ -153,6 +153,30 @@ PlasmaExtras.Menu {
             let sep3 = menu.newSeparator(menu);
             menu.addMenuItem(sep3, insertItem);
             _dynamicDesktopItems.push(sep3);
+        }
+
+        // 1.7 Add Browser History (for Firefox/Browsers)
+        if (result.browserHistory && result.browserHistory.length > 0) {
+            let title = menu.newMenuItem(menu);
+            title.text = Wrappers.i18n("Recent Pages");
+            title.section = true;
+            menu.addMenuItem(title, insertItem);
+            _dynamicDesktopItems.push(title);
+
+            result.browserHistory.forEach((item) => {
+                let menuItem = menu.newMenuItem(menu);
+                menuItem.text = item.name;
+                menuItem.icon = item.icon;
+                menuItem.clicked.connect(() => {
+                    DesktopActionsManager.openUrl(item.url, launcherUrl);
+                });
+                menu.addMenuItem(menuItem, insertItem);
+                _dynamicDesktopItems.push(menuItem);
+            });
+
+            let sep4 = menu.newSeparator(menu);
+            menu.addMenuItem(sep4, insertItem);
+            _dynamicDesktopItems.push(sep4);
         }
 
         // 2. Add Recent Documents
@@ -203,7 +227,7 @@ PlasmaExtras.Menu {
                 }
                 
                 menuItem.clicked.connect(() => {
-                    DesktopActionsManager.openUrl(doc.url);
+                    DesktopActionsManager.openUrl(doc.url, launcherUrl);
                 });
                 menu.addMenuItem(menuItem, insertItem);
                 _dynamicDesktopItems.push(menuItem);
@@ -227,9 +251,8 @@ PlasmaExtras.Menu {
     }
 
     function loadDynamicLaunchActions(launcherUrl: url, onReady: var): void {
-
         // Query desktop file actions and recent documents
-        DesktopActionsManager.query(launcherUrl, (result) => {
+        DesktopActionsManager.query(launcherUrl, Plasmoid.configuration.showBrowserHistory, Plasmoid.configuration.browserHistoryLimit, (result) => {
             _insertDesktopActions(result, launcherUrl);
             if (onReady) onReady();
         });

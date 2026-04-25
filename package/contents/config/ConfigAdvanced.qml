@@ -165,6 +165,39 @@ ConfigPage {
                         leftPadding: cfg_hideMoveToDesktopMenuWithOneDesktop.indicator.width + cfg_hideMoveToDesktopMenuWithOneDesktop.spacing
                     }
                 }
+
+                CheckBox {
+                    id: cfg_showBrowserHistory
+                    text: Wrappers.i18n("Show browsing history in the context menu of web browsers")
+                    checked: cfg_page.cfg_showBrowserHistory
+                    onToggled: cfg_page.cfg_showBrowserHistory = checked
+
+                    Layout.fillWidth: true
+
+                    contentItem: Text {
+                        text: cfg_showBrowserHistory.text
+                        font: cfg_showBrowserHistory.font
+                        color: Kirigami.Theme.textColor
+                        wrapMode: Text.WordWrap
+                        verticalAlignment: Text.AlignVCenter
+                        leftPadding: cfg_showBrowserHistory.indicator.width + cfg_showBrowserHistory.spacing
+                    }
+                }
+
+                RowLayout {
+                    visible: cfg_showBrowserHistory.checked
+                    Item { implicitWidth: Kirigami.Units.gridUnit }
+                    Label {
+                        text: Wrappers.i18n("Number of browser history items:")
+                    }
+                    SpinBox {
+                        id: cfg_browserHistoryLimit
+                        from: 1
+                        to: 50
+                        value: cfg_page.cfg_browserHistoryLimit
+                        onValueModified: cfg_page.cfg_browserHistoryLimit = value
+                    }
+                }
             } // FormLayout
         } // ConfigScrollView
     } // ColumnLayout

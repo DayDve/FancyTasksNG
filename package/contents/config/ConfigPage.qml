@@ -182,4 +182,8 @@ Kirigami.Page {
     property bool cfg_smokeExplosionOnCloseDefault: false
     property bool cfg_showBadgesOnLaunchers: true
     property bool cfg_showBadgesOnLaunchersDefault: true
+    property bool cfg_showBrowserHistory: false
+    property bool cfg_showBrowserHistoryDefault: false
+    property int cfg_browserHistoryLimit: 10
+    property int cfg_browserHistoryLimitDefault: 10
 }

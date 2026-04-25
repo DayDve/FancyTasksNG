@@ -364,6 +364,16 @@
       <label>Show notification badges on pinned application icons.</label>
       <default>true</default>
     </entry>
+    <entry name="showBrowserHistory" type="Bool">
+      <label>Show browsing history in the context menu of web browsers.</label>
+      <default>false</default>
+    </entry>
+    <entry name="browserHistoryLimit" type="Int">
+      <label>Number of browser history items to show.</label>
+      <default>10</default>
+      <min>1</min>
+      <max>50</max>
+    </entry>
   </group>
 
 </kcfg>
