@@ -31,7 +31,7 @@ Loader {
     required property var rootIndex
     property var tasksModel
     property var mpris2Model
-    property var pulseAudio: null
+    property var audioStreamManager: null
     
     // Pass Cache from Root (tasks) down to Instances
     property var thumbnailCache: tasks.thumbnailCache
@@ -242,7 +242,7 @@ Loader {
                     toolTipDelegate: toolTipDelegate
 
                     mpris2Model: toolTipDelegate.mpris2Model
-                    pulseAudio: toolTipDelegate.pulseAudio
+                    audioStreamManager: toolTipDelegate.audioStreamManager
                     
                     isPlayingAudio: toolTipDelegate.isPlayingAudio
                     isMuted: toolTipDelegate.isMuted
@@ -428,7 +428,7 @@ Loader {
                         toolTipDelegate: toolTipDelegate
 
                         mpris2Model: toolTipDelegate.mpris2Model
-                        pulseAudio: toolTipDelegate.pulseAudio
+                        audioStreamManager: toolTipDelegate.audioStreamManager
                     }
                 }
             }

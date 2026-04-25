@@ -14,7 +14,6 @@ import org.kde.ksvg as KSvg
 import org.kde.plasma.extras as PlasmaExtras
 import org.kde.plasma.components as PlasmaComponents3
 import org.kde.kirigami as Kirigami
-// import org.kde.plasma.private.taskmanager as TaskManagerApplet
 import org.kde.plasma.plasmoid
 import QtQuick.Effects
 
@@ -443,22 +442,17 @@ Item {
     }
 
     function updateAudioStreams(): void {
-        var pa = task.tasksRoot.pulseAudio.item;
-        if (!pa || !task.isWindow) {
+        var pa = task.tasksRoot.audioStreamManager.item;
+        if (!pa || !task.model) {
             task.audioStreams = [];
             return;
         }
 
-        // Check appid first for app using portal
-        // https://docs.pipewire.org/page_portal.html
-        var streams = pa.streamsForAppId(task.appId);
+        var streams = pa.streamsForAppId(task.model.AppId);
         if (!streams.length) {
             streams = pa.streamsForPid(task.model.AppPid);
             
             if (!streams.length) {
-                 // Fallback to appName if no PID match found
-                 // Note: This might cause issues with multiple instances if they don't support PID matching,
-                 // but without the complex caching logic (which was unreliable), this is the best effort.
                  streams = pa.streamsForAppName(task.model.AppName);
             }
         }
@@ -475,8 +469,8 @@ Item {
     }
 
     Connections {
-        target: task.tasksRoot.pulseAudio.item
-        ignoreUnknownSignals: true // Plasma-PA might not be available
+        target: task.tasksRoot.audioStreamManager.item
+        ignoreUnknownSignals: true
         function onStreamsChanged(): void {
             task.updateAudioStreams();
         }
@@ -684,25 +678,12 @@ Item {
                             task.tasksRoot.dragHelper.Drag.imageSource = ""; // Reset to prevent engine warnings
                             task.tasksRoot.dragHelper.Drag.imageSource = result.url;
                             
-                            let data = {
-                                "text/x-orgkdeplasmataskmanager_taskurl": (task.model.LauncherUrlWithoutIcon || "").toString()
+                            task.tasksRoot.dragHelper.Drag.mimeData = {
+                                "text/x-orgkdeplasmataskmanager_taskurl": (task.model.LauncherUrlWithoutIcon || "").toString(),
+                                [task.model.MimeType]: task.model.MimeData,
+                                "application/x-orgkdeplasmataskmanager_taskbuttonitem": task.model.MimeData || "true",
                             };
 
-                            const mimeType = task.model.MimeType;
-                            const mimeData = task.model.MimeData;
-
-                            if (mimeType && mimeData !== undefined && mimeData !== null) {
-                                data[mimeType] = mimeData;
-                            }
-
-                            if (mimeData !== undefined && mimeData !== null) {
-                                data["application/x-orgkdeplasmataskmanager_taskbuttonitem"] = mimeData;
-                            } else {
-                                // Provide a dummy value for internal identification if model data is missing
-                                data["application/x-orgkdeplasmataskmanager_taskbuttonitem"] = "true";
-                            }
-
-                            task.tasksRoot.dragHelper.Drag.mimeData = data;
                             task.tasksRoot.dragHelper.Drag.active = dragHandler.active;
                         }, Qt.size(grabWidth, grabHeight));
                 } else {

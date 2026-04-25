@@ -140,13 +140,13 @@ PlasmoidItem {
     }
 
     readonly property Component contextMenuComponent: Qt.createComponent("ContextMenu.qml")
-    readonly property Component pulseAudioComponent: Qt.createComponent("PulseAudio.qml")
+    readonly property Component audioStreamManagerComponent: Qt.createComponent("AudioStreamManager.qml")
 
     property bool needLayoutRefresh: false
 
     property alias taskList: taskList
     property alias effectWatcher: effectWatcher
-    property alias pulseAudio: pulseAudio
+    property alias audioStreamManager: audioStreamManager
     property alias mpris2Source: mpris2Source
     property alias dragHelper: dragHelper
     property alias taskFrame: taskFrame
@@ -465,9 +465,9 @@ PlasmoidItem {
         }
 
         Loader {
-            id: pulseAudio
-            sourceComponent: tasks.pulseAudioComponent
-            active: tasks.pulseAudioComponent.status === Component.Ready
+            id: audioStreamManager
+            sourceComponent: tasks.audioStreamManagerComponent
+            active: tasks.audioStreamManagerComponent.status === Component.Ready
         }
 
         Timer {
@@ -736,7 +736,7 @@ PlasmoidItem {
                     parentTask: tasks.currentHoveredTask
                     tasksModel: tasks.tasksModel
                     mpris2Model: mpris2Source
-                    pulseAudio: pulseAudio
+                    audioStreamManager: audioStreamManager
 
                     readonly property var taskModel: parentTask ? parentTask.model : null
 

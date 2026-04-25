@@ -9,7 +9,7 @@ import QtQuick
 import org.kde.plasma.private.volume
 
 QtObject {
-    id: pulseAudio
+    id: audioStreamManager
 
     signal streamsChanged()
     
@@ -58,7 +58,7 @@ QtObject {
             }
             
             function restoreVolume() {
-                var cached = pulseAudio.getCachedVolume(pid);
+                var cached = audioStreamManager.getCachedVolume(pid);
                 if (cached > 0) { 
                     setVolume(cached);
                 }
@@ -66,13 +66,13 @@ QtObject {
             
             onVolumeChanged: {
                 if (pid > 0) {
-                     pulseAudio.saveVolume(pid, volume);
+                     audioStreamManager.saveVolume(pid, volume);
                 }
             }
         }
 
-        onObjectAdded: (index, object) => pulseAudio.streamsChanged()
-        onObjectRemoved: (index, object) => pulseAudio.streamsChanged()
+        onObjectAdded: (index, object) => audioStreamManager.streamsChanged()
+        onObjectRemoved: (index, object) => audioStreamManager.streamsChanged()
     }
 
     function streamsForAppId(appId: string): var {

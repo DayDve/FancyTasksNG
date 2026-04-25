@@ -39,7 +39,7 @@ Item {
     property var explicitWinId: undefined
     readonly property var currentWinId: explicitWinId !== undefined ? explicitWinId : (toolTipDelegate.windows && root.index < toolTipDelegate.windows.length ? toolTipDelegate.windows[root.index] : undefined)
     
-    property var pulseAudio
+    property var audioStreamManager
     
 
     readonly property bool useOverlayStyle: toolTipDelegate && toolTipDelegate.showThumbnails
@@ -198,7 +198,7 @@ Item {
         }
         var currentForce = (args && args.force);
 
-        var pa = root.pulseAudio.item;
+        var pa = root.audioStreamManager.item;
         if (!pa) {
             streamClearTimer.stop();
             audioStreams = [];
@@ -243,7 +243,7 @@ Item {
     }
 
     Connections {
-        target: root.pulseAudio.item
+        target: root.audioStreamManager.item
         ignoreUnknownSignals: true
         function onStreamsChanged() {
              root.updateAudioStreams({delay: true});
@@ -752,7 +752,7 @@ Item {
          playerData.playbackStatus === Mpris.PlaybackStatus.Paused || 
          (playerData.track && playerData.track.length > 0))
 
-    readonly property bool showVolumeControls: index !== -1 && pulseAudio.item !== null && audioIndicatorsEnabled && (isPlayingAudio || hasAudioStream)
+    readonly property bool showVolumeControls: index !== -1 && audioStreamManager.item !== null && audioIndicatorsEnabled && (isPlayingAudio || hasAudioStream)
     
     property bool controlsAreEffective: showPlayerControls || showVolumeControls
     property bool delayedControlsActive: false
@@ -828,8 +828,8 @@ Item {
                         id: slider
                         Layout.fillWidth: true
                         
-                        from: root.pulseAudio.item.minimalVolume
-                        to: root.pulseAudio.item.normalVolume
+                        from: root.audioStreamManager.item.minimalVolume
+                        to: root.audioStreamManager.item.normalVolume
                         
                         // Use max volume of all streams
                         value: root.hasAudioStream && root.audioStreams.length > 0 ? 
