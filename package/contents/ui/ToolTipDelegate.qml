@@ -14,7 +14,6 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
-import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents3
 import org.kde.plasma.private.mpris as Mpris
 import org.kde.kirigami as Kirigami

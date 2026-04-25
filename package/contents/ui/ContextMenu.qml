@@ -16,7 +16,6 @@ import org.kde.taskmanager as TaskManager
 import org.kde.plasma.private.mpris as Mpris
 // import org.kde.plasma.private.taskmanager as TaskManagerApplet
 
-import "code/layoutmetrics.js" as LayoutMetrics
 import "code/singletones"
 
 PlasmaExtras.Menu {

@@ -6,21 +6,20 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import org.kde.plasma.private.volume
+import org.kde.plasma.private.volume as PlasmaPa
 
 QtObject {
     id: audioStreamManager
 
     signal streamsChanged()
     
-    Component.onCompleted: {
-    }
+    readonly property QtObject globalConfig: PlasmaPa.GlobalConfig { }
     
     // QtObject has no default property, hence adding the Instantiator to one explicitly.
     readonly property Instantiator instantiator: Instantiator {
-        model: PulseObjectFilterModel {
+        model: PlasmaPa.PulseObjectFilterModel {
             filters: [ { role: "VirtualStream", value: false } ]
-            sourceModel: SinkInputModel {}
+            sourceModel: PlasmaPa.SinkInputModel {}
         }
 
         delegate: QtObject {
@@ -108,8 +107,8 @@ QtObject {
     }
 
     // Expose volume constants if valid, otherwise fallback
-    readonly property int minimalVolume: PulseAudio.MinimalVolume ?? 0
-    readonly property int normalVolume: PulseAudio.NormalVolume ?? 65536
+    readonly property int minimalVolume: PlasmaPa.PulseAudio.MinimalVolume ?? 0
+    readonly property int normalVolume: PlasmaPa.PulseAudio.NormalVolume ?? 65536
 
     // Persistent Volume Cache (Key: WinID or PID)
     property var volumeCache: ({})

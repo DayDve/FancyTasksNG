@@ -1,7 +1,5 @@
 import QtQuick
-import org.kde.plasma.components as PlasmaComponents
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.plasmoid
 import QtQuick.Effects
 import "code/singletones"
 

@@ -7,7 +7,6 @@
 
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Templates as T
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents3
@@ -275,7 +274,6 @@ PlasmoidItem {
             if (!tasks._isApplyingConfig) {
                 tasks._isInternalLauncherUpdate = true;
                 Plasmoid.configuration.launchers = launcherList;
-                Plasmoid.configuration.writeConfig(); // Force save to disk for KCM sync
                 // Defer reset to ensure the config change signal has finished propagating
                 Qt.callLater(() => {
                     if (tasks)
@@ -737,7 +735,7 @@ PlasmoidItem {
                     parentTask: tasks.currentHoveredTask
                     tasksModel: tasks.tasksModel
                     mpris2Model: mpris2Source
-                    audioStreamManager: audioStreamManager
+                    audioStreamManager: tasks.audioStreamManager
 
                     readonly property var taskModel: parentTask ? parentTask.model : null
 
