@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-04-25 03:22+0300\n"
+"POT-Creation-Date: 2026-04-25 15:53+0300\n"
 "PO-Revision-Date: 2023-09-21 16:18-0300\n"
 "Last-Translator:  Douglas Guimarães <<dg2003gh@gmail.com>>\n"
 "Language-Team: \n"
@@ -668,6 +668,10 @@ msgstr ""
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Recent Pages"
+msgstr ""
+
+#: package/contents/ui/ContextMenu.qml
+msgid "Recent Folders"
 msgstr ""
 
 #: package/contents/ui/ContextMenu.qml

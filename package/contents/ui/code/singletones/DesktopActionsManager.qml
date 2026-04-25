@@ -91,7 +91,14 @@ Item {
 
     function invalidate(launcherUrl) {
         if (launcherUrl) {
-            delete cache[String(launcherUrl)];
+            const pattern = String(launcherUrl) + "|";
+            // Important: we need to clean BOTH the exact key and any variations 
+            // (with symbols like |true/false|limit)
+            for (let k in cache) {
+                if (k === String(launcherUrl) || k.startsWith(pattern)) {
+                    delete cache[k];
+                }
+            }
         } else {
             cache = {};
         }

@@ -179,7 +179,27 @@ PlasmaExtras.Menu {
             _dynamicDesktopItems.push(sep4);
         }
 
-        // 2. Add Recent Documents
+        // 2. Add Recent Folders
+        if (result.recentFolders && result.recentFolders.length > 0) {
+            let title = menu.newMenuItem(menu);
+            title.text = Wrappers.i18n("Recent Folders");
+            title.section = true;
+            menu.addMenuItem(title, insertItem);
+            _dynamicDesktopItems.push(title);
+
+            result.recentFolders.forEach((folder) => {
+                let menuItem = menu.newMenuItem(menu);
+                menuItem.text = folder.name;
+                menuItem.icon = folder.icon;
+                menuItem.clicked.connect(() => {
+                    DesktopActionsManager.openUrl(folder.url, launcherUrl);
+                });
+                menu.addMenuItem(menuItem, insertItem);
+                _dynamicDesktopItems.push(menuItem);
+            });
+        }
+
+        // 3. Add Recent Documents
         if (result.recentDocs && result.recentDocs.length > 0) {
             // First, add the section header using the native Plasma menu item
             let title = menu.newMenuItem(menu);
@@ -204,9 +224,6 @@ PlasmaExtras.Menu {
                     let insidePath = "";
                     let archiveName = doc.name;
                     
-                    // The path is usually /foo/bar/archive.zip/inner/path
-                    // In the screenshot, doc.name is the full path "zip:///..." for some reason!
-                    // Let's format it properly:
                     let match = pathWithoutProto.match(/([^\/]+\.(?:zip|tar|gz|xz|bz2|rar|7z))(?:\/|$)(.*)/i);
                     if (match) {
                         archiveName = match[1];
@@ -217,7 +234,6 @@ PlasmaExtras.Menu {
                             menuItem.text = archiveName;
                         }
                     } else {
-                        // Fallback to name but stripping the long URL prefix if name is an URL
                         menuItem.text = doc.name.startsWith("zip://") ? pathWithoutProto : doc.name;
                     }
                     menuItem.icon = "application-x-archive";
@@ -232,13 +248,15 @@ PlasmaExtras.Menu {
                 menu.addMenuItem(menuItem, insertItem);
                 _dynamicDesktopItems.push(menuItem);
             });
+        }
 
-            // Add "Clear recent files list" button
+        // 4. Add "Clear recent" button if we added folders OR documents
+        if ((result.recentDocs && result.recentDocs.length > 0) || (result.recentFolders && result.recentFolders.length > 0)) {
             let clearItem = menu.newMenuItem(menu);
             clearItem.text = Wrappers.i18n("Forget Recent Files");
             clearItem.icon = "edit-clear-history";
             clearItem.clicked.connect(() => {
-                DesktopActionsManager.clearRecentDocuments(launcherUrl); // fixed reference error
+                DesktopActionsManager.clearRecentDocuments(launcherUrl);
             });
             menu.addMenuItem(clearItem, insertItem);
             _dynamicDesktopItems.push(clearItem);

@@ -189,12 +189,13 @@ def get_recent_documents(desktop_path):
         conn = sqlite3.connect(str(KACTIVITIES_DB))
         cur = conn.cursor()
         cur.execute(f"""
-            SELECT rsc.targettedResource, ri.mimetype, rsc.lastUpdate
-            FROM ResourceScoreCache rsc
-            LEFT JOIN ResourceInfo ri ON rsc.targettedResource = ri.targettedResource
-            WHERE rsc.initiatingAgent = ?
-            AND rsc.usedActivity = ?
-            ORDER BY rsc.lastUpdate DESC
+            SELECT re.targettedResource, ri.mimetype, MAX(re.start) as lastUpdate
+            FROM ResourceEvent re
+            LEFT JOIN ResourceInfo ri ON re.targettedResource = ri.targettedResource
+            WHERE re.initiatingAgent = ?
+            AND re.usedActivity = ?
+            GROUP BY re.targettedResource
+            ORDER BY lastUpdate DESC
             LIMIT ?
         """, (storage_id, activity, MAX_RECENT * 2))
 
@@ -241,11 +242,6 @@ def get_recent_documents(desktop_path):
             # Determine icon and name
             icon_name = guess_icon_for_mime(mimetype)
             name = os.path.basename(file_path) if file_path.startswith("/") else file_path
-
-            # KActivities sometimes returns directories, but recent documents usually exclude them
-            # unless it's a file manager. Dolphin IS a file manager, so we allow directories.
-            if os.path.isdir(file_path) and storage_id != 'org.kde.dolphin':
-                continue
 
             if file_path not in seen:
                 seen.add(file_path)
@@ -363,7 +359,7 @@ def fetch_sqlite_history(db_path, query, temp_name, limit=10):
 
 
 def clear_recent_documents(desktop_path):
-    """Clear recent documents for this application from the database."""
+    """Clear recent documents for this application from both score cache and event history."""
     if not KACTIVITIES_DB.is_file():
         return False
 
@@ -376,20 +372,39 @@ def clear_recent_documents(desktop_path):
         return False
 
     try:
-        conn = sqlite3.connect(str(KACTIVITIES_DB))
-        cur = conn.cursor()
-        cur.execute("""
-            DELETE FROM ResourceScoreCache 
-            WHERE initiatingAgent = ? AND usedActivity = ?
-        """, (storage_id, activity))
-        conn.commit()
-        conn.close()
+        # Use a context manager to ensure the connection is closed properly.
+        # We need to delete from BOTH tables to keep the daemon happy.
+        with sqlite3.connect(str(KACTIVITIES_DB), timeout=5) as conn:
+            cur = conn.cursor()
+            # 1. Clear the score cache
+            cur.execute("""
+                DELETE FROM ResourceScoreCache 
+                WHERE initiatingAgent = ? AND usedActivity = ?
+            """, (storage_id, activity))
+            
+            # 2. Clear the event history
+            cur.execute("""
+                DELETE FROM ResourceEvent 
+                WHERE initiatingAgent = ? AND usedActivity = ?
+            """, (storage_id, activity))
+            
+            # 3. Clear the resource links (this is likely what was missing for full reset)
+            cur.execute("""
+                DELETE FROM ResourceLink 
+                WHERE initiatingAgent = ? AND usedActivity = ?
+            """, (storage_id, activity))
+            
+            conn.commit()
+            # Ensure changes are written and visible to others
+            cur.execute("PRAGMA wal_checkpoint(FULL)")
         
-        # Trigger KDED to reload stats (optional, usually updates itself)
-        subprocess.run(
-            ["qdbus6", "org.kde.ActivityManager", "/ActivityManager/Resources/Scoring", "org.freedesktop.DBus.Properties.EmitChanged"],
-            capture_output=True, timeout=1
-        )
+        # Notify the daemon that stats have changed
+        subprocess.run([
+            "qdbus6", "org.kde.ActivityManager", "/ActivityManager/Resources/Scoring",
+            "org.freedesktop.DBus.Properties.EmitChanged", 
+            "org.kde.ActivityManager.ResourcesScoring"
+        ], capture_output=True, timeout=1)
+        
         return True
     except Exception as e:
         print(f"desktop_actions: DB clear error: {e}", file=sys.stderr)
@@ -498,11 +513,18 @@ class DesktopActionsService(dbus.service.Object):
         
         raw_recent = get_recent_documents(desktop_path) if desktop_path else []
         
-        # Deduplicate recentDocs against browserHistory
+        # Filter/Split recent items
         recent_docs = []
+        recent_folders = []
         browser_urls = {item['url'] for item in browser_history}
+        
         for doc in raw_recent:
-            if doc['url'] not in browser_urls:
+            if doc['url'] in browser_urls:
+                continue
+            
+            if doc.get('mimeType') == 'inode/directory':
+                recent_folders.append(doc)
+            else:
                 recent_docs.append(doc)
         
         places = []
@@ -512,6 +534,7 @@ class DesktopActionsService(dbus.service.Object):
         data = {
             "jumpList": jump_list,
             "recentDocs": recent_docs,
+            "recentFolders": recent_folders,
             "browserHistory": browser_history,
             "places": places,
             "desktopPath": desktop_path or "",
