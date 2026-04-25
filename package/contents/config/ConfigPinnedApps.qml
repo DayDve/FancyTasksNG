@@ -1047,12 +1047,5 @@ ConfigPage {
         // pinnedLaunchers binding should update automatically from cfg_launchers
     }
 
-    // Synchronize with the Plasmoid configuration when launchers are moved on the panel
-    Connections {
-        target: Plasmoid.configuration
-        function onLaunchersChanged() {
-            // Update the local cfg shortcut which triggers onPinnedLaunchersChanged
-            cfg_page.cfg_launchers = Plasmoid.configuration.launchers;
-        }
-    }
+
 }

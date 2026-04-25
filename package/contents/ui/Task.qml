@@ -48,9 +48,7 @@ Item {
         }
     }
 
-    readonly property bool isMetro: Plasmoid.configuration.indicatorStyle === 0
-    readonly property bool isCiliora: Plasmoid.configuration.indicatorStyle === 1
-    readonly property bool isDashes: Plasmoid.configuration.indicatorStyle === 2
+
 
     readonly property int _cfgIconSize: Plasmoid.configuration.iconSizeOverride ? Plasmoid.configuration.iconSizePx : (Math.min(tasksRoot.width, tasksRoot.height) * Plasmoid.configuration.iconScale / 100)
     readonly property int _cfgZoom: (tasksRoot.iconsOnly && Plasmoid.configuration.taskHoverEffect) ? Plasmoid.configuration.iconZoomFactor : 0
@@ -161,9 +159,7 @@ Item {
         }
     }
 
-    property Item audioStreamIcon: null
     property var audioStreams: []
-    property bool delayAudioStreamIndicator: false
     property bool completed: false
     readonly property 
         bool audioIndicatorsEnabled: Plasmoid.configuration.indicateAudioStreams
@@ -355,21 +351,15 @@ Item {
         tasksRoot.cancelHighlightWindows();
     }
 
-    onPidChanged: task.updateAudioStreams({
-        delay: false
-    })
-    onAppNameChanged: task.updateAudioStreams({
-        delay: false
-    })
+    onPidChanged: task.updateAudioStreams()
+    onAppNameChanged: task.updateAudioStreams()
 
 
 
     onIsWindowChanged: {
         if (task.model.IsWindow) {
             tasksRoot.taskInitComponent.createObject(task);
-            task.updateAudioStreams({
-                delay: false
-            });
+            task.updateAudioStreams();
         }
     }
 
@@ -393,17 +383,7 @@ Item {
 
 
 
-    Loader {
-        id: audioIndicatorLoader
-        z: 10
-        active: false // Disabled in favor of unified overlay inside icon
-        source: "AudioStream.qml"
-        onLoaded: {
-            item.iconBox = iconBox;
-            item.task = task;
-            item.frame = frame;
-        }
-    }
+
 
     Keys.onMenuPressed: event => contextMenuTimer.start()
     Keys.onReturnPressed: event => TaskTools.activateTask(task.modelIndex(), task.model, event.modifiers, task, Plasmoid, tasksRoot, tasksRoot.effectWatcher.registered)
@@ -463,15 +443,7 @@ Item {
         contextMenu.show();
     }
 
-    function updateAudioStreams(args: var): void {
-        if (args) {
-            // When the task just appeared (e.g. virtual desktop switch), show the audio indicator
-            // right away.
-            // Only when audio streams change during the lifetime of this task, delay
-            // showing that to avoid distraction.
-            task.delayAudioStreamIndicator = !!args.delay;
-        }
-
+    function updateAudioStreams(): void {
         var pa = task.tasksRoot.pulseAudio.item;
         if (!pa || !task.isWindow) {
             task.audioStreams = [];
@@ -507,47 +479,11 @@ Item {
         target: task.tasksRoot.pulseAudio.item
         ignoreUnknownSignals: true // Plasma-PA might not be available
         function onStreamsChanged(): void {
-            task.updateAudioStreams({
-                delay: true
-            });
+            task.updateAudioStreams();
         }
     }
 
-    function hexToHSL(hex) {
-        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        let r = parseInt(result[1], 16);
-        let g = parseInt(result[2], 16);
-        let b = parseInt(result[3], 16);
-        r /= 255;
-        g /= 255;
-        b /= 255;
-        var max = Math.max(r, g, b), min = Math.min(r, g, b);
-        var h, s, l = (max + min) / 2;
-        if (max == min) {
-            h = s = 0;
-            // achromatic
-        } else {
-            const d = max - min;
-            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-            switch (max) {
-            case r:
-                h = (g - b) / d + (g < b ? 6 : 0);
-                break;
-            case g:
-                h = (b - r) / d + 2;
-                break;
-            case b:
-                h = (r - g) / d + 4;
-                break;
-            }
-            h /= 6;
-        }
-        var HSL = new Object();
-        HSL['h'] = h;
-        HSL['s'] = s;
-        HSL['l'] = l;
-        return HSL;
-    }
+
 
 
 
@@ -1004,8 +940,7 @@ Item {
             fill: parent
             leftMargin: LayoutMetrics.leftMargin() + iconBox.width + LayoutMetrics.labelMargin
             topMargin: LayoutMetrics.topMargin()
-            rightMargin: LayoutMetrics.rightMargin() + (task.audioStreamIcon !== null && task.audioStreamIcon.visible ?
-                (task.audioStreamIcon.width + LayoutMetrics.labelMargin) : 0)
+            rightMargin: LayoutMetrics.rightMargin()
             bottomMargin: LayoutMetrics.bottomMargin()
         }
 
@@ -1149,9 +1084,7 @@ Item {
     Component.onCompleted: {
         task.lastSeenCount = task.badgeCount;
         if (!task.inPopup && task.model.IsWindow) {
-            task.updateAudioStreams({
-                delay: false
-            });
+            task.updateAudioStreams();
         }
 
         if (!task.inPopup && !task.model.IsWindow) {
