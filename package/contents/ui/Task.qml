@@ -906,24 +906,11 @@ Item {
         ]
     }
 
-    // Loader for Icons-Only mode: inside iconBox so badges scale and move with the icon
     Loader {
-        id: iconsOnlyBadgeLoader
-        parent: iconBox
+        id: badgeLoader
+        parent: task.tasksRoot.iconsOnly ? iconBox : task
         anchors.fill: parent
-        active: task.tasksRoot.iconsOnly && (plasmoid.configuration.showBadges || audioIndicatorsEnabled)
-        source: "TaskBadgeOverlay.qml"
-        onLoaded: {
-            item.parentTask = task;
-        }
-        z: 999
-    }
-
-    // Loader for Classic mode: in root Item to align with wide button edges
-    Loader {
-        id: classicBadgeLoader
-        anchors.fill: parent
-        active: !task.tasksRoot.iconsOnly && (plasmoid.configuration.showBadges || audioIndicatorsEnabled)
+        active: plasmoid.configuration.showBadges || audioIndicatorsEnabled
         source: "TaskBadgeOverlay.qml"
         onLoaded: {
             item.parentTask = task;
