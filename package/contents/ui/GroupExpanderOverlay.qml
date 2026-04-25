@@ -15,14 +15,15 @@ KSvg.SvgItem {
 
     required property var taskModel
     required property Item iconBox
+    required property var tasksRoot
     property int locationOverride: -1
 
     readonly property int effLocation: (locationOverride >= 0 && locationOverride <= 3) ? locationOverride :
-        (tasks.effectiveLocation === PlasmaCore.Types.TopEdge ? 3 :
-         tasks.effectiveLocation === PlasmaCore.Types.LeftEdge ? 1 :
-         tasks.effectiveLocation === PlasmaCore.Types.RightEdge ? 2 : 0)
+        (tasksRoot.effectiveLocation === PlasmaCore.Types.TopEdge ? 3 :
+         tasksRoot.effectiveLocation === PlasmaCore.Types.LeftEdge ? 1 :
+         tasksRoot.effectiveLocation === PlasmaCore.Types.RightEdge ? 2 : 0)
 
-    visible: taskModel.IsGroupParent
+    visible: arrow.taskModel.IsGroupParent
 
     states: [
         State {
@@ -34,7 +35,7 @@ KSvg.SvgItem {
                 anchors.left: undefined
                 anchors.right: undefined
                 anchors.bottom: arrow.parent.bottom
-                anchors.horizontalCenter: iconBox.horizontalCenter
+                anchors.horizontalCenter: arrow.iconBox.horizontalCenter
                 anchors.verticalCenter: undefined
             }
         },
@@ -48,7 +49,7 @@ KSvg.SvgItem {
                 anchors.right: undefined
                 anchors.bottom: undefined
                 anchors.horizontalCenter: undefined
-                anchors.verticalCenter: iconBox.verticalCenter
+                anchors.verticalCenter: arrow.iconBox.verticalCenter
             }
         },
         State {
@@ -61,7 +62,7 @@ KSvg.SvgItem {
                 anchors.right: arrow.parent.right
                 anchors.bottom: undefined
                 anchors.horizontalCenter: undefined
-                anchors.verticalCenter: iconBox.verticalCenter
+                anchors.verticalCenter: arrow.iconBox.verticalCenter
             }
         },
         State {
@@ -73,7 +74,7 @@ KSvg.SvgItem {
                 anchors.left: undefined
                 anchors.right: undefined
                 anchors.bottom: undefined
-                anchors.horizontalCenter: iconBox.horizontalCenter
+                anchors.horizontalCenter: arrow.iconBox.horizontalCenter
                 anchors.verticalCenter: undefined
             }
         }

@@ -487,6 +487,7 @@ Item {
         taskCount: task.childCount
         task: task
         frame: frame
+        tasksRoot: task.tasksRoot
         visible: {
             if (!Plasmoid.configuration.indicatorsEnabled || !task.model) return false;
             if (task.model.IsLauncher || task.model.IsDemandingAttention || task.model.IsActive) return true;
@@ -711,7 +712,7 @@ Item {
             item.pOpacity = Qt.binding(() => Plasmoid.configuration.indicatorProgressOpacity / 100.0);
             item.pThick = Qt.binding(() => Plasmoid.configuration.indicatorProgressThickness);
             item.pPosition = Qt.binding(() => (task.model?.Progress ?? 0) / 100.0);
-            item.panelLocation = Qt.binding(() => tasks.effectiveLocation);
+            item.panelLocation = Qt.binding(() => Plasmoid.location);
         }
     }
 
@@ -732,7 +733,7 @@ Item {
     TaskIconBox {
         id: iconBox
         taskItem: task
-        tasksRootContext: tasksRoot
+        tasksRootContext: task.tasksRoot
         labelVisible: label.visible
     }
 
@@ -740,7 +741,7 @@ Item {
         id: badgeLoader
         parent: task.tasksRoot.iconsOnly ? iconBox : task
         anchors.fill: parent
-        active: plasmoid.configuration.showBadges || audioIndicatorsEnabled
+        active: Plasmoid.configuration.showBadges || task.audioIndicatorsEnabled
         source: "TaskBadgeOverlay.qml"
         onLoaded: {
             item.parentTask = task;

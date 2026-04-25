@@ -27,17 +27,18 @@ PlasmaExtras.Menu {
     required property TaskManager.TasksModel tasksModel
     required property TaskManager.VirtualDesktopInfo virtualDesktopInfo
     required property TaskManager.ActivityInfo activityInfo
+    required property var tasksRoot
 
     readonly property var atm: TaskManager.AbstractTasksModel
 
     property bool showAllPlaces: false
 
     placement: {
-        if (tasks.effectiveLocation === PlasmaCore.Types.LeftEdge) {
+        if (tasksRoot.effectiveLocation === PlasmaCore.Types.LeftEdge) {
             return PlasmaExtras.Menu.RightPosedTopAlignedPopup;
-        } else if (tasks.effectiveLocation === PlasmaCore.Types.TopEdge) {
+        } else if (tasksRoot.effectiveLocation === PlasmaCore.Types.TopEdge) {
             return PlasmaExtras.Menu.BottomPosedLeftAlignedPopup;
-        } else if (tasks.effectiveLocation === PlasmaCore.Types.RightEdge) {
+        } else if (tasksRoot.effectiveLocation === PlasmaCore.Types.RightEdge) {
             return PlasmaExtras.Menu.LeftPosedTopAlignedPopup;
         } else {
             return PlasmaExtras.Menu.TopPosedLeftAlignedPopup;

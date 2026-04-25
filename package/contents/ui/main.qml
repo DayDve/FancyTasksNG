@@ -437,7 +437,8 @@ PlasmoidItem {
             mpris2Source,
             tasksModel: tasks.tasksModel,
             virtualDesktopInfo,
-            activityInfo
+            activityInfo,
+            tasksRoot: tasks
         });
         return tasks.contextMenuComponent.createObject(rootTask, initialArgs);
     }
