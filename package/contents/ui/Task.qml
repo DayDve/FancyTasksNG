@@ -201,9 +201,7 @@ Item {
         interval: 500
         onTriggered: {
             if (task.containsMouse) {
-                task.tasksRoot.currentHoveredTask = task;
-                task.toolTipOpen = true;
-                task.tasksRoot.toolTipAreaItem = task;
+                task.openTooltip();
             }
         }
     }
@@ -214,10 +212,8 @@ Item {
             closeTimer.stop();
             
             // If tooltip is already visible (switching between tasks), show immediately
-            if (tasksRoot.currentHoveredTask !== null && tasksRoot.currentHoveredTask !== task) {
-                tasksRoot.currentHoveredTask = task;
-                task.toolTipOpen = true;
-                tasksRoot.toolTipAreaItem = task;
+            if (tasksRoot.currentHoveredTask && tasksRoot.currentHoveredTask !== task) {
+                task.openTooltip();
             } else {
                 openTimer.restart();
             }
@@ -419,6 +415,12 @@ Item {
             return tasksRoot.filteredTasksModel.mapToSource(proxyIdx).row;
         }
         return task.index;
+    }
+
+    function openTooltip(): void {
+        task.tasksRoot.currentHoveredTask = task;
+        task.toolTipOpen = true;
+        task.tasksRoot.toolTipAreaItem = task;
     }
 
     function closeTooltip(): void {
