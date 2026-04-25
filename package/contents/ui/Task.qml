@@ -10,7 +10,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 
-import org.kde.plasma.core as PlasmaCore
 import org.kde.ksvg as KSvg
 import org.kde.plasma.extras as PlasmaExtras
 import org.kde.plasma.components as PlasmaComponents3
@@ -53,9 +52,9 @@ Item {
     readonly property int _cfgIconSize: Plasmoid.configuration.iconSizeOverride ? Plasmoid.configuration.iconSizePx : (Math.min(tasksRoot.width, tasksRoot.height) * Plasmoid.configuration.iconScale / 100)
     readonly property int _cfgZoom: (tasksRoot.iconsOnly && Plasmoid.configuration.taskHoverEffect) ? Plasmoid.configuration.iconZoomFactor : 0
     readonly property int _maxIconSize: _cfgIconSize + _cfgZoom
-    property alias taskIcon: icon
+    property alias taskIcon: iconBox.icon
     readonly property bool iconOverflows: tasksRoot.vertical ? 
-        (icon.width > tasksRoot.width) : (icon.height > tasksRoot.height)
+        (iconBox.icon.width > tasksRoot.width) : (iconBox.icon.height > tasksRoot.height)
 
     Item {
         id: tooltipAnchor
@@ -141,9 +140,9 @@ Item {
     }
     
     function getGlobalRect() {
-        if (!icon) return Qt.rect(0, 0, 0, 0);
-        var p = icon.mapToGlobal(0, 0);
-        return Qt.rect(p.x, p.y, icon.width, icon.height);
+        if (!iconBox.icon) return Qt.rect(0, 0, 0, 0);
+        var p = iconBox.icon.mapToGlobal(0, 0);
+        return Qt.rect(p.x, p.y, iconBox.icon.width, iconBox.icon.height);
     }
 
 
@@ -633,7 +632,7 @@ Item {
                                     task.model.IsActive ? "focus" : "normal"
         
         prefix: isHovered ?
-            TaskTools.taskPrefixHovered(basePrefix, tasks.effectiveLocation) : TaskTools.taskPrefix(basePrefix, tasks.effectiveLocation)
+            TaskTools.taskPrefixHovered(basePrefix, Plasmoid.location) : TaskTools.taskPrefix(basePrefix, Plasmoid.location)
 
         visible: (!task.model || task.model.IsLauncher || task.model.IsDemandingAttention || task.model.IsActive || frame.isHovered) ?
             true : !Plasmoid.configuration.disableButtonInactiveSvg
@@ -670,13 +669,13 @@ Item {
 
             onActiveChanged: {
                 if (active) {
-                        const grabWidth = Math.floor(icon.width);
-                        const grabHeight = Math.floor(icon.height);
+                        const grabWidth = Math.floor(iconBox.icon.width);
+                        const grabHeight = Math.floor(iconBox.icon.height);
                         if (!isFinite(grabWidth) || !isFinite(grabHeight) || grabWidth <= 0 || grabHeight <= 0) {
                             return;
                         }
 
-                        icon.grabToImage(result => {
+                        iconBox.icon.grabToImage(result => {
                             if (!dragHandler || !dragHandler.active || !task || !task.tasksRoot || !task.tasksRoot.dragHelper) {
                                 return;
                             }
@@ -747,167 +746,11 @@ Item {
 
 
 
-    Item {
+    TaskIconBox {
         id: iconBox
-
-        anchors {
-            fill: tasksRoot.iconsOnly ? parent : undefined
-            left: tasksRoot.iconsOnly ? undefined : parent.left
-            top: tasksRoot.iconsOnly ? undefined : parent.top
-            bottom: tasksRoot.iconsOnly ? undefined : parent.bottom
-            leftMargin: adjustMargin(true, tasksRoot.iconsOnly ? parent.width : parent.height, LayoutMetrics.leftMargin())
-            topMargin: adjustMargin(false, parent.height, LayoutMetrics.topMargin())
-            rightMargin: tasksRoot.iconsOnly ? adjustMargin(true, parent.width, LayoutMetrics.rightMargin()) : 0
-            bottomMargin: adjustMargin(false, parent.height, LayoutMetrics.bottomMargin())
-        }
-        width: tasksRoot.iconsOnly ? undefined : height
-
-        property int growSize: ((task.containsMouse || (tasksRoot.currentHoveredTask === task && tasksRoot.isTooltipHovered) || (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open)) && tasksRoot.iconsOnly && Plasmoid.configuration.taskHoverEffect) ?
-            Plasmoid.configuration.iconZoomFactor : 0
-
-        Behavior on growSize {
-            NumberAnimation {
-                duration: Plasmoid.configuration.iconZoomDuration
-                easing.type: Easing.InOutQuad
-            }
-        }
-
-        // Unified transform for jump and zoom
-        transform: [
-            Translate {
-                id: attentionTranslate
-                y: 0
-            },
-            Scale {
-                id: zoomScale
-                // To keep the margin constant, the origin must be at the icon's edge nearest to the panel
-                origin.x: {
-                    if (Plasmoid.configuration.iconScaleFromEdge) {
-                        if (tasks.effectiveLocation === PlasmaCore.Types.LeftEdge) return icon.anchors.leftMargin;
-                        if (tasks.effectiveLocation === PlasmaCore.Types.RightEdge) return iconBox.width - icon.anchors.rightMargin;
-                    }
-                    return iconBox.width / 2;
-                }
-                origin.y: {
-                    if (Plasmoid.configuration.iconScaleFromEdge) {
-                        if (tasks.effectiveLocation === PlasmaCore.Types.TopEdge) return icon.anchors.topMargin;
-                        if (tasks.effectiveLocation === PlasmaCore.Types.BottomEdge) return iconBox.height - icon.anchors.bottomMargin;
-                    }
-                    return iconBox.height / 2;
-                }
-                xScale: 1 + (iconBox.growSize / Math.max(1, iconBox.height))
-                yScale: xScale
-            }
-        ]
-
-        SequentialAnimation {
-            id: attentionAnimation
-            running: task.model && task.model.IsDemandingAttention && tasksRoot.iconsOnly && Plasmoid.configuration.animateAttentionStatus && !task.highlighted
-            loops: Animation.Infinite
-            onRunningChanged: if (!running) attentionTranslate.y = 0
-
-            NumberAnimation {
-                target: attentionTranslate
-                property: "y"
-                to: -Kirigami.Units.gridUnit / 3.5
-                duration: 300
-                easing.type: Easing.OutQuad
-            }
-            NumberAnimation {
-                target: attentionTranslate
-                property: "y"
-                to: 0
-                duration: 400
-                easing.type: Easing.OutBounce
-            }
-            PauseAnimation {
-                duration: 1500
-            }
-        }
-
-        function adjustMargin(isVertical: bool, size: real, margin: real): real {
-            if (!size) {
-                return margin;
-            }
-
-            var margins = isVertical ? LayoutMetrics.horizontalMargins() : LayoutMetrics.verticalMargins();
-            if ((size - margins) < Kirigami.Units.iconSizes.small) {
-                return Math.ceil((margin * (Kirigami.Units.iconSizes.small / size)) / 2);
-            }
-
-            return margin;
-        }
-
-        Kirigami.Icon {
-            id: icon
-            
-            property bool sizeOverride: Plasmoid.configuration.iconSizeOverride
-            property int fixedSize: Plasmoid.configuration.iconSizePx
-            property real iconScale: Plasmoid.configuration.iconScale / 100
-            property bool scaleFromEdge: Plasmoid.configuration.iconScaleFromEdge
-            property int edgeOffset: Plasmoid.configuration.iconEdgeOffset
-
-            readonly property int baseWidth: (sizeOverride ? fixedSize : (parent.width * iconScale))
-            readonly property int baseHeight: (sizeOverride ? fixedSize : (parent.height * iconScale))
-            readonly property real edgeMarginH: scaleFromEdge ? edgeOffset : (parent.width - baseWidth) / 2
-            readonly property real edgeMarginV: scaleFromEdge ? edgeOffset : (parent.height - baseHeight) / 2
-
-            // Icon size is now stable, the container scales instead
-            width: baseWidth
-            height: baseHeight
-
-            x: {
-                if (tasks.effectiveLocation === PlasmaCore.Types.LeftEdge) return edgeMarginH;
-                if (tasks.effectiveLocation === PlasmaCore.Types.RightEdge) return parent.width - width - edgeMarginH;
-                return (parent.width - width) / 2;
-            }
-
-            y: {
-                if (tasks.effectiveLocation === PlasmaCore.Types.TopEdge) return edgeMarginV;
-                if (tasks.effectiveLocation === PlasmaCore.Types.BottomEdge) return parent.height - height - edgeMarginV;
-                return (parent.height - height) / 2;
-            }
-
-            roundToIconSize: false
-            active: task.highlighted
-            enabled: true
-
-            source: task.model.decoration
-            layer.enabled: task.iconOverflows
-        }
-
-        MultiEffect {
-            anchors.fill: icon
-            source: icon
-            visible: task.iconOverflows
-            shadowEnabled: true
-            shadowBlur: 1.0
-            shadowHorizontalOffset: 0
-            shadowVerticalOffset: 0
-            shadowColor: Qt.rgba(0, 0, 0, 0.5)
-            autoPaddingEnabled: true
-        }
-
-        Loader {
-            anchors.centerIn: parent
-            width: Math.min(parent.width, parent.height)
-            height: width
-            active: !!(task.model && task.model.IsStartup)
-            sourceComponent: task.tasksRoot.busyIndicator
-        }
-
-        states: [
-            State {
-                name: "standalone"
-                when: !label.visible && task.parent
-                AnchorChanges { target: iconBox; anchors.left: undefined; anchors.horizontalCenter: parent.horizontalCenter }
-                PropertyChanges {
-                    target: iconBox; anchors.leftMargin: 0
-                    width: (task.model.IsLauncher && !tasksRoot.iconsOnly) ? (task.parent as TaskList).minimumWidth :
-                        Math.min((task.parent as TaskList).minimumWidth, task.tasksRoot.height) - adjustMargin(true, task.width, task.tasksRoot.taskFrame.margins.left) - adjustMargin(true, task.width, task.tasksRoot.taskFrame.margins.right)
-                }
-            }
-        ]
+        taskItem: task
+        tasksRootContext: tasksRoot
+        labelVisible: label.visible
     }
 
     Loader {
