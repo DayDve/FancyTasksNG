@@ -550,17 +550,26 @@ Item {
     TapHandler {
         acceptedButtons: Qt.MiddleButton
         onTapped: {
-            if (Plasmoid.configuration.middleClickAction === 2 /* NewInstance */) {
-                task.tasksRoot.tasksModel.requestNewInstance(task.modelIndex());
-            } else if (Plasmoid.configuration.middleClickAction === 1 /* Close */) {
-                task.wasMiddleClicked = true;
-                task.tasksRoot.tasksModel.requestClose(task.modelIndex());
-            } else if (Plasmoid.configuration.middleClickAction === 3 /* ToggleMinimized */) {
-                task.tasksRoot.tasksModel.requestToggleMinimized(task.modelIndex());
-            } else if (Plasmoid.configuration.middleClickAction === 4 /* ToggleGrouping */) {
-                task.tasksRoot.tasksModel.requestToggleGrouping(task.modelIndex());
-            } else if (Plasmoid.configuration.middleClickAction === 5 /* BringToCurrentDesktop */) {
-                task.tasksRoot.tasksModel.requestVirtualDesktops(task.modelIndex(), [task.tasksRoot.virtualDesktopInfo.currentDesktop]);
+            const tModel = task.tasksRoot.tasksModel;
+            const mIndex = task.modelIndex();
+
+            switch (Plasmoid.configuration.middleClickAction) {
+                case 1: // Close
+                    task.wasMiddleClicked = true;
+                    tModel.requestClose(mIndex);
+                    break;
+                case 2: // NewInstance
+                    tModel.requestNewInstance(mIndex);
+                    break;
+                case 3: // ToggleMinimized
+                    tModel.requestToggleMinimized(mIndex);
+                    break;
+                case 4: // ToggleGrouping
+                    tModel.requestToggleGrouping(mIndex);
+                    break;
+                case 5: // BringToCurrentDesktop
+                    tModel.requestVirtualDesktops(mIndex, [task.tasksRoot.virtualDesktopInfo.currentDesktop]);
+                    break;
             }
             task.tasksRoot.cancelHighlightWindows();
         }
@@ -858,36 +867,17 @@ Item {
             width: baseWidth
             height: baseHeight
 
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: edgeMarginV
+            x: {
+                if (tasks.effectiveLocation === PlasmaCore.Types.LeftEdge) return edgeMarginH;
+                if (tasks.effectiveLocation === PlasmaCore.Types.RightEdge) return parent.width - width - edgeMarginH;
+                return (parent.width - width) / 2;
+            }
 
-            states: [
-                State {
-                    name: "top"
-                    when: tasks.effectiveLocation === PlasmaCore.Types.TopEdge
-                    AnchorChanges { target: icon; anchors.top: parent.top; anchors.bottom: undefined; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: undefined; anchors.left: undefined; anchors.right: undefined }
-                    PropertyChanges { target: icon; anchors.topMargin: icon.edgeMarginV; anchors.bottomMargin: 0; anchors.leftMargin: 0; anchors.rightMargin: 0 }
-                },
-                State {
-                    name: "left"
-                    when: tasks.effectiveLocation === PlasmaCore.Types.LeftEdge
-                    AnchorChanges { target: icon; anchors.left: parent.left; anchors.right: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.top: undefined; anchors.bottom: undefined }
-                    PropertyChanges { target: icon; anchors.leftMargin: icon.edgeMarginH; anchors.rightMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
-                },
-                State {
-                    name: "right"
-                    when: tasks.effectiveLocation === PlasmaCore.Types.RightEdge
-                    AnchorChanges { target: icon; anchors.right: parent.right; anchors.left: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.top: undefined; anchors.bottom: undefined }
-                    PropertyChanges { target: icon; anchors.rightMargin: icon.edgeMarginH; anchors.leftMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
-                },
-                State {
-                    name: "bottom"
-                    when: tasks.effectiveLocation === PlasmaCore.Types.BottomEdge
-                    AnchorChanges { target: icon; anchors.bottom: parent.bottom; anchors.top: undefined; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: undefined; anchors.left: undefined; anchors.right: undefined }
-                    PropertyChanges { target: icon; anchors.bottomMargin: icon.edgeMarginV; anchors.topMargin: 0; anchors.leftMargin: 0; anchors.rightMargin: 0 }
-                }
-            ]
+            y: {
+                if (tasks.effectiveLocation === PlasmaCore.Types.TopEdge) return edgeMarginV;
+                if (tasks.effectiveLocation === PlasmaCore.Types.BottomEdge) return parent.height - height - edgeMarginV;
+                return (parent.height - height) / 2;
+            }
 
             roundToIconSize: false
             active: task.highlighted
