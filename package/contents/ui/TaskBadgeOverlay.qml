@@ -15,14 +15,22 @@ Item {
     // It inherits the jump animation and zoom from contentWrapper.
     anchors.fill: parent
 
-    // Dynamic height based on grid unit to ensure legibility on High-DPI screens
-    readonly property real badgeHeight: Math.max(14, Math.round(Kirigami.Units.gridUnit * 0.85))
+    // Dynamic height based on parent size (icon size) to ensure it scales correctly
+    // It should be roughly 35-40% of the icon size, but not smaller than a readable minimum
+    readonly property real badgeHeight: {
+        const minHeight = Math.max(10, Math.round(Kirigami.Units.gridUnit * 0.6));
+        const relativeHeight = Math.round(Math.min(parent.width, parent.height) * 0.45);
+        return Math.max(minHeight, relativeHeight);
+    }
+    // Shared Y coordinate for perfect alignment - added small top margin
+    readonly property real badgeY: Math.max(2, Math.round(Kirigami.Units.smallSpacing / 3)) + root.divingMargin
+    
+    readonly property bool compactMode: root.badgeHeight < 14
+    
     // Common diving offset when task is highlighted
     readonly property real divingMargin: (root.parentTask && root.parentTask.tasksRoot.iconsOnly && root.parentTask.highlighted) 
-        ? Math.round(badgeHeight / 6) 
+        ? Math.round(badgeHeight / 5) 
         : 0
-    // Shared Y coordinate for perfect alignment
-    readonly property real badgeY: root.divingMargin
  
     // Audio Indicator (Top-Left)
     Badge {
@@ -55,7 +63,8 @@ Item {
         showBackground: false
         shadowEnabled: true 
         isRound: true
-        fontFactor: 0.85
+        fontFactor: 0.8
+        isBold: false
  
         MouseArea {
             id: audioMouseArea
@@ -88,12 +97,13 @@ Item {
     Badge {
         id: notificationBadge
         anchors.right: parent.right
-        y: root.badgeY
+        anchors.top: parent.top
+        anchors.topMargin: root.divingMargin
  
         // Horizontal shift when task is highlighted
         anchors.rightMargin: 0
  
-        Behavior on y {
+        Behavior on anchors.topMargin {
             enabled: root.parentTask && root.parentTask.tasksRoot.iconsOnly
             NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
         }
@@ -102,13 +112,14 @@ Item {
             NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
         }
  
-        height: root.badgeHeight
+        height: root.compactMode ? Math.round(root.badgeHeight * 0.5) : root.badgeHeight
         visible: !!root.parentTask?.badgeVisible
         appId: root.parentTask?.model?.AppId || ""
         
         isUrgent: (Plasmoid.configuration.badgeHighlightNew && !!root.parentTask?.hasUnseenNotifications) || !!root.parentTask?.model?.DemandsAttention
         isRound: true
         isBold: false
-        fontFactor: 0.7
+        fontFactor: 0.6
+        showNumber: !root.compactMode
     }
 }
