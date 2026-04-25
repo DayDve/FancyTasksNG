@@ -28,17 +28,16 @@ Item {
     readonly property bool _taskHighlighted: iconBox.taskItem ? iconBox.taskItem.highlighted : false
     readonly property bool _taskHasModel: iconBox.taskItem ? !!iconBox.taskItem.model : false
 
-    anchors {
-        fill: iconBox._iconsOnly ? parent : undefined
-        left: iconBox._iconsOnly ? undefined : parent.left
-        top: iconBox._iconsOnly ? undefined : parent.top
-        bottom: iconBox._iconsOnly ? undefined : parent.bottom
-        leftMargin: adjustMargin(true, iconBox._iconsOnly ? parent.width : parent.height, LayoutMetrics.leftMargin())
-        topMargin: adjustMargin(false, parent.height, LayoutMetrics.topMargin())
-        rightMargin: iconBox._iconsOnly ? adjustMargin(true, parent.width, LayoutMetrics.rightMargin()) : 0
-        bottomMargin: adjustMargin(false, parent.height, LayoutMetrics.bottomMargin())
-    }
-    width: iconBox._iconsOnly ? undefined : height
+    anchors.centerIn: iconBox._iconsOnly ? parent : undefined
+    anchors.fill: iconBox._iconsOnly ? undefined : parent
+    anchors.left: iconBox._iconsOnly ? undefined : parent.left
+    
+    anchors.topMargin: iconBox._iconsOnly ? 0 : adjustMargin(false, parent.height, LayoutMetrics.topMargin())
+    anchors.bottomMargin: iconBox._iconsOnly ? 0 : adjustMargin(false, parent.height, LayoutMetrics.bottomMargin())
+    anchors.leftMargin: iconBox._iconsOnly ? 0 : adjustMargin(true, parent.height, LayoutMetrics.leftMargin())
+
+    width: iconBox._iconsOnly ? (parent.width - 2 * Math.max(LayoutMetrics.leftMargin(), LayoutMetrics.rightMargin())) : height
+    height: iconBox._iconsOnly ? (parent.height - 2 * Math.max(LayoutMetrics.topMargin(), LayoutMetrics.bottomMargin())) : parent.height
 
     property int growSize: (iconBox._iconsOnly && Plasmoid.configuration.taskHoverEffect && (iconBox._taskHovered || (iconBox.tasksRootContext && iconBox.tasksRootContext.currentHoveredTask === iconBox.taskItem && iconBox.tasksRootContext.isTooltipHovered) || iconBox._contextMenuOpen)) ?
         Plasmoid.configuration.iconZoomFactor : 0
@@ -175,7 +174,6 @@ Item {
         State {
             name: "standalone"
             when: !iconBox.labelVisible && iconBox.taskItem && iconBox.taskItem.parent
-            AnchorChanges { target: iconBox; anchors.left: undefined; anchors.horizontalCenter: parent.horizontalCenter }
             PropertyChanges {
                 target: iconBox; anchors.leftMargin: 0
                 width: (iconBox._taskHasModel && iconBox.taskItem.model.IsLauncher && !iconBox._iconsOnly) ? iconBox.taskItem.parent.minimumWidth :
