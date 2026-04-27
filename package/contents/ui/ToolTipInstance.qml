@@ -27,6 +27,9 @@ import "code/singletones"
 
 Item {
     id: root
+    
+
+
     implicitWidth: mainLayout.implicitWidth
     implicitHeight: mainLayout.implicitHeight
 
@@ -252,7 +255,9 @@ Item {
 
     onAppPidChanged: updateAudioStreams({delay: false, force: true})
     onAppIdChanged: updateAudioStreams({delay: false, force: true})
-    Component.onCompleted: updateAudioStreams({delay: false, force: true})
+    Component.onCompleted: {
+        updateAudioStreams({delay: false, force: true});
+    }
 
 
     PlasmaExtras.Highlight {
@@ -422,12 +427,12 @@ Item {
             anchors.fill: hoverHandler
             anchors.margins: Kirigami.Units.smallSpacing
 
-            sourceComponent: root.isMinimized || pipeWireLoader.active ? iconItem : x11Thumbnail
+            sourceComponent: (Qt.platform.pluginName === "wayland" || root.isMinimized || pipeWireLoader.item) ? iconItem : x11Thumbnail
 
             Component {
                 id: x11Thumbnail
                 PlasmaCore.WindowThumbnail {
-                    winId: thumbnailSourceItem.winId
+                    winId: Number.isInteger(thumbnailSourceItem.winId) ? thumbnailSourceItem.winId : 0
                 }
             }
 
@@ -476,7 +481,7 @@ Item {
             anchors.fill: hoverHandler
             anchors.margins: thumbnailLoader.anchors.margins
 
-            active: !toolTipDelegate.isLauncher && !albumArtImage.visible && KWindowSystem.isPlatformWayland && root.index !== -1
+            active: !toolTipDelegate.isLauncher && !albumArtImage.visible && Qt.platform.pluginName === "wayland" && root.index !== -1
             asynchronous: true
             source: "PipeWireThumbnail.qml"
 

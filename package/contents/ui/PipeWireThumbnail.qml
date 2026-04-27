@@ -31,10 +31,10 @@ PipeWire.PipeWireSourceItem {
         }
     }
 
-    nodeId: (pipeWireSourceItem.winId !== undefined && pipeWireSourceItem.winId !== null && waylandItem.nodeId > 0) ? waylandItem.nodeId : 0
+    nodeId: (waylandItem.nodeId > 0) ? waylandItem.nodeId : 0
 
     TaskManager.ScreencastingRequest {
         id: waylandItem
-        uuid: pipeWireSourceItem.winId
+        uuid: pipeWireSourceItem.winId ? pipeWireSourceItem.winId : ""
     }
 }
