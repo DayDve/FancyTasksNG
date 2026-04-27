@@ -61,16 +61,22 @@ Item {
             "path": "/DesktopActions",
             "iface": "io.github.daydve.fancytasksng.DesktopActions",
             "member": "Query",
-            "arguments": [launcherUrl, !!showHistory, parseInt(limit || 10)]
+            "arguments": [String(launcherUrl || ""), !!showHistory, parseInt(limit || 10)],
+            "signature": "(sbi)"
         });
 
         pendingReply.finished.connect(() => {
             const stdoutValue = pendingReply.value;
-            // pendingReply.value is a QVariant, which JS might treat as an object. We safely cast to String.
             const stdout = stdoutValue !== undefined && stdoutValue !== null ? String(stdoutValue).trim() : "";
             
             // Native DBus might return empty array (coerced to "") or empty string on errors (e.g. service starting up)
             if (!stdout) {
+                if (callback) callback({jumpList: [], recentDocs: []});
+            } else if (!stdout.startsWith("{")) {
+                // Ignore expected startup race condition
+                if (stdout.indexOf("was not provided by any .service files") === -1) {
+                    console.warn("DesktopActionsManager D-Bus error:", stdout);
+                }
                 if (callback) callback({jumpList: [], recentDocs: []});
             } else {
                 let result = null;
@@ -105,13 +111,13 @@ Item {
     }
 
     function clearRecentDocuments(launcherUrl) {
-        const key = String(launcherUrl);
         const pendingReply = DBus.SessionBus.asyncCall({
             "service": "io.github.daydve.fancytasksng.DesktopActions",
             "path": "/DesktopActions",
             "iface": "io.github.daydve.fancytasksng.DesktopActions",
             "member": "ClearRecent",
-            "arguments": [key]
+            "arguments": [String(launcherUrl || "")],
+            "signature": "(s)"
         });
         pendingReply.finished.connect(() => {
             invalidate(launcherUrl);
@@ -125,7 +131,8 @@ Item {
             "path": "/DesktopActions",
             "iface": "io.github.daydve.fancytasksng.DesktopActions",
             "member": "Execute",
-            "arguments": [execCmd]
+            "arguments": [String(execCmd || "")],
+            "signature": "(s)"
         });
         pendingReply.finished.connect(() => pendingReply.destroy());
     }
@@ -136,7 +143,8 @@ Item {
             "path": "/DesktopActions",
             "iface": "io.github.daydve.fancytasksng.DesktopActions",
             "member": "OpenUrl",
-            "arguments": [url, String(launcherUrl || "")]
+            "arguments": [String(url || ""), String(launcherUrl || "")],
+            "signature": "(ss)"
         });
         pendingReply.finished.connect(() => pendingReply.destroy());
     }
