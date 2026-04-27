@@ -244,7 +244,7 @@ PlasmoidItem {
     property bool _isPublishingGeometries: false
 
     function publishIconGeometries(taskItems: var): void {
-        if (_isPublishingGeometries)
+        if (_isPublishingGeometries || tasks.destroying)
             return;
         if (TaskTools.taskManagerInstanceCount >= 2)
             return;
@@ -253,9 +253,11 @@ PlasmoidItem {
         try {
             for (let i = 0; i < taskItems.length; ++i) {
                 const task = taskItems[i];
-                // Check if it's a Task delegate and has the method
                 if (task.getGlobalRect && task.model && !task.model.IsLauncher && !task.model.IsStartup && tasks.tasksModel) {
-                    tasks.tasksModel.requestPublishDelegateGeometry(task.modelIndex(), task.getGlobalRect(), task);
+                    const idx = task.modelIndex();
+                    if (idx && idx.valid) {
+                        tasks.tasksModel.requestPublishDelegateGeometry(idx, task.getGlobalRect(), task);
+                    }
                 }
             }
         } finally {

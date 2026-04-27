@@ -15,15 +15,11 @@ Item {
     // It inherits the jump animation and zoom from contentWrapper.
     anchors.fill: parent
 
-    // Dynamic height based on parent size (icon size) to ensure it scales correctly
-    // It should be roughly 35-40% of the icon size, but not smaller than a readable minimum
-    readonly property real badgeHeight: {
-        const minHeight = Math.max(10, Math.round(Kirigami.Units.gridUnit * 0.6));
-        const relativeHeight = Math.round(Math.min(parent.width, parent.height) * 0.45);
-        return Math.max(minHeight, relativeHeight);
-    }
-    // Shared Y coordinate for perfect alignment - added small top margin
-    readonly property real badgeY: Math.max(2, Math.round(Kirigami.Units.smallSpacing / 3)) + root.divingMargin
+    // Use gridUnit as base for consistent physical size across different screens
+    readonly property real badgeHeight: Math.min(Math.round(Kirigami.Units.gridUnit * 0.85), Math.round(Math.min(parent.width, parent.height) * 0.5))
+    
+    // Simple shared margin
+    readonly property real badgeTopMargin: root.divingMargin
     
     readonly property bool compactMode: root.badgeHeight < 14
     
@@ -36,12 +32,13 @@ Item {
     Badge {
         id: audioBadge
         anchors.left: parent.left
-        y: root.badgeY
+        anchors.top: parent.top
+        anchors.topMargin: root.badgeTopMargin
         
         // Horizontal shift when task is highlighted
         anchors.leftMargin: 0
         
-        Behavior on y {
+        Behavior on anchors.topMargin {
             enabled: root.parentTask && root.parentTask.tasksRoot.iconsOnly
             NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
         }
@@ -63,7 +60,7 @@ Item {
         showBackground: false
         shadowEnabled: true 
         isRound: true
-        fontFactor: 0.8
+        fontFactor: 0.7
         isBold: false
  
         MouseArea {
@@ -98,8 +95,8 @@ Item {
         id: notificationBadge
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.topMargin: root.divingMargin
- 
+        anchors.topMargin: root.badgeTopMargin
+
         // Horizontal shift when task is highlighted
         anchors.rightMargin: 0
  
@@ -119,7 +116,7 @@ Item {
         isUrgent: (Plasmoid.configuration.badgeHighlightNew && !!root.parentTask?.hasUnseenNotifications) || !!root.parentTask?.model?.DemandsAttention
         isRound: true
         isBold: false
-        fontFactor: 0.6
+        fontFactor: 0.7
         showNumber: !root.compactMode
     }
 }

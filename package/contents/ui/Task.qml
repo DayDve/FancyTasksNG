@@ -97,8 +97,8 @@ Item {
     property bool isWindow: !!(task.model && task.model.IsWindow)
     readonly property bool isHovered: (tasksRoot && tasksRoot.mouseHandler) ? (tasksRoot.mouseHandler.hoveredItem === task) : false
     
-    // Modern state property for internal and Indicators.qml usage
-    readonly property string state: {
+    // Modern taskState property for internal and Indicators.qml usage
+    readonly property string taskState: {
         if (!task.model) return "normal";
 
         switch (true) {
@@ -157,10 +157,10 @@ Item {
         return true;
     }
     
-    function getGlobalRect() {
-        if (!iconBox.icon) return Qt.rect(0, 0, 0, 0);
-        var p = iconBox.icon.mapToGlobal(0, 0);
-        return Qt.rect(p.x, p.y, iconBox.icon.width, iconBox.icon.height);
+    function getGlobalRect(): /*QRect*/ var {
+        if (!task || !task.window) return Qt.rect(0, 0, 0, 0);
+        const pos = task.mapToGlobal(0, 0);
+        return Qt.rect(pos.x, pos.y, task.width, task.height);
     }
 
 
@@ -182,7 +182,16 @@ Item {
         bool audioIndicatorsEnabled: Plasmoid.configuration.indicateAudioStreams
     readonly property bool hasAudioStream: task.audioStreams.length > 0
     readonly property bool playingAudio: task.hasAudioStream && task.audioStreams.some(item => !item.corked)
-    readonly property var winIdList: (task.model && task.model.WinIdList) ? task.model.WinIdList.slice() : []
+    readonly property var winIdList: {
+        if (!task.model || !task.model.WinIdList) return [];
+        // Deep copy without slice() just in case
+        let list = [];
+        let src = task.model.WinIdList;
+        for (let i = 0; i < src.length; i++) {
+            list.push(src[i]);
+        }
+        return list;
+    }
     property bool wasMiddleClicked: false
     readonly property bool muted: task.hasAudioStream && task.audioStreams.every(item => item.muted)
 
@@ -364,20 +373,22 @@ Item {
         tasksRoot.cancelHighlightWindows();
     }
 
-    onPidChanged: task.updateAudioStreams()
-    onAppNameChanged: task.updateAudioStreams()
-
-
+    onPidChanged: if (task.model) task.updateAudioStreams({
+        delay: false
+    })
+    onAppNameChanged: if (task.model) task.updateAudioStreams({
+        delay: false
+    })
 
     onIsWindowChanged: {
-        if (task.model.IsWindow) {
+        if (task.model && task.model.IsWindow) {
             tasksRoot.taskInitComponent.createObject(task);
             task.updateAudioStreams();
         }
     }
 
     onChildCountChanged: {
-        if (TaskTools.taskManagerInstanceCount < 2 && task.childCount > task.previousChildCount) {
+        if (task.model && TaskTools.taskManagerInstanceCount < 2 && task.childCount > task.previousChildCount) {
             tasksRoot.tasksModel.requestPublishDelegateGeometry(task.modelIndex(), task.getGlobalRect(), task);
         }
 
@@ -423,9 +434,14 @@ Item {
     function modelIndex(): /*QModelIndex*/ var {
         if (tasksRoot && tasksRoot.filteredTasksModel) {
             const proxyIdx = tasksRoot.filteredTasksModel.index(task.index, 0);
-            return tasksRoot.filteredTasksModel.mapToSource(proxyIdx);
+            if (proxyIdx.valid) {
+                return tasksRoot.filteredTasksModel.mapToSource(proxyIdx);
+            }
         }
-        return tasksRoot.tasksModel.makeModelIndex(task.index);
+        if (tasksRoot && tasksRoot.tasksModel && task.index >= 0) {
+            return tasksRoot.tasksModel.makeModelIndex(task.index);
+        }
+        return undefined;
     }
 
     function modelRow(): int {
@@ -510,7 +526,7 @@ Item {
         visible: {
             if (!Plasmoid.configuration.indicatorsEnabled || !task.model) return false;
             // Indicators should only be visible for running tasks, not pure launchers
-            if (task.state === "launcher") return false;
+            if (task.taskState === "launcher") return false;
             if (task.model.IsDemandingAttention || task.model.IsActive) return true;
             return !Plasmoid.configuration.disableInactiveIndicators;
         }
@@ -744,6 +760,7 @@ Item {
             GroupExpanderOverlay {
                 iconBox: iconBox
                 taskModel: task.model
+                tasksRoot: task.tasksRoot
                 parent: task
             }
         }

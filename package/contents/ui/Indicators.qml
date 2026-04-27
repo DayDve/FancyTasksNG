@@ -27,7 +27,7 @@ Flow {
             return 0;
             if(indicatorsFlow.task.isSubTask)//Target only the main task items.
             return 0;
-            if(indicatorsFlow.task.state === 'launcher') {
+            if(indicatorsFlow.task.taskState === 'launcher') {
                 return 0;
             }
             return Math.min((indicatorsFlow.taskCount === 0) ? 1 : indicatorsFlow.taskCount, maxStates);
@@ -107,7 +107,7 @@ Flow {
                     baseColor = Qt.darker(baseColor, 1.2)
                 }
 
-                if(Plasmoid.configuration.indicatorDesaturate && indicatorsFlow.task.state === "minimized") {
+                if(Plasmoid.configuration.indicatorDesaturate && indicatorsFlow.task.taskState === "minimized") {
                     colorCalc = Qt.hsla(baseColor.hslHue, 0.0, baseColor.hslLightness, baseColor.a * 0.5)
                 } else {
                     colorCalc = baseColor
