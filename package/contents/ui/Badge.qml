@@ -151,7 +151,7 @@ Rectangle {
     Text {
         id: textIcon
         anchors.centerIn: parent
-        anchors.horizontalCenterOffset: badgeRect.mirrorText ? -1 : 1
+        anchors.horizontalCenterOffset: 0
         // Vertical offset to compensate for font metric differences between symbols and numbers
         anchors.verticalCenterOffset: 0
         
@@ -215,12 +215,13 @@ Rectangle {
     // Text Layer
     Text {
         id: label
-        anchors.fill: parent
+        anchors.centerIn: parent
         // Offset for ellipsis character to keep it visually centered
         anchors.verticalCenterOffset: text === "…" ? -Math.round(parent.height * 0.22) : 0
         
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
+        width: parent.width
         
         font.bold: badgeRect.isBold
         font.pixelSize: Math.round(parent.height * badgeRect.fontFactor)
