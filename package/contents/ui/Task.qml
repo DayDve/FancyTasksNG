@@ -96,6 +96,25 @@ Item {
     property bool isStartup: !!(task.model && task.model.IsStartup)
     property bool isWindow: !!(task.model && task.model.IsWindow)
     readonly property bool isHovered: (tasksRoot && tasksRoot.mouseHandler) ? (tasksRoot.mouseHandler.hoveredItem === task) : false
+    
+    // Modern state property for internal and Indicators.qml usage
+    readonly property string state: {
+        if (!task.model) return "normal";
+
+        switch (true) {
+            case (task.model.IsLauncher && task.winIdList.length === 0):
+                return "launcher";
+            case task.model.IsDemandingAttention:
+                return "attention";
+            case task.model.IsActive:
+                return "active";
+            case task.model.IsMinimized:
+                return "minimized";
+            default:
+                return "inactive";
+        }
+    }
+
     property int childCount: (task.model && task.model.ChildCount) ? task.model.ChildCount : 0
     property int previousChildCount: 0
     property alias labelText: label.text
@@ -490,7 +509,9 @@ Item {
         tasksRoot: task.tasksRoot
         visible: {
             if (!Plasmoid.configuration.indicatorsEnabled || !task.model) return false;
-            if (task.model.IsLauncher || task.model.IsDemandingAttention || task.model.IsActive) return true;
+            // Indicators should only be visible for running tasks, not pure launchers
+            if (task.state === "launcher") return false;
+            if (task.model.IsDemandingAttention || task.model.IsActive) return true;
             return !Plasmoid.configuration.disableInactiveIndicators;
         }
         flow: Flow.LeftToRight
