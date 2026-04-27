@@ -816,8 +816,7 @@ Item {
             when: label.visible
 
             PropertyChanges {
-                target: label
-                text: task.model.display
+                label.text: task.model.display
             }
         }
     }

@@ -28,8 +28,7 @@ Item {
         connectedSources: []
         
         function start() {
-            let scriptPath = Qt.resolvedUrl("../unity_bridge.py").toString();
-            if (scriptPath.startsWith("file://")) scriptPath = scriptPath.slice(7);
+            let scriptPath = Qt.resolvedUrl("../unity_bridge.py").toString().replace(/^file:\/\//, "");
             connectSource("python3 " + scriptPath);
         }
         

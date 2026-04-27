@@ -23,8 +23,7 @@ Item {
         connectedSources: []
         Component.onCompleted: {
             // Start the DBus daemon ONCE
-            let scriptPath = Qt.resolvedUrl("../desktop_actions.py").toString();
-            if (scriptPath.startsWith("file://")) scriptPath = scriptPath.slice(7);
+            let scriptPath = Qt.resolvedUrl("../desktop_actions.py").toString().replace(/^file:\/\//, "");
             connectSource("python3 '" + scriptPath + "'");
         }
     }

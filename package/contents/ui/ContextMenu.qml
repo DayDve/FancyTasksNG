@@ -749,6 +749,7 @@ PlasmaExtras.Menu {
 
             PlasmaExtras.MenuItem {
                 enabled: menu.visualParent && menu.get(atm.IsShadeable)
+                visible: Qt.platform.pluginName !== "wayland"
 
                 checkable: true
                 checked: menu.visualParent && menu.get(atm.IsShaded)
@@ -757,6 +758,31 @@ PlasmaExtras.Menu {
                 icon: "window-shade"
 
                 onClicked: menu.tasksModel.requestToggleShaded(menu.modelIndex)
+            }
+
+            PlasmaExtras.MenuItem {
+                enabled: menu.visualParent && menu.get(atm.CanSetNoBoder)
+
+                checkable: true
+                checked: menu.visualParent && menu.get(atm.HasNoBorder)
+
+                text: Wrappers.i18n("&No Titlebar and Frame")
+                icon: "edit-none-border"
+
+                onClicked: menu.tasksModel.requestToggleNoBorder(menu.modelIndex)
+            }
+
+            PlasmaExtras.MenuItem {
+                enabled: menu.visualParent
+
+                checkable: true
+                checked: menu.visualParent && menu.get(atm.IsExcludedFromCapture)
+                visible: Qt.platform.pluginName === "wayland"
+
+                text: Wrappers.i18n("&Hide from Screencast")
+                icon: "view-private"
+
+                onClicked: menu.tasksModel.requestToggleExcludeFromCapture(menu.modelIndex)
             }
 
             PlasmaExtras.MenuItem {

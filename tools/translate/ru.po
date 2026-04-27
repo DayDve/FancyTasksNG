@@ -811,6 +811,12 @@ msgstr "&Свернуть в заголовок"
 msgid "Allow this program to be grouped"
 msgstr "Разрешить группировку этой программы"
 
+msgid "&No Titlebar and Frame"
+msgstr "&Без рамки и заголовка"
+
+msgid "&Hide from Screencast"
+msgstr "&Скрыть из трансляции"
+
 #: package/contents/ui/ContextMenu.qml
 msgctxt "@item:inmenu"
 msgid "&Close All"
