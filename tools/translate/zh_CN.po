@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-04-25 15:53+0300\n"
+"POT-Creation-Date: 2026-04-28 09:29+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -314,19 +314,47 @@ msgid "Animation of closing/removing an icon from the panel"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Mouse wheel cycles through tasks"
+msgid "Mouse wheel on task buttons:"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Skip minimized tasks"
-msgstr "跳过最小化的任务"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Show window previews when hovering over tasks"
+msgid "Cycles through all tasks"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Hide other windows when hovering over previews"
+msgid "Cycles through all tasks (skip minimized)"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Cycles through tasks of the current group"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Cycles through tasks of the current group (skip minimized)"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Adjusts volume of the window"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "With Ctrl held:"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Shift + Mouse Wheel adjusts system volume"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Show window thumbnails when hovering over tasks"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Hide other windows when hovering over thumbnails"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Media controls on thumbnails"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
@@ -806,6 +834,14 @@ msgid "&Shade"
 msgstr "折叠"
 
 #: package/contents/ui/ContextMenu.qml
+msgid "&No Titlebar and Frame"
+msgstr ""
+
+#: package/contents/ui/ContextMenu.qml
+msgid "&Hide from Screencast"
+msgstr ""
+
+#: package/contents/ui/ContextMenu.qml
 msgid "Allow this program to be grouped"
 msgstr "允许这个程序被分组"
 
@@ -873,3 +909,6 @@ msgstr "也在 %1 上可用"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "在 %1 上可用"
+
+#~ msgid "Skip minimized tasks"
+#~ msgstr "跳过最小化的任务"

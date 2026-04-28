@@ -12,37 +12,37 @@
 // Can't be `let`, or else QML counterpart won't be able to assign to it.
 var taskManagerInstanceCount = 0;
 
-function activateNextPrevTask(anchor, next, wheelSkipMinimized, tasks) {
-    // FIXME TODO: Unnecessarily convoluted and costly; optimize.
-
+function activateNextPrevTask(anchor, next, wheelSkipMinimized, tasks, groupOnly) {
     let taskIndexList = [];
     const activeTaskIndex = tasks.tasksModel.activeTask;
 
-    for (let i = 0; i < tasks.taskList.children.length - 1; ++i) {
-        const task = tasks.taskList.children[i];
-        const modelIndex = task.modelIndex();
+    const collectTasksFromGroup = (modelIndex) => {
+        for (let j = 0; j < tasks.tasksModel.rowCount(modelIndex); ++j) {
+            const childModelIndex = tasks.tasksModel.makeModelIndex(modelIndex.row, j);
+            const childHidden = tasks.tasksModel.data(childModelIndex, TaskManager.AbstractTasksModel.IsHidden);
+            if (!wheelSkipMinimized || !childHidden) {
+                taskIndexList.push(childModelIndex);
+            }
+        }
+    };
 
-        if (!task.model.IsLauncher && !task.model.IsStartup) {
+    if (groupOnly) {
+        if (anchor && anchor.model && anchor.model.IsGroupParent) {
+            collectTasksFromGroup(anchor.modelIndex());
+        } else {
+            return;
+        }
+    } else {
+        // We subtract 1 from length because the last child is usually an invisible spacer or highlight item
+        for (let i = 0; i < tasks.taskList.children.length - 1; ++i) {
+            const task = tasks.taskList.children[i];
+            if (!task.model || task.model.IsLauncher || task.model.IsStartup) {
+                continue;
+            }
             if (task.model.IsGroupParent) {
-                if (task === anchor) { // If the anchor is a group parent, collect only windows within the group.
-                    taskIndexList = [];
-                }
-
-                for (let j = 0; j < tasks.tasksModel.rowCount(modelIndex); ++j) {
-                    const childModelIndex = tasks.tasksModel.makeModelIndex(modelIndex.row, j);
-                    const childHidden = tasks.tasksModel.data(childModelIndex, TaskManager.AbstractTasksModel.IsHidden);
-                    if (!wheelSkipMinimized || !childHidden) {
-                        taskIndexList.push(childModelIndex);
-                    }
-                }
-
-                if (task === anchor) { // See above.
-                    break;
-                }
-            } else {
-                if (!wheelSkipMinimized || !task.model.IsHidden) {
-                    taskIndexList.push(modelIndex);
-                }
+                collectTasksFromGroup(task.modelIndex());
+            } else if (!wheelSkipMinimized || !task.model.IsHidden) {
+                taskIndexList.push(task.modelIndex());
             }
         }
     }
@@ -54,17 +54,15 @@ function activateNextPrevTask(anchor, next, wheelSkipMinimized, tasks) {
     let target = taskIndexList[0];
 
     for (let i = 0; i < taskIndexList.length; ++i) {
-        if (taskIndexList[i] === activeTaskIndex) {
-            if (next && i < (taskIndexList.length - 1)) {
-                target = taskIndexList[i + 1];
-            } else if (!next) {
-                if (i) {
-                    target = taskIndexList[i - 1];
-                } else {
-                    target = taskIndexList[taskIndexList.length - 1];
-                }
+        // Compare model indices. In QML/JS they might need special comparison or use a key
+        if (tasks.tasksModel.data(taskIndexList[i], TaskManager.AbstractTasksModel.AppId) === tasks.tasksModel.data(activeTaskIndex, TaskManager.AbstractTasksModel.AppId) &&
+            tasks.tasksModel.data(taskIndexList[i], TaskManager.AbstractTasksModel.WinIdList)[0] === tasks.tasksModel.data(activeTaskIndex, TaskManager.AbstractTasksModel.WinIdList)[0]) {
+            
+            if (next) {
+                target = taskIndexList[(i + 1) % taskIndexList.length];
+            } else {
+                target = taskIndexList[(i - 1 + taskIndexList.length) % taskIndexList.length];
             }
-
             break;
         }
     }

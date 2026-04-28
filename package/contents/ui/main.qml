@@ -760,7 +760,6 @@ PlasmoidItem {
                     isMuted: taskModel ? (taskModel.IsMuted === true) : false
 
                     forceTextMode: tasks.toolTipOpenedByClick !== null && Plasmoid.configuration.groupedTaskVisualization !== 1
-                }
             }
         }
     }

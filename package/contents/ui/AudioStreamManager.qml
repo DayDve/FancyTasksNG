@@ -15,6 +15,9 @@ QtObject {
     
     readonly property QtObject globalConfig: PlasmaPa.GlobalConfig { }
     
+    readonly property PlasmaPa.SinkModel sinksModel: PlasmaPa.SinkModel { }
+    readonly property var preferredSink: sinksModel.preferredSink
+    
     // QtObject has no default property, hence adding the Instantiator to one explicitly.
     readonly property Instantiator instantiator: Instantiator {
         model: PlasmaPa.PulseObjectFilterModel {
@@ -124,5 +127,32 @@ QtObject {
             return volumeCache[key];
         }
         return -1;
+    }
+
+    function adjustObjectVolume(obj, increment) {
+        if (!obj) return;
+        
+        const step = (normalVolume - minimalVolume) * globalConfig.volumeStep / 100;
+        const currentVolume = obj.Volume !== undefined ? obj.Volume : obj.volume;
+        const newVolume = Math.max(minimalVolume, Math.min(currentVolume + (step * increment), normalVolume));
+        
+        if (obj.setVolume !== undefined) {
+            obj.setVolume(newVolume);
+        } else {
+            obj.Volume = newVolume;
+        }
+
+        const isCurrentlyMuted = obj.Muted !== undefined ? obj.Muted : obj.muted;
+        
+        if (newVolume > minimalVolume && isCurrentlyMuted) {
+            if (obj.unmute !== undefined) obj.unmute(); else obj.Muted = false;
+        } else if (newVolume <= minimalVolume && !isCurrentlyMuted) {
+            if (obj.mute !== undefined) obj.mute(); else obj.Muted = true;
+        }
+
+        return {
+            volume: (newVolume - minimalVolume) / (normalVolume - minimalVolume),
+            muted: obj.Muted !== undefined ? obj.Muted : obj.muted
+        };
     }
 }

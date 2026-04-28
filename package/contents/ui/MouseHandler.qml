@@ -203,7 +203,7 @@ DropArea {
 
         property bool handleWheelEvents: true
 
-        enabled: handleWheelEvents && Plasmoid.configuration.wheelEnabled
+        enabled: handleWheelEvents && (Plasmoid.configuration.wheelAction !== 0 || Plasmoid.configuration.wheelCtrlAction !== 0)
 
         onWheel: event => {
             let increment = 0;
@@ -217,10 +217,21 @@ DropArea {
             }
 
             const anchor = dropArea.target.childAt(event.x, event.y);
+            const isCtrl = event.modifiers & Qt.ControlModifier;
+            const action = isCtrl ? Plasmoid.configuration.wheelCtrlAction : Plasmoid.configuration.wheelAction;
 
-            while (increment !== 0) {
-                TaskTools.activateNextPrevTask(anchor, increment < 0, Plasmoid.configuration.wheelSkipMinimized, dropArea.tasks);
-                increment += (increment < 0) ? 1 : -1;
+            if (action >= 1 && action <= 4) { // Cycle Tasks
+                const skipMinimized = (action === 2 || action === 4);
+                const groupOnly = (action === 3 || action === 4);
+                while (increment !== 0) {
+                    TaskTools.activateNextPrevTask(anchor, increment < 0, skipMinimized, dropArea.tasks, groupOnly);
+                    increment += (increment < 0) ? 1 : -1;
+                }
+            } else if (action === 5) { // Adjust Volume
+                if (anchor && anchor.adjustVolume) {
+                    const isShift = event.modifiers & Qt.ShiftModifier;
+                    anchor.adjustVolume(increment, isShift);
+                }
             }
         }
     }

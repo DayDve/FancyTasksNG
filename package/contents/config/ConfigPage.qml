@@ -36,8 +36,10 @@ Kirigami.Page {
     property bool cfg_forceStripesDefault: false
     property bool cfg_showToolTips: true
     property bool cfg_showToolTipsDefault: true
-    property bool cfg_wheelEnabled: true
-    property bool cfg_wheelEnabledDefault: true
+    property int cfg_wheelAction: 1
+    property int cfg_wheelActionDefault: 1
+    property int cfg_wheelCtrlAction: 2
+    property int cfg_wheelCtrlActionDefault: 2
     property bool cfg_showMediaControls: true
     property bool cfg_showMediaControlsDefault: true
     property bool cfg_wheelSkipMinimized: false

@@ -157,6 +157,25 @@ Item {
         return true;
     }
     
+    function adjustVolume(increment, isGlobal) {
+        const audioManager = tasksRoot.audioStreamManager.item;
+        if (!audioManager) return;
+
+        let streams = isGlobal ? (audioManager.preferredSink ? [audioManager.preferredSink] : []) : task.audioStreams;
+        if (streams.length === 0) return;
+        
+        let lastResult = null;
+        streams.forEach(stream => {
+            lastResult = audioManager.adjustObjectVolume(stream, increment);
+        });
+
+        if (lastResult && taskVolumeOverlayLoader.item) {
+            taskVolumeOverlayLoader.item.volume = lastResult.volume;
+            taskVolumeOverlayLoader.item.muted = lastResult.muted;
+            taskVolumeOverlayLoader.item.show();
+        }
+    }
+
     function getGlobalRect(): /*QRect*/ var {
         if (!task || !task.window) return Qt.rect(0, 0, 0, 0);
         const pos = task.mapToGlobal(0, 0);
@@ -751,6 +770,12 @@ Item {
             item.pPosition = Qt.binding(() => (task.model?.Progress ?? 0) / 100.0);
             item.panelLocation = Qt.binding(() => Plasmoid.location);
         }
+    }
+
+    Loader {
+        id: taskVolumeOverlayLoader
+        anchors.fill: frame
+        source: "TaskVolumeOverlay.qml"
     }
 
     Loader {

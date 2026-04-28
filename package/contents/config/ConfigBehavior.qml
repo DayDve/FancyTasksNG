@@ -112,21 +112,50 @@ ConfigPage {
 
             Item { height: Kirigami.Units.largeSpacing }
 
-            CheckBox {
-                id: cfg_wheelEnabled
-                text: Wrappers.i18n("Cycle through tasks with the mouse wheel")
-                checked: cfg_page.cfg_wheelEnabled
-                onToggled: cfg_page.cfg_wheelEnabled = checked
+            Label {
+                text: Wrappers.i18n("Mouse wheel on task buttons:")
+            }
+            ComboBox {
+                id: cfg_wheelAction
+                Layout.fillWidth: true
+                Layout.minimumWidth: Kirigami.Units.gridUnit * 14
+                model: [
+                    Wrappers.i18n("Does nothing"),
+                    Wrappers.i18n("Cycles through all tasks"),
+                    Wrappers.i18n("Cycles through all tasks (skip minimized)"),
+                    Wrappers.i18n("Cycles through tasks of the current group"),
+                    Wrappers.i18n("Cycles through tasks of the current group (skip minimized)"),
+                    Wrappers.i18n("Adjusts volume of the window")
+                ]
+                currentIndex: cfg_page.cfg_wheelAction
+                onActivated: (index) => cfg_page.cfg_wheelAction = index
             }
 
             RowLayout {
-                visible: cfg_wheelEnabled.checked
                 Item { implicitWidth: Kirigami.Units.gridUnit }
-                CheckBox {
-                    id: cfg_wheelSkipMinimized
-                    text: Wrappers.i18n("Skip minimized tasks")
-                    checked: cfg_page.cfg_wheelSkipMinimized
-                    onToggled: cfg_page.cfg_wheelSkipMinimized = checked
+                Label {
+                    text: Wrappers.i18n("With Ctrl held:")
+                }
+            }
+            RowLayout {
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+                ComboBox {
+                    id: cfg_wheelCtrlAction
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: Kirigami.Units.gridUnit * 14
+                    model: cfg_wheelAction.model
+                    currentIndex: cfg_page.cfg_wheelCtrlAction
+                    onActivated: (index) => cfg_page.cfg_wheelCtrlAction = index
+                }
+            }
+
+            RowLayout {
+                visible: (cfg_wheelAction.currentIndex === 5 || cfg_wheelCtrlAction.currentIndex === 5)
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+                Label {
+                    text: Wrappers.i18n("Shift + Mouse Wheel adjusts system volume")
+                    font.italic: true
+                    opacity: 0.6
                 }
             }
 
