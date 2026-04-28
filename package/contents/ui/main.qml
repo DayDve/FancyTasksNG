@@ -212,7 +212,7 @@ PlasmoidItem {
     }
 
     onWindowsHovered: (winIds, hovered) => {
-        if (!Plasmoid.configuration.highlightWindows)
+        if (!Plasmoid.configuration.highlightWindows || !Plasmoid.configuration.showToolTips)
             return;
         DBus.SessionBus.asyncCall({
             service: "org.kde.KWin.HighlightWindow",

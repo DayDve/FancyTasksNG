@@ -322,12 +322,12 @@ msgid "Skip minimized tasks"
 msgstr "Пропускать свернутые"
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Show window previews when hovering over tasks"
-msgstr "Показывать эскизы окон при наведении на задачи"
+msgid "Show window thumbnails when hovering over tasks"
+msgstr "Показывать миниатюры окон при наведении курсора мыши на кнопку задачи"
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Hide other windows when hovering over previews"
-msgstr "Скрывать остальные окна при наведении на тултип"
+msgid "Hide other windows when hovering over thumbnails"
+msgstr "Скрывать другие окна при наведении курсора на миниатюру окна"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Cycles through tasks"
@@ -882,3 +882,11 @@ msgstr "Также доступно в %1"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Доступно в %1"
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Cycle through tasks with the mouse wheel"
+msgstr "Переключение задач колесиком мыши"
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Media controls on thumbnails"
+msgstr "Элементы управления медиа на миниатюрах окон"

@@ -38,6 +38,8 @@ Kirigami.Page {
     property bool cfg_showToolTipsDefault: true
     property bool cfg_wheelEnabled: true
     property bool cfg_wheelEnabledDefault: true
+    property bool cfg_showMediaControls: true
+    property bool cfg_showMediaControlsDefault: true
     property bool cfg_wheelSkipMinimized: false
     property bool cfg_wheelSkipMinimizedDefault: false
     property bool cfg_highlightWindows: true

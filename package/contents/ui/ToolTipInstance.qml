@@ -759,7 +759,7 @@ Item {
 
     readonly property bool showVolumeControls: index !== -1 && audioStreamManager.item !== null && audioIndicatorsEnabled && (isPlayingAudio || hasAudioStream)
     
-    property bool controlsAreEffective: showPlayerControls || showVolumeControls
+    property bool controlsAreEffective: Plasmoid.configuration.showToolTips && Plasmoid.configuration.showMediaControls && (showPlayerControls || showVolumeControls)
     property bool delayedControlsActive: false
     
     onControlsAreEffectiveChanged: {

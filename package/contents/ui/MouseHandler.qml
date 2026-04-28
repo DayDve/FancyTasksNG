@@ -206,8 +206,6 @@ DropArea {
         enabled: handleWheelEvents && Plasmoid.configuration.wheelEnabled
 
         onWheel: event => {
-            // magic number 15 for common "one scroll"
-            // See https://doc.qt.io/qt-6/qml-qtquick-wheelhandler.html#rotation-prop
             let increment = 0;
             while (rotation >= 15) {
                 rotation -= 15;
@@ -217,7 +215,9 @@ DropArea {
                 rotation += 15;
                 increment--;
             }
+
             const anchor = dropArea.target.childAt(event.x, event.y);
+
             while (increment !== 0) {
                 TaskTools.activateNextPrevTask(anchor, increment < 0, Plasmoid.configuration.wheelSkipMinimized, dropArea.tasks);
                 increment += (increment < 0) ? 1 : -1;

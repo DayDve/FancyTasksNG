@@ -114,7 +114,7 @@ ConfigPage {
 
             CheckBox {
                 id: cfg_wheelEnabled
-                text: Wrappers.i18n("Mouse wheel cycles through tasks")
+                text: Wrappers.i18n("Cycle through tasks with the mouse wheel")
                 checked: cfg_page.cfg_wheelEnabled
                 onToggled: cfg_page.cfg_wheelEnabled = checked
             }
@@ -132,17 +132,31 @@ ConfigPage {
 
             CheckBox {
                 id: showToolTips
-                text: Wrappers.i18n("Show window previews when hovering over tasks")
+                text: Wrappers.i18n("Show window thumbnails when hovering over tasks")
                 checked: cfg_page.cfg_showToolTips
                 onToggled: cfg_page.cfg_showToolTips = checked
             }
 
-            CheckBox {
-                id: highlightWindows
-                text: Wrappers.i18n("Hide other windows when hovering over previews")
+            RowLayout {
                 visible: showToolTips.checked
-                checked: cfg_page.cfg_highlightWindows
-                onToggled: cfg_page.cfg_highlightWindows = checked
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+                CheckBox {
+                    id: highlightWindows
+                    text: Wrappers.i18n("Hide other windows when hovering over thumbnails")
+                    checked: cfg_page.cfg_highlightWindows
+                    onToggled: cfg_page.cfg_highlightWindows = checked
+                }
+            }
+
+            RowLayout {
+                visible: showToolTips.checked
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+                CheckBox {
+                    id: showMediaControls
+                    text: Wrappers.i18n("Media controls on thumbnails")
+                    checked: cfg_page.cfg_showMediaControls
+                    onToggled: cfg_page.cfg_showMediaControls = checked
+                }
             }
 
             Label {
