@@ -47,6 +47,7 @@ PlasmoidItem {
     readonly property bool iconsOnly: Plasmoid.configuration.iconOnly
     property bool showBadges: Plasmoid.configuration.showBadges
 
+    property alias globalVolumeOverlay: globalVolumeOverlay
     property Item dropIndicator: dropIndicator
     property int dropIndex: -1
     property Item dragSource: null
@@ -430,6 +431,17 @@ PlasmoidItem {
         if (task)
             TaskTools.activateTask(task.modelIndex(), task.model, null, task, Plasmoid, tasks, effectWatcher.registered);
     }
+    function adjustGlobalVolume(increment) {
+        const audioManager = audioStreamManager.item;
+        if (!audioManager || !audioManager.preferredSink) return;
+
+        const lastResult = audioManager.adjustObjectVolume(audioManager.preferredSink, increment);
+        if (lastResult && globalVolumeOverlay.item) {
+            globalVolumeOverlay.item.volume = lastResult.volume;
+            globalVolumeOverlay.item.muted = lastResult.muted;
+            globalVolumeOverlay.item.show();
+        }
+    }
     function createContextMenu(rootTask, modelIndex, args = {}) {
         const initialArgs = Object.assign(args, {
             visualParent: rootTask,
@@ -469,6 +481,12 @@ PlasmoidItem {
             id: audioStreamManager
             sourceComponent: tasks.audioStreamManagerComponent
             active: tasks.audioStreamManagerComponent.status === Component.Ready
+        }
+
+        Loader {
+            id: globalVolumeOverlay
+            anchors.fill: parent
+            source: "TaskVolumeOverlay.qml"
         }
 
         Timer {

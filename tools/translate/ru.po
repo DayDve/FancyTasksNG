@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-04-25 15:53+0300\n"
+"POT-Creation-Date: 2026-04-28 09:29+0300\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -314,12 +314,36 @@ msgid "Animation of closing/removing an icon from the panel"
 msgstr "Анимация закрытия/удаления значка с панели"
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Mouse wheel cycles through tasks"
-msgstr "Переключать задачи прокруткой колеса мыши"
+msgid "Mouse wheel:"
+msgstr "Колесо мыши"
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Skip minimized tasks"
-msgstr "Пропускать свернутые"
+msgid "Cycles through all tasks"
+msgstr "переключает все задачи"
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Cycles through all tasks (skip minimized)"
+msgstr "переключает все задачи (пропуская свернутые)"
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Cycles through tasks of the current group"
+msgstr "переключает задачи текущей группы"
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Cycles through tasks of the current group (skip minimized)"
+msgstr "переключает задачи текущей группы (пропуская свернутые)"
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Adjusts volume of the window"
+msgstr "регулирует громкость окна"
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Additional action with Ctrl key"
+msgstr "Дополнительное действие с клавишей Ctrl"
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Adjust system volume with Shift key"
+msgstr "Регулировка системной громкости с клавишей Shift"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Show window thumbnails when hovering over tasks"
@@ -328,6 +352,10 @@ msgstr "Показывать миниатюры окон при наведени
 #: package/contents/config/ConfigBehavior.qml
 msgid "Hide other windows when hovering over thumbnails"
 msgstr "Скрывать другие окна при наведении курсора на миниатюру окна"
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Media controls on thumbnails"
+msgstr "Элементы управления медиа на миниатюрах окон"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Cycles through tasks"
@@ -808,14 +836,16 @@ msgid "&Shade"
 msgstr "&Свернуть в заголовок"
 
 #: package/contents/ui/ContextMenu.qml
-msgid "Allow this program to be grouped"
-msgstr "Разрешить группировку этой программы"
-
 msgid "&No Titlebar and Frame"
 msgstr "&Без рамки и заголовка"
 
+#: package/contents/ui/ContextMenu.qml
 msgid "&Hide from Screencast"
 msgstr "&Скрыть из трансляции"
+
+#: package/contents/ui/ContextMenu.qml
+msgid "Allow this program to be grouped"
+msgstr "Разрешить группировку этой программы"
 
 #: package/contents/ui/ContextMenu.qml
 msgctxt "@item:inmenu"
@@ -883,10 +913,8 @@ msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Доступно в %1"
 
-#: package/contents/config/ConfigBehavior.qml
-msgid "Cycle through tasks with the mouse wheel"
-msgstr "Переключение задач колесиком мыши"
+#~ msgid "Mouse wheel cycles through tasks"
+#~ msgstr "Переключать задачи прокруткой колеса мыши"
 
-#: package/contents/config/ConfigBehavior.qml
-msgid "Media controls on thumbnails"
-msgstr "Элементы управления медиа на миниатюрах окон"
+#~ msgid "Skip minimized tasks"
+#~ msgstr "Пропускать свернутые"
