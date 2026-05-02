@@ -90,10 +90,11 @@ Item {
     // ── Audio Badge ────────────────────────────────────────────────
     Badge {
         id: audioBadge
+        // Shift left significantly to clear the icon center, 
+        // Shift left, but clamp to -width/3 so it doesn't overflow into the left neighbor
+        readonly property real idealX: root.audioCX - width / 2 + root.diveDx
 
-        readonly property real idealX: root.audioCX - width / 2 - root.badgeR + root.diveDx
-
-        x: root.iconsOnly ? Math.max(0, idealX) : 0
+        x: root.iconsOnly ? Math.max(-width / 3, idealX) : 0
         y: root.iconsOnly ? (root.badgeTopY + root.diveDy) : 0
 
         Behavior on x {
