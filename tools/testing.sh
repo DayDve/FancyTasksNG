@@ -1,6 +1,6 @@
 #!/bin/bash
-# SPDX-FileCopyrightText: 2023 Alexandra Stone <alexankitty@gmail.com>
 # SPDX-FileCopyrightText: 2025-2026 Vitaliy Elin <daydve@smbit.pro>
+# SPDX-FileCopyrightText: 2022-2023 Alexandra <alexankitty@gmail.com>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)

@@ -1,5 +1,6 @@
 /*
-    SPDX-FileCopyrightText: 2024 Vitaliy Elin <daydve@smbit.pro>
+    SPDX-FileCopyrightText: 2024-2026 Vitaliy Elin <daydve@smbit.pro>
+
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 

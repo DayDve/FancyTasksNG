@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2026 Vitaliy Elin <daydve@smbit.pro>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 import dbus
 import dbus.service
 from dbus.mainloop.glib import DBusGMainLoop

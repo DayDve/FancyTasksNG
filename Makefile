@@ -1,7 +1,7 @@
-# FancyTasksNG Makefile
 # SPDX-FileCopyrightText: 2025-2026 Vitaliy Elin <daydve@smbit.pro>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+# FancyTasksNG Makefile
 .PHONY: all build install update test clean translate
 
 all: build

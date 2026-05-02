@@ -1,4 +1,14 @@
 /*
+    SPDX-FileCopyrightText: 2026 Vitaliy Elin <daydve@smbit.pro>
+    SPDX-FileCopyrightText: 2023-2024 Marco Martin <notmart@gmail.com>
+    SPDX-FileCopyrightText: 2024 Jin Liu <m.liu.jin@gmail.com>
+    SPDX-FileCopyrightText: 2024 Xaver Hugl <xaver.hugl@gmail.com>
+    SPDX-FileCopyrightText: 2024 ivan tkachenko <me@ratijas.tk>
+    SPDX-FileCopyrightText: 2022-2023 Alexandra <alexankitty@gmail.com>
+    SPDX-FileCopyrightText: 2023 Fushan Wen <qydwhotmail@gmail.com>
+    SPDX-FileCopyrightText: 2023 Nate Graham <nate@kde.org>
+    SPDX-FileCopyrightText: 2023 Niccolò Venerandi <niccolo@venerandi.com>
+    SPDX-FileCopyrightText: 2023 Nicolas Fella <nicolas.fella@gmx.de>
     SPDX-FileCopyrightText: 2012-2016 Eike Hein <hein@kde.org>
     SPDX-FileCopyrightText: 2016 Kai Uwe Broulik <kde@privat.broulik.de>
 

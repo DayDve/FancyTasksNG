@@ -1,4 +1,8 @@
 /*
+    SPDX-FileCopyrightText: 2026 Vitaliy Elin <daydve@smbit.pro>
+    SPDX-FileCopyrightText: 2024 Kisaragi Hiu <mail@kisaragi-hiu.com>
+    SPDX-FileCopyrightText: 2024 Marco Martin <notmart@gmail.com>
+    SPDX-FileCopyrightText: 2024 ivan tkachenko <me@ratijas.tk>
     SPDX-FileCopyrightText: 2012-2013 Eike Hein <hein@kde.org>
 
     SPDX-License-Identifier: GPL-2.0-or-later

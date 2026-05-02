@@ -1,6 +1,21 @@
 /*
-    SPDX-FileCopyrightText: 2012-2013 Eike Hein <hein@kde.org>
     SPDX-FileCopyrightText: 2025-2026 Vitaliy Elin <daydve@smbit.pro>
+    SPDX-FileCopyrightText: 2025 SushiTrash <namanrajhans@gmail.com>
+    SPDX-FileCopyrightText: 2025 SushiTrash <strash137@gmail.com>
+    SPDX-FileCopyrightText: 2023-2024 Fushan Wen <qydwhotmail@gmail.com>
+    SPDX-FileCopyrightText: 2023-2024 Marco Martin <notmart@gmail.com>
+    SPDX-FileCopyrightText: 2023-2024 Nate Graham <nate@kde.org>
+    SPDX-FileCopyrightText: 2023-2024 Niccolò Venerandi <niccolo@venerandi.com>
+    SPDX-FileCopyrightText: 2024 David Edmundson <kde@davidedmundson.co.uk>
+    SPDX-FileCopyrightText: 2024 David Redondo <kde@david-redondo.de>
+    SPDX-FileCopyrightText: 2024 Ismael Asensio <isma.af@gmail.com>
+    SPDX-FileCopyrightText: 2024 ivan tkachenko <me@ratijas.tk>
+    SPDX-FileCopyrightText: 2022-2023 Alexandra <alexankitty@gmail.com>
+    SPDX-FileCopyrightText: 2023 Bharadwaj Raju <bharadwaj.raju777@protonmail.com>
+    SPDX-FileCopyrightText: 2023 Nicolas Fella <nicolas.fella@gmx.de>
+    SPDX-FileCopyrightText: 2023 Noah Davis <noahadvs@gmail.com>
+    SPDX-FileCopyrightText: 2023 Taro Tanaka <mkrmdk@gmail.com>
+    SPDX-FileCopyrightText: 2012-2013 Eike Hein <hein@kde.org>
 
     SPDX-License-Identifier: GPL-2.0-or-later
 */

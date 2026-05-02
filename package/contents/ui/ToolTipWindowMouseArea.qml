@@ -1,7 +1,10 @@
 /*
-    SPDX-FileCopyrightText: 2013 Sebastian Kügler <sebas@kde.org>
-    SPDX-FileCopyrightText: 2014 Martin Gräßlin <mgraesslin@kde.org>
+    SPDX-FileCopyrightText: 2025-2026 Vitaliy Elin <daydve@smbit.pro>
+    SPDX-FileCopyrightText: 2024 ivan tkachenko <me@ratijas.tk>
+    SPDX-FileCopyrightText: 2022-2023 Alexandra <alexankitty@gmail.com>
     SPDX-FileCopyrightText: 2016 Kai Uwe Broulik <kde@privat.broulik.de>
+    SPDX-FileCopyrightText: 2014 Martin Gräßlin <mgraesslin@kde.org>
+    SPDX-FileCopyrightText: 2013 Sebastian Kügler <sebas@kde.org>
 
     SPDX-License-Identifier: LGPL-2.0-or-later
 */

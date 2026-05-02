@@ -1,5 +1,9 @@
 /*
     SPDX-FileCopyrightText: 2025-2026 Vitaliy Elin <daydve@smbit.pro>
+    SPDX-FileCopyrightText: 2022-2023 Alexandra <alexankitty@gmail.com>
+    SPDX-FileCopyrightText: 2023 Fushan Wen <qydwhotmail@gmail.com>
+    SPDX-FileCopyrightText: 2023 Marco Martin <notmart@gmail.com>
+
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 

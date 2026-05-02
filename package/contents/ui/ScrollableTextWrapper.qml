@@ -1,4 +1,6 @@
 /*
+    SPDX-FileCopyrightText: 2024 ivan tkachenko <me@ratijas.tk>
+    SPDX-FileCopyrightText: 2022-2023 Alexandra <alexankitty@gmail.com>
     SPDX-FileCopyrightText: 2020 Tranter Madi <trmdi@yandex.com>
 
     SPDX-License-Identifier: LGPL-2.0-or-later

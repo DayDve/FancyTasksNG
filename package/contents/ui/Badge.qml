@@ -1,3 +1,12 @@
+/*
+    SPDX-FileCopyrightText: 2026 Vitaliy Elin <daydve@smbit.pro>
+    SPDX-FileCopyrightText: 2024 Fushan Wen <qydwhotmail@gmail.com>
+    SPDX-FileCopyrightText: 2024 ivan tkachenko <me@ratijas.tk>
+    SPDX-FileCopyrightText: 2022-2023 Alexandra <alexankitty@gmail.com>
+
+    SPDX-License-Identifier: GPL-2.0-or-later
+*/
+
 import QtQuick
 import org.kde.kirigami as Kirigami
 import QtQuick.Effects
