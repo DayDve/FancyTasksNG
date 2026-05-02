@@ -23,7 +23,7 @@ import "code/singletones"
 
 Item {
     id: task
-    z: highlighted ? 10 : 0
+    z: highlighted ? 10 : (badgeVisible || playingAudio || muted) ? 1 : 0
 
     activeFocusOnTab: true
     opacity: tasksRoot.dragSource === task ? (task.inPopup ? 1.0 : 0.5) : 1.0
