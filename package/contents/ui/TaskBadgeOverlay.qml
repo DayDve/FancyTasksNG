@@ -60,9 +60,13 @@ Item {
     readonly property real notifCX: isVertPanel
         ? (iconCX + innerSign * iconR * depthFactor) : (iconCX + iconR * spreadFactor)
 
+    // How much to raise the badges at rest (so they sit slightly higher)
+    readonly property real restRaise: badgeR * 0.65
+
     // Shared top Y — both badges aligned by their top edge
     readonly property real rawTopY: isVertPanel
-        ? (iconCY - effectiveBadgeDiam / 2) : (iconCY + innerSign * iconR * depthFactor - effectiveBadgeDiam / 2)
+        ? (iconCY - effectiveBadgeDiam / 2 - restRaise) 
+        : (iconCY + innerSign * iconR * depthFactor - effectiveBadgeDiam / 2 - restRaise)
     readonly property real badgeTopY: clamp(rawTopY, 0, boxH - audioBadgeDiam)
 
     // ── Dive offset when zoomed ────────────────────────────────────
@@ -76,13 +80,22 @@ Item {
         return parentGrow * 0.35;
     }
     property real diveOffset: _diveTarget
+    property real raiseCompensation: _diveTarget > 0 ? restRaise : 0
+
     Behavior on diveOffset {
         NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
     }
-    on_DiveTargetChanged: diveOffset = _diveTarget
+    Behavior on raiseCompensation {
+        NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
+    }
+
+    on_DiveTargetChanged: {
+        diveOffset = _diveTarget;
+        raiseCompensation = _diveTarget > 0 ? restRaise : 0;
+    }
 
     readonly property real diveDx: isVertPanel ? (-innerSign * diveOffset) : 0
-    readonly property real diveDy: isVertPanel ? 0 : (-innerSign * diveOffset)
+    readonly property real diveDy: isVertPanel ? raiseCompensation : (-innerSign * diveOffset + raiseCompensation)
 
     // Helper: clamp value to [min, max]
     function clamp(val, lo, hi) { return Math.max(lo, Math.min(hi, val)); }
