@@ -1,9 +1,9 @@
 /*
-    SPDX-FileCopyrightText: 2012-2016 Eike Hein <hein@kde.org>
-    SPDX-FileCopyrightText: 2020 Nate Graham <nate@kde.org>
-
-    SPDX-License-Identifier: GPL-2.0-or-later
-*/
+ *    SPDX-FileCopyrightText: 2012-2016 Eike Hein <hein@kde.org>
+ *    SPDX-FileCopyrightText: 2020 Nate Graham <nate@kde.org>
+ *
+ *    SPDX-License-Identifier: GPL-2.0-or-later
+ */
 
 .pragma library
 .import org.kde.taskmanager as TaskManager
@@ -12,7 +12,7 @@
 // Can't be `let`, or else QML counterpart won't be able to assign to it.
 var taskManagerInstanceCount = 0;
 
-function activateNextPrevTask(anchor, next, wheelSkipMinimized, tasks) {
+function activateNextPrevTask(anchor, next, wheelSkipMinimized, tasks, wheelCycleAll) {
     // FIXME TODO: Unnecessarily convoluted and costly; optimize.
 
     let taskIndexList = [];
@@ -24,7 +24,7 @@ function activateNextPrevTask(anchor, next, wheelSkipMinimized, tasks) {
 
         if (!task.model.IsLauncher && !task.model.IsStartup) {
             if (task.model.IsGroupParent) {
-                if (task === anchor) { // If the anchor is a group parent, collect only windows within the group.
+                if (task === anchor && !wheelCycleAll) { // If the anchor is a group parent, collect only windows within the group.
                     taskIndexList = [];
                 }
 
@@ -36,7 +36,7 @@ function activateNextPrevTask(anchor, next, wheelSkipMinimized, tasks) {
                     }
                 }
 
-                if (task === anchor) { // See above.
+                if (task === anchor && !wheelCycleAll) { // See above.
                     break;
                 }
             } else {

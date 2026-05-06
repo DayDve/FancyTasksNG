@@ -180,17 +180,19 @@ ConfigPage {
         }
 
         ComboBox {
-            id: wheelAction
+            id: wheelEnabled
             Kirigami.FormData.label: Wrappers.i18n("Scrolling Behaviour:")
+
             Layout.fillWidth: true
             Layout.minimumWidth: Kirigami.Units.gridUnit * 14
             model: [
                 Wrappers.i18n("Does nothing"),
+                Wrappers.i18n("Cycles through all tasks"),
                 Wrappers.i18n("Cycles through the hovered task's windows"),
                 Wrappers.i18n("Adjusts the hovered task's volume")
             ]
-            currentIndex: cfg_page.cfg_wheelAction
-            onActivated: (index) => cfg_page.cfg_wheelAction = index
+            currentIndex: cfg_page.cfg_wheelEnabled
+            onActivated: (index) => cfg_page.cfg_wheelEnabled = index
         }
 
         RowLayout {
@@ -200,7 +202,7 @@ ConfigPage {
             CheckBox {
                 id: wheelSkipMinimized
                 text: Wrappers.i18n("Skip minimized tasks")
-                enabled: wheelAction.currentIndex === 1
+                enabled: wheelEnabled.currentIndex === 1 || wheelEnabled.currentIndex === 2
                 checked: cfg_page.cfg_wheelSkipMinimized
                 onToggled: cfg_page.cfg_wheelSkipMinimized = checked
             }

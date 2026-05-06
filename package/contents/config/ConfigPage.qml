@@ -30,8 +30,8 @@ KCMUtils.SimpleKCM {
     property bool cfg_showToolTipsDefault
     property int cfg_taskMaxWidth
     property int cfg_taskMaxWidthDefault
-    property int cfg_wheelAction
-    property int cfg_wheelActionDefault
+    property int cfg_wheelEnabled
+    property int cfg_wheelEnabledDefault
     property bool cfg_wheelSkipMinimized
     property bool cfg_wheelSkipMinimizedDefault
     property bool cfg_highlightWindows

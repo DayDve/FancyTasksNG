@@ -110,10 +110,11 @@
       </choices>
       <default>1</default>
     </entry>
-    <entry name="wheelAction" type="Enum">
+    <entry name="wheelEnabled" type="Enum">
       <label>How the mouse wheel should interact with the hovered task.</label>
       <choices>
         <choice name="None" />
+        <choice name="CycleAllTasks" />
         <choice name="CycleHoveredTask" />
         <choice name="AdjustVolume" />
       </choices>
