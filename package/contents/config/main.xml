@@ -118,7 +118,7 @@
         <choice name="CycleHoveredTask" />
         <choice name="AdjustVolume" />
       </choices>
-      <default>1</default>
+      <default>2</default>
     </entry>
     <entry name="wheelSkipMinimized" type="Bool">
       <label
