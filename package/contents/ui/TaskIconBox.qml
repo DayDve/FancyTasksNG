@@ -35,7 +35,8 @@ Item {
     readonly property bool _taskHasModel: iconBox.taskItem ? !!iconBox.taskItem.model : false
 
     anchors.centerIn: iconBox._iconsOnly ? parent : undefined
-    anchors.fill: iconBox._iconsOnly ? undefined : parent
+    anchors.top: iconBox._iconsOnly ? undefined : parent.top
+    anchors.bottom: iconBox._iconsOnly ? undefined : parent.bottom
     anchors.left: iconBox._iconsOnly ? undefined : parent.left
     
     anchors.topMargin: iconBox._iconsOnly ? 0 : adjustMargin(false, parent.height, LayoutMetrics.topMargin())
@@ -43,7 +44,7 @@ Item {
     anchors.leftMargin: iconBox._iconsOnly ? 0 : adjustMargin(true, parent.height, LayoutMetrics.leftMargin())
 
     width: iconBox._iconsOnly ? (parent.width - 2 * Math.max(LayoutMetrics.leftMargin(), LayoutMetrics.rightMargin())) : height
-    height: iconBox._iconsOnly ? (parent.height - 2 * Math.max(LayoutMetrics.topMargin(), LayoutMetrics.bottomMargin())) : parent.height
+    height: iconBox._iconsOnly ? (parent.height - 2 * Math.max(LayoutMetrics.topMargin(), LayoutMetrics.bottomMargin())) : undefined
 
     property int growSize: (iconBox._iconsOnly && Plasmoid.configuration.taskHoverEffect && (iconBox._taskHovered || (iconBox.tasksRootContext && iconBox.tasksRootContext.currentHoveredTask === iconBox.taskItem && iconBox.tasksRootContext.isTooltipHovered) || iconBox._contextMenuOpen)) ?
         Plasmoid.configuration.iconZoomFactor : 0
