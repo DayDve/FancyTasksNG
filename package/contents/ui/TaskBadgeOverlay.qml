@@ -51,23 +51,15 @@ Item {
         return -1; // BottomEdge / Floating
     }
 
-    // ── Ideal badge centers on the inscribed circle ──────────────
-    readonly property real spreadFactor: 0.97   // near-edge horizontal placement
-    readonly property real depthFactor:  0.35   // shallow inward offset
+    // ── Proportional Layout (Resolution Independent) ─────────────
+    // Calculated based on a standard 44px panel ratio
+    // Audio badge: x = -2px, y = 2px
+    readonly property real audioBaseX: isVertPanel ? (boxW * 0.045) : (-boxW * 0.045)
+    readonly property real audioBaseY: isVertPanel ? (boxH * 0.1) : (boxH * 0.045)
 
-    readonly property real audioCX: isVertPanel
-        ? (iconCX + innerSign * iconR * depthFactor) : (iconCX - iconR * spreadFactor)
-    readonly property real notifCX: isVertPanel
-        ? (iconCX + innerSign * iconR * depthFactor) : (iconCX + iconR * spreadFactor)
-
-    // How much to raise the badges at rest (so they sit slightly higher)
-    readonly property real restRaise: badgeR * 0.65
-
-    // Shared top Y — both badges aligned by their top edge
-    readonly property real rawTopY: isVertPanel
-        ? (iconCY - effectiveBadgeDiam / 2 - restRaise) 
-        : (iconCY + innerSign * iconR * depthFactor - effectiveBadgeDiam / 2 - restRaise)
-    readonly property real badgeTopY: clamp(rawTopY, 0, boxH - audioBadgeDiam)
+    // Notification badge: center X = 36px (82%), y = 3px
+    readonly property real notifBaseCX: isVertPanel ? (boxW * 0.5) : (boxW * 0.85)
+    readonly property real notifBaseCY: isVertPanel ? (boxH * 0.82) : (boxH * 0.068)
 
     // ── Dive offset when zoomed ────────────────────────────────────
     // qmllint disable missing-property
@@ -80,22 +72,17 @@ Item {
         return parentGrow * 0.35;
     }
     property real diveOffset: _diveTarget
-    property real raiseCompensation: _diveTarget > 0 ? restRaise : 0
 
     Behavior on diveOffset {
-        NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
-    }
-    Behavior on raiseCompensation {
         NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
     }
 
     on_DiveTargetChanged: {
         diveOffset = _diveTarget;
-        raiseCompensation = _diveTarget > 0 ? restRaise : 0;
     }
 
     readonly property real diveDx: isVertPanel ? (-innerSign * diveOffset) : 0
-    readonly property real diveDy: isVertPanel ? raiseCompensation : (-innerSign * diveOffset + raiseCompensation)
+    readonly property real diveDy: isVertPanel ? (diveOffset * 0.5) : diveOffset
 
     // Helper: clamp value to [min, max]
     function clamp(val, lo, hi) { return Math.max(lo, Math.min(hi, val)); }
@@ -103,12 +90,11 @@ Item {
     // ── Audio Badge ────────────────────────────────────────────────
     Badge {
         id: audioBadge
-        // Shift left significantly to clear the icon center, 
-        // Shift left, but clamp to -width/3 so it doesn't overflow into the left neighbor
-        readonly property real idealX: root.audioCX - width / 2 + root.diveDx
+        readonly property real idealX: root.audioBaseX + root.diveDx
+        readonly property real idealY: root.audioBaseY + root.diveDy
 
-        x: root.iconsOnly ? Math.max(-width / 3, idealX) : 0
-        y: root.iconsOnly ? (root.badgeTopY + root.diveDy) : 0
+        x: root.iconsOnly ? idealX : 0
+        y: root.iconsOnly ? idealY : 0
 
         Behavior on x {
             enabled: root.iconsOnly
@@ -160,15 +146,14 @@ Item {
     Badge {
         id: notificationBadge
 
-        // When wider than circle, shift left by half the extra width
-        readonly property real idealLeftX: root.notifCX - root.badgeR + root.diveDx
-        readonly property real extraWidth: Math.max(0, width - height)
+        readonly property real idealCenterX: root.notifBaseCX + root.diveDx
+        readonly property real idealY: root.notifBaseCY + root.diveDy
 
         x: root.iconsOnly
-            ? Math.max(0, idealLeftX - extraWidth / 2)
+            ? (idealCenterX - width / 2)
             : (root.boxW - width)
         y: root.iconsOnly
-            ? (root.badgeTopY + root.diveDy)
+            ? idealY
             : 0
 
         Behavior on x {
