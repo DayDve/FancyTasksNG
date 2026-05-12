@@ -379,16 +379,17 @@ PlasmoidItem {
     }
 
     function sortModeEnumValue(index) {
-        return (index === 1) ? TaskManager.TasksModel.SortManual : TaskManager.TasksModel.SortDisabled;
+        return (Number(index) === 1) ? TaskManager.TasksModel.SortManual : TaskManager.TasksModel.SortDisabled;
     }
 
     function groupModeEnumValue(index) {
-        switch (index) {
+        switch (Number(index)) {
         case 0:
             return TaskManager.TasksModel.GroupDisabled;
         case 1:
             return TaskManager.TasksModel.GroupApplications;
         default:
+            return TaskManager.TasksModel.GroupApplications;
         }
     }
 
