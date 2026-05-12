@@ -130,6 +130,14 @@
       </choices>
       <default>5</default>
     </entry>
+    <entry name="wheelCtrlActionEnabled" type="Bool">
+      <label>Enable separate mouse wheel action with Ctrl key</label>
+      <default>true</default>
+    </entry>
+    <entry name="wheelShiftSystemVolumeEnabled" type="Bool">
+      <label>Allow adjusting system volume with Shift key</label>
+      <default>true</default>
+    </entry>
 
 
     <entry name="highlightWindows" type="Bool">

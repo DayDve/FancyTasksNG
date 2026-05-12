@@ -80,26 +80,26 @@ Item {
     property string tintColor: Kirigami.ColorUtils.brightnessForColor(Kirigami.Theme.backgroundColor) === Kirigami.ColorUtils.Dark ?
         "#ffffff" : "#000000"
 
-    rotation: Plasmoid.configuration.reverseMode && tasksRoot.vertical ?
+    rotation: (tasksRoot && Plasmoid.configuration.reverseMode && tasksRoot.vertical) ?
         180 : 0
 
     implicitHeight: task.inPopup ? LayoutMetrics.preferredHeightInPopup() : (
-        tasksRoot.vertical ? LayoutMetrics.preferredMaxHeight() : Math.max(tasksRoot.height / Plasmoid.configuration.maxStripes, LayoutMetrics.preferredMinHeight())
+        (!tasksRoot) ? LayoutMetrics.preferredMinHeight() : (tasksRoot.vertical ? LayoutMetrics.preferredMaxHeight() : Math.max(tasksRoot.height / Plasmoid.configuration.maxStripes, LayoutMetrics.preferredMinHeight()))
     )
-    implicitWidth: tasksRoot.vertical ? (
+    implicitWidth: (!tasksRoot) ? LayoutMetrics.preferredMinWidth() : (tasksRoot.vertical ? (
         Math.max(LayoutMetrics.preferredMinWidth(), Math.min(LayoutMetrics.preferredMaxWidth(), tasksRoot.width / Plasmoid.configuration.maxStripes))
-    ) : LayoutMetrics.preferredMaxWidth()
+    ) : LayoutMetrics.preferredMaxWidth())
 
     Layout.fillWidth: true
     Layout.fillHeight: !task.inPopup
-    Layout.maximumWidth: tasksRoot.vertical ?
+    Layout.maximumWidth: (!tasksRoot || tasksRoot.vertical) ?
         -1 : ((task.model?.IsLauncher && !tasksRoot.iconsOnly) ? (tasksRoot.height / tasksRoot.taskList.rows) + LayoutMetrics.horizontalMargins() : LayoutMetrics.preferredMaxWidth())
-    Layout.maximumHeight: tasksRoot.vertical ?
-        ((task.model?.IsLauncher && !tasksRoot.iconsOnly) ? (tasksRoot.width / tasksRoot.taskList.columns) + LayoutMetrics.verticalMargins() : LayoutMetrics.preferredMaxHeight()) : -1
+    Layout.maximumHeight: (!tasksRoot || !tasksRoot.vertical) ?
+        -1 : ((task.model?.IsLauncher && !tasksRoot.iconsOnly) ? (tasksRoot.width / tasksRoot.taskList.columns) + LayoutMetrics.verticalMargins() : LayoutMetrics.preferredMaxHeight())
 
     required property var model
     required property int index
-    required property /*main.qml*/  var tasksRoot
+    property /*main.qml*/  var tasksRoot
 
     readonly property int pid: (task.model && task.model.AppPid) ? task.model.AppPid : 0
     readonly property string appName: (task.model && task.model.AppName) ? task.model.AppName : ""
@@ -172,6 +172,7 @@ Item {
     }
     
     function adjustVolume(increment, isGlobal) {
+        if (!tasksRoot) return;
         const audioManager = tasksRoot.audioStreamManager.item;
         if (!audioManager) return;
 
@@ -183,10 +184,18 @@ Item {
             lastResult = audioManager.adjustObjectVolume(stream, increment);
         });
 
-        if (lastResult && taskVolumeOverlayLoader.item) {
-            taskVolumeOverlayLoader.item.volume = lastResult.volume;
-            taskVolumeOverlayLoader.item.muted = lastResult.muted;
-            taskVolumeOverlayLoader.item.show();
+        if (lastResult) {
+            if (isGlobal) {
+                if (tasksRoot && tasksRoot.globalVolumeOverlay && tasksRoot.globalVolumeOverlay.item) {
+                    tasksRoot.globalVolumeOverlay.item.volume = lastResult.volume;
+                    tasksRoot.globalVolumeOverlay.item.muted = lastResult.muted;
+                    tasksRoot.globalVolumeOverlay.item.show();
+                }
+            } else if (taskVolumeOverlayLoader.item) {
+                taskVolumeOverlayLoader.item.volume = lastResult.volume;
+                taskVolumeOverlayLoader.item.muted = lastResult.muted;
+                taskVolumeOverlayLoader.item.show();
+            }
         }
     }
 
@@ -512,6 +521,7 @@ Item {
     }
 
     function updateAudioStreams(): void {
+        if (!task.tasksRoot) return;
         var pa = task.tasksRoot.audioStreamManager.item;
         if (!pa || !task.model) {
             task.audioStreams = [];
@@ -789,6 +799,7 @@ Item {
     Loader {
         id: taskVolumeOverlayLoader
         anchors.fill: frame
+        active: !Plasmoid.configuration.showMediaControls || !Plasmoid.configuration.showToolTips
         source: "TaskVolumeOverlay.qml"
     }
 

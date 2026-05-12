@@ -314,8 +314,8 @@ msgid "Animation of closing/removing an icon from the panel"
 msgstr "Анимация закрытия/удаления значка с панели"
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Mouse wheel on task buttons:"
-msgstr "Колесо мыши на кнопках задач:"
+msgid "Mouse wheel:"
+msgstr "Колесо мыши"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Cycles through all tasks"
@@ -338,12 +338,12 @@ msgid "Adjusts volume of the window"
 msgstr "регулирует громкость окна"
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "With Ctrl held:"
-msgstr "С зажатой клавишей Ctrl:"
+msgid "Additional action with Ctrl key"
+msgstr "Дополнительное действие с клавишей Ctrl"
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Shift + Mouse Wheel adjusts system volume"
-msgstr "Shift + колесико мыши регулирует системную громкость"
+msgid "Adjust system volume with Shift key"
+msgstr "Регулировка системной громкости с клавишей Shift"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Show window thumbnails when hovering over tasks"

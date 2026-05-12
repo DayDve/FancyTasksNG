@@ -201,6 +201,7 @@ DropArea {
         }
     }
 
+    property real _rotationAccumulator: 0
     WheelHandler {
         id: wheelHandler
 
@@ -208,21 +209,24 @@ DropArea {
 
         property bool handleWheelEvents: true
 
-        enabled: handleWheelEvents && (Plasmoid.configuration.wheelAction !== 0 || Plasmoid.configuration.wheelCtrlAction !== 0)
+        enabled: handleWheelEvents && (Plasmoid.configuration.wheelAction !== 0 || (Plasmoid.configuration.wheelCtrlActionEnabled && Plasmoid.configuration.wheelCtrlAction !== 0))
 
         onWheel: event => {
+            _rotationAccumulator += (event.angleDelta.y / 8.0);
             let increment = 0;
-            while (rotation >= 15) {
-                rotation -= 15;
+            while (_rotationAccumulator >= 15) {
+                _rotationAccumulator -= 15;
                 increment++;
             }
-            while (rotation <= -15) {
-                rotation += 15;
+            while (_rotationAccumulator <= -15) {
+                _rotationAccumulator += 15;
                 increment--;
             }
 
+            if (increment === 0) return;
+
             const anchor = dropArea.target.childAt(event.x, event.y);
-            const isCtrl = event.modifiers & Qt.ControlModifier;
+            const isCtrl = (event.modifiers & Qt.ControlModifier) && Plasmoid.configuration.wheelCtrlActionEnabled;
             const action = isCtrl ? Plasmoid.configuration.wheelCtrlAction : Plasmoid.configuration.wheelAction;
 
             if (action >= 1 && action <= 4) { // Cycle Tasks
@@ -233,9 +237,11 @@ DropArea {
                     increment += (increment < 0) ? 1 : -1;
                 }
             } else if (action === 5) { // Adjust Volume
+                const isShift = (event.modifiers & Qt.ShiftModifier) && Plasmoid.configuration.wheelShiftSystemVolumeEnabled;
                 if (anchor && anchor.adjustVolume) {
-                    const isShift = event.modifiers & Qt.ShiftModifier;
                     anchor.adjustVolume(increment, isShift);
+                } else if (isShift && tasks.adjustGlobalVolume) {
+                    tasks.adjustGlobalVolume(increment);
                 }
             }
         }

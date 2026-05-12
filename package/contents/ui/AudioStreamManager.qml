@@ -20,7 +20,7 @@ QtObject {
     readonly property QtObject globalConfig: PlasmaPa.GlobalConfig { }
     
     readonly property PlasmaPa.SinkModel sinksModel: PlasmaPa.SinkModel { }
-    readonly property var preferredSink: sinksModel.preferredSink
+    readonly property var preferredSink: sinksModel.preferredObject || sinksModel.preferredSink || (sinksModel.count > 0 ? sinksModel.data(sinksModel.index(0, 0), 257 /*ItemRole*/) : null)
     
     // QtObject has no default property, hence adding the Instantiator to one explicitly.
     readonly property Instantiator instantiator: Instantiator {
@@ -136,27 +136,32 @@ QtObject {
     function adjustObjectVolume(obj, increment) {
         if (!obj) return;
         
-        const step = (normalVolume - minimalVolume) * globalConfig.volumeStep / 100;
-        const currentVolume = obj.Volume !== undefined ? obj.Volume : obj.volume;
-        const newVolume = Math.max(minimalVolume, Math.min(currentVolume + (step * increment), normalVolume));
+        const step = (normalVolume - minimalVolume) * (globalConfig.volumeStep || 5) / 100;
+        const currentVolume = obj.Volume !== undefined ? obj.Volume : (obj.volume !== undefined ? obj.volume : 0);
+        const newVolume = Math.round(Math.max(minimalVolume, Math.min(currentVolume + (step * increment), normalVolume)));
         
         if (obj.setVolume !== undefined) {
             obj.setVolume(newVolume);
-        } else {
+        } else if (obj.volume !== undefined) {
+            obj.volume = newVolume;
+        } else if (obj.Volume !== undefined) {
             obj.Volume = newVolume;
         }
 
-        const isCurrentlyMuted = obj.Muted !== undefined ? obj.Muted : obj.muted;
+        const isCurrentlyMuted = obj.Muted !== undefined ? obj.Muted : (obj.muted !== undefined ? obj.muted : false);
         
         if (newVolume > minimalVolume && isCurrentlyMuted) {
-            if (obj.unmute !== undefined) obj.unmute(); else obj.Muted = false;
+            if (obj.unmute !== undefined) obj.unmute(); 
+            else if (obj.Muted !== undefined) obj.Muted = false;
+            else if (obj.muted !== undefined) obj.muted = false;
         } else if (newVolume <= minimalVolume && !isCurrentlyMuted) {
-            if (obj.mute !== undefined) obj.mute(); else obj.Muted = true;
+            if (obj.mute !== undefined) obj.mute(); 
+            else if (obj.Muted !== undefined) obj.Muted = true;
+            else if (obj.muted !== undefined) obj.muted = true;
         }
-
         return {
             volume: (newVolume - minimalVolume) / (normalVolume - minimalVolume),
-            muted: obj.Muted !== undefined ? obj.Muted : obj.muted
+            muted: obj.Muted !== undefined ? obj.Muted : (obj.muted !== undefined ? obj.muted : false)
         };
     }
 }

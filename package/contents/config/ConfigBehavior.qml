@@ -113,7 +113,7 @@ ConfigPage {
             Item { height: Kirigami.Units.largeSpacing }
 
             Label {
-                text: Wrappers.i18n("Mouse wheel on task buttons:")
+                text: Wrappers.i18n("Mouse wheel:")
             }
             ComboBox {
                 id: cfg_wheelAction
@@ -128,34 +128,72 @@ ConfigPage {
                     Wrappers.i18n("Adjusts volume of the window")
                 ]
                 currentIndex: cfg_page.cfg_wheelAction
-                onActivated: (index) => cfg_page.cfg_wheelAction = index
-            }
-
-            RowLayout {
-                Item { implicitWidth: Kirigami.Units.gridUnit }
-                Label {
-                    text: Wrappers.i18n("With Ctrl held:")
+                onActivated: (index) => {
+                    cfg_page.cfg_wheelAction = index
+                    if (index === 5 && cfg_page.cfg_wheelCtrlAction === 5) {
+                        cfg_page.cfg_wheelCtrlAction = 0
+                    }
                 }
             }
+
+            // Опция Shift для основного действия
+            RowLayout {
+                visible: cfg_wheelAction.currentIndex === 5
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+                CheckBox {
+                    text: Wrappers.i18n("Adjust system volume with Shift key")
+                    checked: cfg_page.cfg_wheelShiftSystemVolumeEnabled
+                    onToggled: cfg_page.cfg_wheelShiftSystemVolumeEnabled = checked
+                }
+            }
+
+            // Галочка Ctrl
             RowLayout {
                 Item { implicitWidth: Kirigami.Units.gridUnit }
-                ComboBox {
-                    id: cfg_wheelCtrlAction
+                CheckBox {
+                    id: cfg_wheelCtrlActionEnabled
+                    text: Wrappers.i18n("Additional action with Ctrl key")
+                    checked: cfg_page.cfg_wheelCtrlActionEnabled
+                    onToggled: cfg_page.cfg_wheelCtrlActionEnabled = checked
+                }
+            }
+
+            // Сабопции Ctrl
+            RowLayout {
+                visible: cfg_wheelCtrlActionEnabled.checked
+                Item { implicitWidth: Kirigami.Units.gridUnit * 2 }
+                ColumnLayout {
                     Layout.fillWidth: true
-                    Layout.minimumWidth: Kirigami.Units.gridUnit * 14
-                    model: cfg_wheelAction.model
-                    currentIndex: cfg_page.cfg_wheelCtrlAction
-                    onActivated: (index) => cfg_page.cfg_wheelCtrlAction = index
-                }
-            }
+                    spacing: Kirigami.Units.smallSpacing
+                    ComboBox {
+                        id: cfg_wheelCtrlAction
+                        Layout.fillWidth: true
+                        model: {
+                            const fullModel = cfg_wheelAction.model;
+                            const filtered = [];
+                            for (let i = 0; i < fullModel.length; i++) {
+                                if (i !== cfg_wheelAction.currentIndex) {
+                                    filtered.push({text: fullModel[i], originalIndex: i});
+                                }
+                            }
+                            return filtered;
+                        }
+                        textRole: "text"
+                        currentIndex: {
+                            for (let i = 0; i < model.length; i++) {
+                                if (model[i].originalIndex === cfg_page.cfg_wheelCtrlAction) return i;
+                            }
+                            return 0;
+                        }
+                        onActivated: (index) => cfg_page.cfg_wheelCtrlAction = model[index].originalIndex
+                    }
 
-            RowLayout {
-                visible: (cfg_wheelAction.currentIndex === 5 || cfg_wheelCtrlAction.currentIndex === 5)
-                Item { implicitWidth: Kirigami.Units.gridUnit }
-                Label {
-                    text: Wrappers.i18n("Shift + Mouse Wheel adjusts system volume")
-                    font.italic: true
-                    opacity: 0.6
+                    CheckBox {
+                        visible: cfg_wheelCtrlAction.model[cfg_wheelCtrlAction.currentIndex]?.originalIndex === 5
+                        text: Wrappers.i18n("Adjust system volume with Shift key")
+                        checked: cfg_page.cfg_wheelShiftSystemVolumeEnabled
+                        onToggled: cfg_page.cfg_wheelShiftSystemVolumeEnabled = checked
+                    }
                 }
             }
 
