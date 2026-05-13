@@ -97,10 +97,13 @@ Kirigami.Page {
     property int cfg_iconOnlyDefault: 0
     property int cfg_groupedTaskVisualization: 0
     property int cfg_groupedTaskVisualizationDefault: 0
+    
+    // Legacy properties (kept to prevent QML warnings from cached configs)
     property bool cfg_groupPopups: true
     property bool cfg_groupPopupsDefault: true
     property bool cfg_onlyGroupWhenFull: false
     property bool cfg_onlyGroupWhenFullDefault: false
+    
     property int cfg_sortingStrategy: 0
     property int cfg_sortingStrategyDefault: 0
 

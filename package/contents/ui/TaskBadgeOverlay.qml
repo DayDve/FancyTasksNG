@@ -57,9 +57,9 @@ Item {
     readonly property real audioBaseX: isVertPanel ? (boxW * 0.045) : (-boxW * 0.045)
     readonly property real audioBaseY: isVertPanel ? (boxH * 0.1) : (boxH * 0.045)
 
-    // Notification badge: center X = 36px (82%), y = 3px
+    // Notification badge: center X = 36px (85%), y = 3px
     readonly property real notifBaseCX: isVertPanel ? (boxW * 0.5) : (boxW * 0.85)
-    readonly property real notifBaseCY: isVertPanel ? (boxH * 0.82) : (boxH * 0.068)
+    readonly property real notifBaseCY: isVertPanel ? (boxH * 0.85) : (boxH * 0.068)
 
     // ── Dive offset when zoomed ────────────────────────────────────
     // qmllint disable missing-property

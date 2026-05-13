@@ -372,8 +372,8 @@ PlasmoidItem {
         tasks.tasksModel.separateLaunchers = (Plasmoid.configuration.sortingStrategy === 0);
 
         tasks.tasksModel.groupMode = tasks.groupModeEnumValue(Plasmoid.configuration.groupingStrategy);
-        tasks.tasksModel.groupInline = !Plasmoid.configuration.groupPopups && !tasks.iconsOnly;
-        tasks.tasksModel.groupingWindowTasksThreshold = (Plasmoid.configuration.onlyGroupWhenFull && !tasks.iconsOnly ? LayoutMetrics.optimumCapacity(tasks.width, tasks.height) + 1 : -1);
+        tasks.tasksModel.groupInline = false;
+        tasks.tasksModel.groupingWindowTasksThreshold = -1;
 
         tasks._isApplyingConfig = false;
     }

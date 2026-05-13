@@ -42,26 +42,7 @@ ConfigPage {
 
             Item { height: Kirigami.Units.largeSpacing }
 
-            Label {
-                text: Wrappers.i18n("Clicking group button:")
-                visible: (!cfg_page.cfg_iconOnly) && cfg_groupingStrategy.checked
-            }
-            CheckBox {
-                id: cfg_groupPopups
-                visible: (!cfg_page.cfg_iconOnly) && cfg_groupingStrategy.checked
-                text: Wrappers.i18n("Combine into single button")
-                checked: cfg_page.cfg_groupPopups
-                onToggled: cfg_page.cfg_groupPopups = checked
-            }
 
-            CheckBox {
-                id: cfg_onlyGroupWhenFull
-                visible: (!cfg_page.cfg_iconOnly) && cfg_groupingStrategy.checked && cfg_groupPopups.checked
-                text: Wrappers.i18n("Group only when the Task Manager is full")
-                Accessible.onPressAction: toggle()
-                checked: cfg_page.cfg_onlyGroupWhenFull
-                onToggled: cfg_page.cfg_onlyGroupWhenFull = checked
-            }
 
             Item { height: Kirigami.Units.largeSpacing }
 
