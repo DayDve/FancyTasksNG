@@ -78,7 +78,7 @@ ConfigPage {
 
                 CheckBox {
                     id: cfg_unhideOnAttention
-                    text: Wrappers.i18n("Unhide when a window wants attention")
+                    text: Wrappers.i18n("Unhide panel when a window wants attention")
                     enabled: Plasmoid.location !== PlasmaCore.Types.Floating
                     checked: cfg_page.cfg_unhideOnAttention
                     onToggled: cfg_page.cfg_unhideOnAttention = checked
@@ -87,11 +87,10 @@ ConfigPage {
                 CheckBox {
                     id: cfg_animateAttentionStatus
                     text: Wrappers.i18n("Animate task icon when a window wants attention")
-                    enabled: Plasmoid.location !== PlasmaCore.Types.Floating && cfg_unhideOnAttention.checked
+                    enabled: Plasmoid.location !== PlasmaCore.Types.Floating
                     checked: cfg_page.cfg_animateAttentionStatus
                     onToggled: cfg_page.cfg_animateAttentionStatus = checked
                     visible: cfg_page.cfg_iconOnly === 1
-                    Layout.leftMargin: Kirigami.Units.gridUnit
                 }
 
                 Item { height: Kirigami.Units.largeSpacing }
