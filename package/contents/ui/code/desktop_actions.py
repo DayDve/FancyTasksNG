@@ -24,6 +24,7 @@ import shutil
 import sqlite3
 import subprocess
 import sys
+import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from urllib.parse import unquote, urlparse
@@ -266,10 +267,53 @@ def get_recent_documents(desktop_path):
     return docs
 
 
+def find_active_db_from_proc(process_names, db_name):
+    """Find the active database path by inspecting open file descriptors of running processes."""
+    try:
+        # Get all PIDs for the given process names
+        pids = []
+        for name in process_names:
+            try:
+                # Use pgrep -u to only look at current user's processes
+                out = subprocess.check_output(['pgrep', '-u', str(os.getuid()), '-f', name], text=True)
+                pids.extend(out.strip().split())
+            except subprocess.CalledProcessError:
+                continue
+        
+        for pid in set(pids):
+            fd_dir = Path(f"/proc/{pid}/fd")
+            if not fd_dir.exists():
+                continue
+            try:
+                for fd in fd_dir.iterdir():
+                    try:
+                        target = os.readlink(fd)
+                        if db_name in target and os.path.isfile(target):
+                            return Path(target)
+                    except (OSError, PermissionError):
+                        continue
+            except (OSError, PermissionError):
+                continue
+    except Exception as e:
+        print(f"desktop_actions: proc scan error: {e}", file=sys.stderr)
+    return None
+
+
 def get_firefox_recent(limit=10):
-    """Fetch recent Firefox history from places.sqlite with robust profile discovery."""
+    """Fetch recent Firefox history with active profile detection and robust discovery."""
+    # 1. Try to find active profile via /proc
+    active_db = find_active_db_from_proc(["firefox"], "places.sqlite")
+    if active_db:
+        return fetch_sqlite_history(active_db, """
+            SELECT DISTINCT url, title FROM moz_places 
+            WHERE last_visit_date IS NOT NULL AND title IS NOT NULL AND url LIKE 'http%'
+            ORDER BY last_visit_date DESC LIMIT ?
+        """, "places_ff_active.sqlite", limit)
+
+    # 2. Fallback to searching directories
     search_dirs = [
         Path.home() / ".mozilla" / "firefox",
+        Path.home() / ".config" / "mozilla" / "firefox",
         Path.home() / ".var" / "app" / "org.mozilla.firefox" / ".mozilla" / "firefox",
         Path.home() / ".var" / "app" / "org.mozilla.firefox-trunk" / ".mozilla" / "firefox",
         Path.home() / "snap" / "firefox" / "common" / ".mozilla" / "firefox"
@@ -303,14 +347,51 @@ def get_firefox_recent(limit=10):
 
 
 def get_chromium_recent(browser_name, limit=10):
-    """Fetch recent history for Chromium-based browsers."""
+    """Fetch recent history for Chromium-based browsers with active profile detection."""
+    proc_names = {
+        "chrome": ["google-chrome", "chrome"],
+        "chromium": ["chromium"],
+        "brave": ["brave"],
+        "vivaldi": ["vivaldi"],
+        "edge": ["msedge", "microsoft-edge"],
+        "opera": ["opera"],
+    }
+    
+    # 1. Try to find active profile via /proc
+    active_db = find_active_db_from_proc(proc_names.get(browser_name, [browser_name]), "History")
+    if active_db:
+        return fetch_sqlite_history(active_db, """
+            SELECT DISTINCT url, title FROM urls 
+            WHERE last_visit_time IS NOT NULL AND title IS NOT NULL AND url LIKE 'http%'
+            ORDER BY last_visit_time DESC LIMIT ?
+        """, f"history_{browser_name}_active.sqlite", limit)
+
+    # 2. Fallback to searching directories
     configs = {
-        "chrome": [Path.home() / ".config" / "google-chrome"],
-        "chromium": [Path.home() / ".config" / "chromium"],
-        "brave": [Path.home() / ".config" / "BraveSoftware" / "Brave-Browser"],
-        "vivaldi": [Path.home() / ".config" / "vivaldi"],
-        "edge": [Path.home() / ".config" / "microsoft-edge"],
-        "opera": [Path.home() / ".config" / "opera"],
+        "chrome": [
+            Path.home() / ".config" / "google-chrome",
+            Path.home() / ".var" / "app" / "com.google.Chrome" / "config" / "google-chrome"
+        ],
+        "chromium": [
+            Path.home() / ".config" / "chromium",
+            Path.home() / ".var" / "app" / "org.chromium.Chromium" / "config" / "chromium"
+        ],
+        "brave": [
+            Path.home() / ".config" / "BraveSoftware" / "Brave-Browser",
+            Path.home() / ".var" / "app" / "com.brave.Browser" / "config" / "BraveSoftware" / "Brave-Browser"
+        ],
+        "vivaldi": [
+            Path.home() / ".config" / "vivaldi",
+            Path.home() / ".var" / "app" / "com.vivaldi.Vivaldi" / "config" / "vivaldi"
+        ],
+        "edge": [
+            Path.home() / ".config" / "microsoft-edge",
+            Path.home() / ".var" / "app" / "com.microsoft.Edge" / "config" / "microsoft-edge"
+        ],
+        "opera": [
+            Path.home() / ".config" / "opera",
+            Path.home() / ".var" / "app" / "com.opera.Opera" / "config" / "opera"
+        ],
     }
     
     base_dirs = configs.get(browser_name, [])
@@ -331,13 +412,17 @@ def get_chromium_recent(browser_name, limit=10):
         WHERE last_visit_time IS NOT NULL AND title IS NOT NULL AND url LIKE 'http%'
         ORDER BY last_visit_time DESC LIMIT ?
     """
-    return fetch_sqlite_history(db_path, query, "places_chrome_recent.sqlite", limit)
+    return fetch_sqlite_history(db_path, query, f"history_{browser_name}_recent.sqlite", limit)
 
 
 def fetch_sqlite_history(db_path, query, temp_name, limit=10):
-    """Generic helper to fetch history from a SQLite DB."""
+    """Generic helper to fetch history from a SQLite DB using a temporary copy."""
     docs = []
-    temp_db = Path("/tmp") / temp_name
+    # Use tempfile to avoid collisions and permission issues in /tmp
+    fd, temp_path = tempfile.mkstemp(prefix=temp_name)
+    os.close(fd)
+    temp_db = Path(temp_path)
+    
     try:
         shutil.copy2(db_path, temp_db)
         conn = sqlite3.connect(temp_db)
@@ -355,9 +440,14 @@ def fetch_sqlite_history(db_path, query, temp_name, limit=10):
             docs.append({"name": title, "url": url, "icon": "internet-services", "mimeType": "text/html"})
             if len(docs) >= limit: break
         conn.close()
-    except Exception: pass
+    except Exception as e:
+        print(f"desktop_actions: fetch_history error ({db_path}): {e}", file=sys.stderr)
     finally:
-        if temp_db.exists(): temp_db.unlink()
+        if temp_db.exists():
+            try:
+                temp_db.unlink()
+            except OSError:
+                pass
     return docs
 
 

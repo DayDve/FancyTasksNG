@@ -48,8 +48,8 @@ msgid "Panel Settings:"
 msgstr "Настройки панели:"
 
 #: package/contents/config/ConfigAdvanced.qml
-msgid "Unhide when a window wants attention"
-msgstr "Показывать, если окно требует внимания"
+msgid "Unhide panel when a window wants attention"
+msgstr "Показывать панель, если окно требует внимания"
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Animate task icon when a window wants attention"
@@ -94,8 +94,8 @@ msgstr ""
 "если используется только один рабочий стол"
 
 #: package/contents/config/ConfigAdvanced.qml
-msgid "Show browsing history in the context menu of web browsers"
-msgstr "Отображать историю браузеров в контекстном меню"
+msgid "Show browsing history in the context menu of web browsers (Experimental)"
+msgstr "Отображать историю браузеров в контекстном меню (экспериментально)"
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Number of browser history items:"

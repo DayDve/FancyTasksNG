@@ -170,7 +170,7 @@ ConfigPage {
 
                 CheckBox {
                     id: cfg_showBrowserHistory
-                    text: Wrappers.i18n("Show browsing history in the context menu of web browsers")
+                    text: Wrappers.i18n("Show browsing history in the context menu of web browsers (Experimental)")
                     checked: cfg_page.cfg_showBrowserHistory
                     onToggled: cfg_page.cfg_showBrowserHistory = checked
 
