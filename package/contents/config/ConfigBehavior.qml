@@ -75,6 +75,15 @@ ConfigPage {
                     checked: cfg_page.cfg_onlyGroupWhenFull
                     onToggled: cfg_page.cfg_onlyGroupWhenFull = checked
                 }
+
+                CheckBox {
+                    id: groupIconEnabled
+                    Layout.leftMargin: Kirigami.Units.gridUnit * 2
+                    visible: groupCollapsed.checked
+                    text: Wrappers.i18n("Standard group overlay")
+                    checked: cfg_page.cfg_groupIconEnabled
+                    onToggled: cfg_page.cfg_groupIconEnabled = checked
+                }
             }
 
             Item { height: Kirigami.Units.largeSpacing }

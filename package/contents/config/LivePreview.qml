@@ -41,33 +41,45 @@ Item {
 
     // Reference to the zoomed task item (Index 1) for tooltip positioning
     property var zoomedTaskItem: null
-    property var fallbackIcons: ["system-run", "preferences-system"]
-    property var fakeNames: [Wrappers.i18n("App name"), Wrappers.i18n("App name")]
 
-    function getIconName(index) {
-        if (cfg_page && cfg_page.cfg_launchers && cfg_page.cfg_launchers.length > index) {
-            let match = cfg_page.cfg_launchers[index].match(/([^\/:]+)\.desktop$/);
-            if (match) return match[1];
-        }
-        return fallbackIcons[index % fallbackIcons.length];
+    // Dynamic task model that reacts to grouping settings
+    ListModel {
+        id: taskModel
     }
 
-    function getTaskName(index) {
-        if (cfg_page && cfg_page.cfg_launchers && cfg_page.cfg_launchers.length > index) {
-            let url = cfg_page.cfg_launchers[index];
+    // Grouping mode tracking
+    readonly property int groupMode: cfg_page ? cfg_page.cfg_groupingStrategy : 0
+    readonly property bool groupPopups: cfg_page ? cfg_page.cfg_groupPopups : true
+    readonly property bool groupOverlay: cfg_page ? cfg_page.cfg_groupIconEnabled : true
 
-            if (url.indexOf("://") !== -1) {
-                let name = url.split("://").pop();
-                return name.charAt(0).toUpperCase() + name.slice(1);
-            }
+    onGroupModeChanged: rebuildTaskModel()
+    onGroupPopupsChanged: rebuildTaskModel()
+    Component.onCompleted: rebuildTaskModel()
 
-            let match = url.match(/([^\/:]+)\.desktop$/);
-            if (match) {
-                let name = match[1].split('.').pop();
-                return name.charAt(0).toUpperCase() + name.slice(1);
-            }
+    function rebuildTaskModel() {
+        taskModel.clear();
+
+        if (groupMode === 0) {
+            // Strategy 0: Disabled (5 tasks)
+            taskModel.append({ iconName: "plasmadiscover",   taskName: "Discover",   isMinimized: true,  isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: true  });
+            taskModel.append({ iconName: "org.kde.dolphin",  taskName: "Dolphin",    isMinimized: false, isActive: true,  isHovered: true,  playingAudio: false, isMuted: false, showBadge: true,  badgeCount: 3, isGroup: false, groupCount: 1, showProgress: false });
+            taskModel.append({ iconName: "utilities-terminal",   taskName: "Konsole",isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
+            taskModel.append({ iconName: "internet-web-browser", taskName: "Firefox",isMinimized: false, isActive: false, isHovered: false, playingAudio: true,  isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
+            taskModel.append({ iconName: "org.kde.dolphin",  taskName: "Dolphin",    isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
+        } else if (groupMode === 1 && groupPopups === false) {
+            // Strategy 1, Popups false: Side-by-side (5 tasks, dolphins adjacent)
+            taskModel.append({ iconName: "plasmadiscover",   taskName: "Discover",   isMinimized: true,  isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: true  });
+            taskModel.append({ iconName: "org.kde.dolphin",  taskName: "Dolphin",    isMinimized: false, isActive: true,  isHovered: true,  playingAudio: false, isMuted: false, showBadge: true,  badgeCount: 3, isGroup: false, groupCount: 1, showProgress: false });
+            taskModel.append({ iconName: "org.kde.dolphin",  taskName: "Dolphin",    isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
+            taskModel.append({ iconName: "utilities-terminal",   taskName: "Konsole",isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
+            taskModel.append({ iconName: "internet-web-browser", taskName: "Firefox",isMinimized: false, isActive: false, isHovered: false, playingAudio: true,  isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
+        } else {
+            // Strategy 1, Popups true: Collapsed (4 tasks, Dolphin is a group)
+            taskModel.append({ iconName: "plasmadiscover",   taskName: "Discover",   isMinimized: true,  isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: true  });
+            taskModel.append({ iconName: "org.kde.dolphin",  taskName: "Dolphin",    isMinimized: false, isActive: true,  isHovered: true,  playingAudio: false, isMuted: false, showBadge: true,  badgeCount: 3, isGroup: true,  groupCount: 2, showProgress: false });
+            taskModel.append({ iconName: "utilities-terminal",   taskName: "Konsole",isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
+            taskModel.append({ iconName: "internet-web-browser", taskName: "Firefox",isMinimized: false, isActive: false, isHovered: false, playingAudio: true,  isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
         }
-        return fakeNames[index % fakeNames.length];
     }
 
     // Current hover state for tooltip positioning parity
@@ -90,7 +102,7 @@ Item {
     property int simulatedThickness: cfg_page ? cfg_page.cfg_previewSize : Math.round(Kirigami.Units.gridUnit * 2.5)
 
     // Multistripe simulation
-    readonly property int taskCountDisplay: 4
+    readonly property int taskCountDisplay: taskModel.count
     readonly property int simulatedStripeCount: {
         let maxS = (cfg_page && cfg_page.cfg_maxStripes !== undefined) ? cfg_page.cfg_maxStripes : 1
         if (maxS <= 1) return 1
@@ -326,14 +338,14 @@ Item {
 
                         Repeater {
                             id: taskRepeater
-                            model: previewRoot.taskCountDisplay
+                            model: taskModel
 
                             Item {
                                 id: mockTask
                                 z: isHovered ? 2000 : 0
 
                                 Component.onCompleted: {
-                                    if (index === 1) previewRoot.zoomedTaskItem = mockTask;
+                                    if (mockTask.isHovered) previewRoot.zoomedTaskItem = mockTask;
                                 }
 
                                 readonly property int maxW: (previewRoot.cfg_page ? previewRoot.cfg_page.cfg_maxButtonLength : Kirigami.Units.gridUnit * 10)
@@ -347,6 +359,18 @@ Item {
                                 Layout.fillWidth: previewRoot.isVertical || mockTask.showText
                                 Layout.fillHeight: !previewRoot.isVertical || mockTask.showText
                                 required property int index
+                                required property string iconName
+                                required property string taskName
+                                required property bool isMinimized
+                                required property bool isActive
+                                required property bool isHovered
+                                required property bool playingAudio
+                                required property bool isMuted
+                                required property bool showBadge
+                                required property int badgeCount
+                                required property bool isGroup
+                                required property int groupCount
+                                required property bool showProgress
 
                                 readonly property var cfg: previewRoot.cfg_page
                                 readonly property bool cfgReady: cfg !== null
@@ -361,18 +385,12 @@ Item {
                                 readonly property color tintColor: Kirigami.ColorUtils.brightnessForColor(Kirigami.Theme.backgroundColor) === Kirigami.ColorUtils.Dark ? "#ffffff" : "#000000"
                                 readonly property color indicatorColor: Kirigami.ColorUtils.tintWithAlpha(dominantColor, tintColor, .38)
 
-                                // Task 0: minimized, progress demo, audio badge
-                                // Task 1: hovered, active, count badge
                                 readonly property bool isRunning: true
-                                readonly property bool isMinimized: mockTask.index === 0
-                                readonly property bool isActive: mockTask.index === 1
-                                readonly property bool isHovered: mockTask.index === 1
-                                readonly property bool isInactive: !isActive && !isHovered
+                                readonly property bool isInactive: !mockTask.isActive && !mockTask.isHovered
 
-                                // Simulated audio state: Task 0 is playing, Task 2 is muted
-                                readonly property bool playingAudio: index === 0
-                                readonly property bool isMuted: index === 2
-                                readonly property bool hasAudio: playingAudio || isMuted
+                                readonly property bool hasAudio: mockTask.playingAudio || mockTask.isMuted
+
+                                readonly property bool isGroupParent: mockTask.isGroup
 
                                 readonly property bool showText: !previewRoot.iconsOnly && (!previewRoot.isVertical || previewRoot.simulatedThickness > (Kirigami.Units.gridUnit * 4))
 
@@ -402,9 +420,8 @@ Item {
                                     readonly property bool hideDueToColorize: {
                                         if (!mockTask.cfgReady || !mockTask.cfg.cfg_buttonColorize) return false;
                                         if (mockTask.isActive || mockTask.isHovered) return true;
-                                        // Move inactive colorization demonstration to 3rd and 4th buttons (indices 2 and 3)
                                         if (mockTask.isInactive && mockTask.cfg.cfg_buttonColorizeInactive) {
-                                            return mockTask.index >= 2;
+                                            return true;
                                         }
                                         return false;
                                     }
@@ -427,7 +444,7 @@ Item {
                                 // 3. Progress overlay (reuses production component)
                                 FancyUI.TaskProgressOverlay {
                                     anchors.fill: taskBackground
-                                    visible: mockTask.index === 0 && mockTask.cfg.cfg_indicatorProgressStyle > 0
+                                    visible: mockTask.showProgress && mockTask.cfg.cfg_indicatorProgressStyle > 0
                                     pStyle: mockTask.cfg.cfg_indicatorProgressStyle
                                     pColor: mockTask.cfg.cfg_indicatorProgressColor
                                     pOpacity: mockTask.cfg.cfg_indicatorProgressOpacity / 100.0
@@ -439,7 +456,7 @@ Item {
                                 // Group overlay
                                 Loader {
                                     id: groupExpanderLoader
-                                    active: (mockTask.cfgReady && mockTask.cfg.cfg_groupIconEnabled) && mockTask.index === 3
+                                    active: (mockTask.cfgReady && mockTask.cfg.cfg_groupIconEnabled) && mockTask.isGroupParent
                                     sourceComponent: Component {
                                          FancyUI.GroupExpanderOverlay {
                                             iconBox: iconBox
@@ -543,49 +560,68 @@ Item {
                                             }
                                         ]
 
-                                        source: previewRoot.getIconName(mockTask.index)
+                                        source: mockTask.iconName
                                         roundToIconSize: false
                                     }
 
-                                    // Count badge (task 1)
+                                    // Notification badge (proportional to taskIcon, scales with zoom)
                                     FancyUI.Badge {
-                                        visible: mockTask.index === 1 && mockTask.cfgReady && mockTask.cfg.cfg_showBadges
-                                        anchors.right: taskIcon.right
-                                        anchors.top: taskIcon.top
-                                        height: Math.round(taskIcon.height * 0.4)
+                                        visible: mockTask.showBadge && mockTask.cfgReady && mockTask.cfg.cfg_showBadges
                                         z: 10
-                                        number: 3
+
+                                        readonly property real iconR: Math.min(taskIcon.width, taskIcon.height) / 2
+                                        readonly property real badgeDiam: Math.max(8, iconR * 0.7)
+                                        height: badgeDiam
+
+                                        readonly property real notifCX: previewRoot.isVertical ? (taskIcon.width * 0.5) : (taskIcon.width * 0.88)
+                                        readonly property real notifCY: previewRoot.isVertical ? (taskIcon.height * 0.88) : (taskIcon.height * 0.05)
+                                        x: taskIcon.x + notifCX - width / 2
+                                        y: taskIcon.y + notifCY
+
+                                        number: mockTask.badgeCount
                                         isRound: true
                                         hovered: mockTask.isHovered
                                     }
 
                                 }
                                 
-                                // 5. Audio badge (Moved out of iconBox to match production hierarchy)
+                                // Audio indicator (Matching TaskBadgeOverlay.qml exactly)
                                 FancyUI.Badge {
                                     id: audioBadge
-                                    visible: mockTask.hasAudio && mockTask.cfgReady && mockTask.cfg.cfg_indicateAudioStreams
-                                    z: 50 // Above everything
+                                    visible: (mockTask.playingAudio || mockTask.isMuted) && mockTask.cfgReady && mockTask.cfg.cfg_indicateAudioStreams
+                                    z: 50
+
+                                    readonly property real iconR: Math.min(taskIcon.width, taskIcon.height) / 2
+                                    readonly property real badgeDiam: Math.max(8, iconR * 0.7)
+                                    readonly property real audioBadgeDiam: badgeDiam * 1.4
                                     
-                                    // Visual size logic from AudioStream.qml
-                                    readonly property int visualSize: Math.round(Math.min(Math.min(iconBox.width, iconBox.height) * 0.4, Kirigami.Units.iconSizes.smallMedium))
-                                    height: visualSize
-                                    width: visualSize
+                                    height: audioBadgeDiam
+                                    width: height
 
-                                    // Clamping logic relative to mockTask, matching AudioStream.qml exactly
-                                    x: Math.max(0, Math.min(mockTask.width - visualSize, iconBox.x + taskIcon.x))
-                                    y: Math.max(0, Math.min(mockTask.height - visualSize, iconBox.y + taskIcon.y))
+                                    // Match proportions from TaskBadgeOverlay.qml
+                                    readonly property real audioBaseX: previewRoot.isVertical ? (taskIcon.width * 0.045) : (-taskIcon.width * 0.045)
+                                    readonly property real audioBaseY: previewRoot.isVertical ? (taskIcon.height * 0.1) : (taskIcon.height * 0.045)
 
-                                    iconSource: mockTask.isMuted ? "audio-volume-muted-symbolic" : "audio-volume-high-symbolic"
-                                    highlightColor: mockTask.isMuted ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.highlightColor
-                                    hovered: mockTask.isHovered
+                                    x: taskIcon.x + audioBaseX
+                                    y: taskIcon.y + audioBaseY
+
+                                    textSource: "🕪"
+                                    mirrorText: true
+                                    overlaySource: mockTask.isMuted ? "⦸" : ""
+                                    opacity: mockTask.isMuted ? 0.7 : 1.0
+                                    
+                                    showBackground: false
+                                    shadowEnabled: true
+                                    fontFactor: 0.85
+                                    isBold: false
+                                    isRound: true
                                 }
 
                                 // 5. Text label
                                 Label {
                                     id: label
                                     visible: mockTask.showText
-                                    text: previewRoot.getTaskName(mockTask.index)
+                                    text: mockTask.taskName
                                     color: Kirigami.Theme.textColor
                                     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
@@ -617,65 +653,78 @@ Item {
                                     readonly property bool isVerticalIndicator: effLoc === 1 || effLoc === 2
                                     readonly property int spacing: 2
 
+                                    // Expose parent properties for nested Repeater delegate
+                                    readonly property int segCount: mockTask.groupCount
+                                    readonly property bool parentIsGroupParent: mockTask.isGroupParent
+                                    readonly property var parentCfg: mockTask.cfg
+                                    readonly property bool parentCfgReady: mockTask.cfgReady
+                                    readonly property real parentWidth: mockTask.width
+                                    readonly property real parentHeight: mockTask.height
+                                    readonly property bool parentIsMinimized: mockTask.isMinimized
+                                    readonly property color parentIndicatorColor: mockTask.indicatorColor
+
                                     Repeater {
-                                        model: mockTask.index === 3 ? 2 : 1
+                                        model: indicatorArea.segCount
                                         Rectangle {
                                             id: indicator
                                             required property int index
-                                            readonly property int indStyle: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorStyle : 0
-                                            readonly property int indLength: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorLength : 8
-                                            readonly property int indSize: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorSize : 2
-                                            readonly property int indShrink: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorShrink : 0
+                                            readonly property int indStyle: indicatorArea.parentCfgReady ? indicatorArea.parentCfg.cfg_indicatorStyle : 0
+                                            readonly property int indLength: indicatorArea.parentCfgReady ? indicatorArea.parentCfg.cfg_indicatorLength : 8
+                                            readonly property int indSize: indicatorArea.parentCfgReady ? indicatorArea.parentCfg.cfg_indicatorSize : 2
+                                            readonly property int indShrink: indicatorArea.parentCfgReady ? indicatorArea.parentCfg.cfg_indicatorShrink : 0
 
-                                            readonly property real pSize: !indicatorArea.isVerticalIndicator ? mockTask.width : mockTask.height
-                                            readonly property real computedSize: indStyle === 1 ? indLength : Math.max(8, (pSize - indShrink) / (mockTask.index === 3 ? 2.5 : 1))
+                                            readonly property real pSize: !indicatorArea.isVerticalIndicator ? indicatorArea.parentWidth : indicatorArea.parentHeight
+                                            readonly property real computedSize: indStyle === 1 ? indLength : Math.max(8, (pSize - indShrink) / (indicatorArea.parentIsGroupParent ? 2.5 : 1))
 
                                             width: indicatorArea.isVerticalIndicator ? indSize : computedSize
                                             height: indicatorArea.isVerticalIndicator ? computedSize : indSize
 
-                                            readonly property int edgeOff: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorEdgeOffset : 0
+                                            readonly property int edgeOff: indicatorArea.parentCfgReady ? indicatorArea.parentCfg.cfg_indicatorEdgeOffset : 0
 
-                                            // Positioning with group offset
                                             x: {
+                                                if (!indicatorArea) return 0;
+                                                let sc = indicatorArea.segCount;
                                                 let base = indicatorArea.isVerticalIndicator ? 
                                                     (indicatorArea.effLoc === 1 ? edgeOff : parent.width - width - edgeOff) :
-                                                    (parent.width - (width * (mockTask.index === 3 ? 2 : 1) + (mockTask.index === 3 ? indicatorArea.spacing : 0))) / 2;
+                                                    (parent.width - (width * sc + (sc > 1 ? indicatorArea.spacing * (sc - 1) : 0))) / 2;
                                                 
-                                                if (!indicatorArea.isVerticalIndicator && mockTask.index === 3) {
+                                                if (!indicatorArea.isVerticalIndicator && sc > 1) {
                                                     return base + (index * (width + indicatorArea.spacing));
                                                 }
                                                 return base;
                                             }
                                             y: {
+                                                if (!indicatorArea) return 0;
+                                                let sc = indicatorArea.segCount;
                                                 let base = !indicatorArea.isVerticalIndicator ? 
                                                     (indicatorArea.effLoc === 3 ? edgeOff : parent.height - height - edgeOff) :
-                                                    (parent.height - (height * (mockTask.index === 3 ? 2 : 1) + (mockTask.index === 3 ? indicatorArea.spacing : 0))) / 2;
+                                                    (parent.height - (height * sc + (sc > 1 ? indicatorArea.spacing * (sc - 1) : 0))) / 2;
                                                 
-                                                if (indicatorArea.isVerticalIndicator && mockTask.index === 3) {
+                                                if (indicatorArea.isVerticalIndicator && sc > 1) {
                                                     return base + (index * (height + indicatorArea.spacing));
                                                 }
                                                 return base;
                                             }
 
                                             color: {
-                                                if (!mockTask.cfgReady) return Kirigami.Theme.textColor;
+                                                if (!indicatorArea.parentCfgReady) return Kirigami.Theme.textColor;
 
                                                 let baseColor = TaskTools.resolveIndicatorBaseColor(
-                                                    mockTask.cfg.cfg_indicatorAccentColor,
-                                                    mockTask.cfg.cfg_indicatorDominantColor,
+                                                    indicatorArea.parentCfg.cfg_indicatorAccentColor,
+                                                    indicatorArea.parentCfg.cfg_indicatorDominantColor,
                                                     Kirigami.Theme.highlightColor,
-                                                    mockTask.indicatorColor,
-                                                    mockTask.cfg.cfg_indicatorCustomColor
+                                                    indicatorArea.parentIndicatorColor,
+                                                    indicatorArea.parentCfg.cfg_indicatorCustomColor
                                                 );
 
-                                                if (mockTask.cfg.cfg_indicatorDesaturate && mockTask.isMinimized) {
+                                                if (indicatorArea.parentCfg.cfg_indicatorDesaturate && indicatorArea.parentIsMinimized) {
                                                     let c = Qt.color(baseColor)
                                                     return Qt.hsla(c.hslHue, 0.0, c.hslLightness, c.a * 0.5)
                                                 }
                                                 return baseColor
                                             }
 
-                                            radius: Math.min(width, height) * ((mockTask.cfgReady ? mockTask.cfg.cfg_indicatorRadius : 0) / 200)
+                                            radius: Math.min(width, height) * ((indicatorArea.parentCfgReady ? indicatorArea.parentCfg.cfg_indicatorRadius : 0) / 200)
                                         }
                                     }
                                 }
