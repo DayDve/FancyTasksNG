@@ -11,3 +11,4 @@ package/contents/ui/unity/*.so
 package/contents/ui/unity/qmldir
 _plasma_src/
 **/__pycache__/
+**/*.mo
