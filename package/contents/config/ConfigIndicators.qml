@@ -45,7 +45,7 @@ ConfigPage {
 
             CheckBox {
                 id: indicatorsEnabled
-                text: Wrappers.i18n("Enable")
+                text: Wrappers.i18nc("State", "Enabled")
                 checked: cfg_page.cfg_indicatorsEnabled
                 onToggled: cfg_page.cfg_indicatorsEnabled = checked
             }
@@ -351,7 +351,7 @@ ConfigPage {
             ComboBox {
                 id: indicatorProgressStyle
                 model: [
-                    Wrappers.i18n("Disabled"),
+                    Wrappers.i18nc("State", "Disabled"),
                     Wrappers.i18n("Fill (Left-Right)"),
                     Wrappers.i18n("Fill (Bottom-Top)"),
                     Wrappers.i18n("Strip (Top)"),

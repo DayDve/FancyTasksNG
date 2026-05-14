@@ -95,19 +95,11 @@ PlasmoidItem {
         function onShowOnlyCurrentActivityChanged() {
             modelUpdateTimer.restart();
         }
-        function onShowOnlyMinimizedChanged() {
-            modelUpdateTimer.restart();
-        }
+
         function onSortingStrategyChanged() {
             modelUpdateTimer.restart();
         }
         function onGroupingStrategyChanged() {
-            modelUpdateTimer.restart();
-        }
-        function onGroupPopupsChanged() {
-            modelUpdateTimer.restart();
-        }
-        function onOnlyGroupWhenFullChanged() {
             modelUpdateTimer.restart();
         }
     }
@@ -372,8 +364,8 @@ PlasmoidItem {
         tasks.tasksModel.separateLaunchers = (Plasmoid.configuration.sortingStrategy === 0);
 
         tasks.tasksModel.groupMode = tasks.groupModeEnumValue(Plasmoid.configuration.groupingStrategy);
-        tasks.tasksModel.groupInline = false;
-        tasks.tasksModel.groupingWindowTasksThreshold = -1;
+        tasks.tasksModel.groupInline = !Plasmoid.configuration.groupPopups;
+        tasks.tasksModel.groupingWindowTasksThreshold = Plasmoid.configuration.onlyGroupWhenFull ? 0 : -1;
 
         tasks._isApplyingConfig = false;
     }

@@ -257,9 +257,22 @@ msgstr "Огромный"
 msgid "Automatically set to Large when in Touch mode"
 msgstr "Автоматически «Большой» в сенсорном режиме"
 
-#: package/contents/config/ConfigBehavior.qml
-msgid "Group windows by program name"
-msgstr "Группировать окна по имени программы"
+msgid "Grouping of tasks:"
+msgstr "Группировка задач:"
+
+msgctxt "State"
+msgid "Enabled"
+msgstr "Включено"
+
+msgctxt "State"
+msgid "Disabled"
+msgstr "Отключено"
+
+msgid "Place windows of one application side-by-side"
+msgstr "Размещать окна одного приложения рядом"
+
+msgid "Combine into one button by application name"
+msgstr "Объединять в одну кнопку по имени приложения"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Clicking group button:"
@@ -270,8 +283,8 @@ msgid "Combine into single button"
 msgstr "Объединять в одну кнопку"
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Group only when the Task Manager is full"
-msgstr "Группировать только при заполнении панели"
+msgid "Only when space is limited"
+msgstr "Только при заполнении панели"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Allow manual task reordering"

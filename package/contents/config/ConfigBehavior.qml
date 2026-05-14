@@ -33,11 +33,48 @@ ConfigPage {
         Kirigami.FormLayout {
             width: parent.width - Kirigami.Units.gridUnit * 2
 
-            CheckBox {
-                id: cfg_groupingStrategy
-                text: Wrappers.i18n("Group windows by program name")
-                checked: cfg_page.cfg_groupingStrategy === 1
-                onToggled: cfg_page.cfg_groupingStrategy = checked ? 1 : 0
+            Label {
+                text: Wrappers.i18n("Grouping of tasks:")
+            }
+
+            ColumnLayout {
+                Layout.leftMargin: Kirigami.Units.gridUnit
+
+                RadioButton {
+                    id: groupDisabled
+                    text: Wrappers.i18nc("State", "Disabled")
+                    checked: cfg_page.cfg_groupingStrategy === 0
+                    onToggled: if (checked) cfg_page.cfg_groupingStrategy = 0
+                }
+
+                RadioButton {
+                    id: groupSideBySide
+                    text: Wrappers.i18n("Place windows of one application side-by-side")
+                    checked: cfg_page.cfg_groupingStrategy === 1 && !cfg_page.cfg_groupPopups
+                    onToggled: if (checked) {
+                        cfg_page.cfg_groupingStrategy = 1;
+                        cfg_page.cfg_groupPopups = false;
+                    }
+                }
+
+                RadioButton {
+                    id: groupCollapsed
+                    text: Wrappers.i18n("Combine into one button by application name")
+                    checked: cfg_page.cfg_groupingStrategy === 1 && cfg_page.cfg_groupPopups
+                    onToggled: if (checked) {
+                        cfg_page.cfg_groupingStrategy = 1;
+                        cfg_page.cfg_groupPopups = true;
+                    }
+                }
+
+                CheckBox {
+                    id: onlyGroupWhenFull
+                    Layout.leftMargin: Kirigami.Units.gridUnit * 2
+                    visible: groupCollapsed.checked && cfg_page.cfg_iconOnly === 0
+                    text: Wrappers.i18n("Only when space is limited")
+                    checked: cfg_page.cfg_onlyGroupWhenFull
+                    onToggled: cfg_page.cfg_onlyGroupWhenFull = checked
+                }
             }
 
             Item { height: Kirigami.Units.largeSpacing }
