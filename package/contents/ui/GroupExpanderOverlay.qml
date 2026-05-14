@@ -40,7 +40,7 @@ KSvg.SvgItem {
                 anchors.left: undefined
                 anchors.right: undefined
                 anchors.bottom: arrow.parent.bottom
-                anchors.horizontalCenter: arrow.iconBox.horizontalCenter
+                anchors.horizontalCenter: arrow.parent.horizontalCenter
                 anchors.verticalCenter: undefined
             }
         },
@@ -54,7 +54,7 @@ KSvg.SvgItem {
                 anchors.right: undefined
                 anchors.bottom: undefined
                 anchors.horizontalCenter: undefined
-                anchors.verticalCenter: arrow.iconBox.verticalCenter
+                anchors.verticalCenter: arrow.parent.verticalCenter
             }
         },
         State {
@@ -67,7 +67,7 @@ KSvg.SvgItem {
                 anchors.right: arrow.parent.right
                 anchors.bottom: undefined
                 anchors.horizontalCenter: undefined
-                anchors.verticalCenter: arrow.iconBox.verticalCenter
+                anchors.verticalCenter: arrow.parent.verticalCenter
             }
         },
         State {
@@ -79,7 +79,7 @@ KSvg.SvgItem {
                 anchors.left: undefined
                 anchors.right: undefined
                 anchors.bottom: undefined
-                anchors.horizontalCenter: arrow.iconBox.horizontalCenter
+                anchors.horizontalCenter: arrow.parent.horizontalCenter
                 anchors.verticalCenter: undefined
             }
         }

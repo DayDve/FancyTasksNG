@@ -63,11 +63,6 @@
             >Whether groups are to be reduced to a single task button and expand into a popup or task buttons are grouped on the widget itself.</label>
       <default>true</default>
     </entry>
-    <entry name="onlyGroupWhenFull" type="Bool">
-      <label
-            >Whether to group always or only when the widget runs out of space to show additional task buttons comfortably.</label>
-      <default>true</default>
-    </entry>
 
     <entry name="groupingAppIdBlacklist" type="StringList">
       <label

@@ -67,14 +67,6 @@ ConfigPage {
                     }
                 }
 
-                CheckBox {
-                    id: onlyGroupWhenFull
-                    Layout.leftMargin: Kirigami.Units.gridUnit * 2
-                    visible: groupCollapsed.checked && cfg_page.cfg_iconOnly === 0
-                    text: Wrappers.i18n("Only when space is limited")
-                    checked: cfg_page.cfg_onlyGroupWhenFull
-                    onToggled: cfg_page.cfg_onlyGroupWhenFull = checked
-                }
 
                 CheckBox {
                     id: groupIconEnabled

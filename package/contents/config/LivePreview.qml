@@ -64,7 +64,7 @@ Item {
             taskModel.append({ iconName: "plasmadiscover",   taskName: "Discover",   isMinimized: true,  isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: true  });
             taskModel.append({ iconName: "org.kde.dolphin",  taskName: "Dolphin",    isMinimized: false, isActive: true,  isHovered: true,  playingAudio: false, isMuted: false, showBadge: true,  badgeCount: 3, isGroup: false, groupCount: 1, showProgress: false });
             taskModel.append({ iconName: "utilities-terminal",   taskName: "Konsole",isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
-            taskModel.append({ iconName: "internet-web-browser", taskName: "Firefox",isMinimized: false, isActive: false, isHovered: false, playingAudio: true,  isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
+            taskModel.append({ iconName: "internet-web-browser", taskName: "Browser",isMinimized: false, isActive: false, isHovered: false, playingAudio: true,  isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
             taskModel.append({ iconName: "org.kde.dolphin",  taskName: "Dolphin",    isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
         } else if (groupMode === 1 && groupPopups === false) {
             // Strategy 1, Popups false: Side-by-side (5 tasks, dolphins adjacent)
@@ -72,13 +72,13 @@ Item {
             taskModel.append({ iconName: "org.kde.dolphin",  taskName: "Dolphin",    isMinimized: false, isActive: true,  isHovered: true,  playingAudio: false, isMuted: false, showBadge: true,  badgeCount: 3, isGroup: false, groupCount: 1, showProgress: false });
             taskModel.append({ iconName: "org.kde.dolphin",  taskName: "Dolphin",    isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
             taskModel.append({ iconName: "utilities-terminal",   taskName: "Konsole",isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
-            taskModel.append({ iconName: "internet-web-browser", taskName: "Firefox",isMinimized: false, isActive: false, isHovered: false, playingAudio: true,  isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
+            taskModel.append({ iconName: "internet-web-browser", taskName: "Browser",isMinimized: false, isActive: false, isHovered: false, playingAudio: true,  isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
         } else {
             // Strategy 1, Popups true: Collapsed (4 tasks, Dolphin is a group)
             taskModel.append({ iconName: "plasmadiscover",   taskName: "Discover",   isMinimized: true,  isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: true  });
             taskModel.append({ iconName: "org.kde.dolphin",  taskName: "Dolphin",    isMinimized: false, isActive: true,  isHovered: true,  playingAudio: false, isMuted: false, showBadge: true,  badgeCount: 3, isGroup: true,  groupCount: 2, showProgress: false });
             taskModel.append({ iconName: "utilities-terminal",   taskName: "Konsole",isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
-            taskModel.append({ iconName: "internet-web-browser", taskName: "Firefox",isMinimized: false, isActive: false, isHovered: false, playingAudio: true,  isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
+            taskModel.append({ iconName: "internet-web-browser", taskName: "Browser",isMinimized: false, isActive: false, isHovered: false, playingAudio: true,  isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
         }
     }
 
@@ -639,6 +639,37 @@ Item {
                                     verticalAlignment: previewRoot.isVertical ? Text.AlignTop : Text.AlignVCenter
                                     horizontalAlignment: (previewRoot.isVertical || mockTask.width < 100) ? Text.AlignHCenter : Text.AlignLeft
                                     maximumLineCount: 1
+                                }
+
+                                // 6. Group expander overlay (Matching GroupExpanderOverlay.qml)
+                                KSvg.SvgItem {
+                                    id: groupArrow
+                                    visible: mockTask.isGroup && mockTask.cfgReady && mockTask.cfg.cfg_groupIconEnabled
+                                    z: 60
+
+                                    readonly property int effLoc: mockTask.effLoc
+                                    
+                                    anchors {
+                                        horizontalCenter: (effLoc === 0 || effLoc === 3) ? parent.horizontalCenter : undefined
+                                        verticalCenter: (effLoc === 1 || effLoc === 2) ? parent.verticalCenter : undefined
+                                        bottom: effLoc === 0 ? parent.bottom : undefined
+                                        top: effLoc === 3 ? parent.top : undefined
+                                        left: effLoc === 1 ? parent.left : undefined
+                                        right: effLoc === 2 ? parent.right : undefined
+                                    }
+
+                                    implicitWidth: Math.min(naturalSize.width, 16)
+                                    implicitHeight: Math.min(naturalSize.height, 16)
+
+                                    imagePath: "widgets/tasks"
+                                    elementId: {
+                                        switch (effLoc) {
+                                            case 1: return "group-expander-left";
+                                            case 3: return "group-expander-top";
+                                            case 2: return "group-expander-right";
+                                            default: return "group-expander-bottom";
+                                        }
+                                    }
                                 }
 
                                 // 6. Indicator

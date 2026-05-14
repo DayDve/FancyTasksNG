@@ -365,7 +365,7 @@ PlasmoidItem {
 
         tasks.tasksModel.groupMode = tasks.groupModeEnumValue(Plasmoid.configuration.groupingStrategy);
         tasks.tasksModel.groupInline = !Plasmoid.configuration.groupPopups;
-        tasks.tasksModel.groupingWindowTasksThreshold = Plasmoid.configuration.onlyGroupWhenFull ? 0 : -1;
+        tasks.tasksModel.groupingWindowTasksThreshold = 0;
 
         tasks._isApplyingConfig = false;
     }

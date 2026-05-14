@@ -199,7 +199,7 @@ msgstr "Окрашивать неактивные кнопки"
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Maximum button width (px):"
-msgstr ""
+msgstr "Максимальная ширина кнопки (px):"
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Space between taskbar items (px):"

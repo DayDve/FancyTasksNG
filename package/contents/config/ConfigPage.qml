@@ -103,8 +103,6 @@ Kirigami.Page {
 
     property bool cfg_groupPopups: true
     property bool cfg_groupPopupsDefault: true
-    property bool cfg_onlyGroupWhenFull: false
-    property bool cfg_onlyGroupWhenFullDefault: false
 
     property var cfg_groupingAppIdBlacklist: []
     property var cfg_groupingAppIdBlacklistDefault: []
