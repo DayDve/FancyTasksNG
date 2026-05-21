@@ -66,6 +66,10 @@ PlasmoidItem {
     property Item dropIndicator: dropIndicator
     property int dropIndex: -1
     property Item dragSource: null
+    // Set to true in Task.qml when drag ends with cursor outside the panel bounds.
+    // Used in Drag.onDragFinished to trigger unpin regardless of the dropAction
+    // (some Plasma components may accept the drop and return non-IgnoreAction).
+    property bool dragEndedOutsidePanel: false
 
     property bool _isApplyingConfig: false
     property bool _initialStartup: true
@@ -541,7 +545,48 @@ PlasmoidItem {
             id: dragHelper
             Drag.dragType: Drag.Automatic
             Drag.supportedActions: Qt.CopyAction | Qt.MoveAction | Qt.LinkAction
+
+            // Holds the launcher URL while waiting for the unpin animation to finish.
+            property string pendingUnpinUrl: ""
+
+            // Delays the actual model removal so the explosion animation has time to play.
+            Timer {
+                id: unpinDelayTimer
+                interval: 300
+                repeat: false
+                onTriggered: {
+                    if (dragHelper.pendingUnpinUrl !== "") {
+                        tasks.removeLauncher(dragHelper.pendingUnpinUrl);
+                        dragHelper.pendingUnpinUrl = "";
+                    }
+                }
+            }
+
             Drag.onDragFinished: dropAction => {
+                // If a pure launcher (no running windows) is dragged outside the panel,
+                // treat it as an "unpin" gesture.
+                // We check both Qt.IgnoreAction (nothing accepted the drop) AND
+                // dragEndedOutsidePanel (set by position check in Task.qml's DragHandler),
+                // because Plasma desktop or other shell components may accept the drag
+                // and return a non-IgnoreAction even when the user clearly dropped outside.
+                const source = tasks.dragSource;
+                if (Plasmoid.configuration.unpinByDrag
+                        && (dropAction === Qt.IgnoreAction || tasks.dragEndedOutsidePanel)
+                        && source
+                        && source.model
+                        && source.model.IsLauncher
+                        && source.winIdList.length === 0) {
+                    if (Plasmoid.configuration.unpinByDragExplosion
+                            && Plasmoid.configuration.iconOnly === 1) {
+                        explosionManager.spawn(tasks, source, true);
+                        // Delay removal so the explosion animation plays before the item disappears.
+                        dragHelper.pendingUnpinUrl = source.model.LauncherUrlWithoutIcon.toString();
+                        unpinDelayTimer.start();
+                    } else {
+                        tasks.removeLauncher(source.model.LauncherUrlWithoutIcon);
+                    }
+                }
+                tasks.dragEndedOutsidePanel = false;
                 tasks.dragSource = null;
                 tasks.dropIndicator.visible = false;
             }

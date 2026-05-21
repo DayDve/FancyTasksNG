@@ -655,6 +655,14 @@ msgstr "Добавить приложение"
 msgid "Search applications..."
 msgstr "Поиск приложений..."
 
+#: package/contents/config/ConfigPinnedApps.qml
+msgid "Unpin app by dragging its icon off the panel"
+msgstr "Открепить приложение перетащив значок за пределы панели"
+
+#: package/contents/config/ConfigPinnedApps.qml
+msgid "Play removal animation"
+msgstr "Анимация удаления"
+
 #: package/contents/config/config.qml
 msgid "Appearance"
 msgstr "Внешний вид"

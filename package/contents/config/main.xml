@@ -396,6 +396,15 @@
       <min>1</min>
       <max>50</max>
     </entry>
+    <entry name="unpinByDrag" type="Bool">
+      <label>Remove pinned launcher when dragging its icon outside the panel.</label>
+      <default>false</default>
+    </entry>
+    <entry name="unpinByDragExplosion" type="Bool">
+      <label>Play removal animation when unpinning by drag (icons-only mode).</label>
+      <default>false</default>
+    </entry>
   </group>
+
 
 </kcfg>

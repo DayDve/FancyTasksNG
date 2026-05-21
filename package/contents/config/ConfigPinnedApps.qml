@@ -802,6 +802,29 @@ ConfigPage {
                     }
                 }
 
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: Kirigami.Units.smallSpacing
+
+                    CheckBox {
+                        id: cfg_unpinByDrag
+                        text: Wrappers.i18n("Unpin app by dragging its icon off the panel")
+                        checked: cfg_page.cfg_unpinByDrag
+                        onToggled: cfg_page.cfg_unpinByDrag = checked
+                    }
+
+                    RowLayout {
+                        visible: cfg_unpinByDrag.checked && cfg_page.cfg_iconOnly === 1
+                        Item { implicitWidth: Kirigami.Units.gridUnit }
+                        CheckBox {
+                            id: cfg_unpinByDragExplosion
+                            text: Wrappers.i18n("Play removal animation")
+                            checked: cfg_page.cfg_unpinByDragExplosion
+                            onToggled: cfg_page.cfg_unpinByDragExplosion = checked
+                        }
+                    }
+                }
+
                 RowLayout {
                     Layout.fillWidth: true
 

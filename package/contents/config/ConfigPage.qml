@@ -189,6 +189,10 @@ Kirigami.Page {
     property bool cfg_showLivePreviewDefault: true
     property bool cfg_smokeExplosionOnClose: false
     property bool cfg_smokeExplosionOnCloseDefault: false
+    property bool cfg_unpinByDrag: false
+    property bool cfg_unpinByDragDefault: false
+    property bool cfg_unpinByDragExplosion: false
+    property bool cfg_unpinByDragExplosionDefault: false
     property bool cfg_showBadgesOnLaunchers: true
     property bool cfg_showBadgesOnLaunchersDefault: true
     property bool cfg_showBrowserHistory: false
