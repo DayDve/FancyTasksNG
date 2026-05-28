@@ -59,8 +59,8 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-sed -i 's/# SOME DESCRIPTIVE TITLE./'"# Translation of ${widgetName} in LANGUAGE"'/' "tools/translate/template.pot.new"
-sed -i 's/# Copyright (C) YEAR THE PACKAGE'"'"'S COPYRIGHT HOLDER/'"# Copyright (C) $(date +%Y)"'/' "tools/translate/template.pot.new"
+sed -i 's/# SOME DESCRIPTIVE TITLE./'"# Translation of ${widgetName} in LANGUAGE"'/' "tools/translate/languages/template.pot.new"
+sed -i 's/# Copyright (C) YEAR THE PACKAGE'"'"'S COPYRIGHT HOLDER/'"# Copyright (C) $(date +%Y)"'/' "tools/translate/languages/template.pot.new"
 
 cd "tools/translate/languages"
 
@@ -81,7 +81,7 @@ else
 	mv "template.pot.new" "template.pot"
 fi
 
-rm "infiles.list"
+rm "../infiles.list"
 echo "[merge] Done extracting messages"
 
 echo "[merge] Merging messages"

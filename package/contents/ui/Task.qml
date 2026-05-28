@@ -182,30 +182,8 @@ Item {
     }
     
     function adjustVolume(increment, isGlobal) {
-        if (!tasksRoot) return;
-        const audioManager = tasksRoot.audioStreamManager.item;
-        if (!audioManager) return;
-
-        let streams = isGlobal ? (audioManager.preferredSink ? [audioManager.preferredSink] : []) : task.audioStreams;
-        if (streams.length === 0) return;
-        
-        let lastResult = null;
-        streams.forEach(stream => {
-            lastResult = audioManager.adjustObjectVolume(stream, increment);
-        });
-
-        if (lastResult) {
-            if (isGlobal) {
-                if (tasksRoot && tasksRoot.globalVolumeOverlay && tasksRoot.globalVolumeOverlay.item) {
-                    tasksRoot.globalVolumeOverlay.item.volume = lastResult.volume;
-                    tasksRoot.globalVolumeOverlay.item.muted = lastResult.muted;
-                    tasksRoot.globalVolumeOverlay.item.show();
-                }
-            } else if (taskVolumeOverlayLoader.item) {
-                taskVolumeOverlayLoader.item.volume = lastResult.volume;
-                taskVolumeOverlayLoader.item.muted = lastResult.muted;
-                taskVolumeOverlayLoader.item.show();
-            }
+        if (mediaController) {
+            mediaController.adjustVolume(increment, isGlobal);
         }
     }
 
@@ -283,12 +261,8 @@ Item {
         }
     }
 
-    property var audioStreams: []
     property bool completed: false
-    readonly property 
-        bool audioIndicatorsEnabled: Plasmoid.configuration.indicateAudioStreams
-    readonly property bool hasAudioStream: task.audioStreams.length > 0
-    readonly property bool playingAudio: task.hasAudioStream && task.audioStreams.some(item => !item.corked)
+    readonly property bool audioIndicatorsEnabled: Plasmoid.configuration.indicateAudioStreams
     readonly property var winIdList: {
         if (!task.model || !task.model.WinIdList) return [];
         // Deep copy without slice() just in case
@@ -300,7 +274,14 @@ Item {
         return list;
     }
     property bool wasMiddleClicked: false
-    readonly property bool muted: task.hasAudioStream && task.audioStreams.every(item => item.muted)
+
+    // Media Controller Proxy Properties
+    readonly property var mediaController: mediaControllerLoader.item
+    readonly property bool playingAudio: mediaController ? mediaController.playingAudio : false
+    readonly property bool muted: mediaController ? mediaController.muted : false
+    readonly property bool hasAudioStream: mediaController ? mediaController.hasAudioStream : false
+    readonly property var audioStreams: mediaController ? mediaController.audioStreams : []
+    readonly property var volumeOverlay: taskVolumeOverlayLoader.item
 
     readonly property bool highlighted: (task.inPopup && activeFocus) ||
         (!task.inPopup && (containsMouse || isHovered)) || (tasksRoot.currentHoveredTask === task) || 
@@ -493,17 +474,9 @@ Item {
         }
     }
 
-    onPidChanged: if (task.model) task.updateAudioStreams({
-        delay: false
-    })
-    onAppNameChanged: if (task.model) task.updateAudioStreams({
-        delay: false
-    })
-
     onIsWindowChanged: {
         if (task.model && task.model.IsWindow) {
             tasksRoot.taskInitComponent.createObject(task);
-            task.updateAudioStreams();
         }
     }
 
@@ -601,39 +574,9 @@ Item {
         contextMenu.show();
     }
 
-    function updateAudioStreams(): void {
-        if (!task.tasksRoot) return;
-        var pa = task.tasksRoot.audioStreamManager.item;
-        if (!pa || !task.model) {
-            task.audioStreams = [];
-            return;
-        }
-
-        var streams = pa.streamsForAppId(task.model.AppId);
-        if (!streams.length) {
-            streams = pa.streamsForPid(task.model.AppPid);
-            
-            if (!streams.length) {
-                 streams = pa.streamsForAppName(task.model.AppName);
-            }
-        }
-
-        task.audioStreams = streams;
-    }
-
     function toggleMuted(): void {
-        if (task.muted) {
-            task.audioStreams.forEach(item => item.unmute());
-        } else {
-            task.audioStreams.forEach(item => item.mute());
-        }
-    }
-
-    Connections {
-        target: task.tasksRoot.audioStreamManager.item
-        ignoreUnknownSignals: true
-        function onStreamsChanged(): void {
-            task.updateAudioStreams();
+        if (mediaController) {
+            mediaController.toggleMuted();
         }
     }
 
@@ -919,6 +862,15 @@ Item {
     }
 
     Loader {
+        id: mediaControllerLoader
+        active: !!task.model && task.model.IsWindow
+        source: "TaskMediaController.qml"
+        onLoaded: {
+            item.taskItem = task;
+        }
+    }
+
+    Loader {
         id: badgeLoader
         parent: task.tasksRoot.iconsOnly ? iconBox : task
         anchors.fill: parent
@@ -967,9 +919,6 @@ Item {
 
     Component.onCompleted: {
         task.lastSeenCount = task.badgeCount;
-        if (!task.inPopup && task.model.IsWindow) {
-            task.updateAudioStreams();
-        }
 
         if (!task.inPopup && !task.model.IsWindow) {
             tasksRoot.taskInitComponent.createObject(task);

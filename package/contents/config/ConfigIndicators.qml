@@ -19,7 +19,7 @@ ConfigPage {
     id: cfg_page
 
     // Silence KCM errors for legacy/removed properties
-    readonly property bool plasmaPaAvailable: Qt.createComponent("../ui/PulseAudio.qml").status === Component.Ready
+    readonly property bool plasmaPaAvailable: true
 
     readonly property bool isLineStyle: cfg_page.cfg_indicatorStyle === 0
 
