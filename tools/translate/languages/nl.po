@@ -1,21 +1,21 @@
-# Translation of fancytasks in zh_CN
+# Translation of fancytasks in nl
 # Copyright (C) 2023
 # This file is distributed under the same license as the fancytasks package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-04-28 09:29+0300\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2026-05-28 14:24+0300\n"
+"PO-Revision-Date: 2023-07-13 22:27+0200\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
+"Language-Team: \n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "This option is disabled when the widget is on a panel."
@@ -50,8 +50,8 @@ msgid "Panel Settings:"
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
-msgid "Unhide when a window wants attention"
-msgstr "当窗口提示时取消隐藏"
+msgid "Unhide panel when a window wants attention"
+msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Animate task icon when a window wants attention"
@@ -94,7 +94,7 @@ msgid "Hide 'Move to Desktop' if only one virtual desktop is used"
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
-msgid "Show browsing history in the context menu of web browsers"
+msgid "Show browsing history in the context menu of web browsers (Experimental)"
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
@@ -103,11 +103,11 @@ msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Use plasma borders"
-msgstr "使用plasma边框"
+msgstr "Plasmakaders gebruiken"
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Display:"
-msgstr "显示："
+msgstr "Tonen:"
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Classic panel"
@@ -115,7 +115,7 @@ msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Show icons only"
-msgstr "只显示图标"
+msgstr "Alleen pictogrammen"
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Icon size:"
@@ -179,11 +179,11 @@ msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml package/contents/config/ConfigIndicators.qml
 msgid "Use dominant icon color"
-msgstr "使用图标主体色"
+msgstr "Dominante pictogramkleur gebruiken"
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Custom Color:"
-msgstr "自定义颜色："
+msgstr "Zelfgekozen kleur:"
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "For inactive buttons:"
@@ -203,7 +203,7 @@ msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Space between taskbar items (px):"
-msgstr "任务栏组件间距（px）"
+msgstr "Ruimte tussen taakbalkitems (in px):"
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Use multi-column view:"
@@ -227,11 +227,11 @@ msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Maximum columns:"
-msgstr "最大列数"
+msgstr "Maximaal aantal kolommen:"
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Maximum rows:"
-msgstr "最大行数"
+msgstr "Maximaal aantal rĳen:"
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Inner padding:"
@@ -258,20 +258,25 @@ msgid "Automatically set to Large when in Touch mode"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Group windows by program name"
+msgid "Grouping of tasks:"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml package/contents/config/ConfigIndicators.qml
+msgctxt "State"
+msgid "Disabled"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Clicking group button:"
+msgid "Place windows of one application side-by-side"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Combine into single button"
-msgstr "组合到一个按钮中"
+msgid "Combine into one button by application name"
+msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Group only when the Task Manager is full"
-msgstr "仅在任务栏已满时组合"
+msgid "Standard group overlay"
+msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Allow manual task reordering"
@@ -283,7 +288,7 @@ msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Middle-clicking any task:"
-msgstr "鼠标中键点击活动任务时："
+msgstr "Actie na middelklikken op een taak:"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Does nothing"
@@ -314,7 +319,7 @@ msgid "Animation of closing/removing an icon from the panel"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Mouse wheel on task buttons:"
+msgid "Mouse wheel:"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
@@ -338,23 +343,31 @@ msgid "Adjusts volume of the window"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "With Ctrl held:"
+msgid "Adjust system volume with Shift key"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Shift + Mouse Wheel adjusts system volume"
+msgid "Additional action with Ctrl key"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Show window thumbnails when hovering over tasks"
+msgid "Show tooltips when hovering over task buttons"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Hide other windows when hovering over thumbnails"
+msgid "Show window thumbnails in tooltips"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Media controls on thumbnails"
+msgid "Hide other windows when hovering over a window in the tooltip"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Show media controls"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Clicking group button:"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
@@ -375,19 +388,19 @@ msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Show only tasks:"
-msgstr "只展示任务"
+msgstr "Alleen taken tonen van:"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "From current screen"
-msgstr "从当前屏幕"
+msgstr "Huidig scherm"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "From current desktop"
-msgstr "从当前桌面"
+msgstr "Huidig bureaublad"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "From current activity"
-msgstr "从当前活动"
+msgstr "Huidige activiteit"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "In any state"
@@ -403,7 +416,7 @@ msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "New tasks appear:"
-msgstr "新任务出现在："
+msgstr "Nieuwe taken tonen aan:"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "On the bottom"
@@ -411,11 +424,11 @@ msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "To the right"
-msgstr "右边"
+msgstr "Rechterkant"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "To the left"
-msgstr "左边"
+msgstr "Linkerkant"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "On the top"
@@ -426,7 +439,8 @@ msgid "Active application indicators:"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
-msgid "Enable"
+msgctxt "State"
+msgid "Enabled"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
@@ -443,7 +457,7 @@ msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "Dashes"
-msgstr "Dashes"
+msgstr "Streepjes"
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "Override indicator location"
@@ -451,19 +465,19 @@ msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "Bottom"
-msgstr "底部"
+msgstr "Onderaan"
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "Left"
-msgstr "左边"
+msgstr "Links"
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "Right"
-msgstr "右边"
+msgstr "Rechts"
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "Top"
-msgstr "顶部"
+msgstr "Bovenaan"
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "Edge offset:"
@@ -499,7 +513,7 @@ msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "Use plasma accent color"
-msgstr "使用plasma预设"
+msgstr "Plasma-accentkleur"
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "Custom color:"
@@ -511,14 +525,6 @@ msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "Desaturate when minimized"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Group Indicators:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Standard group overlay"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
@@ -548,10 +554,6 @@ msgstr ""
 #: package/contents/config/ConfigIndicators.qml
 msgid "Progress:"
 msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Disabled"
-msgstr "关闭"
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "Fill (Left-Right)"
@@ -622,6 +624,14 @@ msgid "Remove"
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
+msgid "Unpin app by dragging its icon off the panel"
+msgstr ""
+
+#: package/contents/config/ConfigPinnedApps.qml
+msgid "Play removal animation"
+msgstr ""
+
+#: package/contents/config/ConfigPinnedApps.qml
 msgid "Add Application..."
 msgstr ""
 
@@ -643,15 +653,15 @@ msgstr ""
 
 #: package/contents/config/config.qml
 msgid "Appearance"
-msgstr "外观"
+msgstr "Vormgeving"
 
 #: package/contents/config/config.qml
 msgid "Behavior"
-msgstr "行为"
+msgstr "Gedrag"
 
 #: package/contents/config/config.qml
 msgid "Indicators"
-msgstr "指示器"
+msgstr "Indicators"
 
 #: package/contents/config/config.qml
 msgid "Advanced"
@@ -659,10 +669,6 @@ msgstr ""
 
 #: package/contents/config/config.qml
 msgid "Pinned Applications"
-msgstr ""
-
-#: package/contents/config/LivePreview.qml
-msgid "App name"
 msgstr ""
 
 #: package/contents/config/LivePreview.qml
@@ -675,6 +681,10 @@ msgstr ""
 
 #: package/contents/config/LivePreview.qml
 msgid "This setting only changes the appearance of this preview and does not affect your actual system panel."
+msgstr ""
+
+#: package/contents/config/LivePreview.qml
+msgid "App name"
 msgstr ""
 
 #: package/contents/config/LivePreview.qml
@@ -717,121 +727,125 @@ msgstr ""
 #: package/contents/ui/ContextMenu.qml
 msgctxt "Play previous track"
 msgid "Previous Track"
-msgstr "上一首"
+msgstr "Vorig nummer"
 
 #: package/contents/ui/ContextMenu.qml
 msgctxt "Pause playback"
 msgid "Pause"
-msgstr "暂停"
+msgstr "Pauzeren"
 
 #: package/contents/ui/ContextMenu.qml
 msgctxt "Start playback"
 msgid "Play"
-msgstr "播放"
+msgstr "Afspelen"
 
 #: package/contents/ui/ContextMenu.qml
 msgctxt "Play next track"
 msgid "Next Track"
-msgstr "下一首"
+msgstr "Volgend nummer"
 
 #: package/contents/ui/ContextMenu.qml
 msgctxt "Stop playback"
 msgid "Stop"
-msgstr "停止"
+msgstr "Stoppen"
 
 #: package/contents/ui/ContextMenu.qml
 msgctxt "Quit media player app"
 msgid "Quit"
-msgstr "退出"
+msgstr "Afsluiten"
 
 #: package/contents/ui/ContextMenu.qml
 msgctxt "Open or bring to the front window of media player app"
 msgid "Restore"
-msgstr "恢复"
+msgstr "Herstellen"
 
-#: package/contents/ui/ContextMenu.qml package/contents/ui/ToolTipInstance.qml
+#: package/contents/ui/ContextMenu.qml package/contents/ui/ToolTipMediaControls.qml
 msgid "Mute"
-msgstr "静音"
+msgstr "Dempen"
+
+#: package/contents/ui/ContextMenu.qml
+msgid "Launch"
+msgstr ""
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Open New Window"
-msgstr "打开新窗口"
+msgstr "Nieuw venster openen"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Move to &Desktop"
-msgstr "移动到桌面"
+msgstr "Verplaatsen naar bureaubla&d"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Move &To Current Desktop"
-msgstr "移动到当前桌面"
+msgstr "Verplaa&tsen naar huidig bureaublad"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "&All Desktops"
-msgstr "所有桌面"
+msgstr "&Alle bureaubladen"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "&New Desktop"
-msgstr "新建桌面"
+msgstr "&Nieuw bureaublad"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Show in &Activities"
-msgstr "在活动中展示"
+msgstr "Tonen in &activiteiten"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Add To Current Activity"
-msgstr "添加到当前活动"
+msgstr "Toevoegen aan huidige activiteit"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "All Activities"
-msgstr "所有活动"
+msgstr "Alle activiteiten"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Move to %1"
-msgstr "移动到%1"
+msgstr "Verplaatsen naar %1"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "&Pin to Task Manager"
-msgstr "固定到任务栏"
+msgstr "Vastma&ken aan takenbeheer"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Unpin from Task Manager"
-msgstr "从任务栏上解除固定"
+msgstr "Losmaken van takenbeheer"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "More"
-msgstr "更多"
+msgstr "Meer"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "&Move"
-msgstr "移动"
+msgstr "Ver&plaatsen"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Re&size"
-msgstr "调整大小"
+msgstr "Grootte aanpa&ssen"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Ma&ximize"
-msgstr "最大化"
+msgstr "Ma&ximaliseren"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Mi&nimize"
-msgstr "最小化"
+msgstr "Mi&nimaliseren"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Keep &Above Others"
-msgstr "置顶"
+msgstr "&Altĳd bovenaan"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Keep &Below Others"
-msgstr "置底"
+msgstr "Altĳd on&deraan"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "&Fullscreen"
-msgstr "全屏"
+msgstr "&Volledig scherm"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "&Shade"
-msgstr "折叠"
+msgstr "Op&rollen"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "&No Titlebar and Frame"
@@ -843,7 +857,7 @@ msgstr ""
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Allow this program to be grouped"
-msgstr "允许这个程序被分组"
+msgstr "Groeperen toestaan"
 
 #: package/contents/ui/ContextMenu.qml
 msgctxt "@item:inmenu"
@@ -852,7 +866,7 @@ msgstr ""
 
 #: package/contents/ui/ContextMenu.qml
 msgid "&Close"
-msgstr "关闭"
+msgstr "&Sluiten"
 
 #: package/contents/ui/Task.qml
 msgctxt "@info:usagetip %1 application name"
@@ -883,32 +897,44 @@ msgstr ""
 
 #: package/contents/ui/Task.qml
 msgid "Activate %1"
-msgstr "活动 %1"
+msgstr "%1 activeren"
 
 #: package/contents/ui/ToolTipDelegate.qml package/contents/ui/ToolTipInstance.qml
 msgctxt "Comma-separated list of desktops"
 msgid "On %1"
-msgstr "在 %1 上"
+msgstr "Op %1"
 
 #: package/contents/ui/ToolTipDelegate.qml package/contents/ui/ToolTipInstance.qml
 msgctxt "Comma-separated list of desktops"
 msgid "Pinned to all desktops"
-msgstr "固定到所有桌面"
+msgstr "Vastgemaakt op alle bureaubladen"
 
 #: package/contents/ui/ToolTipDelegate.qml package/contents/ui/ToolTipInstance.qml
 msgctxt "Which virtual desktop a window is currently on"
 msgid "Available on all activities"
-msgstr "在所有活动上可用"
+msgstr "Actief op alle activiteiten"
 
 #: package/contents/ui/ToolTipDelegate.qml package/contents/ui/ToolTipInstance.qml
 msgctxt "Activities a window is currently on (apart from the current one)"
 msgid "Also available on %1"
-msgstr "也在 %1 上可用"
+msgstr "Ook actief op %1"
 
 #: package/contents/ui/ToolTipDelegate.qml package/contents/ui/ToolTipInstance.qml
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
-msgstr "在 %1 上可用"
+msgstr "Actief op %1"
+
+#~ msgid "Unhide when a window wants attention"
+#~ msgstr "Tonen als een venster om aandacht vraagt"
+
+#~ msgid "Combine into single button"
+#~ msgstr "Combineren tot één knop"
+
+#~ msgid "Group only when the Task Manager is full"
+#~ msgstr "Alleen groeperen als takenbeheer vol is"
+
+#~ msgid "Disabled"
+#~ msgstr "Uitgeschakeld"
 
 #~ msgid "Skip minimized tasks"
-#~ msgstr "跳过最小化的任务"
+#~ msgstr "Geminimaliseerde taken overslaan"

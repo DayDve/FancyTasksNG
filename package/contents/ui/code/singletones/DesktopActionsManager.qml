@@ -29,8 +29,8 @@ Item {
         }
     }
 
-    function query(launcherUrl, showHistory, limit, callback) {
-        const key = String(launcherUrl) + "|" + showHistory + "|" + limit;
+    function query(launcherUrl, appPid, showHistory, limit, callback) {
+        const key = String(launcherUrl) + "|" + appPid + "|" + showHistory + "|" + limit;
 
         // Always do a background query to keep data fresh, 
         // but if we have cache, we can return it immediately for instant UI
@@ -38,31 +38,31 @@ Item {
             callback(cache[key]);
             // If we already have a callback, we might not want to re-trigger UI 
             // but we SHOULD update the cache in background.
-            _doQuery(String(launcherUrl), showHistory, limit, null); 
+            _doQuery(String(launcherUrl), appPid, showHistory, limit, null); 
             return;
         }
 
-        _doQuery(String(launcherUrl), showHistory, limit, callback);
+        _doQuery(String(launcherUrl), appPid, showHistory, limit, callback);
     }
 
     function prefetch(launcherUrl) {
         if (!launcherUrl) return;
-        const key = String(launcherUrl) + "|false|10";
+        const key = String(launcherUrl) + "|0|false|10";
         // Only prefetch if NOT in cache to avoid spam
         if (!(key in cache)) {
-            _doQuery(String(launcherUrl), false, 10, null);
+            _doQuery(String(launcherUrl), 0, false, 10, null);
         }
     }
 
-    function _doQuery(launcherUrl, showHistory, limit, callback) {
-        const key = String(launcherUrl) + "|" + showHistory + "|" + limit;
+    function _doQuery(launcherUrl, appPid, showHistory, limit, callback) {
+        const key = String(launcherUrl) + "|" + appPid + "|" + showHistory + "|" + limit;
         const pendingReply = DBus.SessionBus.asyncCall({
             "service": "io.github.daydve.fancytasksng.DesktopActions",
             "path": "/DesktopActions",
             "iface": "io.github.daydve.fancytasksng.DesktopActions",
             "member": "Query",
-            "arguments": [String(launcherUrl || ""), !!showHistory, parseInt(limit || 10)],
-            "signature": "(sbi)"
+            "arguments": [String(launcherUrl || ""), !!showHistory, parseInt(limit || 10), parseInt(appPid || 0)],
+            "signature": "(sbii)"
         });
 
         pendingReply.finished.connect(() => {

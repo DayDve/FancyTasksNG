@@ -15,6 +15,7 @@ Each recentDocs item: {"name": str, "url": str, "icon": str}
 """
 
 import configparser
+import hashlib
 import json
 import mimetypes
 import os
@@ -103,8 +104,14 @@ def get_jump_list_actions(desktop_path):
     action_ids = cp.get("Desktop Entry", "Actions", fallback="").strip(";").split(";")
     action_ids = [a.strip() for a in action_ids if a.strip()]
 
-    # Determine system languages (e.g. from LANGUAGE or LANG)
-    lang_env = os.environ.get("LANGUAGE", "") or os.environ.get("LANG", "")
+    # Determine system languages (e.g. from LANGUAGE, LC_ALL, LC_MESSAGES, or LANG)
+    lang_envs = [
+        os.environ.get("LANGUAGE", ""),
+        os.environ.get("LC_ALL", ""),
+        os.environ.get("LC_MESSAGES", ""),
+        os.environ.get("LANG", "")
+    ]
+    lang_env = ":".join(filter(None, lang_envs))
     langs = []
     for l in lang_env.split(":"):
         l = l.split(".")[0].strip() # e.g. ru_RU.UTF-8 -> ru_RU
@@ -267,19 +274,24 @@ def get_recent_documents(desktop_path):
     return docs
 
 
-def find_active_db_from_proc(process_names, db_name):
-    """Find the active database path by inspecting open file descriptors of running processes."""
+def find_active_db_from_proc(db_name, app_pid=0):
+    """Find the active database path by inspecting open file descriptors of the given PID and its parent PPID."""
+    if app_pid <= 0:
+        return None
     try:
-        # Get all PIDs for the given process names
-        pids = []
-        for name in process_names:
-            try:
-                # Use pgrep -u to only look at current user's processes
-                out = subprocess.check_output(['pgrep', '-u', str(os.getuid()), '-f', name], text=True)
-                pids.extend(out.strip().split())
-            except subprocess.CalledProcessError:
-                continue
-        
+        pids = [app_pid]
+        # Browser renderers may have child PIDs while the main process owns the DB handle.
+        # Inspect parent PID as well to cover multi-process architectures.
+        try:
+            with open(f"/proc/{app_pid}/stat", "r") as f:
+                stat_parts = f.read().split()
+                if len(stat_parts) > 3:
+                    ppid = int(stat_parts[3])
+                    if ppid > 0:
+                        pids.append(ppid)
+        except Exception:
+            pass
+
         for pid in set(pids):
             fd_dir = Path(f"/proc/{pid}/fd")
             if not fd_dir.exists():
@@ -299,16 +311,107 @@ def find_active_db_from_proc(process_names, db_name):
     return None
 
 
-def get_firefox_recent(limit=10):
-    """Fetch recent Firefox history with active profile detection and robust discovery."""
-    # 1. Try to find active profile via /proc
-    active_db = find_active_db_from_proc(["firefox"], "places.sqlite")
+def extract_favicons(history_items, favicons_db_path, browser_type):
+    """Extract favicons for history items and save them to local cache."""
+    if not history_items or not favicons_db_path or not os.path.exists(favicons_db_path):
+        return history_items
+
+    cache_dir = Path.home() / ".cache" / "fancytasksng" / "favicons"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    urls_to_query = []
+    for item in history_items:
+        url = item.get("url")
+        if not url:
+            continue
+        url_hash = hashlib.md5(url.encode('utf-8')).hexdigest()
+        
+        cached_png = cache_dir / f"{url_hash}.png"
+        cached_failed = cache_dir / f"{url_hash}.failed"
+        
+        if cached_png.exists():
+            item["icon"] = f"file://{cached_png}"
+        elif cached_failed.exists():
+            item["icon"] = "internet-services"
+        else:
+            urls_to_query.append((url, item, cached_png, cached_failed))
+
+    if not urls_to_query:
+        return history_items
+
+    fd, temp_path = tempfile.mkstemp(prefix="favicons_temp.sqlite")
+    os.close(fd)
+    temp_db = Path(temp_path)
+
+    try:
+        shutil.copy2(favicons_db_path, temp_db)
+        conn = sqlite3.connect(temp_db)
+        cursor = conn.cursor()
+
+        for url, item, cached_png, cached_failed in urls_to_query:
+            blob = None
+            if browser_type == "firefox":
+                cursor.execute("""
+                    SELECT i.data FROM moz_icons i
+                    JOIN moz_icons_to_pages itp ON itp.icon_id = i.id
+                    JOIN moz_pages_w_icons p ON p.id = itp.page_id
+                    WHERE p.page_url = ? AND i.data IS NOT NULL
+                    ORDER BY i.width DESC LIMIT 1
+                """, (url,))
+                row = cursor.fetchone()
+                if row:
+                    blob = row[0]
+            else:
+                cursor.execute("""
+                    SELECT b.image_data FROM favicon_bitmaps b
+                    JOIN icon_mapping m ON m.icon_id = b.icon_id
+                    WHERE m.page_url = ? AND b.image_data IS NOT NULL
+                    ORDER BY b.width DESC LIMIT 1
+                """, (url,))
+                row = cursor.fetchone()
+                if row:
+                    blob = row[0]
+
+            if blob:
+                try:
+                    with open(cached_png, "wb") as f:
+                        f.write(blob)
+                    item["icon"] = f"file://{cached_png}"
+                except Exception as e:
+                    print(f"desktop_actions: failed to write favicon cache: {e}", file=sys.stderr)
+                    item["icon"] = "internet-services"
+            else:
+                try:
+                    with open(cached_failed, "w") as f:
+                        f.write("")
+                except Exception:
+                    pass
+                item["icon"] = "internet-services"
+
+        conn.close()
+    except Exception as e:
+        print(f"desktop_actions: extract_favicons error: {e}", file=sys.stderr)
+    finally:
+        if temp_db.exists():
+            try:
+                temp_db.unlink()
+            except OSError:
+                pass
+
+    return history_items
+
+
+def get_firefox_recent(limit=10, app_pid=0):
+    """Fetch recent Firefox history with active profile detection via process info and fallback."""
+    # 1. Try to find active profile via /proc using app_pid
+    active_db = find_active_db_from_proc("places.sqlite", app_pid=app_pid)
     if active_db:
-        return fetch_sqlite_history(active_db, """
+        history = fetch_sqlite_history(active_db, """
             SELECT DISTINCT url, title FROM moz_places 
             WHERE last_visit_date IS NOT NULL AND title IS NOT NULL AND url LIKE 'http%'
             ORDER BY last_visit_date DESC LIMIT ?
         """, "places_ff_active.sqlite", limit)
+        return extract_favicons(history, active_db.parent / "favicons.sqlite", "firefox")
 
     # 2. Fallback to searching directories
     search_dirs = [
@@ -343,28 +446,21 @@ def get_firefox_recent(limit=10):
         WHERE last_visit_date IS NOT NULL AND title IS NOT NULL AND url LIKE 'http%'
         ORDER BY last_visit_date DESC LIMIT ?
     """
-    return fetch_sqlite_history(db_path, query, "places_ff_recent.sqlite", limit)
+    history = fetch_sqlite_history(db_path, query, "places_ff_recent.sqlite", limit)
+    return extract_favicons(history, db_path.parent / "favicons.sqlite", "firefox")
 
 
-def get_chromium_recent(browser_name, limit=10):
+def get_chromium_recent(browser_name, limit=10, app_pid=0):
     """Fetch recent history for Chromium-based browsers with active profile detection."""
-    proc_names = {
-        "chrome": ["google-chrome", "chrome"],
-        "chromium": ["chromium"],
-        "brave": ["brave"],
-        "vivaldi": ["vivaldi"],
-        "edge": ["msedge", "microsoft-edge"],
-        "opera": ["opera"],
-    }
-    
-    # 1. Try to find active profile via /proc
-    active_db = find_active_db_from_proc(proc_names.get(browser_name, [browser_name]), "History")
+    # 1. Try to find active profile via /proc using app_pid
+    active_db = find_active_db_from_proc("History", app_pid=app_pid)
     if active_db:
-        return fetch_sqlite_history(active_db, """
+        history = fetch_sqlite_history(active_db, """
             SELECT DISTINCT url, title FROM urls 
             WHERE last_visit_time IS NOT NULL AND title IS NOT NULL AND url LIKE 'http%'
             ORDER BY last_visit_time DESC LIMIT ?
         """, f"history_{browser_name}_active.sqlite", limit)
+        return extract_favicons(history, active_db.parent / "Favicons", "chromium")
 
     # 2. Fallback to searching directories
     configs = {
@@ -412,7 +508,8 @@ def get_chromium_recent(browser_name, limit=10):
         WHERE last_visit_time IS NOT NULL AND title IS NOT NULL AND url LIKE 'http%'
         ORDER BY last_visit_time DESC LIMIT ?
     """
-    return fetch_sqlite_history(db_path, query, f"history_{browser_name}_recent.sqlite", limit)
+    history = fetch_sqlite_history(db_path, query, f"history_{browser_name}_recent.sqlite", limit)
+    return extract_favicons(history, db_path.parent / "Favicons", "chromium")
 
 
 def fetch_sqlite_history(db_path, query, temp_name, limit=10):
@@ -581,28 +678,28 @@ class DesktopActionsService(dbus.service.Object):
             print(f"DesktopActionsService error: {e}", file=sys.stderr)
             sys.exit(1)
 
-    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='sbi', out_signature='s')
-    def Query(self, launcher_url, show_history, limit):
+    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='sbii', out_signature='s')
+    def Query(self, launcher_url, show_history, limit, app_pid):
         desktop_path = resolve_launcher_url(launcher_url)
         jump_list = get_jump_list_actions(desktop_path) if desktop_path else []
         
         browser_history = []
         if desktop_path and show_history:
             d_lower = desktop_path.lower()
-            if "firefox" in d_lower or "mozilla" in d_lower:
-                browser_history = get_firefox_recent(limit)
+            if "firefox" in d_lower or "mozilla" in d_lower or "ffpwa" in d_lower:
+                browser_history = get_firefox_recent(limit, app_pid)
             elif "chrome" in d_lower:
-                browser_history = get_chromium_recent("chrome", limit)
+                browser_history = get_chromium_recent("chrome", limit, app_pid)
             elif "brave" in d_lower:
-                browser_history = get_chromium_recent("brave", limit)
+                browser_history = get_chromium_recent("brave", limit, app_pid)
             elif "vivaldi" in d_lower:
-                browser_history = get_chromium_recent("vivaldi", limit)
+                browser_history = get_chromium_recent("vivaldi", limit, app_pid)
             elif "chromium" in d_lower:
-                browser_history = get_chromium_recent("chromium", limit)
+                browser_history = get_chromium_recent("chromium", limit, app_pid)
             elif "edge" in d_lower:
-                browser_history = get_chromium_recent("edge", limit)
+                browser_history = get_chromium_recent("edge", limit, app_pid)
             elif "opera" in d_lower:
-                browser_history = get_chromium_recent("opera", limit)
+                browser_history = get_chromium_recent("opera", limit, app_pid)
         
         raw_recent = get_recent_documents(desktop_path) if desktop_path else []
         
@@ -654,6 +751,11 @@ class DesktopActionsService(dbus.service.Object):
             if desktop_path:
                 exec_cmd = get_desktop_exec(desktop_path)
                 if exec_cmd:
+                    # If the command expects a custom protocol but we are opening a standard HTTP/HTTPS web URL,
+                    # dynamically switch --protocol to --url to ensure correct document loading.
+                    if url.lower().startswith("http") and "--protocol" in exec_cmd:
+                        exec_cmd = exec_cmd.replace("--protocol", "--url")
+                    
                     # Replace %u, %U, %f, %F with the actual URL
                     clean_exec = re.sub(r'%[uUfF]', url, exec_cmd)
                     if url not in clean_exec:

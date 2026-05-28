@@ -18,6 +18,7 @@
 import QtQuick
 
 import org.kde.plasma.plasmoid
+import org.kde.kirigami as Kirigami
 
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.extras as PlasmaExtras
@@ -32,7 +33,7 @@ PlasmaExtras.Menu {
     id: menu
 
     required property Mpris.Mpris2Model mpris2Source
-    required property /*QModelIndex*/var modelIndex
+    required property /*QModelIndex*/ var modelIndex
     required property TaskManager.TasksModel tasksModel
     required property TaskManager.VirtualDesktopInfo virtualDesktopInfo
     required property TaskManager.ActivityInfo activityInfo
@@ -54,36 +55,35 @@ PlasmaExtras.Menu {
         }
     }
 
-
     readonly property Item visualParentItem: visualParent as Item
     minimumWidth: visualParentItem ? visualParentItem.width : 0
 
     onStatusChanged: {
         if (status === PlasmaExtras.Menu.Open) {
             if (activitiesDesktopsMenuItem.visible) {
-                 activitiesDesktopsMenuItem._activitiesDesktopsMenu.refresh();
+                activitiesDesktopsMenuItem._activitiesDesktopsMenu.refresh();
             }
             if (virtualDesktopsMenuItem.visible) {
-                 virtualDesktopsMenuItem._virtualDesktopsMenu.refresh();
+                virtualDesktopsMenuItem._virtualDesktopsMenu.refresh();
             }
         } else if (status === PlasmaExtras.Menu.Closed) {
             menu.destroy();
         }
     }
 
-    Component.onCompleted: {
-    }
+    Component.onCompleted: {}
 
-    Component.onDestruction: {
-    }
+    Component.onDestruction: {}
 
     function showContextMenuWithAllPlaces(): void {
         const parentTask = visualParent as Task;
-        parentTask.showContextMenu({showAllPlaces: true});
+        parentTask.showContextMenu({
+            showAllPlaces: true
+        });
     }
 
     function get(modelProp: int): var {
-        return menu.tasksModel.data(modelIndex, modelProp)
+        return menu.tasksModel.data(modelIndex, modelProp);
     }
 
     function show(): void {
@@ -117,17 +117,40 @@ PlasmaExtras.Menu {
         let insertItem = startNewInstanceItem;
 
         // Clean up any previously added dynamic items to avoid duplicates on re-open
-        _dynamicDesktopItems.forEach((item) => {
-            if (item) item.destroy();
+        _dynamicDesktopItems.forEach(item => {
+            if (item)
+                item.destroy();
         });
         _dynamicDesktopItems = [];
 
+        // Manually elide text since QMenu does not limit its width automatically
+        const textMetrics = Qt.createQmlObject("import QtQuick; TextMetrics {}", menu);
+        textMetrics.elide = Qt.ElideRight;
+        textMetrics.elideWidth = Kirigami.Units.iconSizes.sizeForLabels * 28;
+
+        function elideText(text) {
+            if (!text)
+                return "";
+            textMetrics.text = text.replace(/&/g, "&&");
+            return textMetrics.elidedText;
+        }
+
+        function setIcon(item, iconPath) {
+            if (!iconPath)
+                return;
+            if (String(iconPath).startsWith("file://")) {
+                item.icon = iconPath.replace(/^file:\/\//, "");
+            } else {
+                item.icon = iconPath;
+            }
+        }
+
         // 1. Add Jump List Actions (Desktop Actions)
         if (result.jumpList && result.jumpList.length > 0) {
-            result.jumpList.forEach((action) => {
+            result.jumpList.forEach(action => {
                 let menuItem = menu.newMenuItem(menu);
                 menuItem.text = action.name;
-                menuItem.icon = action.icon;
+                setIcon(menuItem, action.icon);
                 menuItem.clicked.connect(() => {
                     let cleanExec = action.exec.replace(/%[uUfF]/g, "").trim();
                     DesktopActionsManager.executeCommand(cleanExec);
@@ -147,10 +170,10 @@ PlasmaExtras.Menu {
             placesSubItem.text = Wrappers.i18n("Places");
             let placesSubMenu = placesSubItem.subMenu;
 
-            result.places.forEach((place) => {
+            result.places.forEach(place => {
                 let menuItem = menu.newMenuItem(placesSubMenu);
-                menuItem.text = place.name;
-                menuItem.icon = place.icon;
+                menuItem.text = elideText(place.name);
+                setIcon(menuItem, place.icon);
                 menuItem.clicked.connect(() => {
                     DesktopActionsManager.openUrl(place.url, launcherUrl);
                 });
@@ -173,10 +196,10 @@ PlasmaExtras.Menu {
             menu.addMenuItem(title, insertItem);
             _dynamicDesktopItems.push(title);
 
-            result.browserHistory.forEach((item) => {
+            result.browserHistory.forEach(item => {
                 let menuItem = menu.newMenuItem(menu);
-                menuItem.text = item.name;
-                menuItem.icon = item.icon;
+                menuItem.text = elideText(item.name);
+                setIcon(menuItem, item.icon);
                 menuItem.clicked.connect(() => {
                     DesktopActionsManager.openUrl(item.url, launcherUrl);
                 });
@@ -197,10 +220,10 @@ PlasmaExtras.Menu {
             menu.addMenuItem(title, insertItem);
             _dynamicDesktopItems.push(title);
 
-            result.recentFolders.forEach((folder) => {
+            result.recentFolders.forEach(folder => {
                 let menuItem = menu.newMenuItem(menu);
-                menuItem.text = folder.name;
-                menuItem.icon = folder.icon;
+                menuItem.text = elideText(folder.name);
+                setIcon(menuItem, folder.icon);
                 menuItem.clicked.connect(() => {
                     DesktopActionsManager.openUrl(folder.url, launcherUrl);
                 });
@@ -219,39 +242,39 @@ PlasmaExtras.Menu {
             _dynamicDesktopItems.push(title);
 
             // Add the files
-            result.recentDocs.forEach((doc) => {
+            result.recentDocs.forEach(doc => {
                 let menuItem = menu.newMenuItem(menu);
-                
+
                 // Format name visually for virtual paths using plaintext
                 if (doc.url.startsWith("trash:/")) {
-                    menuItem.text = Wrappers.i18n("Trash");
-                    menuItem.icon = "user-trash-full";
+                    menuItem.text = elideText(Wrappers.i18n("Trash"));
+                    setIcon(menuItem, "user-trash-full");
                 } else if (doc.url.startsWith("zip://") || doc.url.startsWith("tar://") || doc.url.startsWith("krarc://")) {
                     // Extract archive name safely without regex
                     let protoIdx = doc.url.indexOf("://");
                     let pathWithoutProto = protoIdx !== -1 ? doc.url.substring(protoIdx + 3) : doc.url;
-                    
+
                     let insidePath = "";
                     let archiveName = doc.name;
-                    
+
                     let match = pathWithoutProto.match(/([^\/]+\.(?:zip|tar|gz|xz|bz2|rar|7z))(?:\/|$)(.*)/i);
                     if (match) {
                         archiveName = match[1];
                         insidePath = match[2];
                         if (insidePath) {
-                            menuItem.text = "[" + archiveName + "] /" + insidePath;
+                            menuItem.text = elideText("[" + archiveName + "] /" + insidePath);
                         } else {
-                            menuItem.text = archiveName;
+                            menuItem.text = elideText(archiveName);
                         }
                     } else {
-                        menuItem.text = doc.name.startsWith("zip://") ? pathWithoutProto : doc.name;
+                        menuItem.text = elideText(doc.name.startsWith("zip://") ? pathWithoutProto : doc.name);
                     }
-                    menuItem.icon = "application-x-archive";
+                    setIcon(menuItem, "application-x-archive");
                 } else {
-                    menuItem.text = doc.name;
-                    menuItem.icon = doc.icon;
+                    menuItem.text = elideText(doc.name);
+                    setIcon(menuItem, doc.icon);
                 }
-                
+
                 menuItem.clicked.connect(() => {
                     DesktopActionsManager.openUrl(doc.url, launcherUrl);
                 });
@@ -264,7 +287,7 @@ PlasmaExtras.Menu {
         if ((result.recentDocs && result.recentDocs.length > 0) || (result.recentFolders && result.recentFolders.length > 0)) {
             let clearItem = menu.newMenuItem(menu);
             clearItem.text = Wrappers.i18n("Forget Recent Files");
-            clearItem.icon = "edit-clear-history";
+            setIcon(clearItem, "edit-clear-history");
             clearItem.clicked.connect(() => {
                 DesktopActionsManager.clearRecentDocuments(launcherUrl);
             });
@@ -280,11 +303,12 @@ PlasmaExtras.Menu {
 
     function loadDynamicLaunchActions(launcherUrl: url, onReady: var): void {
         // Query desktop file actions and recent documents
-        DesktopActionsManager.query(launcherUrl, Plasmoid.configuration.showBrowserHistory, Plasmoid.configuration.browserHistoryLimit, (result) => {
+        const showHistory = get(atm.AppPid) > 0 && Plasmoid.configuration.showBrowserHistory;
+        DesktopActionsManager.query(launcherUrl, get(atm.AppPid), showHistory, Plasmoid.configuration.browserHistoryLimit, result => {
             _insertDesktopActions(result, launcherUrl);
-            if (onReady) onReady();
+            if (onReady)
+                onReady();
         });
-
 
         // Add Media Player control actions
         const playerData = menu.mpris2Source.playerForLauncherUrl(launcherUrl, menu.get(menu.atm.AppPid));
@@ -405,27 +429,28 @@ PlasmaExtras.Menu {
 
     PlasmaExtras.MenuItem {
         id: startNewInstanceItem
-        visible: menu.get(menu.atm.CanLaunchNewInstance)
-        text: Wrappers.i18n("Open New Window")
-        icon: "window-new"
+        visible: menu.get(menu.atm.CanLaunchNewInstance) || menu.get(menu.atm.IsLauncher)
+        text: menu.get(menu.atm.IsLauncher) ? Wrappers.i18n("Launch") : Wrappers.i18n("Open New Window")
+        icon: menu.get(menu.atm.IsLauncher) ? "system-run" : "window-new"
 
-        onClicked: menu.tasksModel.requestNewInstance(menu.modelIndex)
+        onClicked: {
+            const parentTask = menu.visualParent;
+            if (parentTask && typeof parentTask.triggerLaunch === "function") {
+                parentTask.triggerLaunch();
+            }
+            menu.tasksModel.requestNewInstance(menu.modelIndex);
+        }
     }
 
     PlasmaExtras.MenuItem {
         id: virtualDesktopsMenuItem
 
-        visible: (menu.virtualDesktopInfo.numberOfDesktops > 1 || !Plasmoid.configuration.hideMoveToDesktopMenuWithOneDesktop)
-            && (menu.visualParent && !menu.get(menu.atm.IsLauncher)
-            && !menu.get(menu.atm.IsStartup)
-            && menu.get(menu.atm.IsVirtualDesktopsChangeable))
+        visible: (menu.virtualDesktopInfo.numberOfDesktops > 1 || !Plasmoid.configuration.hideMoveToDesktopMenuWithOneDesktop) && (menu.visualParent && !menu.get(menu.atm.IsLauncher) && !menu.get(menu.atm.IsStartup) && menu.get(menu.atm.IsVirtualDesktopsChangeable))
 
         enabled: visible
 
         text: Wrappers.i18n("Move to &Desktop")
         icon: "virtual-desktops"
-
-
 
         readonly property Connections virtualDesktopsMenuConnections: Connections {
             target: menu.virtualDesktopInfo
@@ -479,11 +504,11 @@ PlasmaExtras.Menu {
                     menuItem.text = menu.virtualDesktopInfo.desktopNames[i];
                     menuItem.checkable = true;
                     menuItem.checked = Qt.binding((i => {
-                        return () => menu.visualParent && menu.get(menu.atm.VirtualDesktops).indexOf(menu.virtualDesktopInfo.desktopIds[i]) > -1;
-                    })(i));
+                            return () => menu.visualParent && menu.get(menu.atm.VirtualDesktops).indexOf(menu.virtualDesktopInfo.desktopIds[i]) > -1;
+                        })(i));
                     menuItem.clicked.connect((i => {
-                        return () => menu.tasksModel.requestVirtualDesktops(menu.modelIndex, [menu.virtualDesktopInfo.desktopIds[i]]);
-                    })(i));
+                            return () => menu.tasksModel.requestVirtualDesktops(menu.modelIndex, [menu.virtualDesktopInfo.desktopIds[i]]);
+                        })(i));
                 }
 
                 menu.newSeparator(virtualDesktopsMenuItem._virtualDesktopsMenu);
@@ -500,25 +525,21 @@ PlasmaExtras.Menu {
         }
     }
 
-     PlasmaExtras.MenuItem {
+    PlasmaExtras.MenuItem {
         id: activitiesDesktopsMenuItem
 
-        visible: menu.activityInfo.numberOfRunningActivities > 1
-            && (menu.visualParent && !menu.get(menu.atm.IsLauncher)
-            && !menu.get(menu.atm.IsStartup))
+        visible: menu.activityInfo.numberOfRunningActivities > 1 && (menu.visualParent && !menu.get(menu.atm.IsLauncher) && !menu.get(menu.atm.IsStartup))
 
         enabled: visible
 
         text: Wrappers.i18n("Show in &Activities")
         icon: "activities"
 
-
-
         readonly property Connections activityInfoConnections: Connections {
             target: menu.activityInfo
 
             function onNumberOfRunningActivitiesChanged(): void {
-                activitiesDesktopsMenuItem._activitiesDesktopsMenu["refresh"]()
+                activitiesDesktopsMenuItem._activitiesDesktopsMenu["refresh"]();
             }
         }
 
@@ -537,8 +558,7 @@ PlasmaExtras.Menu {
                 let menuItem = menu.newMenuItem(activitiesDesktopsMenuItem._activitiesDesktopsMenu);
                 menuItem.text = Wrappers.i18n("Add To Current Activity");
                 menuItem.enabled = Qt.binding(() => {
-                    return menu.visualParent && menu.get(atm.Activities).length > 0 &&
-                           menu.get(atm.Activities).indexOf(menu.activityInfo.currentActivity) < 0;
+                    return menu.visualParent && menu.get(atm.Activities).length > 0 && menu.get(atm.Activities).indexOf(menu.activityInfo.currentActivity) < 0;
                 });
                 menuItem.clicked.connect(() => {
                     menu.tasksModel.requestActivities(menu.modelIndex, menu.get(atm.Activities).concat(menu.activityInfo.currentActivity));
@@ -569,24 +589,24 @@ PlasmaExtras.Menu {
                     menuItem.icon = menu.activityInfo.activityIcon(runningActivities[i]);
                     menuItem.checkable = true;
                     menuItem.checked = Qt.binding((activityId => {
-                        return () => menu.visualParent && menu.get(atm.Activities).indexOf(activityId) >= 0;
-                    })(activityId));
+                            return () => menu.visualParent && menu.get(atm.Activities).indexOf(activityId) >= 0;
+                        })(activityId));
                     menuItem.toggled.connect((activityId => {
-                        return checked => {
-                            let newActivities = menu.get(atm.Activities);
-                            if (checked) {
-                                newActivities = newActivities.concat(activityId);
-                            } else {
-                                const index = newActivities.indexOf(activityId);
-                                if (index < 0) {
-                                    return;
-                                }
+                            return checked => {
+                                let newActivities = menu.get(atm.Activities);
+                                if (checked) {
+                                    newActivities = newActivities.concat(activityId);
+                                } else {
+                                    const index = newActivities.indexOf(activityId);
+                                    if (index < 0) {
+                                        return;
+                                    }
 
-                                newActivities.splice(index, 1);
-                            }
-                            return menu.tasksModel.requestActivities(menu.modelIndex, newActivities);
-                        };
-                    })(activityId));
+                                    newActivities.splice(index, 1);
+                                }
+                                return menu.tasksModel.requestActivities(menu.modelIndex, newActivities);
+                            };
+                        })(activityId));
                 }
 
                 menu.newSeparator(activitiesDesktopsMenuItem._activitiesDesktopsMenu);
@@ -601,11 +621,11 @@ PlasmaExtras.Menu {
                     }
 
                     menuItem = menu.newMenuItem(activitiesDesktopsMenuItem._activitiesDesktopsMenu);
-                    menuItem.text = Wrappers.i18n("Move to %1", menu.activityInfo.activityName(activityId))
-                    menuItem.icon = menu.activityInfo.activityIcon(activityId)
+                    menuItem.text = Wrappers.i18n("Move to %1", menu.activityInfo.activityName(activityId));
+                    menuItem.icon = menu.activityInfo.activityIcon(activityId);
                     menuItem.clicked.connect((activityId => {
-                        return () => menu.tasksModel.requestActivities(menu.modelIndex, [activityId]);
-                    })(activityId));
+                            return () => menu.tasksModel.requestActivities(menu.modelIndex, [activityId]);
+                        })(activityId));
                 }
 
                 menu.newSeparator(activitiesDesktopsMenuItem._activitiesDesktopsMenu);
@@ -618,11 +638,7 @@ PlasmaExtras.Menu {
     PlasmaExtras.MenuItem {
         id: launcherToggleAction
 
-        visible: visualParent
-            && !get(atm.IsLauncher)
-            && !get(atm.IsStartup)
-            && Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable
-            && !isPinned()
+        visible: visualParent && !get(atm.IsLauncher) && !get(atm.IsStartup) && Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable && !isPinned()
 
         enabled: visualParent && get(atm.LauncherUrlWithoutIcon).toString() !== ""
 
@@ -645,10 +661,7 @@ PlasmaExtras.Menu {
     }
 
     PlasmaExtras.MenuItem {
-        visible: visualParent
-                && get(atm.IsStartup) !== true
-                && Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable
-                && (get(atm.IsLauncher) || launcherToggleAction.isPinned())
+        visible: visualParent && get(atm.IsStartup) !== true && Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable && (get(atm.IsLauncher) || launcherToggleAction.isPinned())
 
         text: Wrappers.i18n("Unpin from Task Manager")
         icon: "window-unpin"
@@ -673,8 +686,6 @@ PlasmaExtras.Menu {
 
         text: Wrappers.i18n("More")
         icon: "view-more-symbolic"
-
-
 
         readonly property PlasmaExtras.Menu moreMenu: PlasmaExtras.Menu {
             visualParent: moreActionsMenuItem.action
@@ -813,7 +824,9 @@ PlasmaExtras.Menu {
         }
     }
 
-    PlasmaExtras.MenuItem { separator: true }
+    PlasmaExtras.MenuItem {
+        separator: true
+    }
 
     PlasmaExtras.MenuItem {
         property QtObject configureAction: null
@@ -843,7 +856,9 @@ PlasmaExtras.Menu {
         Component.onCompleted: editModeAction = Plasmoid.containment.internalAction("configure")
     }
 
-    PlasmaExtras.MenuItem { separator: true }
+    PlasmaExtras.MenuItem {
+        separator: true
+    }
 
     PlasmaExtras.MenuItem {
         id: closeWindowItem

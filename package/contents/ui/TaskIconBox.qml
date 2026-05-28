@@ -155,6 +155,10 @@ Item {
 
         source: iconBox._taskHasModel ? iconBox.taskItem.model.decoration : ""
         layer.enabled: iconBox._iconOverflows
+        opacity: (iconBox.taskItem && (iconBox.taskItem.isLaunching || (iconBox._taskHasModel && iconBox.taskItem.model.IsStartup))) ? 0.4 : 1.0
+        Behavior on opacity {
+            NumberAnimation { duration: 250 }
+        }
     }
 
     MultiEffect {
@@ -173,7 +177,7 @@ Item {
         anchors.centerIn: parent
         width: Math.min(parent.width, parent.height)
         height: width
-        active: !!(iconBox._taskHasModel && iconBox.taskItem.model.IsStartup)
+        active: !!(iconBox._taskHasModel && (iconBox.taskItem.model.IsStartup || (iconBox.taskItem && iconBox.taskItem.isLaunching)))
         sourceComponent: iconBox.tasksRootContext ? iconBox.tasksRootContext.busyIndicator : null
     }
 

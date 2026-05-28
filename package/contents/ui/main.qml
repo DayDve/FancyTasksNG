@@ -224,7 +224,7 @@ PlasmoidItem {
     }
 
     onWindowsHovered: (winIds, hovered) => {
-        if (!Plasmoid.configuration.highlightWindows || !Plasmoid.configuration.showToolTips)
+        if (!Plasmoid.configuration.highlightWindows || !Plasmoid.configuration.enableToolTips)
             return;
         DBus.SessionBus.asyncCall({
             service: "org.kde.KWin.HighlightWindow",
@@ -538,7 +538,10 @@ PlasmoidItem {
 
         Component {
             id: busyIndicator
-            PlasmaComponents3.BusyIndicator {}
+            PlasmaComponents3.BusyIndicator {
+                anchors.fill: parent
+                running: true
+            }
         }
 
         Item {

@@ -96,8 +96,12 @@
             >Whether to try and always layout task buttons in as many rows/columns as set via maxStripes.</label>
       <default>false</default>
     </entry>
+    <entry name="enableToolTips" type="Bool">
+      <label>Show tooltips when hovering over task buttons</label>
+      <default>true</default>
+    </entry>
     <entry name="showToolTips" type="Bool">
-      <label>Show window thumbnails when hovering over tasks</label>
+      <label>Show window thumbnails in tooltips</label>
       <default>true</default>
     </entry>
     <entry name="showMediaControls" type="Bool">

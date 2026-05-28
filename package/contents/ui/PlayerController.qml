@@ -26,13 +26,15 @@ RowLayout {
     id: playerControllerRoot
     required property var playerData
     required property bool isWin
+    property bool showText: true
 
     enabled: playerData.canControl
 
     readonly property bool isPlaying: playerData.playbackStatus === Mpris.PlaybackStatus.Playing
 
     ColumnLayout {
-        Layout.fillWidth: true
+        visible: playerControllerRoot.showText
+        Layout.fillWidth: playerControllerRoot.showText
         Layout.topMargin: Kirigami.Units.smallSpacing
         Layout.bottomMargin: Kirigami.Units.smallSpacing
         Layout.rightMargin: playerControllerRoot.isWin ? Kirigami.Units.smallSpacing : Kirigami.Units.gridUnit
@@ -75,12 +77,24 @@ RowLayout {
     }
 
     PlasmaComponents3.ToolButton {
+        implicitWidth: playerControllerRoot.showText ? Kirigami.Units.gridUnit * 1.6 : Kirigami.Units.gridUnit * 1.2
+        implicitHeight: playerControllerRoot.showText ? Kirigami.Units.gridUnit * 1.6 : Kirigami.Units.gridUnit * 1.2
+        padding: playerControllerRoot.showText ? Kirigami.Units.smallSpacing : 0
+        icon.width: playerControllerRoot.showText ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.small
+        icon.height: playerControllerRoot.showText ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.small
+
         enabled: playerControllerRoot.playerData.canGoPrevious
         icon.name: mirrored ? "media-skip-forward" : "media-skip-backward"
         onClicked: playerControllerRoot.playerData.Previous()
     }
 
     PlasmaComponents3.ToolButton {
+        implicitWidth: playerControllerRoot.showText ? Kirigami.Units.gridUnit * 1.6 : Kirigami.Units.gridUnit * 1.2
+        implicitHeight: playerControllerRoot.showText ? Kirigami.Units.gridUnit * 1.6 : Kirigami.Units.gridUnit * 1.2
+        padding: playerControllerRoot.showText ? Kirigami.Units.smallSpacing : 0
+        icon.width: playerControllerRoot.showText ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.small
+        icon.height: playerControllerRoot.showText ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.small
+
         enabled: playerControllerRoot.isPlaying ? playerControllerRoot.playerData.canPause : playerControllerRoot.playerData.canPlay
         icon.name: playerControllerRoot.isPlaying ? "media-playback-pause" : "media-playback-start"
         onClicked: {
@@ -93,6 +107,12 @@ RowLayout {
     }
 
     PlasmaComponents3.ToolButton {
+        implicitWidth: playerControllerRoot.showText ? Kirigami.Units.gridUnit * 1.6 : Kirigami.Units.gridUnit * 1.2
+        implicitHeight: playerControllerRoot.showText ? Kirigami.Units.gridUnit * 1.6 : Kirigami.Units.gridUnit * 1.2
+        padding: playerControllerRoot.showText ? Kirigami.Units.smallSpacing : 0
+        icon.width: playerControllerRoot.showText ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.small
+        icon.height: playerControllerRoot.showText ? Kirigami.Units.iconSizes.smallMedium : Kirigami.Units.iconSizes.small
+
         enabled: playerControllerRoot.playerData.canGoNext
         icon.name: mirrored ? "media-skip-backward" : "media-skip-forward"
         onClicked: playerControllerRoot.playerData.Next()

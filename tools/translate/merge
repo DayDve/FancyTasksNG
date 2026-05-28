@@ -52,7 +52,7 @@ xgettext \
 	--package-name="${widgetName}" \
 	--msgid-bugs-address="${bugAddress}" \
 	-D "." \
-	-o "tools/translate/template.pot.new"
+	-o "tools/translate/languages/template.pot.new"
 
 if [ $? -ne 0 ]; then
 	echo "[merge] error while calling xgettext. aborting."
@@ -62,7 +62,7 @@ fi
 sed -i 's/# SOME DESCRIPTIVE TITLE./'"# Translation of ${widgetName} in LANGUAGE"'/' "tools/translate/template.pot.new"
 sed -i 's/# Copyright (C) YEAR THE PACKAGE'"'"'S COPYRIGHT HOLDER/'"# Copyright (C) $(date +%Y)"'/' "tools/translate/template.pot.new"
 
-cd "tools/translate"
+cd "tools/translate/languages"
 
 if [ -f "template.pot" ]; then
 	newPotDate=$(grep "POT-Creation-Date:" template.pot.new | sed 's/.\{3\}$//')
@@ -98,7 +98,7 @@ for cat in $catalogs; do
 		--add-location=file \
 		--no-fuzzy-matching \
 		-o "$cat.new" \
-		"$cat.new" "${SCRIPT_DIR}/template.pot"
+		"$cat.new" "${SCRIPT_DIR}/languages/template.pot"
 
 	sed -i 's/# SOME DESCRIPTIVE TITLE./'"# Translation of ${widgetName} in ${catLocale}"'/' "$cat.new"
 	mv "$cat.new" "$cat"

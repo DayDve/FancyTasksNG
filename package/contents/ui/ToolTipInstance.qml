@@ -28,8 +28,6 @@ import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents3
 import org.kde.plasma.extras as PlasmaExtras
 import org.kde.kirigami as Kirigami
-import org.kde.kwindowsystem
-import org.kde.plasma.private.mpris as Mpris
 import org.kde.taskmanager as TaskManager
 
 import "code/singletones"
@@ -164,108 +162,70 @@ Item {
 
         return text + counter;
     }
-
-    // Media Player Data
-    readonly property var playerData: {
-        if (!mpris2Model) return null;
-        if (!mpris2Model.playerForLauncherUrl) return null;
-        const player = mpris2Model.playerForLauncherUrl(toolTipDelegate.launcherUrl, appPid);
-        return player;
-    }
-    readonly property bool titleIncludesTrack: playerData && playerData.track && title.includes(playerData.track)
-
     required property bool isPlayingAudio
     required property bool isMuted
 
-    // Audio Streams
-    property var audioStreams: []
-    property bool delayAudioStreamIndicator: false
-    readonly property bool audioIndicatorsEnabled: Plasmoid.configuration.indicateAudioStreams
-    readonly property bool hasAudioStream: audioStreams.length > 0
-    // Use the model's IsMuted role as the primary source of truth for the initial state,
-    // but check the stream's state for live updates.
-    readonly property bool muted: isMuted || (hasAudioStream && audioStreams.every(item => item.muted))
-    readonly property bool playingAudio: hasAudioStream && audioStreams.some(item => !item.corked)
+    // Media Controller Loader
+    Loader {
+        id: mediaControllerLoader
+        // Lazy load the backend media controller only when media controls are enabled in settings
+        active: Plasmoid.configuration && Plasmoid.configuration.showMediaControls
+        sourceComponent: ToolTipMediaController {
+            toolTipDelegate: root.toolTipDelegate
+            appPid: root.appPid
+            appId: root.appId
+            title: root.title
+            audioStreamManager: root.audioStreamManager
+            mpris2Model: root.mpris2Model
+            index: root.index
+            thumbnailWinId: thumbnailSourceItem.winId
+            isPlayingAudio: root.isPlayingAudio
+        }
+    }
+
+    readonly property var mediaController: mediaControllerLoader.item
+
+    // Bridge Properties to maintain full compatibility with visual overlays and controllers
+    readonly property var playerData: mediaController ? mediaController.playerData : null
+    readonly property bool titleIncludesTrack: mediaController ? mediaController.titleIncludesTrack : false
     
-    function hasWindowSpecificStream(winId) {
-        if (!winId || !hasAudioStream) return false;
-        
-        // Exact Match
-        const exactMatch = audioStreams.some(stream => stream.windowId === winId);
-        if (exactMatch) return true;
-        
-        return false;
-    }
-
-    Timer {
-        id: streamClearTimer
-        interval: 1000
-        repeat: false
-        onTriggered: root.audioStreams = []
-    }
-
-    function updateAudioStreams(args) {
-        if (args && args.delay) {
-             delayAudioStreamIndicator = true;
-        }
-        var currentForce = (args && args.force);
-
-        var pa = root.audioStreamManager.item;
-        if (!pa) {
-            streamClearTimer.stop();
-            audioStreams = [];
-            return;
-        }
-
-        // Check appid first for app using portal
-        var streams = pa.streamsForAppId(appId.replace(/\.desktop/, '')); 
-        if (!streams.length) {
-            streams = pa.streamsForPid(appPid);
-        }
-        
-        if (streams.length > 0) {
-            var activeKey = appPid;
-            var savedVol = pa.getCachedVolume(activeKey);
-            
-            var currentMax = streams.reduce((max, s) => Math.max(max, s.volume), 0);
-            var seemsReset = (currentMax > 60000 && savedVol > 0 && Math.abs(currentMax - savedVol) > 2000);
-
-            if ((streamClearTimer.running || seemsReset) && savedVol > 0) {
-                 streams.forEach(s => s.setVolume(savedVol));
-            }
-
-            streamClearTimer.stop();
-            audioStreams = streams;
-        } else {
-            if (audioStreams.length > 0 && !currentForce) {
-                streamClearTimer.restart();
-            } else {
-                streamClearTimer.stop();
-                audioStreams = []; 
-            }
-        }
-    }
+    // Audio Streams (Bridged to controller with fallbacks to task model)
+    readonly property var audioStreams: mediaController ? mediaController.audioStreams : []
+    readonly property bool hasAudioStream: mediaController ? mediaController.hasAudioStream : false
+    readonly property bool muted: mediaController ? mediaController.muted : root.isMuted
+    readonly property bool playingAudio: mediaController ? mediaController.playingAudio : root.isPlayingAudio
 
     function toggleMuted() {
-        if (muted) {
-            audioStreams.forEach(item => item.unmute());
+        if (mediaController) {
+            mediaController.toggleMuted();
+        }
+    }
+    
+    function adjustAppVolume(increment) {
+        if (mediaController) {
+            mediaController.adjustAppVolume(increment);
+        }
+    }
+
+    readonly property bool showPlayerControls: mediaController ? mediaController.showPlayerControls : false
+    readonly property bool showVolumeControls: mediaController ? mediaController.showVolumeControls : false
+    readonly property bool controlsAreEffective: mediaController ? mediaController.controlsAreEffective : false
+    property bool delayedControlsActive: false
+    
+    onControlsAreEffectiveChanged: {
+        if (controlsAreEffective) {
+            controlsHideTimer.stop();
+            delayedControlsActive = true;
         } else {
-            audioStreams.forEach(item => item.mute());
+            controlsHideTimer.restart();
         }
     }
-
-    Connections {
-        target: root.audioStreamManager.item
-        ignoreUnknownSignals: true
-        function onStreamsChanged() {
-             root.updateAudioStreams({delay: true});
-        }
-    }
-
-    onAppPidChanged: updateAudioStreams({delay: false, force: true})
-    onAppIdChanged: updateAudioStreams({delay: false, force: true})
-    Component.onCompleted: {
-        updateAudioStreams({delay: false, force: true});
+    
+    Timer {
+        id: controlsHideTimer
+        interval: 1000
+        repeat: false
+        onTriggered: delayedControlsActive = false
     }
 
 
@@ -381,13 +341,17 @@ Item {
 
     // LIST MEDIA CONTROLS (Only visible in Text Mode)
     Loader {
+        id: textModeControlsLoader
         Layout.fillWidth: true
+        Layout.maximumWidth: toolTipDelegate ? toolTipDelegate.tooltipInstanceMaximumWidth : Kirigami.Units.gridUnit * 14
         Layout.topMargin: -Kirigami.Units.smallSpacing // Tighter spacing to header
         
-        active: !toolTipDelegate.showThumbnails && root.controlsAreEffective
+        active: !toolTipDelegate.showThumbnails && (root.controlsAreEffective || root.delayedControlsActive)
         visible: active
         
-        sourceComponent: mediaControlsComponent
+        sourceComponent: ToolTipMediaControls {
+            mediaController: root.mediaController
+        }
     }
 
     Item {
@@ -564,7 +528,7 @@ Item {
             sourceSize: Qt.size(parent.width, parent.height)
 
             asynchronous: true
-            source: toolTipDelegate.playerData?.artUrl ?? ""
+            source: root.playerData?.artUrl ?? ""
             fillMode: Image.PreserveAspectFit
             visible: available
         }
@@ -586,7 +550,7 @@ Item {
         // Overlay Media Controls (Ghost Controls)
         Loader {
             id: overlayControlsLoader
-            active: toolTipDelegate.showThumbnails && root.controlsAreEffective
+            active: toolTipDelegate.showThumbnails && (root.controlsAreEffective || root.delayedControlsActive)
             visible: active
             
             z: 2002 
@@ -596,46 +560,11 @@ Item {
             anchors.margins: Kirigami.Units.smallSpacing
             width: hoverHandler.width - (anchors.margins * 2)
             
-            sourceComponent: Item { 
-                 
-                 readonly property Image source: albumArtImage
-                 width: overlayControlsLoader.width
-                 height: controlsColumn.height + (Kirigami.Units.smallSpacing * 2)
-                
-                readonly property bool hoveredState: thumbnailSourceItem.thumbnailAreaHovered
-                readonly property bool isHovered: overlayHover.hovered
-                readonly property bool childrenVisible: controlsColumn.children.some(child => child.visible)
-
-                HoverHandler {
-                    id: overlayHover
-                }
-
-                Rectangle {
-                    anchors.fill: parent
-                    color: Qt.rgba(0, 0, 0, 0.6)
-                    radius: Kirigami.Units.smallSpacing
-                    
-                    opacity: parent.hoveredState ? 1.0 : 0.0
-                    Behavior on opacity { NumberAnimation { duration: Kirigami.Units.longDuration } }
-                }
-                
-                ColumnLayout {
-                    id: controlsColumn
-                    anchors.centerIn: parent
-                    width: parent.width - (Kirigami.Units.smallSpacing * 2)
-                    
-                    opacity: parent.hoveredState ? 1.0 : 0.4
-                    Behavior on opacity { NumberAnimation { duration: Kirigami.Units.longDuration } }
-
-                    Loader {
-                        sourceComponent: mediaControlsComponent
-                        Layout.fillWidth: true
-                    }
-                }
+            sourceComponent: ToolTipMediaOverlay {
+                mediaController: root.mediaController
+                hoveredState: thumbnailSourceItem.thumbnailAreaHovered
             }
         }
-
-        // Title Overlay (Top-Left)
 
         // Title Overlay (Top-Left)
         Item {
@@ -752,122 +681,9 @@ Item {
         }
     }
 }
-    
-    readonly property bool showPlayerControls: index !== -1 && playerData && playerData.canControl && 
-        (
-            hasWindowSpecificStream(thumbnailSourceItem.winId) || 
-            titleIncludesTrack || 
-            isPlayingAudio || 
-            // Allow single-window apps to show if they have a stream (e.g. Spotify).
-            // This also covers background tabs in parent processes (where WinID is missing).
-            hasAudioStream
-        ) &&
-        (playerData.playbackStatus === Mpris.PlaybackStatus.Playing || 
-         playerData.playbackStatus === Mpris.PlaybackStatus.Paused || 
-         (playerData.track && playerData.track.length > 0))
 
-    readonly property bool showVolumeControls: index !== -1 && audioStreamManager.item !== null && audioIndicatorsEnabled && (isPlayingAudio || hasAudioStream)
-    
-    property bool controlsAreEffective: Plasmoid.configuration.showToolTips && Plasmoid.configuration.showMediaControls && (showPlayerControls || showVolumeControls)
-    property bool delayedControlsActive: false
-    
-    onControlsAreEffectiveChanged: {
-        if (controlsAreEffective) {
-            controlsHideTimer.stop();
-            delayedControlsActive = true;
-        } else {
-            controlsHideTimer.restart();
-        }
-    }
-    
-    Timer {
-        id: controlsHideTimer
-        interval: 1000
-        repeat: false
-        onTriggered: delayedControlsActive = false
-    }
 
-    // Reusable Media Controls Component
-    Component {
-        id: mediaControlsComponent
-        
-        ColumnLayout {
-            spacing: Kirigami.Units.smallSpacing
-            
-            // MPRIS Controls
-            Loader {
-                id: playerController
-                active: root.showPlayerControls
-                asynchronous: false 
-                visible: active
-                Layout.fillWidth: true
-                
-                sourceComponent: PlayerController {
-                    playerData: root.playerData
-                    isWin: toolTipDelegate.isWin
-                }
-            }    
 
-            // Volume Controls
-            Loader {
-                id: volumeControlsLoader
-                active: root.showVolumeControls || (root.delayedControlsActive && root.hasAudioStream) // Keep visible during debounce if we had stream
-                asynchronous: false 
-                visible: active
-                Layout.fillWidth: true
-
-                sourceComponent: RowLayout {
-                    PlasmaComponents3.ToolButton {
-                        icon.width: Kirigami.Units.iconSizes.small
-                        icon.height: Kirigami.Units.iconSizes.small
-                      
-                        icon.name: if (checked) {
-                            "audio-volume-muted";
-                        } else if (Math.round(slider.value / slider.to * 100) <= 25) {
-                            "audio-volume-low";
-                        } else if (Math.round(slider.value / slider.to * 100) <= 75) {
-                            "audio-volume-medium";
-                        } else {
-                            "audio-volume-high";
-                        }
-                        
-                        text: i18n("Mute")
-                        display: PlasmaComponents3.AbstractButton.IconOnly
-                        checkable: true
-                        checked: root.muted
-                        onClicked: root.toggleMuted()
-                    }
-
-                    PlasmaComponents3.Slider {
-                        id: slider
-                        Layout.fillWidth: true
-                        
-                        from: root.audioStreamManager.item.minimalVolume
-                        to: root.audioStreamManager.item.normalVolume
-                        
-                        // Use max volume of all streams
-                        value: root.hasAudioStream && root.audioStreams.length > 0 ? 
-                               root.audioStreams.reduce((max, s) => Math.max(max, s.volume), 0) : 0
-                        
-                        onMoved: {
-                            root.audioStreams.forEach(item => {
-                                // Scale relative to original volume if needed, or just set absolute?
-                                // Simple approach: Set all streams to this volume
-                                item.setVolume(value);
-                                if (value > 0 && item.muted) item.unmute();
-                            });
-                        }
-                    }
-                    
-                    PlasmaComponents3.Label {
-                        text: Math.round(slider.value / slider.to * 100) + "%"
-                        Layout.minimumWidth: 3 * Kirigami.Units.gridUnit 
-                        horizontalAlignment: Text.AlignRight
-                    }
-                }
-            }
-        }
-    }
 
 
 

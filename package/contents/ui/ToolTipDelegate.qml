@@ -21,9 +21,7 @@ import QtQml.Models
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
-
 import org.kde.plasma.components as PlasmaComponents3
-import org.kde.plasma.private.mpris as Mpris
 import org.kde.kirigami as Kirigami
 
 import org.kde.plasma.plasmoid
@@ -138,12 +136,10 @@ Loader {
     readonly property bool isVerticalPanel: tasks.vertical
     readonly property int tooltipInstanceMaximumWidth: Kirigami.Units.gridUnit * 14
 
-    readonly property Mpris.PlayerContainer playerData: mpris2Model && mpris2Model.playerForLauncherUrl ? mpris2Model.playerForLauncherUrl(launcherUrl, pidParent) : null
-    
     property bool forceTextMode: false
 
-    // Using showToolTips as the toggle for "Show Thumbnails"
-    readonly property bool showThumbnails: Plasmoid.configuration.showToolTips && !forceTextMode
+    // Thumbnails are shown only when both the parent tooltip toggle and the thumbnail sub-option are enabled.
+    readonly property bool showThumbnails: Plasmoid.configuration.enableToolTips && Plasmoid.configuration.showToolTips && !forceTextMode
 
     function getAppLayoutDirection(app) {
         return app.layoutDirection;
@@ -151,7 +147,9 @@ Loader {
     LayoutMirroring.enabled: getAppLayoutDirection(Qt.application) === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
 
-    active: rootIndex !== undefined
+    // Do not load the tooltip at all when tooltips are disabled — prevents PipeWireThumbnail from
+    // attempting to grab invisible window images and emitting "grabToImage: item's window is not visible".
+    active: rootIndex !== undefined && Plasmoid.configuration.enableToolTips
     asynchronous: false
 
     sourceComponent: isGroup ? groupToolTip : singleTooltip
@@ -232,6 +230,7 @@ Loader {
                 
                 sourceComponent: ToolTipInstance {    
                     index: 0 
+                    height: implicitHeight
                     submodelIndex: toolTipDelegate.rootIndex
                     explicitWinId: singleInstanceLoader.currentWin
                     
@@ -412,6 +411,7 @@ Loader {
                         required property var model
                         
                         width: toolTipDelegate.tooltipInstanceMaximumWidth
+                        height: implicitHeight
                         
                         index: index 
                         

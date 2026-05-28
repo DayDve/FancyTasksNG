@@ -217,29 +217,40 @@ ConfigPage {
             }
 
             CheckBox {
-                id: showToolTips
-                text: Wrappers.i18n("Show window thumbnails when hovering over tasks")
-                checked: cfg_page.cfg_showToolTips
-                onToggled: cfg_page.cfg_showToolTips = checked
+                id: enableToolTips
+                text: Wrappers.i18n("Show tooltips when hovering over task buttons")
+                checked: cfg_page.cfg_enableToolTips
+                onToggled: cfg_page.cfg_enableToolTips = checked
             }
 
             RowLayout {
-                visible: showToolTips.checked
+                visible: enableToolTips.checked
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+                CheckBox {
+                    id: showToolTips
+                    text: Wrappers.i18n("Show window thumbnails in tooltips")
+                    checked: cfg_page.cfg_showToolTips
+                    onToggled: cfg_page.cfg_showToolTips = checked
+                }
+            }
+
+            RowLayout {
+                visible: enableToolTips.checked
                 Item { implicitWidth: Kirigami.Units.gridUnit }
                 CheckBox {
                     id: highlightWindows
-                    text: Wrappers.i18n("Hide other windows when hovering over thumbnails")
+                    text: Wrappers.i18n("Hide other windows when hovering over a window in the tooltip")
                     checked: cfg_page.cfg_highlightWindows
                     onToggled: cfg_page.cfg_highlightWindows = checked
                 }
             }
 
             RowLayout {
-                visible: showToolTips.checked
+                visible: enableToolTips.checked
                 Item { implicitWidth: Kirigami.Units.gridUnit }
                 CheckBox {
                     id: showMediaControls
-                    text: Wrappers.i18n("Media controls on thumbnails")
+                    text: Wrappers.i18n("Show media controls")
                     checked: cfg_page.cfg_showMediaControls
                     onToggled: cfg_page.cfg_showMediaControls = checked
                 }

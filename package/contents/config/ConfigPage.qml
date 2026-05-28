@@ -35,6 +35,8 @@ Kirigami.Page {
     property int cfg_maxButtonLengthDefault: 0
     property bool cfg_forceStripes: false
     property bool cfg_forceStripesDefault: false
+    property bool cfg_enableToolTips: true
+    property bool cfg_enableToolTipsDefault: true
     property bool cfg_showToolTips: true
     property bool cfg_showToolTipsDefault: true
     property int cfg_wheelAction: 1

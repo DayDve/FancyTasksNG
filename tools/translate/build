@@ -28,7 +28,7 @@ echo "[build] Compiling messages for $projectName"
 
 rm -rf "$PACKAGE_DIR/contents/locale"
 
-catalogs=$(find . -name '*.po' | sort)
+catalogs=$(find languages -name '*.po' | sort)
 for cat in $catalogs; do
 	echo "$cat"
 	catLocale=$(basename "${cat%.*}")
