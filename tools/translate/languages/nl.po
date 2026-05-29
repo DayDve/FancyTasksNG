@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-05-28 19:10+0300\n"
+"POT-Creation-Date: 2026-05-28 19:37+0300\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -364,6 +364,18 @@ msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Show media controls"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Media controls location:"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "On thumbnails (Overlay)"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Under thumbnails"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
@@ -759,7 +771,7 @@ msgctxt "Open or bring to the front window of media player app"
 msgid "Restore"
 msgstr "Herstellen"
 
-#: package/contents/ui/ContextMenu.qml package/contents/ui/ToolTipMediaControls.qml
+#: package/contents/ui/ContextMenu.qml package/contents/ui/ToolTipMediaBar.qml package/contents/ui/ToolTipMediaControls.qml
 msgid "Mute"
 msgstr "Dempen"
 

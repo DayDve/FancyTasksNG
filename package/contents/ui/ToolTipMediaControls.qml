@@ -79,7 +79,20 @@ RowLayout {
             from: controlsRoot.mediaController && controlsRoot.mediaController.audioStreamManager ? controlsRoot.mediaController.audioStreamManager.item.minimalVolume : 0
             to: controlsRoot.mediaController && controlsRoot.mediaController.audioStreamManager ? controlsRoot.mediaController.audioStreamManager.item.normalVolume : 65536
             
-            value: controlsRoot.mediaController ? controlsRoot.mediaController.appVolume : 0
+            // Block built-in QML Slider wheel handling completely to prevent duplicate scroll bugs!
+            WheelHandler {
+                acceptedButtons: Qt.NoButton
+                onWheel: (event) => {
+                    event.accepted = true;
+                }
+            }
+
+            Binding {
+                target: sliderInline
+                property: "value"
+                value: controlsRoot.mediaController ? controlsRoot.mediaController.appVolume : 0
+                when: !sliderInline.pressed
+            }
             
             onMoved: {
                 if (controlsRoot.mediaController) {
@@ -90,8 +103,9 @@ RowLayout {
         
         PlasmaComponents3.Label {
             text: Math.round(sliderInline.value / sliderInline.to * 100) + "%"
-            Layout.minimumWidth: 2.5 * Kirigami.Units.gridUnit 
-            horizontalAlignment: Text.AlignRight
+            Layout.minimumWidth: Kirigami.Units.gridUnit * 1.5
+            font.pixelSize: 10
+            horizontalAlignment: Text.AlignHCenter
         }
     }
 }

@@ -104,7 +104,20 @@ Item {
                 from: overlayRoot.mediaController && overlayRoot.mediaController.audioStreamManager ? overlayRoot.mediaController.audioStreamManager.item.minimalVolume : 0
                 to: overlayRoot.mediaController && overlayRoot.mediaController.audioStreamManager ? overlayRoot.mediaController.audioStreamManager.item.normalVolume : 65536
                 
-                value: overlayRoot.mediaController ? overlayRoot.mediaController.appVolume : 0
+                // Block built-in QML Slider wheel handling completely to prevent duplicate scroll bugs!
+                WheelHandler {
+                    acceptedButtons: Qt.NoButton
+                    onWheel: (event) => {
+                        event.accepted = true;
+                    }
+                }
+
+                Binding {
+                    target: slider
+                    property: "value"
+                    value: overlayRoot.mediaController ? overlayRoot.mediaController.appVolume : 0
+                    when: !slider.pressed
+                }
                 
                 onMoved: {
                     if (overlayRoot.mediaController) {
@@ -115,8 +128,9 @@ Item {
             
             PlasmaComponents3.Label {
                 text: Math.round(slider.value / slider.to * 100) + "%"
-                Layout.minimumWidth: 2.5 * Kirigami.Units.gridUnit 
-                horizontalAlignment: Text.AlignRight
+                Layout.minimumWidth: Kirigami.Units.gridUnit * 1.5
+                font.pixelSize: 10
+                horizontalAlignment: Text.AlignHCenter
             }
         }
     }

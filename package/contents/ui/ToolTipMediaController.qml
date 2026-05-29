@@ -40,10 +40,11 @@ Item {
     readonly property bool muted: hasAudioStream && audioStreams.every(item => item.muted)
     readonly property bool playingAudio: hasAudioStream && audioStreams.some(item => !item.corked)
 
-    // Cached and smoothed volume properties to prevent slider flicker
+    // While userVolumeChangeTimer is running, expose cachedVolume instead of live PA
+    // to prevent the slider from showing intermediate PA values during rapid scrolling.
     property int cachedVolume: 0
     readonly property int appVolume: {
-        if (hasAudioStream && audioStreams.length > 0) {
+        if (hasAudioStream && audioStreams.length > 0 && !userVolumeChangeTimer.running) {
             var validStreams = audioStreams.filter(s => s && typeof s.volume !== 'undefined');
             if (validStreams.length > 0) {
                 return validStreams.reduce((max, s) => Math.max(max, s.volume), 0);
@@ -63,6 +64,20 @@ Item {
         interval: 1000
         repeat: false
         onTriggered: controller.audioStreams = []
+    }
+
+    Timer {
+        id: userVolumeChangeTimer
+        // Cooldown after a user volume change. During this window appVolume returns
+        // cachedVolume instead of reading live PA streams, which may still carry
+        // intermediate values from earlier commands in a rapid scroll sequence.
+        interval: 500
+        repeat: false
+        onTriggered: {
+            var validStreams = audioStreams.filter(s => s && typeof s.volume !== 'undefined');
+            if (validStreams.length > 0)
+                cachedVolume = validStreams.reduce((max, s) => Math.max(max, s.volume), 0);
+        }
     }
 
     function updateAudioStreams(args) {
@@ -92,22 +107,14 @@ Item {
 
 
         if (streams.length > 0) {
-            var activeKey = appPid;
-            var savedVol = pa.getCachedVolume(activeKey);
-
-            var validStreams = streams.filter(s => s && typeof s.volume !== 'undefined');
-            if (validStreams.length > 0) {
-                var maxVol = validStreams.reduce((max, s) => Math.max(max, s.volume), 0);
-                cachedVolume = maxVol;
+            // Only update cachedVolume from PA when not actively changing volume.
+            // While userVolumeChangeTimer is running we keep cachedVolume as-is so
+            // the slider stays at the intended position until PA fully converges.
+            if (!userVolumeChangeTimer.running) {
+                var validStreams = streams.filter(s => s && typeof s.volume !== 'undefined');
+                if (validStreams.length > 0)
+                    cachedVolume = validStreams.reduce((max, s) => Math.max(max, s.volume), 0);
             }
-
-            var currentMax = streams.reduce((max, s) => Math.max(max, s.volume), 0);
-            var seemsReset = (currentMax > 60000 && savedVol > 0 && Math.abs(currentMax - savedVol) > 2000);
-
-            if ((streamClearTimer.running || seemsReset) && savedVol > 0) {
-                streams.forEach(s => s.setVolume(savedVol));
-            }
-
             streamClearTimer.stop();
             audioStreams = streams;
         } else {
@@ -129,31 +136,27 @@ Item {
     }
 
     function adjustAppVolume(increment) {
-        if (!hasAudioStream || !audioStreamManager || !audioStreamManager.item) return;
+        if (!hasAudioStream || !audioStreamManager || !audioStreamManager.item)
+            return;
         let pa = audioStreamManager.item;
-        audioStreams.forEach(item => {
-            if (item && typeof item.setVolume === 'function') {
-                let newVol = Math.max(pa.minimalVolume, Math.min(pa.normalVolume, item.volume + increment));
-                item.setVolume(newVol);
-                if (newVol > 0 && item.muted) {
-                    item.unmute();
-                }
-                cachedVolume = newVol;
-            }
-        });
+        // Compute an absolute target and delegate to setVolume — same path as the slider.
+        // appVolume returns the live PA value when idle, or cachedVolume during rapid
+        // scrolling, so accumulation is always correct without any separate caching logic.
+        setVolume(Math.max(pa.minimalVolume, Math.min(pa.normalVolume, appVolume + increment)));
     }
 
     function setVolume(value) {
-        if (!hasAudioStream) return;
+        if (!hasAudioStream)
+            return;
+        cachedVolume = value;
+        userVolumeChangeTimer.restart();
         audioStreams.forEach(item => {
             if (item && typeof item.setVolume === 'function') {
                 item.setVolume(value);
-                if (value > 0 && item.muted) {
+                if (value > 0 && item.muted)
                     item.unmute();
-                }
             }
         });
-        cachedVolume = value;
     }
 
     Connections {
@@ -182,8 +185,24 @@ Item {
     }
 
     // Effective control state calculation
-    readonly property bool showPlayerControls: index !== -1 && playerData && playerData.canControl && (hasWindowSpecificStream(thumbnailWinId) || titleIncludesTrack || (toolTipDelegate.windows.length === 1 && (isPlayingAudio || hasAudioStream))) && (playerData.playbackStatus === Mpris.PlaybackStatus.Playing || playerData.playbackStatus === Mpris.PlaybackStatus.Paused || (playerData.track && playerData.track.length > 0))
-    readonly property bool showVolumeControls: index !== -1 && audioStreamManager && audioStreamManager.item !== null && audioIndicatorsEnabled && (hasWindowSpecificStream(thumbnailWinId) || titleIncludesTrack || (toolTipDelegate.windows.length === 1 && hasAudioStream))
+    readonly property bool showPlayerControls: {
+        if (index === -1 || !playerData || !playerData.canControl)
+            return false;
+        
+        var hasStatus = playerData.playbackStatus === Mpris.PlaybackStatus.Playing || 
+                        playerData.playbackStatus === Mpris.PlaybackStatus.Paused || 
+                        (playerData.track && playerData.track.length > 0);
+        if (!hasStatus)
+            return false;
+
+        // If it's a single window tooltip or global group controller, always allow controls
+        if (!toolTipDelegate || !toolTipDelegate.isGroup || !thumbnailWinId)
+            return true;
+
+        // For individual windows inside a group, require strict stream or title matching
+        return hasWindowSpecificStream(thumbnailWinId) || titleIncludesTrack || isPlayingAudio || hasAudioStream;
+    }
+    readonly property bool showVolumeControls: index !== -1 && audioStreamManager && audioStreamManager.item !== null && audioIndicatorsEnabled && (hasWindowSpecificStream(thumbnailWinId) || titleIncludesTrack || hasAudioStream)
     readonly property bool controlsAreEffective: Plasmoid.configuration && Plasmoid.configuration.showMediaControls && (showPlayerControls || showVolumeControls)
 }
 
