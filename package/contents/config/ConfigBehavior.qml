@@ -84,11 +84,23 @@ ConfigPage {
 
             Item { height: Kirigami.Units.largeSpacing }
 
-            CheckBox {
+            Label {
+                text: Wrappers.i18n("Sort tasks:")
+            }
+            ComboBox {
                 id: cfg_sortingStrategy
-                text: Wrappers.i18n("Allow manual task reordering")
-                checked: cfg_page.cfg_sortingStrategy === 1
-                onToggled: cfg_page.cfg_sortingStrategy = (checked ? 1 : 0)
+                Layout.fillWidth: true
+                Layout.minimumWidth: Kirigami.Units.gridUnit * 14
+                model: [
+                    Wrappers.i18n("Do not sort"),
+                    Wrappers.i18n("Manually"),
+                    Wrappers.i18n("Alphabetically"),
+                    Wrappers.i18n("By desktop"),
+                    Wrappers.i18n("By activity"),
+                    Wrappers.i18n("By horizontal window position")
+                ]
+                currentIndex: cfg_page.cfg_sortingStrategy
+                onActivated: (index) => cfg_page.cfg_sortingStrategy = index
             }
 
 

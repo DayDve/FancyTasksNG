@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-05-29 20:04+0300\n"
+"POT-Creation-Date: 2026-05-31 10:53+0300\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -291,8 +291,32 @@ msgid "Standard group overlay"
 msgstr "Стандартный оверлей групп"
 
 #: package/contents/config/ConfigBehavior.qml
-msgid "Allow manual task reordering"
-msgstr "Разрешить ручную сортировку задач"
+msgid "Sort tasks:"
+msgstr "Сортировка задач:"
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Do not sort"
+msgstr "Без сортировки"
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Manually"
+msgstr "Вручную"
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Alphabetically"
+msgstr "По алфавиту"
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "By desktop"
+msgstr "По рабочим столам"
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "By activity"
+msgstr "По комнатам"
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "By horizontal window position"
+msgstr "По горизонтальному положению окон"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Clicking active task minimizes the task"

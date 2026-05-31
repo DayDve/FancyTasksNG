@@ -368,7 +368,7 @@ PlasmoidItem {
         tasks.tasksModel.hideActivatedLaunchers = tasks.iconsOnly || tasks.tasksModel.launchInPlace;
         tasks.tasksModel.sortMode = tasks.sortModeEnumValue(Plasmoid.configuration.sortingStrategy);
         tasks.tasksModel.launchInPlace = (Plasmoid.configuration.sortingStrategy === 1);
-        tasks.tasksModel.separateLaunchers = (Plasmoid.configuration.sortingStrategy === 0);
+        tasks.tasksModel.separateLaunchers = (Plasmoid.configuration.sortingStrategy !== 1);
 
         tasks.tasksModel.groupMode = tasks.groupModeEnumValue(Plasmoid.configuration.groupingStrategy);
         tasks.tasksModel.groupInline = !Plasmoid.configuration.groupPopups;
@@ -378,7 +378,22 @@ PlasmoidItem {
     }
 
     function sortModeEnumValue(index) {
-        return (Number(index) === 1) ? TaskManager.TasksModel.SortManual : TaskManager.TasksModel.SortDisabled;
+        switch (Number(index)) {
+        case 0:
+            return TaskManager.TasksModel.SortDisabled;
+        case 1:
+            return TaskManager.TasksModel.SortManual;
+        case 2:
+            return TaskManager.TasksModel.SortAlpha;
+        case 3:
+            return TaskManager.TasksModel.SortVirtualDesktop;
+        case 4:
+            return TaskManager.TasksModel.SortActivity;
+        case 5:
+            return TaskManager.TasksModel.SortWindowPositionHorizontal;
+        default:
+            return TaskManager.TasksModel.SortDisabled;
+        }
     }
 
     function groupModeEnumValue(index) {
