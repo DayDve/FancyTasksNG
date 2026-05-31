@@ -550,7 +550,7 @@ Item {
         // Overlay Media Controls (Ghost Controls)
         Loader {
             id: overlayControlsLoader
-            active: toolTipDelegate.showThumbnails && (root.controlsAreEffective || root.delayedControlsActive)
+            active: toolTipDelegate.showThumbnails && Plasmoid.configuration.mediaControlsLocation === 0 && (root.controlsAreEffective || root.delayedControlsActive)
             visible: active
             
             z: 2002 
@@ -678,6 +678,21 @@ Item {
                 const targetIndex = root.findMatchingTaskIndex();
                 tasksModel.requestClose(targetIndex);
             }
+        }
+    }
+
+    // UNDER-THUMBNAIL MEDIA BAR
+    Loader {
+        id: mediaBarLoader
+        Layout.fillWidth: true
+        Layout.topMargin: Kirigami.Units.smallSpacing
+        Layout.bottomMargin: -Kirigami.Units.smallSpacing // Tighter padding
+
+        active: toolTipDelegate.showThumbnails && Plasmoid.configuration.mediaControlsLocation === 1 && (root.controlsAreEffective || root.delayedControlsActive)
+        visible: active
+
+        sourceComponent: ToolTipMediaBar {
+            mediaController: root.mediaController
         }
     }
 }

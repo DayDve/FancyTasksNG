@@ -75,7 +75,7 @@
       <default />
     </entry>
     <entry name="sortingStrategy" type="Int">
-      <label>How to sort tasks: 0 = Automatic, 1 = Manually</label>
+      <label>How to sort tasks: 0 = Do not sort, 1 = Manually, 2 = Alphabetically, 3 = By desktop, 4 = By activity, 5 = By horizontal window position</label>
       <default>0</default>
     </entry>
 
@@ -411,6 +411,10 @@
     <entry name="unpinByDragExplosion" type="Bool">
       <label>Play removal animation when unpinning by drag (icons-only mode).</label>
       <default>false</default>
+    </entry>
+    <entry name="mediaControlsLocation" type="Int">
+      <label>Location of media controls on thumbnails: 0 = On thumbnails (Overlay), 1 = Under thumbnails</label>
+      <default>0</default>
     </entry>
   </group>
 

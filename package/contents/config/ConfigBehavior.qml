@@ -256,6 +256,25 @@ ConfigPage {
                 }
             }
 
+            RowLayout {
+                visible: enableToolTips.checked && showToolTips.checked && showMediaControls.checked
+                Item { implicitWidth: Kirigami.Units.gridUnit * 2 }
+                Label {
+                    text: Wrappers.i18n("Media controls location:")
+                }
+                ComboBox {
+                    id: cfg_mediaControlsLocation
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: Kirigami.Units.gridUnit * 12
+                    model: [
+                        Wrappers.i18n("On thumbnails (Overlay)"),
+                        Wrappers.i18n("Under thumbnails")
+                    ]
+                    currentIndex: cfg_page.cfg_mediaControlsLocation
+                    onActivated: (index) => cfg_page.cfg_mediaControlsLocation = index
+                }
+            }
+
             Label {
                 text: Wrappers.i18n("Clicking group button:")
             }
