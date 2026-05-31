@@ -171,8 +171,35 @@ Kirigami.Page {
     property int cfg_indicatorRadiusDefault: 0
     property int cfg_indicatorShrink: 0
     property int cfg_indicatorShrinkDefault: 0
-    property bool cfg_indicatorDarkenExtras: false
-    property bool cfg_indicatorDarkenExtrasDefault: false
+
+    property int cfg_indicatorActiveLength: 12
+    property int cfg_indicatorActiveLengthDefault: 12
+    property int cfg_indicatorActiveSize: 5
+    property int cfg_indicatorActiveSizeDefault: 5
+    property int cfg_indicatorHoverLength: 14
+    property int cfg_indicatorHoverLengthDefault: 14
+    property int cfg_indicatorHoverSize: 5
+    property int cfg_indicatorHoverSizeDefault: 5
+    property bool cfg_indicatorResize: true
+    property bool cfg_indicatorResizeDefault: true
+    property bool cfg_indicatorResizeLength: true
+    property bool cfg_indicatorResizeLengthDefault: true
+    property bool cfg_indicatorResizeThickness: true
+    property bool cfg_indicatorResizeThicknessDefault: true
+    property bool cfg_indicatorHoverSeparate: false
+    property bool cfg_indicatorHoverSeparateDefault: false
+    property bool cfg_indicatorGroupSeparate: false
+    property bool cfg_indicatorGroupSeparateDefault: false
+    property int cfg_indicatorGroupLength: 10
+    property int cfg_indicatorGroupLengthDefault: 10
+    property int cfg_indicatorGroupSize: 3
+    property int cfg_indicatorGroupSizeDefault: 3
+    property bool cfg_indicatorShowPlus: true
+    property bool cfg_indicatorShowPlusDefault: true
+    property bool cfg_indicatorHighlightActive: true
+    property bool cfg_indicatorHighlightActiveDefault: true
+    property int cfg_indicatorAlignment: 0
+    property int cfg_indicatorAlignmentDefault: 0
     property bool cfg_indicatorDominantColor: false
     property bool cfg_indicatorDominantColorDefault: false
     property bool cfg_indicatorAccentColor: false

@@ -157,6 +157,190 @@ ConfigPage {
             RowLayout {
                 visible: indicatorsEnabled.checked
                 spacing: Kirigami.Units.smallSpacing
+                CheckBox {
+                    id: indicatorResize
+                    text: Wrappers.i18n("Resize indicators on activation/hover")
+                    checked: cfg_page.cfg_indicatorResize
+                    onToggled: cfg_page.cfg_indicatorResize = checked
+                }
+            }
+
+            RowLayout {
+                visible: indicatorsEnabled.checked && indicatorResize.checked
+                spacing: Kirigami.Units.smallSpacing
+                Item { width: Kirigami.Units.gridUnit }
+
+                Label {
+                    text: Wrappers.i18n("Length:")
+                }
+                SpinBox {
+                    id: indicatorActiveLength
+                    from: 1
+                    to: 999
+                    value: cfg_page.cfg_indicatorActiveLength
+                    onValueModified: cfg_page.cfg_indicatorActiveLength = value
+                }
+                Label {
+                    text: "px"
+                }
+
+                Item { width: Kirigami.Units.largeSpacing }
+
+                Label {
+                    text: Wrappers.i18n("Thickness:")
+                }
+                SpinBox {
+                    id: indicatorActiveSize
+                    from: 1
+                    to: 999
+                    value: cfg_page.cfg_indicatorActiveSize
+                    onValueModified: cfg_page.cfg_indicatorActiveSize = value
+                }
+                Label {
+                    text: "px"
+                }
+            }
+
+            RowLayout {
+                visible: indicatorsEnabled.checked && indicatorResize.checked
+                spacing: Kirigami.Units.smallSpacing
+                Item { width: Kirigami.Units.gridUnit }
+                Label {
+                    text: Wrappers.i18n("Segment alignment:")
+                }
+                ComboBox {
+                    id: indicatorAlignment
+                    model: {
+                        let isVertical = cfg_page.cfg_indicatorOverride ? 
+                            (cfg_page.cfg_indicatorLocation === 1 || cfg_page.cfg_indicatorLocation === 2) :
+                            (Plasmoid.location === PlasmaCore.Types.LeftEdge || Plasmoid.location === PlasmaCore.Types.RightEdge);
+
+                        return isVertical ? [
+                            Wrappers.i18n("Align Left"),
+                            Wrappers.i18n("Align Center"),
+                            Wrappers.i18n("Align Right")
+                        ] : [
+                            Wrappers.i18n("Align Top"),
+                            Wrappers.i18n("Align Center"),
+                            Wrappers.i18n("Align Bottom")
+                        ];
+                    }
+                    currentIndex: cfg_page.cfg_indicatorAlignment
+                    onActivated: (index) => cfg_page.cfg_indicatorAlignment = index
+                }
+            }
+
+            RowLayout {
+                visible: indicatorsEnabled.checked && indicatorResize.checked
+                spacing: Kirigami.Units.smallSpacing
+                Item { width: Kirigami.Units.gridUnit }
+                CheckBox {
+                    id: indicatorHoverSeparate
+                    text: Wrappers.i18n("Separate settings for hovered indicators")
+                    checked: cfg_page.cfg_indicatorHoverSeparate
+                    onToggled: cfg_page.cfg_indicatorHoverSeparate = checked
+                }
+            }
+
+            RowLayout {
+                visible: indicatorsEnabled.checked && indicatorResize.checked && indicatorHoverSeparate.checked
+                spacing: Kirigami.Units.smallSpacing
+                Item { width: Kirigami.Units.gridUnit * 2 }
+
+                Label {
+                    text: Wrappers.i18n("Thickness:")
+                }
+                SpinBox {
+                    id: indicatorHoverSize
+                    from: 1
+                    to: 999
+                    value: cfg_page.cfg_indicatorHoverSize
+                    onValueModified: cfg_page.cfg_indicatorHoverSize = value
+                }
+                Label {
+                    text: "px"
+                }
+
+                Item { width: Kirigami.Units.largeSpacing }
+
+                Label {
+                    text: Wrappers.i18n("Length:")
+                }
+                SpinBox {
+                    id: indicatorHoverLength
+                    from: 1
+                    to: 999
+                    value: cfg_page.cfg_indicatorHoverLength
+                    onValueModified: cfg_page.cfg_indicatorHoverLength = value
+                }
+                Label {
+                    text: "px"
+                }
+            }
+
+            RowLayout {
+                visible: indicatorsEnabled.checked && indicatorResize.checked
+                spacing: Kirigami.Units.smallSpacing
+                Item { width: Kirigami.Units.gridUnit }
+                CheckBox {
+                    id: indicatorHighlightActive
+                    text: Wrappers.i18n("Highlight active window in group")
+                    checked: cfg_page.cfg_indicatorHighlightActive
+                    onToggled: cfg_page.cfg_indicatorHighlightActive = checked
+                }
+            }
+
+            RowLayout {
+                visible: indicatorsEnabled.checked && indicatorResize.checked && indicatorHighlightActive.checked
+                spacing: Kirigami.Units.smallSpacing
+                Item { width: Kirigami.Units.gridUnit * 2 }
+                CheckBox {
+                    id: indicatorGroupSeparate
+                    text: Wrappers.i18n("Separate settings for group indicators")
+                    checked: cfg_page.cfg_indicatorGroupSeparate
+                    onToggled: cfg_page.cfg_indicatorGroupSeparate = checked
+                }
+            }
+
+            RowLayout {
+                visible: indicatorsEnabled.checked && indicatorResize.checked && indicatorHighlightActive.checked && indicatorGroupSeparate.checked
+                spacing: Kirigami.Units.smallSpacing
+                Item { width: Kirigami.Units.gridUnit * 3 }
+
+                Label {
+                    text: Wrappers.i18n("Thickness:")
+                }
+                SpinBox {
+                    id: indicatorGroupSize
+                    from: 1
+                    to: 999
+                    value: cfg_page.cfg_indicatorGroupSize
+                    onValueModified: cfg_page.cfg_indicatorGroupSize = value
+                }
+                Label {
+                    text: "px"
+                }
+
+                Item { width: Kirigami.Units.largeSpacing }
+
+                Label {
+                    text: Wrappers.i18n("Length:")
+                }
+                SpinBox {
+                    id: indicatorGroupLength
+                    from: 1
+                    to: 999
+                    value: cfg_page.cfg_indicatorGroupLength
+                    onValueModified: cfg_page.cfg_indicatorGroupLength = value
+                }
+                Label {
+                    text: "px"
+                }
+            }
+
+            RowLayout {
+                visible: indicatorsEnabled.checked
+                spacing: Kirigami.Units.smallSpacing
                 Label {
                     text: Wrappers.i18n("Roundness:")
                 }
@@ -191,13 +375,6 @@ ConfigPage {
                 }
             }
 
-            CheckBox {
-                visible: indicatorsEnabled.checked && cfg_page.isLineStyle
-                text: Wrappers.i18n("Darken extra segments")
-                checked: cfg_page.cfg_indicatorDarkenExtras
-                onToggled: cfg_page.cfg_indicatorDarkenExtras = checked
-            }
-
             Item { height: Kirigami.Units.largeSpacing; visible: indicatorsEnabled.checked }
 
             RowLayout {
@@ -213,6 +390,14 @@ ConfigPage {
                     value: cfg_page.cfg_indicatorMaxLimit
                     onValueModified: cfg_page.cfg_indicatorMaxLimit = value
                 }
+            }
+
+            CheckBox {
+                visible: indicatorsEnabled.checked
+                id: indicatorShowPlus
+                text: Wrappers.i18n("Show '+' on overflow")
+                checked: cfg_page.cfg_indicatorShowPlus
+                onToggled: cfg_page.cfg_indicatorShowPlus = checked
             }
 
             Item { height: Kirigami.Units.largeSpacing; visible: indicatorsEnabled.checked }

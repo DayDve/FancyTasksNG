@@ -210,11 +210,10 @@ Item {
     states: [
         State {
             name: "standalone"
-            when: !iconBox.labelVisible && iconBox.taskItem && iconBox.taskItem.parent
+            when: !iconBox._iconsOnly && !iconBox.labelVisible && iconBox.taskItem && iconBox.taskItem.parent && iconBox._taskHasModel && !iconBox.taskItem.model.IsLauncher
             PropertyChanges {
                 target: iconBox; anchors.leftMargin: 0
-                width: (iconBox._taskHasModel && iconBox.taskItem.model.IsLauncher && !iconBox._iconsOnly) ? iconBox.taskItem.parent.minimumWidth :
-                    Math.min(iconBox.taskItem.parent.minimumWidth, iconBox._trHeight) - adjustMargin(true, iconBox.taskItem.width, iconBox._trTaskFrame ? iconBox._trTaskFrame.margins.left : 0) - adjustMargin(true, iconBox.taskItem.width, iconBox._trTaskFrame ? iconBox._trTaskFrame.margins.right : 0)
+                width: Math.min(iconBox.taskItem.parent.minimumWidth, iconBox._trHeight) - adjustMargin(true, iconBox.taskItem.width, iconBox._trTaskFrame ? iconBox._trTaskFrame.margins.left : 0) - adjustMargin(true, iconBox.taskItem.width, iconBox._trTaskFrame ? iconBox._trTaskFrame.margins.right : 0)
             }
         }
     ]

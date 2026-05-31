@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-05-31 10:53+0300\n"
+"POT-Creation-Date: 2026-05-31 23:30+0300\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -540,6 +540,50 @@ msgid "Segment length:"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
+msgid "Resize indicators on activation/hover"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Length:"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Segment alignment:"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Align Left"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Align Center"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Align Right"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Align Top"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Align Bottom"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Separate settings for hovered indicators"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Highlight active window in group"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Separate settings for group indicators"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
 msgid "Roundness:"
 msgstr ""
 
@@ -548,11 +592,11 @@ msgid "Side padding:"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
-msgid "Darken extra segments"
+msgid "Max segments:"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
-msgid "Max segments:"
+msgid "Show '+' on overflow"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-05-31 10:53+0300\n"
+"POT-Creation-Date: 2026-05-31 23:30+0300\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -540,6 +540,50 @@ msgid "Segment length:"
 msgstr "Длина сегмента:"
 
 #: package/contents/config/ConfigIndicators.qml
+msgid "Resize indicators on activation/hover"
+msgstr "Изменение размеров индикаторов при активации/наведении"
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Length:"
+msgstr "Длина:"
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Segment alignment:"
+msgstr "Выравнивание сегментов:"
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Align Left"
+msgstr "Слева"
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Align Center"
+msgstr "По центру"
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Align Right"
+msgstr "Справа"
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Align Top"
+msgstr "По верху"
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Align Bottom"
+msgstr "По низу"
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Separate settings for hovered indicators"
+msgstr "Отдельная настройка для индикаторов при наведении"
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Highlight active window in group"
+msgstr "Выделять активное окно в группе"
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Separate settings for group indicators"
+msgstr "Отдельная настройка для индикаторов в группе"
+
+#: package/contents/config/ConfigIndicators.qml
 msgid "Roundness:"
 msgstr "Скругление:"
 
@@ -548,12 +592,12 @@ msgid "Side padding:"
 msgstr "Боковой отступ:"
 
 #: package/contents/config/ConfigIndicators.qml
-msgid "Darken extra segments"
-msgstr "Затенять дополнительные сегменты"
-
-#: package/contents/config/ConfigIndicators.qml
 msgid "Max segments:"
 msgstr "Макс. сегментов:"
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Show '+' on overflow"
+msgstr "Отображать «+» при переполнении"
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "Colors:"
@@ -974,6 +1018,30 @@ msgstr "Также доступно в %1"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Доступно в %1"
+
+#~ msgid "Active window thickness:"
+#~ msgstr "Толщина (активное окно):"
+
+#~ msgid "Active window length:"
+#~ msgstr "Длина (активное окно):"
+
+#~ msgid "Hover thickness:"
+#~ msgstr "Толщина при наведении:"
+
+#~ msgid "Hover length:"
+#~ msgstr "Длина при наведении:"
+
+#~ msgid "Length"
+#~ msgstr "Длина"
+
+#~ msgid "Thickness"
+#~ msgstr "Толщина"
+
+#~ msgid "Group thickness:"
+#~ msgstr "Толщина в группе:"
+
+#~ msgid "Group length:"
+#~ msgstr "Длина в группе:"
 
 #~ msgid "Combine into single button"
 #~ msgstr "Объединять в одну кнопку"

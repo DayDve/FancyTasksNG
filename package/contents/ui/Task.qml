@@ -84,12 +84,41 @@ Item {
     rotation: (tasksRoot && Plasmoid.configuration.reverseMode && tasksRoot.vertical) ?
         180 : 0
 
-    implicitHeight: task.inPopup ? LayoutMetrics.preferredHeightInPopup() : (
-        (!tasksRoot) ? LayoutMetrics.preferredMinHeight() : (tasksRoot.vertical ? LayoutMetrics.preferredMaxHeight() : Math.max(tasksRoot.height / Plasmoid.configuration.maxStripes, LayoutMetrics.preferredMinHeight()))
-    )
-    implicitWidth: (!tasksRoot) ? LayoutMetrics.preferredMinWidth() : (tasksRoot.vertical ? (
-        Math.max(LayoutMetrics.preferredMinWidth(), Math.min(LayoutMetrics.preferredMaxWidth(), tasksRoot.width / Plasmoid.configuration.maxStripes))
-    ) : LayoutMetrics.preferredMaxWidth())
+    implicitHeight: {
+        if (!tasksRoot) return LayoutMetrics.preferredMinHeight();
+        if (task.inPopup) return LayoutMetrics.preferredHeightInPopup();
+        if (tasksRoot.vertical) {
+            if (task.isIcon) {
+                let cols = (tasksRoot.taskList && tasksRoot.taskList.columns > 0) ? tasksRoot.taskList.columns : (Plasmoid.configuration.maxStripes || 1);
+                return (tasksRoot.width / cols) + LayoutMetrics.verticalMargins();
+            }
+            return LayoutMetrics.preferredMaxHeight();
+        } else {
+            let stripes = Plasmoid.configuration.maxStripes || 1;
+            if (task.isIcon) {
+                let rws = (tasksRoot.taskList && tasksRoot.taskList.rows > 0) ? tasksRoot.taskList.rows : stripes;
+                return (tasksRoot.height / rws) + LayoutMetrics.verticalMargins();
+            }
+            return Math.max(tasksRoot.height / stripes, LayoutMetrics.preferredMinHeight());
+        }
+    }
+    implicitWidth: {
+        if (!tasksRoot) return LayoutMetrics.preferredMinWidth();
+        if (tasksRoot.vertical) {
+            let stripes = Plasmoid.configuration.maxStripes || 1;
+            if (task.isIcon) {
+                let cols = (tasksRoot.taskList && tasksRoot.taskList.columns > 0) ? tasksRoot.taskList.columns : stripes;
+                return (tasksRoot.width / cols) + LayoutMetrics.horizontalMargins();
+            }
+            return Math.max(LayoutMetrics.preferredMinWidth(), Math.min(LayoutMetrics.preferredMaxWidth(), tasksRoot.width / stripes));
+        } else {
+            if (task.isIcon) {
+                let rws = (tasksRoot.taskList && tasksRoot.taskList.rows > 0) ? tasksRoot.taskList.rows : (Plasmoid.configuration.maxStripes || 1);
+                return (tasksRoot.height / rws) + LayoutMetrics.horizontalMargins();
+            }
+            return LayoutMetrics.preferredMaxWidth();
+        }
+    }
 
     Layout.fillWidth: true
     Layout.fillHeight: !task.inPopup
@@ -609,7 +638,7 @@ Item {
         }
         flow: Flow.LeftToRight
         spacing: Kirigami.Units.smallSpacing
-        clip: true
+        clip: false
     }
 
     TapHandler {

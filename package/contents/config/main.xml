@@ -299,9 +299,61 @@
       <label>Set the indicator margins in pixels</label>
       <default>4</default>
     </entry>
-    <entry name="indicatorDarkenExtras" type="Bool">
-      <label>Darken extra indicator segments (Line style only)</label>
+    <entry name="indicatorActiveLength" type="Int">
+      <label>Set the length of the active indicator in pixels</label>
+      <default>12</default>
+    </entry>
+    <entry name="indicatorActiveSize" type="Int">
+      <label>Set the thickness of the active indicator in pixels</label>
+      <default>5</default>
+    </entry>
+    <entry name="indicatorHoverLength" type="Int">
+      <label>Set the length of the hovered indicator in pixels</label>
+      <default>14</default>
+    </entry>
+    <entry name="indicatorHoverSize" type="Int">
+      <label>Set the thickness of the hovered indicator in pixels</label>
+      <default>5</default>
+    </entry>
+    <entry name="indicatorResize" type="Bool">
+      <label>Enable resizing of indicators on activation and hover</label>
       <default>true</default>
+    </entry>
+    <entry name="indicatorResizeLength" type="Bool">
+      <label>Resize length of active and hovered indicators</label>
+      <default>true</default>
+    </entry>
+    <entry name="indicatorResizeThickness" type="Bool">
+      <label>Resize thickness of active and hovered indicators</label>
+      <default>true</default>
+    </entry>
+    <entry name="indicatorHoverSeparate" type="Bool">
+      <label>Use separate settings for hovered indicators</label>
+      <default>false</default>
+    </entry>
+    <entry name="indicatorGroupSeparate" type="Bool">
+      <label>Use separate settings for group indicators</label>
+      <default>false</default>
+    </entry>
+    <entry name="indicatorGroupLength" type="Int">
+      <label>Length of group indicators</label>
+      <default>10</default>
+    </entry>
+    <entry name="indicatorGroupSize" type="Int">
+      <label>Thickness of group indicators</label>
+      <default>3</default>
+    </entry>
+    <entry name="indicatorShowPlus" type="Bool">
+      <label>Show a plus badge when open windows count exceeds maximum visible indicators</label>
+      <default>true</default>
+    </entry>
+    <entry name="indicatorHighlightActive" type="Bool">
+      <label>Highlight active window indicator in groups</label>
+      <default>true</default>
+    </entry>
+    <entry name="indicatorAlignment" type="Int">
+      <label>Cross-axis alignment of indicator segments (0=edge, 1=center, 2=inner)</label>
+      <default>0</default>
     </entry>
     <entry name="indicatorDominantColor" type="Bool">
       <label>Make the indicator the dominant Icon Color</label>

@@ -8,8 +8,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-
-
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
@@ -23,6 +21,46 @@ Flow {
     required property var task
     required property var frame
     required property var tasksRoot
+
+    // Max possible cross-axis thickness across all indicator states
+    readonly property int maxIndicatorThickness: Math.max(
+        Plasmoid.configuration.indicatorSize,
+        Plasmoid.configuration.indicatorActiveSize,
+        Plasmoid.configuration.indicatorHoverSize,
+        Plasmoid.configuration.indicatorGroupSize
+    )
+
+    function getActiveChildIndex() {
+        if (!indicatorsFlow.task || !indicatorsFlow.task.model) {
+            return -1;
+        }
+        let model = indicatorsFlow.tasksRoot.tasksModel;
+        if (!model) {
+            return -1;
+        }
+        let activeTask = model.activeTask;
+        if (!activeTask || !activeTask.valid) {
+            return -1;
+        }
+        let index = indicatorsFlow.task.modelIndex();
+        if (!index || !index.valid) {
+            return -1;
+        }
+
+        if (!indicatorsFlow.task.model.IsGroupParent) {
+            // For single windows/launchers: check if it's the active task and has no parent
+            let activeParent = model.parent(activeTask);
+            return (index.row === activeTask.row && (!activeParent || !activeParent.valid)) ? 0 : -1;
+        }
+
+        // For grouped tasks: check if the active task's parent matches this task
+        let activeParent = model.parent(activeTask);
+        if (activeParent && activeParent.valid && activeParent.row === index.row) {
+            return activeTask.row;
+        }
+        return -1;
+    }
+
     Repeater {
         model: {
             if(!Plasmoid.configuration.indicatorsEnabled)
@@ -36,13 +74,16 @@ Flow {
         }
         readonly property int maxStates: Plasmoid.configuration.indicatorMaxLimit
         
-        Rectangle{
-            id: stateRect
+        Item {
+            id: segmentWrapper
             required property int index
-            Behavior on height { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-            Behavior on width { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-            Behavior on color { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-            Behavior on radius { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+            readonly property bool isActiveWindow: {
+                let activeIdx = indicatorsFlow.getActiveChildIndex();
+                if (activeIdx === -1) return false;
+                if (index === activeIdx) return true;
+                if (index === (maxStates - 1) && activeIdx >= maxStates) return true;
+                return false;
+            }
             readonly property color decoColor: indicatorsFlow.frame.indicatorColor
             readonly property int maxStates: Plasmoid.configuration.indicatorMaxLimit
             readonly property bool isFirst: index === 0
@@ -53,21 +94,19 @@ Flow {
                 if (indicatorsFlow.tasksRoot.vertical && !Plasmoid.configuration.indicatorOverride) {
                     return true;
                 }
-                // Legacy override logic (still supported for now)
                 if (Plasmoid.configuration.indicatorOverride && (Plasmoid.configuration.indicatorLocation === 1 || Plasmoid.configuration.indicatorLocation === 2)) {
                     return true;
                 }
                 return false;
             }
+
             readonly property var computedVar: {
-                var height;
-                var width;
                 var colorCalc;
                 var colorEval;
                 var parentSize = !isVertical ? indicatorsFlow.frame.width : indicatorsFlow.frame.height;
                 var indicatorComputedSize;
                 var adjustment = isFirst ? adjust : 0
-                var parentSpacingAdjust = indicatorsFlow.taskCount >= 1 && maxStates >= 2 ? (spacing * 2.5) : 0 //Spacing fix for multiple items
+                var parentSpacingAdjust = indicatorsFlow.taskCount >= 1 && maxStates >= 2 ? (spacing * 2.5) : 0
 
                 colorEval = TaskTools.resolveIndicatorBaseColor(
                     Plasmoid.configuration.indicatorAccentColor,
@@ -76,52 +115,145 @@ Flow {
                     decoColor,
                     Plasmoid.configuration.indicatorCustomColor
                 );
-                if(isFirst){//compute the size
-        
-                    let mainSize = (parentSize + parentSpacingAdjust);
 
+                let segLength = indicatorLength;
+                let segSize = Plasmoid.configuration.indicatorSize;
+
+                // 1. Active styling
+                if (isActiveWindow) {
+                    if (Plasmoid.configuration.indicatorResize) {
+                        if (indicatorsFlow.taskCount > 1 && Plasmoid.configuration.indicatorGroupSeparate) {
+                            segLength = Plasmoid.configuration.indicatorGroupLength;
+                            segSize = Plasmoid.configuration.indicatorGroupSize;
+                        } else {
+                            segLength = Plasmoid.configuration.indicatorActiveLength;
+                            segSize = Plasmoid.configuration.indicatorActiveSize;
+                        }
+                    }
+                }
+
+                // 2. Hover styling
+                if (indicatorsFlow.task.containsMouse || indicatorsFlow.task.isHovered) {
+                    if (Plasmoid.configuration.indicatorResize) {
+                        if (Plasmoid.configuration.indicatorHoverSeparate) {
+                            segLength = Plasmoid.configuration.indicatorHoverLength;
+                            segSize = Plasmoid.configuration.indicatorHoverSize;
+                        } else {
+                            if (indicatorsFlow.taskCount > 1 && Plasmoid.configuration.indicatorGroupSeparate) {
+                                segLength = Plasmoid.configuration.indicatorGroupLength;
+                                segSize = Plasmoid.configuration.indicatorGroupSize;
+                            } else {
+                                segLength = Plasmoid.configuration.indicatorActiveLength;
+                                segSize = Plasmoid.configuration.indicatorActiveSize;
+                            }
+                        }
+                    }
+                }
+
+                // If overflow '+' icon is shown, make the last segment a perfect square of size segSize
+                if (Plasmoid.configuration.indicatorShowPlus && index === (maxStates - 1) && indicatorsFlow.taskCount > maxStates) {
+                    segLength = segSize;
+                }
+
+                if(isFirst){
+                    let mainSize = (parentSize + parentSpacingAdjust);
                     switch(Plasmoid.configuration.indicatorStyle){
                         case 0: // Line
-                        indicatorComputedSize = mainSize - (Math.min(indicatorsFlow.taskCount, maxStates === 1 ? 0 : maxStates)  * (spacing + indicatorLength)) - adjust
+                        indicatorComputedSize = mainSize - (Math.min(indicatorsFlow.taskCount, maxStates === 1 ? 0 : maxStates)  * (spacing + segLength)) - adjust
                         break
                         case 1: // Dashes
-                        indicatorComputedSize = indicatorLength
+                        indicatorComputedSize = segLength
                         break
                         default:
                         break
                     }
-    
                 }
                 else {
-                    indicatorComputedSize = indicatorLength
+                    indicatorComputedSize = segLength
                 }
-                if(!isVertical){
-                    width = indicatorComputedSize;
-                    height = Plasmoid.configuration.indicatorSize
-                }
-                else{
-                    width = Plasmoid.configuration.indicatorSize
-                    height = indicatorComputedSize
-                
-                }
-                var baseColor = Qt.darker(colorEval, 1.0)
-                if(!isFirst && Plasmoid.configuration.indicatorDarkenExtras) {
-                    baseColor = Qt.darker(baseColor, 1.2)
-                }
+
+                var baseColor = colorEval;
 
                 if(Plasmoid.configuration.indicatorDesaturate && indicatorsFlow.task.taskState === "minimized") {
                     colorCalc = Qt.hsla(baseColor.hslHue, 0.0, baseColor.hslLightness, baseColor.a * 0.5)
                 } else {
                     colorCalc = baseColor
                 }
-                return {height: height, width: width, colorCalc: colorCalc}
+
+                // If there are multiple segments (grouped task) and highlight is enabled, apply 40% opacity to non-active segments to highlight the active one
+                if (indicatorsFlow.taskCount > 1 && Plasmoid.configuration.indicatorHighlightActive && !isActiveWindow) {
+                    colorCalc = Qt.rgba(colorCalc.r, colorCalc.g, colorCalc.b, colorCalc.a * 0.4)
+                }
+
+                return {length: indicatorComputedSize, thickness: segSize, colorCalc: colorCalc}
             }
-            width: computedVar.width
-            height: computedVar.height
-            color: computedVar.colorCalc
-            radius: Math.min(width, height) * (Plasmoid.configuration.indicatorRadius / 200)
 
+            // Wrapper = base indicatorSize; visual rect overflows when active/hovered
+            width: isVertical ? Plasmoid.configuration.indicatorSize : computedVar.length
+            height: isVertical ? computedVar.length : Plasmoid.configuration.indicatorSize
+            clip: false
 
+            Behavior on height { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+            Behavior on width { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+
+            Rectangle {
+                id: stateRect
+
+                width: segmentWrapper.isVertical ? segmentWrapper.computedVar.thickness : parent.width
+                height: segmentWrapper.isVertical ? parent.height : segmentWrapper.computedVar.thickness
+
+                Behavior on height { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+                Behavior on width { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+                Behavior on color { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+                Behavior on radius { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+                Behavior on y { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+                Behavior on x { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+
+                // Cross-axis positioning: 0=top/left, 1=center, 2=bottom/right
+                x: {
+                    if (!segmentWrapper.isVertical) return 0;
+                    let diff = Plasmoid.configuration.indicatorSize - width;
+                    let isGroupActive = indicatorsFlow.taskCount > 1 && segmentWrapper.isActiveWindow && Plasmoid.configuration.indicatorResize;
+                    if (!isGroupActive) return 0;
+                    let a = Plasmoid.configuration.indicatorAlignment;
+                    return a === 0 ? 0 : a === 1 ? diff / 2 : diff;
+                }
+                y: {
+                    if (segmentWrapper.isVertical) return 0;
+                    let diff = Plasmoid.configuration.indicatorSize - height;
+                    let isGroupActive = indicatorsFlow.taskCount > 1 && segmentWrapper.isActiveWindow && Plasmoid.configuration.indicatorResize;
+                    if (!isGroupActive) return 0;
+                    let a = Plasmoid.configuration.indicatorAlignment;
+                    return a === 0 ? 0 : a === 1 ? diff / 2 : diff;
+                }
+
+                color: (Plasmoid.configuration.indicatorShowPlus && (segmentWrapper.index === (segmentWrapper.maxStates - 1)) && (indicatorsFlow.taskCount > segmentWrapper.maxStates)) ? "transparent" : segmentWrapper.computedVar.colorCalc
+                radius: Math.min(width, height) * (Plasmoid.configuration.indicatorRadius / 200)
+
+                Item {
+                    id: plusIcon
+                    anchors.fill: parent
+                    visible: Plasmoid.configuration.indicatorShowPlus && (segmentWrapper.index === (segmentWrapper.maxStates - 1)) && (indicatorsFlow.taskCount > segmentWrapper.maxStates)
+
+                    // Horizontal bar of the plus sign
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: parent.width
+                        height: Math.max(1, Math.round(parent.height * 0.25))
+                        color: segmentWrapper.computedVar.colorCalc
+                        radius: height / 2
+                    }
+
+                    // Vertical bar of the plus sign
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: Math.max(1, Math.round(parent.width * 0.25))
+                        height: parent.height
+                        color: segmentWrapper.computedVar.colorCalc
+                        radius: width / 2
+                    }
+                }
+            }
         }
     }
     
