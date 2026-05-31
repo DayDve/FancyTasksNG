@@ -193,6 +193,25 @@ ConfigPage {
                 visible: cfg_page.cfg_iconOnly === 1 && cfg_taskHoverEffect.checked
                 spacing: Kirigami.Units.smallSpacing
                 Label {
+                    text: Wrappers.i18n("Hover style:")
+                }
+                ComboBox {
+                    id: cfg_taskHoverEffectStyle
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: Kirigami.Units.gridUnit * 14
+                    model: [
+                        Wrappers.i18n("Simple"),
+                        Wrappers.i18n("Parabolic")
+                    ]
+                    currentIndex: cfg_page.cfg_taskHoverEffectStyle
+                    onActivated: (index) => cfg_page.cfg_taskHoverEffectStyle = index
+                }
+            }
+
+            RowLayout {
+                visible: cfg_page.cfg_iconOnly === 1 && cfg_taskHoverEffect.checked
+                spacing: Kirigami.Units.smallSpacing
+                Label {
                     text: Wrappers.i18n("Icon zoom factor (px):")
                 }
                 SpinBox {

@@ -112,6 +112,9 @@ PlasmoidItem {
     property Task toolTipAreaItem
 
     property Task currentHoveredTask: null
+    property Task instantHoveredTask: null
+    property int instantHoveredIndex: instantHoveredTask ? instantHoveredTask.index : -1
+    property real instantHoveredFraction: 0.5
     property bool isTooltipHovered: false
 
     // PERSIST PARENT FOR FADE-OUT ANIMATION

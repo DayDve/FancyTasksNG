@@ -294,6 +294,12 @@ Item {
 
     HoverHandler {
         id: hoverHandler
+        onPointChanged: {
+            if (hovered && tasksRoot.instantHoveredTask === task) {
+                const fraction = tasksRoot.vertical ? (point.position.y / height) : (point.position.x / width);
+                tasksRoot.instantHoveredFraction = Math.max(0.0, Math.min(1.0, fraction));
+            }
+        }
     }
 
     Timer {
@@ -331,6 +337,7 @@ Item {
 
     onContainsMouseChanged: {
         if (containsMouse) {
+            tasksRoot.instantHoveredTask = task;
             task.forceActiveFocus(Qt.MouseFocusReason);
             closeTimer.stop();
             
@@ -341,6 +348,9 @@ Item {
                 openTimer.restart();
             }
         } else {
+            if (tasksRoot.instantHoveredTask === task) {
+                tasksRoot.instantHoveredTask = null;
+            }
             openTimer.stop();
             closeTimer.start();
         }

@@ -520,7 +520,27 @@ Item {
                                         readonly property bool sizeOverride: mockTask.cfgReady && mockTask.cfg.cfg_iconSizeOverride
                                         readonly property int fixedSize: mockTask.cfgReady ? mockTask.cfg.cfg_iconSizePx : 32
                                         readonly property real iconScale: mockTask.cfgReady ? mockTask.cfg.cfg_iconScale / 100 : 1.0
-                                        readonly property int growSize: (mockTask.isHovered && mockTask.cfg.cfg_iconOnly === 1 && mockTask.cfg.cfg_taskHoverEffect) ? mockTask.cfg.cfg_iconZoomFactor : 0
+                                        readonly property int growSize: {
+                                            if (!mockTask.cfgReady || mockTask.cfg.cfg_iconOnly !== 1 || !mockTask.cfg.cfg_taskHoverEffect) {
+                                                return 0;
+                                            }
+                                            const activeHoveredTask = previewRoot.zoomedTaskItem;
+                                            if (!activeHoveredTask) {
+                                                return 0;
+                                            }
+                                            const diff = Math.abs(mockTask.index - activeHoveredTask.index);
+                                            const isParabolic = mockTask.cfg.cfg_taskHoverEffectStyle === 1;
+
+                                            if (diff === 0) {
+                                                return mockTask.cfg.cfg_iconZoomFactor;
+                                            }
+                                            if (isParabolic) {
+                                                if (diff === 1) {
+                                                    return Math.round(0.30 * mockTask.cfg.cfg_iconZoomFactor);
+                                                }
+                                            }
+                                            return 0;
+                                        }
 
                                         readonly property bool scaleFromEdge: mockTask.cfgReady && mockTask.cfg.cfg_iconScaleFromEdge
                                         readonly property int edgeOffset: mockTask.cfgReady ? mockTask.cfg.cfg_iconEdgeOffset : 0

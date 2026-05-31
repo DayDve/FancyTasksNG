@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-05-28 19:37+0300\n"
+"POT-Creation-Date: 2026-05-29 20:04+0300\n"
 "PO-Revision-Date: 2023-09-21 16:18-0300\n"
 "Last-Translator:  Douglas Guimarães <<dg2003gh@gmail.com>>\n"
 "Language-Team: \n"
@@ -143,6 +143,18 @@ msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Icon hover effects"
+msgstr ""
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Hover style:"
+msgstr ""
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Simple"
+msgstr ""
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Parabolic"
 msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml

@@ -46,10 +46,36 @@ Item {
     width: iconBox._iconsOnly ? (parent.width - 2 * Math.max(LayoutMetrics.leftMargin(), LayoutMetrics.rightMargin())) : height
     height: iconBox._iconsOnly ? (parent.height - 2 * Math.max(LayoutMetrics.topMargin(), LayoutMetrics.bottomMargin())) : undefined
 
-    property int growSize: (iconBox._iconsOnly && Plasmoid.configuration.taskHoverEffect && (iconBox._taskHovered || (iconBox.tasksRootContext && iconBox.tasksRootContext.currentHoveredTask === iconBox.taskItem && iconBox.tasksRootContext.isTooltipHovered) || iconBox._contextMenuOpen)) ?
-        Plasmoid.configuration.iconZoomFactor : 0
+    readonly property int hoveredIndex: iconBox.tasksRootContext ? iconBox.tasksRootContext.instantHoveredIndex : -1
+    readonly property int myIndex: iconBox.taskItem ? iconBox.taskItem.index : -1
+    readonly property real hoveredFraction: iconBox.tasksRootContext ? iconBox.tasksRootContext.instantHoveredFraction : 0.5
+    readonly property real virtualCursorIndex: (hoveredIndex !== -1) ? (hoveredIndex + hoveredFraction - 0.5) : -1
+    readonly property real distanceToCursor: (virtualCursorIndex !== -1 && myIndex !== -1) ? Math.abs(myIndex - virtualCursorIndex) : -1
+
+    readonly property real zoomMultiplier: {
+        if (iconBox._contextMenuOpen) {
+            return 1.0;
+        }
+        if (hoveredIndex === -1 || myIndex === -1 || !iconBox._iconsOnly || !Plasmoid.configuration.taskHoverEffect) {
+            return 0.0;
+        }
+
+        if (Plasmoid.configuration.taskHoverEffectStyle !== 1) {
+            return (hoveredIndex === myIndex) ? 1.0 : 0.0;
+        }
+
+        if (distanceToCursor <= 0.5) {
+            return 1.0 - distanceToCursor;
+        } else if (distanceToCursor < 1.5) {
+            return 0.5 * (1.5 - distanceToCursor);
+        }
+        return 0.0;
+    }
+
+    property int growSize: Math.round(iconBox.zoomMultiplier * Plasmoid.configuration.iconZoomFactor)
 
     Behavior on growSize {
+        enabled: !iconBox.tasksRootContext || iconBox.tasksRootContext.instantHoveredIndex === -1
         NumberAnimation {
             duration: Plasmoid.configuration.iconZoomDuration
             easing.type: Easing.InOutQuad
