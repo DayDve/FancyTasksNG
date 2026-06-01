@@ -547,12 +547,12 @@ Item {
 
                                         readonly property int baseWidth: (sizeOverride ? fixedSize : (parent.width * iconScale))
                                         readonly property int baseHeight: (sizeOverride ? fixedSize : (parent.height * iconScale))
+                                        readonly property int iconSize: Math.min(baseWidth, baseHeight) + growSize
+                                        readonly property real edgeMarginH: scaleFromEdge ? edgeOffset : (parent.width - iconSize) / 2
+                                        readonly property real edgeMarginV: scaleFromEdge ? edgeOffset : (parent.height - iconSize) / 2
 
-                                        width: baseWidth + growSize
-                                        height: baseHeight + growSize
-
-                                        readonly property real edgeMarginH: scaleFromEdge ? edgeOffset : (parent.width - baseWidth) / 2
-                                        readonly property real edgeMarginV: scaleFromEdge ? edgeOffset : (parent.height - baseHeight) / 2
+                                        width: iconSize
+                                        height: iconSize
 
                                         // Simplified alignment (matches Task.qml)
                                         anchors.horizontalCenter: parent.horizontalCenter
@@ -582,6 +582,68 @@ Item {
 
                                         source: mockTask.iconName
                                         roundToIconSize: false
+
+                                        layer.enabled: mockTask.cfgReady && mockTask.cfg.cfg_clipIconToShape
+                                        layer.smooth: true
+                                        layer.samples: 8
+                                        layer.effect: MultiEffect {
+                                            maskEnabled: mockTask.cfgReady && mockTask.cfg.cfg_clipIconToShape
+                                            maskSource: previewIconMask
+                                            maskThresholdMin: 0.5
+                                            maskSpreadAtMin: 1.0
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        id: previewIconMask
+                                        x: -9999
+                                        y: -9999
+                                        width: taskIcon.width
+                                        height: taskIcon.height
+                                        radius: mockTask.cfgReady ? (mockTask.cfg.cfg_iconClipRadius / 200) * Math.min(taskIcon.width, taskIcon.height) : Math.min(taskIcon.width, taskIcon.height) * 0.25
+                                        color: "black"
+                                        visible: true
+                                        antialiasing: true
+                                        layer.enabled: true
+                                        layer.smooth: true
+                                    }
+
+                                    Loader {
+                                        id: previewIconColorsLoader
+                                        // ImageColors is a heavy C++ component that parses the icon. To prevent memory and CPU waste,
+                                        // we only activate this Loader when shape clipping is enabled, background card is enabled,
+                                        // and a dynamic color extraction mode (dominant or average) is selected.
+                                        active: mockTask.cfgReady && mockTask.cfg.cfg_clipIconToShape && mockTask.cfg.cfg_clipIconBackgroundEnabled && (mockTask.cfg.cfg_clipIconBackgroundColorMode === 1 || mockTask.cfg.cfg_clipIconBackgroundColorMode === 2)
+                                        sourceComponent: Kirigami.ImageColors {
+                                            source: taskIcon.source
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        id: previewIconBackground
+                                        anchors.fill: taskIcon
+                                        radius: mockTask.cfgReady ? (mockTask.cfg.cfg_iconClipRadius / 200) * Math.min(taskIcon.width, taskIcon.height) : Math.min(taskIcon.width, taskIcon.height) * 0.25
+                                        antialiasing: true
+                                        color: {
+                                            if (!mockTask.cfgReady) {
+                                                return "#000000";
+                                            }
+                                            const mode = mockTask.cfg.cfg_clipIconBackgroundColorMode;
+                                            if (mode === 1) {
+                                                const domColor = previewIconColorsLoader.item ? previewIconColorsLoader.item.dominant : "transparent";
+                                                return TaskTools.harmonizeIconColor(domColor, domColor, Kirigami.Theme.backgroundColor, false);
+                                            } else if (mode === 2) {
+                                                const avgColor = previewIconColorsLoader.item ? TaskTools.getAveragePaletteColor(previewIconColorsLoader.item.palette, previewIconColorsLoader.item.average) : "transparent";
+                                                const domColor = previewIconColorsLoader.item ? previewIconColorsLoader.item.dominant : "transparent";
+                                                return TaskTools.harmonizeIconColor(avgColor, domColor, Kirigami.Theme.backgroundColor, true);
+                                            } else if (mode === 3) {
+                                                return Kirigami.Theme.highlightColor;
+                                            }
+                                            return mockTask.cfg.cfg_clipIconBackgroundColor;
+                                        }
+                                        opacity: mockTask.cfgReady ? (mockTask.cfg.cfg_clipIconBackgroundOpacity / 100) : 0.2
+                                        visible: mockTask.cfgReady && mockTask.cfg.cfg_clipIconToShape && mockTask.cfg.cfg_clipIconBackgroundEnabled
+                                        z: -1
                                     }
 
                                     // Notification badge (proportional to taskIcon, scales with zoom)

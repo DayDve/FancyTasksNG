@@ -133,6 +133,19 @@ Kirigami.Page {
     property bool cfg_disableButtonInactiveSvg: false
     property bool cfg_disableButtonInactiveSvgDefault: false
 
+    property bool cfg_clipIconToShape: false
+    property bool cfg_clipIconToShapeDefault: false
+    property int cfg_iconClipRadius: 50
+    property int cfg_iconClipRadiusDefault: 50
+    property bool cfg_clipIconBackgroundEnabled: false
+    property bool cfg_clipIconBackgroundEnabledDefault: false
+    property string cfg_clipIconBackgroundColor: "#000000"
+    property string cfg_clipIconBackgroundColorDefault: "#000000"
+    property int cfg_clipIconBackgroundOpacity: 20
+    property int cfg_clipIconBackgroundOpacityDefault: 20
+    property int cfg_clipIconBackgroundColorMode: 0
+    property int cfg_clipIconBackgroundColorModeDefault: 0
+
     // --- Indicators ---
     property int cfg_indicatorsEnabled: 1
     property int cfg_indicatorsEnabledDefault: 1

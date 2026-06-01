@@ -399,6 +399,31 @@
       <label>Disables the decoration SVG for inactive windows</label>
       <default>false</default>
     </entry>
+    <entry name="clipIconToShape" type="Bool">
+      <label>Enable clipping of icons to a custom shape</label>
+      <default>false</default>
+    </entry>
+    <entry name="iconClipRadius" type="Int">
+      <label>Corner radius for the icon clipping mask, in percent of icon size (0=square, 100=circle)</label>
+      <default>50</default>
+    </entry>
+    <entry name="clipIconBackgroundEnabled" type="Bool">
+      <label>Enable background under clipped icons</label>
+      <default>false</default>
+    </entry>
+    <entry name="clipIconBackgroundColor" type="String">
+      <label>Color of the icon background card</label>
+      <default>#000000</default>
+    </entry>
+    <entry name="clipIconBackgroundOpacity" type="Int">
+      <label>Opacity of the icon background card (0-100)</label>
+      <default>20</default>
+    </entry>
+    <entry name="clipIconBackgroundColorMode" type="Int">
+      <label>Background color mode under clipped icons (0: Custom, 1: Dominant, 2: Average, 3: Accent)</label>
+      <default>0</default>
+    </entry>
+
     <entry name="overridePlasmaButtonDirection" type="Bool">
       <label>Override the plasma button direction </label>
       <default>false</default>

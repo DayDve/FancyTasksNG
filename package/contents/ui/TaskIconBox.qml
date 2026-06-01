@@ -13,6 +13,7 @@ import org.kde.plasma.plasmoid
 import QtQuick.Effects
 
 import "code/layoutmetrics.js" as LayoutMetrics
+import "code/tools.js" as TaskTools
 
 Item {
     id: iconBox
@@ -33,6 +34,7 @@ Item {
     readonly property bool _iconOverflows: iconBox.taskItem ? iconBox.taskItem.iconOverflows : false
     readonly property bool _taskHighlighted: iconBox.taskItem ? iconBox.taskItem.highlighted : false
     readonly property bool _taskHasModel: iconBox.taskItem ? !!iconBox.taskItem.model : false
+    readonly property var _iconMask: iconMask
 
     anchors.centerIn: iconBox._iconsOnly ? parent : undefined
     anchors.top: iconBox._iconsOnly ? undefined : parent.top
@@ -157,11 +159,12 @@ Item {
 
         readonly property int baseWidth: (sizeOverride ? fixedSize : (parent.width * iconScale))
         readonly property int baseHeight: (sizeOverride ? fixedSize : (parent.height * iconScale))
-        readonly property real edgeMarginH: scaleFromEdge ? edgeOffset : (parent.width - baseWidth) / 2
-        readonly property real edgeMarginV: scaleFromEdge ? edgeOffset : (parent.height - baseHeight) / 2
+        readonly property int iconSize: Math.min(baseWidth, baseHeight)
+        readonly property real edgeMarginH: scaleFromEdge ? edgeOffset : (parent.width - iconSize) / 2
+        readonly property real edgeMarginV: scaleFromEdge ? edgeOffset : (parent.height - iconSize) / 2
 
-        width: baseWidth
-        height: baseHeight
+        width: iconSize
+        height: iconSize
 
         x: {
             if (Plasmoid.location === PlasmaCore.Types.LeftEdge) return edgeMarginH;
@@ -180,23 +183,76 @@ Item {
         enabled: true
 
         source: iconBox._taskHasModel ? iconBox.taskItem.model.decoration : ""
-        layer.enabled: iconBox._iconOverflows
         opacity: (iconBox.taskItem && (iconBox.taskItem.isLaunching || (iconBox._taskHasModel && iconBox.taskItem.model.IsStartup))) ? 0.4 : 1.0
         Behavior on opacity {
             NumberAnimation { duration: 250 }
         }
+
+        layer.enabled: iconBox._iconOverflows || Plasmoid.configuration.clipIconToShape
+        layer.smooth: true
+        layer.samples: 8
+        layer.effect: MultiEffect {
+            maskEnabled: Plasmoid.configuration.clipIconToShape
+            maskSource: iconBox._iconMask
+            maskThresholdMin: 0.5
+            maskSpreadAtMin: 1.0
+
+            shadowEnabled: iconBox._iconOverflows
+            shadowBlur: 1.0
+            shadowHorizontalOffset: 0
+            shadowVerticalOffset: 0
+            shadowColor: Qt.rgba(0, 0, 0, 0.5)
+            autoPaddingEnabled: true
+        }
     }
 
-    MultiEffect {
+    Rectangle {
+        id: iconMask
+        x: -9999
+        y: -9999
+        width: innerIcon.width
+        height: innerIcon.height
+        radius: (Plasmoid.configuration.iconClipRadius / 200) * Math.min(innerIcon.width, innerIcon.height)
+        color: "black"
+        visible: true
+        antialiasing: true
+        layer.enabled: true
+        layer.smooth: true
+    }
+
+    Loader {
+        id: iconColorsLoader
+        // ImageColors is a heavy C++ component that parses the icon. To prevent memory and CPU waste,
+        // we only activate this Loader when shape clipping is enabled, background card is enabled,
+        // and a dynamic color extraction mode (dominant or average) is selected.
+        active: Plasmoid.configuration.clipIconToShape && Plasmoid.configuration.clipIconBackgroundEnabled && (Plasmoid.configuration.clipIconBackgroundColorMode === 1 || Plasmoid.configuration.clipIconBackgroundColorMode === 2)
+        sourceComponent: Kirigami.ImageColors {
+            source: innerIcon.source
+        }
+    }
+
+    Rectangle {
+        id: iconBackgroundCard
         anchors.fill: innerIcon
-        source: innerIcon
-        visible: iconBox._iconOverflows
-        shadowEnabled: true
-        shadowBlur: 1.0
-        shadowHorizontalOffset: 0
-        shadowVerticalOffset: 0
-        shadowColor: Qt.rgba(0, 0, 0, 0.5)
-        autoPaddingEnabled: true
+        radius: (Plasmoid.configuration.iconClipRadius / 200) * Math.min(innerIcon.width, innerIcon.height)
+        antialiasing: true
+        color: {
+            const mode = Plasmoid.configuration.clipIconBackgroundColorMode;
+            if (mode === 1) {
+                const domColor = iconColorsLoader.item ? iconColorsLoader.item.dominant : "transparent";
+                return TaskTools.harmonizeIconColor(domColor, domColor, Kirigami.Theme.backgroundColor, false);
+            } else if (mode === 2) {
+                const avgColor = iconColorsLoader.item ? TaskTools.getAveragePaletteColor(iconColorsLoader.item.palette, iconColorsLoader.item.average) : "transparent";
+                const domColor = iconColorsLoader.item ? iconColorsLoader.item.dominant : "transparent";
+                return TaskTools.harmonizeIconColor(avgColor, domColor, Kirigami.Theme.backgroundColor, true);
+            } else if (mode === 3) {
+                return Kirigami.Theme.highlightColor;
+            }
+            return Plasmoid.configuration.clipIconBackgroundColor;
+        }
+        opacity: Plasmoid.configuration.clipIconBackgroundOpacity / 100
+        visible: Plasmoid.configuration.clipIconToShape && Plasmoid.configuration.clipIconBackgroundEnabled
+        z: -1
     }
 
     Loader {

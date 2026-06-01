@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-05-31 23:30+0300\n"
+"POT-Creation-Date: 2026-06-01 12:36+0300\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -216,6 +216,50 @@ msgstr ""
 #: package/contents/config/ConfigAppearance.qml
 msgid "Space between taskbar items (px):"
 msgstr "Ruimte tussen taakbalkitems (in px):"
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Icon Shape:"
+msgstr ""
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Clip icons to a custom shape"
+msgstr ""
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Icon corner radius:"
+msgstr ""
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Show background under clipped icons"
+msgstr ""
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Background color source:"
+msgstr ""
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Custom color"
+msgstr ""
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Dominant icon color"
+msgstr ""
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Average icon color"
+msgstr ""
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Plasma accent color"
+msgstr ""
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Background color:"
+msgstr ""
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Background opacity:"
+msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Use multi-column view:"

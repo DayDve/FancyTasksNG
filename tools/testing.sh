@@ -20,6 +20,7 @@ ln -s "$PACKAGE_DIR/contents/locale" "$TEMP_SHARE/locale"
 # Point XDG_DATA_DIRS to our fake share directory.
 # This ensures plasmawindowed finds the translations for our domain.
 export XDG_DATA_DIRS="$TEMP_SHARE:$XDG_DATA_DIRS"
+export QT_LOGGING_RULES="kf.*=false;org.kde.*=false"
 
 echo "3. Starting plasmawindowed from local source..."
 QML_DISABLE_DISK_CACHE=true plasmawindowed "$PACKAGE_DIR"

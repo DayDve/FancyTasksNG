@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-05-31 23:30+0300\n"
+"POT-Creation-Date: 2026-06-01 12:36+0300\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -216,6 +216,50 @@ msgstr "Максимальная ширина кнопки (px):"
 #: package/contents/config/ConfigAppearance.qml
 msgid "Space between taskbar items (px):"
 msgstr "Расстояние между элементами (px):"
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Icon Shape:"
+msgstr "Форма значков:"
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Clip icons to a custom shape"
+msgstr "Скруглять значки приложений"
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Icon corner radius:"
+msgstr "Радиус скругления значка:"
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Show background under clipped icons"
+msgstr "Показывать подложку под скругленными значками"
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Background color source:"
+msgstr "Источник цвета подложки:"
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Custom color"
+msgstr "Пользовательский цвет"
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Dominant icon color"
+msgstr "Основной цвет значка"
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Average icon color"
+msgstr "Усредненный цвет значка"
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Plasma accent color"
+msgstr "Цвет акцента Plasma"
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Background color:"
+msgstr "Цвет подложки:"
+
+#: package/contents/config/ConfigAppearance.qml
+msgid "Background opacity:"
+msgstr "Непрозрачность подложки:"
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Use multi-column view:"
@@ -1018,6 +1062,21 @@ msgstr "Также доступно в %1"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Доступно в %1"
+
+#~ msgid "Icon Outline & Shape:"
+#~ msgstr "Обтравочный контур значков:"
+
+#~ msgid "Show outline border on clipped icons"
+#~ msgstr "Показывать рамку-контур для значка"
+
+#~ msgid "Outline color:"
+#~ msgstr "Цвет рамки:"
+
+#~ msgid "Outline thickness (px):"
+#~ msgstr "Толщина рамки (px):"
+
+#~ msgid "Outline opacity (%):"
+#~ msgstr "Прозрачность рамки (%):"
 
 #~ msgid "Active window thickness:"
 #~ msgstr "Толщина (активное окно):"

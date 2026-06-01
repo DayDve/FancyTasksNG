@@ -367,6 +367,118 @@ ConfigPage {
 
             Item { height: Kirigami.Units.largeSpacing }
 
+            Label {
+                text: Wrappers.i18n("Icon Shape:")
+            }
+
+            CheckBox {
+                id: clipIconToShape
+                text: Wrappers.i18n("Clip icons to a custom shape")
+                checked: cfg_page.cfg_clipIconToShape
+                onToggled: cfg_page.cfg_clipIconToShape = checked
+            }
+
+            RowLayout {
+                visible: cfg_page.cfg_clipIconToShape
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Icon corner radius:")
+                }
+                Slider {
+                    id: iconClipRadiusSlider
+                    Layout.fillWidth: true
+                    from: 0
+                    to: 100
+                    stepSize: 1
+                    value: cfg_page.cfg_iconClipRadius
+                    onMoved: cfg_page.cfg_iconClipRadius = value
+                }
+                SpinBox {
+                    id: iconClipRadiusSpin
+                    from: 0
+                    to: 100
+                    editable: true
+                    value: iconClipRadiusSlider.value
+                    onValueModified: cfg_page.cfg_iconClipRadius = value
+                    textFromValue: function(value, locale) { return value + "%" }
+                    valueFromText: function(text, locale) { return parseInt(text) }
+                }
+            }
+
+            CheckBox {
+                id: clipIconBackgroundEnabled
+                visible: cfg_page.cfg_clipIconToShape
+                text: Wrappers.i18n("Show background under clipped icons")
+                checked: cfg_page.cfg_clipIconBackgroundEnabled
+                onToggled: cfg_page.cfg_clipIconBackgroundEnabled = checked
+            }
+
+            RowLayout {
+                visible: cfg_page.cfg_clipIconToShape && cfg_page.cfg_clipIconBackgroundEnabled
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Background color source:")
+                }
+                ComboBox {
+                    id: cfg_clipIconBackgroundColorMode
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: Kirigami.Units.gridUnit * 14
+                    model: [
+                        Wrappers.i18n("Custom color"),
+                        Wrappers.i18n("Dominant icon color"),
+                        Wrappers.i18n("Average icon color"),
+                        Wrappers.i18n("Plasma accent color")
+                    ]
+                    currentIndex: cfg_page.cfg_clipIconBackgroundColorMode
+                    onActivated: (index) => cfg_page.cfg_clipIconBackgroundColorMode = index
+                }
+            }
+
+            RowLayout {
+                visible: cfg_page.cfg_clipIconToShape && cfg_page.cfg_clipIconBackgroundEnabled && cfg_page.cfg_clipIconBackgroundColorMode === 0
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Background color:")
+                }
+                KQuickAddons.ColorButton {
+                    id: clipIconBackgroundColorBtn
+                    showAlphaChannel: true
+                    color: cfg_page.cfg_clipIconBackgroundColor
+                    onColorChanged: {
+                        if (!Qt.colorEqual(color, cfg_page.cfg_clipIconBackgroundColor)) {
+                            cfg_page.cfg_clipIconBackgroundColor = color
+                        }
+                    }
+                }
+            }
+
+            RowLayout {
+                visible: cfg_page.cfg_clipIconToShape && cfg_page.cfg_clipIconBackgroundEnabled
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Background opacity:")
+                }
+                Slider {
+                    id: clipIconBackgroundOpacitySlider
+                    Layout.fillWidth: true
+                    from: 0
+                    to: 100
+                    stepSize: 5
+                    value: cfg_page.cfg_clipIconBackgroundOpacity
+                    onMoved: cfg_page.cfg_clipIconBackgroundOpacity = value
+                }
+                SpinBox {
+                    id: clipIconBackgroundOpacitySpin
+                    from: 0
+                    to: 100
+                    editable: true
+                    value: clipIconBackgroundOpacitySlider.value
+                    onValueModified: cfg_page.cfg_clipIconBackgroundOpacity = value
+                    textFromValue: function(value, locale) { return value + "%" }
+                    valueFromText: function(text, locale) { return parseInt(text) }
+                }
+            }
+
             Item { height: Kirigami.Units.largeSpacing }
 
             Label {

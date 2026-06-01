@@ -38,6 +38,7 @@ import "code/singletones"
 
 Item {
     id: task
+    readonly property alias frame: frame
     z: highlighted ? 10 : (badgeVisible || playingAudio || muted) ? 1 : 0
 
     activeFocusOnTab: true
@@ -761,8 +762,7 @@ Item {
             rightMargin: _hMargin
         }
 
-        imagePath: Plasmoid.configuration.disableButtonSvg ?
-            "" : "widgets/tasks"
+        imagePath: Plasmoid.configuration.disableButtonSvg ? "" : "widgets/tasks"
         enabledBorders: Plasmoid.configuration.useBorders ? 1 | 2 | 4 |
             8 : 0
         property bool isHovered: task.highlighted && Plasmoid.configuration.taskHoverEffect
