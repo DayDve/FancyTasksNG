@@ -202,27 +202,35 @@ Flow {
                 width: segmentWrapper.isVertical ? segmentWrapper.computedVar.thickness : parent.width
                 height: segmentWrapper.isVertical ? parent.height : segmentWrapper.computedVar.thickness
 
-                Behavior on height { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-                Behavior on width { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+                Behavior on width {
+                    enabled: segmentWrapper.isVertical && Plasmoid.configuration.indicatorsAnimated
+                    PropertyAnimation { duration: 250 }
+                }
+                Behavior on height {
+                    enabled: !segmentWrapper.isVertical && Plasmoid.configuration.indicatorsAnimated
+                    PropertyAnimation { duration: 250 }
+                }
                 Behavior on color { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
                 Behavior on radius { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-                Behavior on y { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-                Behavior on x { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+                Behavior on x {
+                    enabled: segmentWrapper.isVertical && Plasmoid.configuration.indicatorsAnimated
+                    PropertyAnimation { duration: 250 }
+                }
+                Behavior on y {
+                    enabled: !segmentWrapper.isVertical && Plasmoid.configuration.indicatorsAnimated
+                    PropertyAnimation { duration: 250 }
+                }
 
-                // Cross-axis positioning: 0=top/left, 1=center, 2=bottom/right
+                // Cross-axis positioning: 0=Align Top/Left, 1=Align Center, 2=Align Bottom/Right
                 x: {
                     if (!segmentWrapper.isVertical) return 0;
                     let diff = Plasmoid.configuration.indicatorSize - width;
-                    let isGroupActive = indicatorsFlow.taskCount > 1 && segmentWrapper.isActiveWindow && Plasmoid.configuration.indicatorResize;
-                    if (!isGroupActive) return 0;
                     let a = Plasmoid.configuration.indicatorAlignment;
                     return a === 0 ? 0 : a === 1 ? diff / 2 : diff;
                 }
                 y: {
                     if (segmentWrapper.isVertical) return 0;
                     let diff = Plasmoid.configuration.indicatorSize - height;
-                    let isGroupActive = indicatorsFlow.taskCount > 1 && segmentWrapper.isActiveWindow && Plasmoid.configuration.indicatorResize;
-                    if (!isGroupActive) return 0;
                     let a = Plasmoid.configuration.indicatorAlignment;
                     return a === 0 ? 0 : a === 1 ? diff / 2 : diff;
                 }
