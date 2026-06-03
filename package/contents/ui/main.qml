@@ -438,8 +438,16 @@ PlasmoidItem {
     }
 
     function handleItemRemoval(taskItem) {
+        if (!taskItem || !taskItem.model) return;
+        
+        // Do not spawn ghosts for Launchers or Startups, as their removal is typically
+        // a model transition (e.g. Launcher -> Startup -> Window), not a real closure.
+        if (taskItem.model.IsLauncher || taskItem.model.IsStartup) return;
+
         if (Plasmoid.configuration.smokeExplosionOnClose && Plasmoid.configuration.iconOnly === 1) {
-            explosionManager.spawn(tasks, taskItem, taskItem.wasMiddleClicked);
+            if (taskItem.wasMiddleClicked) {
+                explosionManager.spawn(tasks, taskItem, true);
+            }
         }
     }
 

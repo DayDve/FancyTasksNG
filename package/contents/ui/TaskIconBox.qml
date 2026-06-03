@@ -77,9 +77,8 @@ Item {
     property int growSize: Math.round(iconBox.zoomMultiplier * Plasmoid.configuration.iconZoomFactor)
 
     Behavior on growSize {
-        enabled: !iconBox.tasksRootContext || iconBox.tasksRootContext.instantHoveredIndex === -1
         NumberAnimation {
-            duration: Plasmoid.configuration.iconZoomDuration
+            duration: (!iconBox.tasksRootContext || iconBox.tasksRootContext.instantHoveredIndex === -1 || iconBox.myIndex === -1 || (iconBox._taskHasModel && iconBox.taskItem.model.IsStartup)) ? Plasmoid.configuration.iconZoomDuration : 0
             easing.type: Easing.InOutQuad
         }
     }
@@ -183,7 +182,7 @@ Item {
         enabled: true
 
         source: iconBox._taskHasModel ? iconBox.taskItem.model.decoration : ""
-        opacity: (iconBox.taskItem && (iconBox.taskItem.isLaunching || (iconBox._taskHasModel && iconBox.taskItem.model.IsStartup))) ? 0.4 : 1.0
+        opacity: 1.0
         Behavior on opacity {
             NumberAnimation { duration: 250 }
         }
@@ -259,7 +258,7 @@ Item {
         anchors.centerIn: parent
         width: Math.min(parent.width, parent.height)
         height: width
-        active: !!(iconBox._taskHasModel && (iconBox.taskItem.model.IsStartup || (iconBox.taskItem && iconBox.taskItem.isLaunching)))
+        active: !!(iconBox._taskHasModel && iconBox.taskItem.model.IsStartup)
         sourceComponent: iconBox.tasksRootContext ? iconBox.tasksRootContext.busyIndicator : null
     }
 

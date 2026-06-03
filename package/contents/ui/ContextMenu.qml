@@ -434,10 +434,6 @@ PlasmaExtras.Menu {
         icon: menu.get(menu.atm.IsLauncher) ? "system-run" : "window-new"
 
         onClicked: {
-            const parentTask = menu.visualParent;
-            if (parentTask && typeof parentTask.triggerLaunch === "function") {
-                parentTask.triggerLaunch();
-            }
             menu.tasksModel.requestNewInstance(menu.modelIndex);
         }
     }

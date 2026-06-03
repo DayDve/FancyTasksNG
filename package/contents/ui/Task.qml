@@ -138,16 +138,7 @@ Item {
     readonly property bool isIcon: task.model ? (tasksRoot.iconsOnly || !!task.model.IsLauncher) : tasksRoot.iconsOnly
     property bool toolTipOpen: false
     property bool inPopup: false
-    property bool isLaunching: false
-    readonly property alias launchingTimeoutTimer: launchingTimeoutTimer
-    
-    function triggerLaunch(): void {
-        if (task.model && task.model.IsLauncher && task.winIdList.length === 0) {
-            task.isLaunching = true;
-            task.launchingTimeoutTimer.restart();
-        }
-    }
-    property bool isStartup: !!(task.model && task.model.IsStartup)
+
     property bool isWindow: !!(task.model && task.model.IsWindow)
     readonly property bool isHovered: (tasksRoot && tasksRoot.mouseHandler) ? (tasksRoot.mouseHandler.hoveredItem === task) : false
     
@@ -236,60 +227,7 @@ Item {
         }
     }
 
-    Connections {
-        target: task.tasksRoot ? task.tasksRoot.tasksModel : null
-        ignoreUnknownSignals: true
 
-        function checkStartupRows(first, last) {
-            if (!task.model || !task.model.IsLauncher || task.winIdList.length > 0) {
-                return;
-            }
-
-            const appId = task.model.AppId;
-            const launcherUrl = task.model.LauncherUrlWithoutIcon ? task.model.LauncherUrlWithoutIcon.toString() : "";
-            
-            function normalizeAppId(id) {
-                return String(id || "").replace(/\.desktop$/, "").toLowerCase();
-            }
-
-            function normalizeUrl(url) {
-                return String(url || "").replace(/\.desktop$/, "").toLowerCase();
-            }
-
-            const normAppId = normalizeAppId(appId);
-            const normUrl = normalizeUrl(launcherUrl);
-
-            const tModel = task.tasksRoot.tasksModel;
-            for (let i = first; i <= last; ++i) {
-                const idx = tModel.makeModelIndex(i);
-                if (idx.valid) {
-                    const isStartup = tModel.data(idx, TaskManager.AbstractTasksModel.IsStartup) === true;
-                    if (isStartup) {
-                        const startupAppId = tModel.data(idx, TaskManager.AbstractTasksModel.AppId);
-                        const startupUrl = tModel.data(idx, TaskManager.AbstractTasksModel.LauncherUrlWithoutIcon);
-                        const startupUrlStr = startupUrl ? startupUrl.toString() : "";
-
-                        const matchesAppId = (normAppId !== "" && normalizeAppId(startupAppId) === normAppId);
-                        const matchesUrl = (normUrl !== "" && normalizeUrl(startupUrlStr) === normUrl);
-
-                        if (matchesAppId || matchesUrl) {
-                            task.isLaunching = true;
-                            launchingTimeoutTimer.restart();
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        function onRowsInserted(parent, first, last) {
-            checkStartupRows(first, last);
-        }
-
-        function onDataChanged(topLeft, bottomRight, roles) {
-            checkStartupRows(topLeft.row, bottomRight.row);
-        }
-    }
 
     property bool completed: false
     readonly property bool audioIndicatorsEnabled: Plasmoid.configuration.indicateAudioStreams
@@ -348,12 +286,7 @@ Item {
         }
     }
 
-    Timer {
-        id: launchingTimeoutTimer
-        interval: 15000 // 15 seconds
-        repeat: false
-        onTriggered: task.isLaunching = false
-    }
+
 
     Timer {
         id: openTimer
@@ -507,12 +440,7 @@ Item {
         tasksRoot.cancelHighlightWindows();
     }
 
-    onWinIdListChanged: {
-        if (task.winIdList.length > 0) {
-            task.isLaunching = false;
-            launchingTimeoutTimer.stop();
-        }
-    }
+
 
     onIsWindowChanged: {
         if (task.model && task.model.IsWindow) {
@@ -544,7 +472,6 @@ Item {
 
     Keys.onMenuPressed: event => contextMenuTimer.start()
     Keys.onReturnPressed: event => {
-        task.triggerLaunch();
         TaskTools.activateTask(task.modelIndex(), task.model, event.modifiers, task, Plasmoid, tasksRoot, tasksRoot.effectWatcher.registered);
     }
     Keys.onEnterPressed: event => Keys.returnPressed(event)
@@ -683,7 +610,6 @@ Item {
 
         function leftClick(): void {
             task.tasksRoot.currentHoveredTask = null;
-            task.triggerLaunch();
             TaskTools.activateTask(task.modelIndex(), task.model, point.modifiers, task, Plasmoid, task.tasksRoot, task.tasksRoot.effectWatcher.registered);
         }
     }
@@ -700,7 +626,6 @@ Item {
                     tModel.requestClose(mIndex);
                     break;
                 case 2: // NewInstance
-                    task.triggerLaunch();
                     tModel.requestNewInstance(mIndex);
                     break;
                 case 3: // ToggleMinimized
