@@ -12,7 +12,6 @@
 
 import QtQuick
 
-import org.kde.taskmanager as TaskManager
 import org.kde.plasma.plasmoid
 
 import "code/tools.js" as TaskTools
@@ -212,14 +211,14 @@ DropArea {
         enabled: handleWheelEvents && (Plasmoid.configuration.wheelAction !== 0 || (Plasmoid.configuration.wheelCtrlActionEnabled && Plasmoid.configuration.wheelCtrlAction !== 0))
 
         onWheel: event => {
-            _rotationAccumulator += (event.angleDelta.y / 8.0);
+            dropArea._rotationAccumulator += (event.angleDelta.y / 8.0);
             let increment = 0;
-            while (_rotationAccumulator >= 15) {
-                _rotationAccumulator -= 15;
+            while (dropArea._rotationAccumulator >= 15) {
+                dropArea._rotationAccumulator -= 15;
                 increment++;
             }
-            while (_rotationAccumulator <= -15) {
-                _rotationAccumulator += 15;
+            while (dropArea._rotationAccumulator <= -15) {
+                dropArea._rotationAccumulator += 15;
                 increment--;
             }
 
@@ -240,8 +239,8 @@ DropArea {
                 const isShift = (event.modifiers & Qt.ShiftModifier) && Plasmoid.configuration.wheelShiftSystemVolumeEnabled;
                 if (anchor && anchor.adjustVolume) {
                     anchor.adjustVolume(increment, isShift);
-                } else if (isShift && tasks.adjustGlobalVolume) {
-                    tasks.adjustGlobalVolume(increment);
+                } else if (isShift && dropArea.tasks.adjustGlobalVolume) {
+                    dropArea.tasks.adjustGlobalVolume(increment);
                 }
             }
         }

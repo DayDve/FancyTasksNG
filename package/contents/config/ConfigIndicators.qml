@@ -16,12 +16,12 @@ import org.kde.kquickcontrols as KQuickAddons
 import "../ui/code/singletones"
 
 ConfigPage {
-    id: cfg_page
+    id: indicatorsPage
 
     // Silence KCM errors for legacy/removed properties
     readonly property bool plasmaPaAvailable: true
 
-    readonly property bool isLineStyle: cfg_page.cfg_indicatorStyle === 0
+    readonly property bool isLineStyle: indicatorsPage.cfg_indicatorStyle === 0
 
     ColumnLayout {
         anchors.fill: parent
@@ -46,16 +46,16 @@ ConfigPage {
             CheckBox {
                 id: indicatorsEnabled
                 text: Wrappers.i18nc("State", "Enabled")
-                checked: cfg_page.cfg_indicatorsEnabled
-                onToggled: cfg_page.cfg_indicatorsEnabled = checked
+                checked: indicatorsPage.cfg_indicatorsEnabled
+                onToggled: indicatorsPage.cfg_indicatorsEnabled = checked
             }
 
             CheckBox {
                 visible: indicatorsEnabled.checked
                 id: indicatorsAnimated
                 text: Wrappers.i18n("Animate indicators")
-                checked: cfg_page.cfg_indicatorsAnimated
-                onToggled: cfg_page.cfg_indicatorsAnimated = checked
+                checked: indicatorsPage.cfg_indicatorsAnimated
+                onToggled: indicatorsPage.cfg_indicatorsAnimated = checked
             }
 
             Item { height: Kirigami.Units.largeSpacing; visible: indicatorsEnabled.checked }
@@ -73,8 +73,8 @@ ConfigPage {
                         Wrappers.i18n("Line"),
                         Wrappers.i18n("Dashes")
                     ]
-                    currentIndex: cfg_page.cfg_indicatorStyle
-                    onActivated: (index) => cfg_page.cfg_indicatorStyle = index
+                    currentIndex: indicatorsPage.cfg_indicatorStyle
+                    onActivated: (index) => indicatorsPage.cfg_indicatorStyle = index
                 }
             }
 
@@ -82,8 +82,8 @@ ConfigPage {
                 visible: indicatorsEnabled.checked
                 id: indicatorOverride
                 text: Wrappers.i18n("Override indicator location")
-                checked: cfg_page.cfg_indicatorOverride
-                onToggled: cfg_page.cfg_indicatorOverride = checked
+                checked: indicatorsPage.cfg_indicatorOverride
+                onToggled: indicatorsPage.cfg_indicatorOverride = checked
             }
 
             ComboBox {
@@ -96,8 +96,8 @@ ConfigPage {
                     Wrappers.i18n("Right"),
                     Wrappers.i18n("Top")
                 ]
-                currentIndex: cfg_page.cfg_indicatorLocation
-                onActivated: (index) => cfg_page.cfg_indicatorLocation = index
+                currentIndex: indicatorsPage.cfg_indicatorLocation
+                onActivated: (index) => indicatorsPage.cfg_indicatorLocation = index
             }
 
             Item { height: Kirigami.Units.smallSpacing; visible: indicatorsEnabled.checked }
@@ -112,8 +112,8 @@ ConfigPage {
                     id: indicatorEdgeOffset
                     from: 0
                     to: 999
-                    value: cfg_page.cfg_indicatorEdgeOffset
-                    onValueModified: cfg_page.cfg_indicatorEdgeOffset = value
+                    value: indicatorsPage.cfg_indicatorEdgeOffset
+                    onValueModified: indicatorsPage.cfg_indicatorEdgeOffset = value
                 }
                 Label {
                     text: "px"
@@ -130,8 +130,8 @@ ConfigPage {
                     id: indicatorSize
                     from: 1
                     to: 999
-                    value: cfg_page.cfg_indicatorSize
-                    onValueModified: cfg_page.cfg_indicatorSize = value
+                    value: indicatorsPage.cfg_indicatorSize
+                    onValueModified: indicatorsPage.cfg_indicatorSize = value
                 }
                 Label {
                     text: "px"
@@ -146,8 +146,8 @@ ConfigPage {
                     id: indicatorLength
                     from: 1
                     to: 999
-                    value: cfg_page.cfg_indicatorLength
-                    onValueModified: cfg_page.cfg_indicatorLength = value
+                    value: indicatorsPage.cfg_indicatorLength
+                    onValueModified: indicatorsPage.cfg_indicatorLength = value
                 }
                 Label {
                     text: "px"
@@ -160,8 +160,8 @@ ConfigPage {
                 CheckBox {
                     id: indicatorResize
                     text: Wrappers.i18n("Resize indicators on activation/hover")
-                    checked: cfg_page.cfg_indicatorResize
-                    onToggled: cfg_page.cfg_indicatorResize = checked
+                    checked: indicatorsPage.cfg_indicatorResize
+                    onToggled: indicatorsPage.cfg_indicatorResize = checked
                 }
             }
 
@@ -177,8 +177,8 @@ ConfigPage {
                     id: indicatorActiveLength
                     from: 1
                     to: 999
-                    value: cfg_page.cfg_indicatorActiveLength
-                    onValueModified: cfg_page.cfg_indicatorActiveLength = value
+                    value: indicatorsPage.cfg_indicatorActiveLength
+                    onValueModified: indicatorsPage.cfg_indicatorActiveLength = value
                 }
                 Label {
                     text: "px"
@@ -193,8 +193,8 @@ ConfigPage {
                     id: indicatorActiveSize
                     from: 1
                     to: 999
-                    value: cfg_page.cfg_indicatorActiveSize
-                    onValueModified: cfg_page.cfg_indicatorActiveSize = value
+                    value: indicatorsPage.cfg_indicatorActiveSize
+                    onValueModified: indicatorsPage.cfg_indicatorActiveSize = value
                 }
                 Label {
                     text: "px"
@@ -211,8 +211,8 @@ ConfigPage {
                 ComboBox {
                     id: indicatorAlignment
                     model: {
-                        let isVertical = cfg_page.cfg_indicatorOverride ? 
-                            (cfg_page.cfg_indicatorLocation === 1 || cfg_page.cfg_indicatorLocation === 2) :
+                        let isVertical = indicatorsPage.cfg_indicatorOverride ? 
+                            (indicatorsPage.cfg_indicatorLocation === 1 || indicatorsPage.cfg_indicatorLocation === 2) :
                             (Plasmoid.location === PlasmaCore.Types.LeftEdge || Plasmoid.location === PlasmaCore.Types.RightEdge);
 
                         return isVertical ? [
@@ -225,8 +225,8 @@ ConfigPage {
                             Wrappers.i18n("Align Bottom")
                         ];
                     }
-                    currentIndex: cfg_page.cfg_indicatorAlignment
-                    onActivated: (index) => cfg_page.cfg_indicatorAlignment = index
+                    currentIndex: indicatorsPage.cfg_indicatorAlignment
+                    onActivated: (index) => indicatorsPage.cfg_indicatorAlignment = index
                 }
             }
 
@@ -237,8 +237,8 @@ ConfigPage {
                 CheckBox {
                     id: indicatorHoverSeparate
                     text: Wrappers.i18n("Separate settings for hovered indicators")
-                    checked: cfg_page.cfg_indicatorHoverSeparate
-                    onToggled: cfg_page.cfg_indicatorHoverSeparate = checked
+                    checked: indicatorsPage.cfg_indicatorHoverSeparate
+                    onToggled: indicatorsPage.cfg_indicatorHoverSeparate = checked
                 }
             }
 
@@ -254,8 +254,8 @@ ConfigPage {
                     id: indicatorHoverSize
                     from: 1
                     to: 999
-                    value: cfg_page.cfg_indicatorHoverSize
-                    onValueModified: cfg_page.cfg_indicatorHoverSize = value
+                    value: indicatorsPage.cfg_indicatorHoverSize
+                    onValueModified: indicatorsPage.cfg_indicatorHoverSize = value
                 }
                 Label {
                     text: "px"
@@ -270,8 +270,8 @@ ConfigPage {
                     id: indicatorHoverLength
                     from: 1
                     to: 999
-                    value: cfg_page.cfg_indicatorHoverLength
-                    onValueModified: cfg_page.cfg_indicatorHoverLength = value
+                    value: indicatorsPage.cfg_indicatorHoverLength
+                    onValueModified: indicatorsPage.cfg_indicatorHoverLength = value
                 }
                 Label {
                     text: "px"
@@ -285,8 +285,8 @@ ConfigPage {
                 CheckBox {
                     id: indicatorHighlightActive
                     text: Wrappers.i18n("Highlight active window in group")
-                    checked: cfg_page.cfg_indicatorHighlightActive
-                    onToggled: cfg_page.cfg_indicatorHighlightActive = checked
+                    checked: indicatorsPage.cfg_indicatorHighlightActive
+                    onToggled: indicatorsPage.cfg_indicatorHighlightActive = checked
                 }
             }
 
@@ -297,8 +297,8 @@ ConfigPage {
                 CheckBox {
                     id: indicatorGroupSeparate
                     text: Wrappers.i18n("Separate settings for group indicators")
-                    checked: cfg_page.cfg_indicatorGroupSeparate
-                    onToggled: cfg_page.cfg_indicatorGroupSeparate = checked
+                    checked: indicatorsPage.cfg_indicatorGroupSeparate
+                    onToggled: indicatorsPage.cfg_indicatorGroupSeparate = checked
                 }
             }
 
@@ -314,8 +314,8 @@ ConfigPage {
                     id: indicatorGroupSize
                     from: 1
                     to: 999
-                    value: cfg_page.cfg_indicatorGroupSize
-                    onValueModified: cfg_page.cfg_indicatorGroupSize = value
+                    value: indicatorsPage.cfg_indicatorGroupSize
+                    onValueModified: indicatorsPage.cfg_indicatorGroupSize = value
                 }
                 Label {
                     text: "px"
@@ -330,8 +330,8 @@ ConfigPage {
                     id: indicatorGroupLength
                     from: 1
                     to: 999
-                    value: cfg_page.cfg_indicatorGroupLength
-                    onValueModified: cfg_page.cfg_indicatorGroupLength = value
+                    value: indicatorsPage.cfg_indicatorGroupLength
+                    onValueModified: indicatorsPage.cfg_indicatorGroupLength = value
                 }
                 Label {
                     text: "px"
@@ -348,29 +348,29 @@ ConfigPage {
                     id: indicatorRadius
                     from: 0
                     to: 100
-                    value: cfg_page.cfg_indicatorRadius
-                    onValueModified: cfg_page.cfg_indicatorRadius = value
+                    value: indicatorsPage.cfg_indicatorRadius
+                    onValueModified: indicatorsPage.cfg_indicatorRadius = value
                 }
                 Label {
                     text: "%"
                 }
 
-                Item { width: Kirigami.Units.largeSpacing; visible: cfg_page.isLineStyle }
+                Item { width: Kirigami.Units.largeSpacing; visible: indicatorsPage.isLineStyle }
 
                 Label {
-                    visible: cfg_page.isLineStyle
+                    visible: indicatorsPage.isLineStyle
                     text: Wrappers.i18n("Side padding:")
                 }
                 SpinBox {
                     id: indicatorShrink
-                    visible: cfg_page.isLineStyle
+                    visible: indicatorsPage.isLineStyle
                     from: 0
                     to: 999
-                    value: cfg_page.cfg_indicatorShrink
-                    onValueModified: cfg_page.cfg_indicatorShrink = value
+                    value: indicatorsPage.cfg_indicatorShrink
+                    onValueModified: indicatorsPage.cfg_indicatorShrink = value
                 }
                 Label {
-                    visible: cfg_page.isLineStyle
+                    visible: indicatorsPage.isLineStyle
                     text: "px"
                 }
             }
@@ -387,8 +387,8 @@ ConfigPage {
                     id: indicatorMaxLimit
                     from: 1
                     to: 99
-                    value: cfg_page.cfg_indicatorMaxLimit
-                    onValueModified: cfg_page.cfg_indicatorMaxLimit = value
+                    value: indicatorsPage.cfg_indicatorMaxLimit
+                    onValueModified: indicatorsPage.cfg_indicatorMaxLimit = value
                 }
             }
 
@@ -396,8 +396,8 @@ ConfigPage {
                 visible: indicatorsEnabled.checked
                 id: indicatorShowPlus
                 text: Wrappers.i18n("Show '+' on overflow")
-                checked: cfg_page.cfg_indicatorShowPlus
-                onToggled: cfg_page.cfg_indicatorShowPlus = checked
+                checked: indicatorsPage.cfg_indicatorShowPlus
+                onToggled: indicatorsPage.cfg_indicatorShowPlus = checked
             }
 
             Item { height: Kirigami.Units.largeSpacing; visible: indicatorsEnabled.checked }
@@ -411,16 +411,16 @@ ConfigPage {
                 visible: indicatorsEnabled.checked
                 id: indicatorAccentColor
                 text: Wrappers.i18n("Use plasma accent color")
-                checked: cfg_page.cfg_indicatorAccentColor
-                onToggled: cfg_page.cfg_indicatorAccentColor = checked
+                checked: indicatorsPage.cfg_indicatorAccentColor
+                onToggled: indicatorsPage.cfg_indicatorAccentColor = checked
             }
 
             CheckBox {
                 visible: indicatorsEnabled.checked && !indicatorAccentColor.checked
                 id: indicatorDominantColor
                 text: Wrappers.i18n("Use dominant icon color")
-                checked: cfg_page.cfg_indicatorDominantColor
-                onToggled: cfg_page.cfg_indicatorDominantColor = checked
+                checked: indicatorsPage.cfg_indicatorDominantColor
+                onToggled: indicatorsPage.cfg_indicatorDominantColor = checked
             }
 
             RowLayout {
@@ -432,10 +432,10 @@ ConfigPage {
                 KQuickAddons.ColorButton {
                     id: indicatorCustomColor
                     showAlphaChannel: true
-                    color: cfg_page.cfg_indicatorCustomColor
+                    color: indicatorsPage.cfg_indicatorCustomColor
                     onColorChanged: {
-                        if (!Qt.colorEqual(color, cfg_page.cfg_indicatorCustomColor)) {
-                            cfg_page.cfg_indicatorCustomColor = color
+                        if (!Qt.colorEqual(color, indicatorsPage.cfg_indicatorCustomColor)) {
+                            indicatorsPage.cfg_indicatorCustomColor = color
                         }
                     }
                 }
@@ -452,8 +452,8 @@ ConfigPage {
                 visible: indicatorsEnabled.checked
                 id: indicatorDesaturate
                 text: Wrappers.i18n("Desaturate when minimized")
-                checked: cfg_page.cfg_indicatorDesaturate
-                onToggled: cfg_page.cfg_indicatorDesaturate = checked
+                checked: indicatorsPage.cfg_indicatorDesaturate
+                onToggled: indicatorsPage.cfg_indicatorDesaturate = checked
             }
 
 
@@ -465,8 +465,8 @@ ConfigPage {
             CheckBox {
                 id: cfg_showBadges
                 text: Wrappers.i18n("Show badges")
-                checked: cfg_page.cfg_showBadges
-                onToggled: cfg_page.cfg_showBadges = checked
+                checked: indicatorsPage.cfg_showBadges
+                onToggled: indicatorsPage.cfg_showBadges = checked
             }
 
             RowLayout {
@@ -476,16 +476,16 @@ ConfigPage {
                     CheckBox {
                         id: cfg_badgeHighlightNew
                         text: Wrappers.i18n("Highlight new notifications")
-                        checked: cfg_page.cfg_badgeHighlightNew
-                        onToggled: cfg_page.cfg_badgeHighlightNew = checked
+                        checked: indicatorsPage.cfg_badgeHighlightNew
+                        onToggled: indicatorsPage.cfg_badgeHighlightNew = checked
                     }
                     RowLayout {
                         spacing: Kirigami.Units.smallSpacing
                         CheckBox {
                             id: cfg_showBadgesOnLaunchers
                             text: Wrappers.i18n("Show badges on pinned application icons")
-                            checked: cfg_page.cfg_showBadgesOnLaunchers
-                            onToggled: cfg_page.cfg_showBadgesOnLaunchers = checked
+                            checked: indicatorsPage.cfg_showBadgesOnLaunchers
+                            onToggled: indicatorsPage.cfg_showBadgesOnLaunchers = checked
                         }
                         Kirigami.Icon {
                             source: "help-about"
@@ -507,9 +507,9 @@ ConfigPage {
             CheckBox {
                 id: cfg_indicateAudioStreams
                 text: Wrappers.i18n("Mark applications playing audio")
-                checked: cfg_page.cfg_indicateAudioStreams
-                onToggled: cfg_page.cfg_indicateAudioStreams = checked
-                visible: cfg_page.plasmaPaAvailable
+                checked: indicatorsPage.cfg_indicateAudioStreams
+                onToggled: indicatorsPage.cfg_indicateAudioStreams = checked
+                visible: indicatorsPage.plasmaPaAvailable
             }
 
             Item { height: Kirigami.Units.largeSpacing }
@@ -529,8 +529,8 @@ ConfigPage {
                     Wrappers.i18n("Strip (Left)"),
                     Wrappers.i18n("Strip (Right)")
                 ]
-                currentIndex: cfg_page.cfg_indicatorProgressStyle
-                onActivated: cfg_page.cfg_indicatorProgressStyle = currentIndex
+                currentIndex: indicatorsPage.cfg_indicatorProgressStyle
+                onActivated: indicatorsPage.cfg_indicatorProgressStyle = currentIndex
             }
 
             RowLayout {
@@ -542,10 +542,10 @@ ConfigPage {
                 KQuickAddons.ColorButton {
                     id: indicatorProgressColor
                     showAlphaChannel: true
-                    color: cfg_page.cfg_indicatorProgressColor
+                    color: indicatorsPage.cfg_indicatorProgressColor
                     onColorChanged: {
-                        if (!Qt.colorEqual(color, cfg_page.cfg_indicatorProgressColor)) {
-                            cfg_page.cfg_indicatorProgressColor = color
+                        if (!Qt.colorEqual(color, indicatorsPage.cfg_indicatorProgressColor)) {
+                            indicatorsPage.cfg_indicatorProgressColor = color
                         }
                     }
                 }
@@ -564,8 +564,8 @@ ConfigPage {
                     from: 1
                     to: 10
                     stepSize: 1
-                    value: cfg_page.cfg_indicatorProgressThickness
-                    onMoved: cfg_page.cfg_indicatorProgressThickness = value
+                    value: indicatorsPage.cfg_indicatorProgressThickness
+                    onMoved: indicatorsPage.cfg_indicatorProgressThickness = value
                 }
 
                 Item {
@@ -581,8 +581,8 @@ ConfigPage {
                     from: 10
                     to: 100
                     stepSize: 5
-                    value: cfg_page.cfg_indicatorProgressOpacity
-                    onMoved: cfg_page.cfg_indicatorProgressOpacity = value
+                    value: indicatorsPage.cfg_indicatorProgressOpacity
+                    onMoved: indicatorsPage.cfg_indicatorProgressOpacity = value
                 }
                 }
             } // FormLayout

@@ -62,8 +62,8 @@ PlasmoidItem {
     readonly property bool iconsOnly: Plasmoid.configuration.iconOnly
     property bool showBadges: Plasmoid.configuration.showBadges
 
-    property alias globalVolumeOverlay: globalVolumeOverlay
-    property Item dropIndicator: dropIndicator
+    property alias globalVolumeOverlay: globalVolumeOverlayLoader
+    property Item dropIndicator: dropIndicatorRect
     property int dropIndex: -1
     property Item dragSource: null
     // Set to true in Task.qml when drag ends with cursor outside the panel bounds.
@@ -73,6 +73,7 @@ PlasmoidItem {
 
     property bool _isApplyingConfig: false
     property bool _initialStartup: true
+    property bool _isDestroying: false
 
     Timer {
         id: startupTimer
@@ -158,10 +159,10 @@ PlasmoidItem {
 
     property bool needLayoutRefresh: false
 
-    property alias taskList: taskList
-    property alias effectWatcher: effectWatcher
-    property alias audioStreamManager: audioStreamManager
-    property alias mpris2Source: mpris2Source
+    property alias taskList: taskListView
+    property alias effectWatcher: windowViewEffectWatcher
+    property alias audioStreamManager: audioStreamManagerLoader
+    property alias mpris2Source: mpris2SourceModel
     property alias dragHelper: dragHelper
     property alias taskFrame: taskFrame
     property alias filteredTasksModel: filteredTasksModel
@@ -198,7 +199,7 @@ PlasmoidItem {
             return -1; // Let Plasma manage and persist manual resizes
         if (vertical)
             return Kirigami.Units.gridUnit * (iconsOnly ? 2.5 : 10);
-        return taskList.Layout.maximumWidth;
+        return taskListView.Layout.maximumWidth;
     }
     Layout.preferredHeight: {
         if (shouldShrinkToZero)
@@ -206,14 +207,14 @@ PlasmoidItem {
         if (Plasmoid.location === PlasmaCore.Types.Floating)
             return -1; // Let Plasma manage and persist manual resizes
         if (vertical)
-            return taskList.Layout.maximumHeight;
+            return taskListView.Layout.maximumHeight;
         return Kirigami.Units.gridUnit * 2;
     }
 
     signal requestLayout
     signal windowsHovered(var winIds, bool hovered)
     function activateWindowView(winIds) {
-        if (!effectWatcher.registered)
+        if (!windowViewEffectWatcher.registered)
             return;
         cancelHighlightWindows();
         return DBus.SessionBus.asyncCall({
@@ -259,7 +260,7 @@ PlasmoidItem {
     property bool _isPublishingGeometries: false
 
     function publishIconGeometries(taskItems: var): void {
-        if (_isPublishingGeometries || tasks.destroying)
+        if (_isPublishingGeometries || tasks._isDestroying)
             return;
         if (TaskTools.taskManagerInstanceCount >= 2)
             return;
@@ -408,7 +409,7 @@ PlasmoidItem {
     }
 
     DBus.DBusServiceWatcher {
-        id: effectWatcher
+        id: windowViewEffectWatcher
         busType: DBus.BusType.Session
         watchedService: "org.kde.KWin.Effect.WindowView1"
     }
@@ -434,7 +435,7 @@ PlasmoidItem {
     }
 
     Mpris.Mpris2Model {
-        id: mpris2Source
+        id: mpris2SourceModel
     }
 
     function handleItemRemoval(taskItem) {
@@ -467,24 +468,29 @@ PlasmoidItem {
             return;
         const task = taskRepeater.itemAt(index) as Task;
         if (task)
-            TaskTools.activateTask(task.modelIndex(), task.model, null, task, Plasmoid, tasks, effectWatcher.registered);
+            TaskTools.activateTask(task.modelIndex(), task.model, null, task, Plasmoid, tasks, windowViewEffectWatcher.registered);
     }
-    function adjustGlobalVolume(increment) {
-        const audioManager = audioStreamManager.item;
-        if (!audioManager || !audioManager.preferredSink) return;
+    function adjustGlobalVolume(increment: int) {
+        const audioManager = audioStreamManagerLoader.item;
+        const pSink = "preferredSink";
+        const pAdj = "adjustObjectVolume";
+        if (!audioManager || !audioManager[pSink]) return;
 
-        const lastResult = audioManager.adjustObjectVolume(audioManager.preferredSink, increment);
-        if (lastResult && globalVolumeOverlay.item) {
-            globalVolumeOverlay.item.volume = lastResult.volume;
-            globalVolumeOverlay.item.muted = lastResult.muted;
-            globalVolumeOverlay.item.show();
+        const lastResult = audioManager[pAdj](audioManager[pSink], increment);
+        if (lastResult && globalVolumeOverlayLoader.item) {
+            const pVol = "volume";
+            const pMute = "muted";
+            const pShow = "show";
+            globalVolumeOverlayLoader.item[pVol] = lastResult.volume;
+            globalVolumeOverlayLoader.item[pMute] = lastResult.muted;
+            globalVolumeOverlayLoader.item[pShow]();
         }
     }
     function createContextMenu(rootTask, modelIndex, args = {}) {
         const initialArgs = Object.assign(args, {
             visualParent: rootTask,
             modelIndex,
-            mpris2Source,
+            mpris2SourceModel,
             tasksModel: tasks.tasksModel,
             virtualDesktopInfo,
             activityInfo,
@@ -516,13 +522,13 @@ PlasmoidItem {
         }
 
         Loader {
-            id: audioStreamManager
+            id: audioStreamManagerLoader
             sourceComponent: tasks.audioStreamManagerComponent
             active: tasks.audioStreamManagerComponent.status === Component.Ready
         }
 
         Loader {
-            id: globalVolumeOverlay
+            id: globalVolumeOverlayLoader
             anchors.fill: parent
             source: "TaskVolumeOverlay.qml"
         }
@@ -531,7 +537,7 @@ PlasmoidItem {
             id: iconGeometryTimer
             interval: 500
             repeat: false
-            onTriggered: tasks.publishIconGeometries(taskList.children)
+            onTriggered: tasks.publishIconGeometries(taskListView.children)
         }
 
         Timer {
@@ -599,20 +605,22 @@ PlasmoidItem {
                 // because Plasma desktop or other shell components may accept the drag
                 // and return a non-IgnoreAction even when the user clearly dropped outside.
                 const source = tasks.dragSource;
+                let pModel = "model";
+                let pWinIdList = "winIdList";
                 if (Plasmoid.configuration.unpinByDrag
                         && (dropAction === Qt.IgnoreAction || tasks.dragEndedOutsidePanel)
                         && source
-                        && source.model
-                        && source.model.IsLauncher
-                        && source.winIdList.length === 0) {
+                        && source[pModel]
+                        && source[pModel].IsLauncher
+                        && source[pWinIdList].length === 0) {
                     if (Plasmoid.configuration.unpinByDragExplosion
                             && Plasmoid.configuration.iconOnly === 1) {
                         explosionManager.spawn(tasks, source, true);
                         // Delay removal so the explosion animation plays before the item disappears.
-                        dragHelper.pendingUnpinUrl = source.model.LauncherUrlWithoutIcon.toString();
+                        dragHelper.pendingUnpinUrl = source[pModel].LauncherUrlWithoutIcon.toString();
                         unpinDelayTimer.start();
                     } else {
-                        tasks.removeLauncher(source.model.LauncherUrlWithoutIcon);
+                        tasks.removeLauncher(source[pModel].LauncherUrlWithoutIcon);
                     }
                 }
                 tasks.dragEndedOutsidePanel = false;
@@ -622,7 +630,7 @@ PlasmoidItem {
         }
 
         Rectangle {
-            id: dropIndicator
+            id: dropIndicatorRect
             color: Kirigami.Theme.highlightColor
             width: tasks.vertical ? parent.width : 2
             height: tasks.vertical ? 2 : parent.height
@@ -630,14 +638,14 @@ PlasmoidItem {
             z: 999
 
             Behavior on x {
-                enabled: dropIndicator.visible
+                enabled: tasks.dropIndicator.visible
                 NumberAnimation {
                     duration: Kirigami.Units.shortDuration
                     easing.type: Easing.OutQuad
                 }
             }
             Behavior on y {
-                enabled: dropIndicator.visible
+                enabled: tasks.dropIndicator.visible
                 NumberAnimation {
                     duration: Kirigami.Units.shortDuration
                     easing.type: Easing.OutQuad
@@ -700,11 +708,11 @@ PlasmoidItem {
             LayoutMirroring.enabled: tasks.shouldBeMirrored(Plasmoid.configuration.reverseMode, Qt.locale().textDirection, tasks.vertical)
             x: centerAlign && !tasks.vertical ? Math.round((parent.width - width) / 2) : 0
             y: centerAlign && tasks.vertical ? Math.round((parent.height - height) / 2) : 0
-            height: taskList.childrenRect.height
-            width: taskList.childrenRect.width
+            height: taskListView.childrenRect.height
+            width: taskListView.childrenRect.width
 
             TaskList {
-                id: taskList
+                id: taskListView
                 tasks: tasks
                 tasksModel: filteredTasksModel
                 LayoutMirroring.enabled: tasks.shouldBeMirrored(Plasmoid.configuration.reverseMode, Qt.locale().textDirection, tasks.vertical)

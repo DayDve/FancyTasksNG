@@ -101,16 +101,16 @@ Item {
 
     // Listen to task metadata and state changes
     Connections {
-        target: taskItem
+        target: controller.taskItem
         ignoreUnknownSignals: true
         function onPidChanged(): void {
-            if (taskItem.model) controller.updateAudioStreams();
+            if (controller.taskItem.model) controller.updateAudioStreams();
         }
         function onAppNameChanged(): void {
-            if (taskItem.model) controller.updateAudioStreams();
+            if (controller.taskItem.model) controller.updateAudioStreams();
         }
         function onIsWindowChanged(): void {
-            if (taskItem.model && taskItem.model.IsWindow) {
+            if (controller.taskItem.model && controller.taskItem.model.IsWindow) {
                 controller.updateAudioStreams();
             }
         }

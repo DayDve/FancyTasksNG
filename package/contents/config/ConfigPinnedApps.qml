@@ -567,7 +567,7 @@ ConfigPage {
 
                         onPositionChanged: (drag) => {
                             if (cfg_page.isDragging) {
-                                var localY = drag.y;
+                                let localY = drag.y;
                                 if (localY < 50) {
                                     autoScrollTimer.direction = -1;
                                     autoScrollTimer.running = true;
@@ -598,7 +598,7 @@ ConfigPage {
                             }
                             var item = pinnedAppsList.itemAtIndex(idx);
                             if (item) {
-                                var midY = item.y + item.height / 2;
+                                let midY = item.y + item.height / 2;
                                 cfg_page.dropItemIndex = absY < midY ? idx : idx + 1;
                             } else {
                                 cfg_page.dropItemIndex = idx;

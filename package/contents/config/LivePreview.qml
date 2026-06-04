@@ -18,7 +18,6 @@ import "../ui/code/singletones"
 import "../ui" as FancyUI
 import "../ui/code/tools.js" as TaskTools
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.plasmoid
 
 Item {
     id: previewRoot
@@ -215,10 +214,10 @@ Item {
                 id: controlsOverlay
                 z: 100
                 anchors {
-                    top: location === PlasmaCore.Types.TopEdge ? undefined : parent.top
-                    bottom: location === PlasmaCore.Types.TopEdge ? parent.bottom : undefined
-                    right: location === PlasmaCore.Types.RightEdge ? undefined : parent.right
-                    left: location === PlasmaCore.Types.RightEdge ? parent.left : undefined
+                    top: previewRoot.location === PlasmaCore.Types.TopEdge ? undefined : parent.top
+                    bottom: previewRoot.location === PlasmaCore.Types.TopEdge ? parent.bottom : undefined
+                    right: previewRoot.location === PlasmaCore.Types.RightEdge ? undefined : parent.right
+                    left: previewRoot.location === PlasmaCore.Types.RightEdge ? parent.left : undefined
                     margins: Kirigami.Units.largeSpacing
                 }
                 
@@ -630,11 +629,15 @@ Item {
                                             }
                                             const mode = mockTask.cfg.cfg_clipIconBackgroundColorMode;
                                             if (mode === 1) {
-                                                const domColor = previewIconColorsLoader.item ? previewIconColorsLoader.item.dominant : "transparent";
+                                                let pDom = "dominant";
+                                                const domColor = previewIconColorsLoader.item ? previewIconColorsLoader.item[pDom] : "transparent";
                                                 return TaskTools.harmonizeIconColor(domColor, domColor, Kirigami.Theme.backgroundColor, false);
                                             } else if (mode === 2) {
-                                                const avgColor = previewIconColorsLoader.item ? TaskTools.getAveragePaletteColor(previewIconColorsLoader.item.palette, previewIconColorsLoader.item.average) : "transparent";
-                                                const domColor = previewIconColorsLoader.item ? previewIconColorsLoader.item.dominant : "transparent";
+                                                let pDom = "dominant";
+                                                let pPal = "palette";
+                                                let pAvg = "average";
+                                                const avgColor = previewIconColorsLoader.item ? TaskTools.getAveragePaletteColor(previewIconColorsLoader.item[pPal], previewIconColorsLoader.item[pAvg]) : "transparent";
+                                                const domColor = previewIconColorsLoader.item ? previewIconColorsLoader.item[pDom] : "transparent";
                                                 return TaskTools.harmonizeIconColor(avgColor, domColor, Kirigami.Theme.backgroundColor, true);
                                             } else if (mode === 3) {
                                                 return Kirigami.Theme.highlightColor;

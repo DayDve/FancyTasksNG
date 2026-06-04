@@ -18,8 +18,8 @@ Flow {
     id: indicatorsFlow
     spacing: 10
     property int taskCount: 1
-    required property var task
-    required property var frame
+    required property var taskItem
+    required property var frameSvgItem
     required property var tasksRoot
 
     // Max possible cross-axis thickness across all indicator states
@@ -31,7 +31,7 @@ Flow {
     )
 
     function getActiveChildIndex() {
-        if (!indicatorsFlow.task || !indicatorsFlow.task.model) {
+        if (!indicatorsFlow.taskItem || !indicatorsFlow.taskItem.model) {
             return -1;
         }
         let model = indicatorsFlow.tasksRoot.tasksModel;
@@ -42,12 +42,12 @@ Flow {
         if (!activeTask || !activeTask.valid) {
             return -1;
         }
-        let index = indicatorsFlow.task.modelIndex();
+        let index = indicatorsFlow.taskItem.modelIndex();
         if (!index || !index.valid) {
             return -1;
         }
 
-        if (!indicatorsFlow.task.model.IsGroupParent) {
+        if (!indicatorsFlow.taskItem.model.IsGroupParent) {
             // For single windows/launchers: check if it's the active task and has no parent
             let activeParent = model.parent(activeTask);
             return (index.row === activeTask.row && (!activeParent || !activeParent.valid)) ? 0 : -1;
@@ -65,9 +65,9 @@ Flow {
         model: {
             if(!Plasmoid.configuration.indicatorsEnabled)
             return 0;
-            if(indicatorsFlow.task.isSubTask)//Target only the main task items.
+            if(indicatorsFlow.taskItem.isSubTask)//Target only the main task items.
             return 0;
-            if(indicatorsFlow.task.taskState === 'launcher') {
+            if(indicatorsFlow.taskItem.taskState === 'launcher') {
                 return 0;
             }
             return Math.min((indicatorsFlow.taskCount === 0) ? 1 : indicatorsFlow.taskCount, maxStates);
@@ -84,7 +84,7 @@ Flow {
                 if (index === (maxStates - 1) && activeIdx >= maxStates) return true;
                 return false;
             }
-            readonly property color decoColor: indicatorsFlow.frame.indicatorColor
+            readonly property color decoColor: indicatorsFlow.frameSvgItem.indicatorColor
             readonly property int maxStates: Plasmoid.configuration.indicatorMaxLimit
             readonly property bool isFirst: index === 0
             readonly property int adjust: Plasmoid.configuration.indicatorShrink
@@ -103,7 +103,7 @@ Flow {
             readonly property var computedVar: {
                 var colorCalc;
                 var colorEval;
-                var parentSize = !isVertical ? indicatorsFlow.frame.width : indicatorsFlow.frame.height;
+                var parentSize = !isVertical ? indicatorsFlow.frameSvgItem.width : indicatorsFlow.frameSvgItem.height;
                 var indicatorComputedSize;
                 var adjustment = isFirst ? adjust : 0
                 var parentSpacingAdjust = indicatorsFlow.taskCount >= 1 && maxStates >= 2 ? (spacing * 2.5) : 0
@@ -133,7 +133,7 @@ Flow {
                 }
 
                 // 2. Hover styling
-                if (indicatorsFlow.task.containsMouse || indicatorsFlow.task.isHovered) {
+                if (indicatorsFlow.taskItem.containsMouse || indicatorsFlow.taskItem.isHovered) {
                     if (Plasmoid.configuration.indicatorResize) {
                         if (Plasmoid.configuration.indicatorHoverSeparate) {
                             segLength = Plasmoid.configuration.indicatorHoverLength;
@@ -174,7 +174,7 @@ Flow {
 
                 var baseColor = colorEval;
 
-                if(Plasmoid.configuration.indicatorDesaturate && indicatorsFlow.task.taskState === "minimized") {
+                if(Plasmoid.configuration.indicatorDesaturate && indicatorsFlow.taskItem.taskState === "minimized") {
                     colorCalc = Qt.hsla(baseColor.hslHue, 0.0, baseColor.hslLightness, baseColor.a * 0.5)
                 } else {
                     colorCalc = baseColor

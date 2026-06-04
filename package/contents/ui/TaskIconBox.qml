@@ -4,6 +4,8 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 
 import org.kde.plasma.core as PlasmaCore
@@ -238,11 +240,11 @@ Item {
         color: {
             const mode = Plasmoid.configuration.clipIconBackgroundColorMode;
             if (mode === 1) {
-                const domColor = iconColorsLoader.item ? iconColorsLoader.item.dominant : "transparent";
+                const domColor = iconColorsLoader.item ? (iconColorsLoader.item as Kirigami.ImageColors).dominant : "transparent";
                 return TaskTools.harmonizeIconColor(domColor, domColor, Kirigami.Theme.backgroundColor, false);
             } else if (mode === 2) {
-                const avgColor = iconColorsLoader.item ? TaskTools.getAveragePaletteColor(iconColorsLoader.item.palette, iconColorsLoader.item.average) : "transparent";
-                const domColor = iconColorsLoader.item ? iconColorsLoader.item.dominant : "transparent";
+                const avgColor = iconColorsLoader.item ? TaskTools.getAveragePaletteColor((iconColorsLoader.item as Kirigami.ImageColors).palette, (iconColorsLoader.item as Kirigami.ImageColors).average) : "transparent";
+                const domColor = iconColorsLoader.item ? (iconColorsLoader.item as Kirigami.ImageColors).dominant : "transparent";
                 return TaskTools.harmonizeIconColor(avgColor, domColor, Kirigami.Theme.backgroundColor, true);
             } else if (mode === 3) {
                 return Kirigami.Theme.highlightColor;
@@ -267,8 +269,8 @@ Item {
             name: "standalone"
             when: !iconBox._iconsOnly && !iconBox.labelVisible && iconBox.taskItem && iconBox.taskItem.parent && iconBox._taskHasModel && !iconBox.taskItem.model.IsLauncher
             PropertyChanges {
-                target: iconBox; anchors.leftMargin: 0
-                width: Math.min(iconBox.taskItem.parent.minimumWidth, iconBox._trHeight) - adjustMargin(true, iconBox.taskItem.width, iconBox._trTaskFrame ? iconBox._trTaskFrame.margins.left : 0) - adjustMargin(true, iconBox.taskItem.width, iconBox._trTaskFrame ? iconBox._trTaskFrame.margins.right : 0)
+                iconBox.anchors.leftMargin: 0
+                iconBox.width: Math.min(iconBox.taskItem.parent.minimumWidth, iconBox._trHeight) - adjustMargin(true, iconBox.taskItem.width, iconBox._trTaskFrame ? iconBox._trTaskFrame.margins.left : 0) - adjustMargin(true, iconBox.taskItem.width, iconBox._trTaskFrame ? iconBox._trTaskFrame.margins.right : 0)
             }
         }
     ]

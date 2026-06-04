@@ -136,7 +136,7 @@ QtObject {
     function adjustObjectVolume(obj, increment) {
         if (!obj) return;
         
-        const step = (normalVolume - minimalVolume) * (globalConfig.volumeStep || 5) / 100;
+        const step = (normalVolume - minimalVolume) * (globalConfig["volumeStep"] || 5) / 100;
         const currentVolume = obj.Volume !== undefined ? obj.Volume : (obj.volume !== undefined ? obj.volume : 0);
         const newVolume = Math.round(Math.max(minimalVolume, Math.min(currentVolume + (step * increment), normalVolume)));
         

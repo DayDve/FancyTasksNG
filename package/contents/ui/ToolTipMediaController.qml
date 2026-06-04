@@ -45,7 +45,7 @@ Item {
     property int cachedVolume: 0
     readonly property int appVolume: {
         if (hasAudioStream && audioStreams.length > 0 && !userVolumeChangeTimer.running) {
-            var validStreams = audioStreams.filter(s => s && typeof s.volume !== 'undefined');
+            let validStreams = audioStreams.filter(s => s && typeof s.volume !== 'undefined');
             if (validStreams.length > 0) {
                 return validStreams.reduce((max, s) => Math.max(max, s.volume), 0);
             }
@@ -74,9 +74,9 @@ Item {
         interval: 500
         repeat: false
         onTriggered: {
-            var validStreams = audioStreams.filter(s => s && typeof s.volume !== 'undefined');
+            var validStreams = controller.audioStreams.filter(s => s && typeof s.volume !== 'undefined');
             if (validStreams.length > 0)
-                cachedVolume = validStreams.reduce((max, s) => Math.max(max, s.volume), 0);
+                controller.cachedVolume = validStreams.reduce((max, s) => Math.max(max, s.volume), 0);
         }
     }
 
@@ -111,7 +111,7 @@ Item {
             // While userVolumeChangeTimer is running we keep cachedVolume as-is so
             // the slider stays at the intended position until PA fully converges.
             if (!userVolumeChangeTimer.running) {
-                var validStreams = streams.filter(s => s && typeof s.volume !== 'undefined');
+                let validStreams = streams.filter(s => s && typeof s.volume !== 'undefined');
                 if (validStreams.length > 0)
                     cachedVolume = validStreams.reduce((max, s) => Math.max(max, s.volume), 0);
             }

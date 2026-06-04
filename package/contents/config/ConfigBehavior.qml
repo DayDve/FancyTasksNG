@@ -16,7 +16,7 @@ import org.kde.plasma.plasmoid
 import "../ui/code/singletones"
 
 ConfigPage {
-    id: cfg_page
+    id: behaviorPage
     ColumnLayout {
         anchors.fill: parent
         spacing: Kirigami.Units.largeSpacing
@@ -43,27 +43,27 @@ ConfigPage {
                 RadioButton {
                     id: groupDisabled
                     text: Wrappers.i18nc("State", "Disabled")
-                    checked: cfg_page.cfg_groupingStrategy === 0
-                    onToggled: if (checked) cfg_page.cfg_groupingStrategy = 0
+                    checked: behaviorPage.cfg_groupingStrategy === 0
+                    onToggled: if (checked) behaviorPage.cfg_groupingStrategy = 0
                 }
 
                 RadioButton {
                     id: groupSideBySide
                     text: Wrappers.i18n("Place windows of one application side-by-side")
-                    checked: cfg_page.cfg_groupingStrategy === 1 && !cfg_page.cfg_groupPopups
+                    checked: behaviorPage.cfg_groupingStrategy === 1 && !behaviorPage.cfg_groupPopups
                     onToggled: if (checked) {
-                        cfg_page.cfg_groupingStrategy = 1;
-                        cfg_page.cfg_groupPopups = false;
+                        behaviorPage.cfg_groupingStrategy = 1;
+                        behaviorPage.cfg_groupPopups = false;
                     }
                 }
 
                 RadioButton {
                     id: groupCollapsed
                     text: Wrappers.i18n("Combine into one button by application name")
-                    checked: cfg_page.cfg_groupingStrategy === 1 && cfg_page.cfg_groupPopups
+                    checked: behaviorPage.cfg_groupingStrategy === 1 && behaviorPage.cfg_groupPopups
                     onToggled: if (checked) {
-                        cfg_page.cfg_groupingStrategy = 1;
-                        cfg_page.cfg_groupPopups = true;
+                        behaviorPage.cfg_groupingStrategy = 1;
+                        behaviorPage.cfg_groupPopups = true;
                     }
                 }
 
@@ -73,8 +73,8 @@ ConfigPage {
                     Layout.leftMargin: Kirigami.Units.gridUnit * 2
                     visible: groupCollapsed.checked
                     text: Wrappers.i18n("Standard group overlay")
-                    checked: cfg_page.cfg_groupIconEnabled
-                    onToggled: cfg_page.cfg_groupIconEnabled = checked
+                    checked: behaviorPage.cfg_groupIconEnabled
+                    onToggled: behaviorPage.cfg_groupIconEnabled = checked
                 }
             }
 
@@ -99,8 +99,8 @@ ConfigPage {
                     Wrappers.i18n("By activity"),
                     Wrappers.i18n("By horizontal window position")
                 ]
-                currentIndex: cfg_page.cfg_sortingStrategy
-                onActivated: (index) => cfg_page.cfg_sortingStrategy = index
+                currentIndex: behaviorPage.cfg_sortingStrategy
+                onActivated: (index) => behaviorPage.cfg_sortingStrategy = index
             }
 
 
@@ -110,8 +110,8 @@ ConfigPage {
             CheckBox {
                 id: cfg_minimizeActiveTaskOnClick
                 text: Wrappers.i18n("Clicking active task minimizes the task")
-                checked: cfg_page.cfg_minimizeActiveTaskOnClick
-                onToggled: cfg_page.cfg_minimizeActiveTaskOnClick = checked
+                checked: behaviorPage.cfg_minimizeActiveTaskOnClick
+                onToggled: behaviorPage.cfg_minimizeActiveTaskOnClick = checked
             }
 
             Label {
@@ -129,16 +129,16 @@ ConfigPage {
                     Wrappers.i18n("Toggles grouping"),
                     Wrappers.i18n("Brings it to the current virtual desktop")
                 ]
-                currentIndex: cfg_page.cfg_middleClickAction
-                onActivated: (index) => cfg_page.cfg_middleClickAction = index
+                currentIndex: behaviorPage.cfg_middleClickAction
+                onActivated: (index) => behaviorPage.cfg_middleClickAction = index
             }
 
             CheckBox {
                 id: cfg_smokeExplosionOnClose
-                visible: cfg_page.cfg_iconOnly === 1 && cfg_middleClickAction.currentIndex === 1
+                visible: behaviorPage.cfg_iconOnly === 1 && cfg_middleClickAction.currentIndex === 1
                 text: Wrappers.i18n("Animation of closing/removing an icon from the panel")
-                checked: cfg_page.cfg_smokeExplosionOnClose
-                onToggled: cfg_page.cfg_smokeExplosionOnClose = checked
+                checked: behaviorPage.cfg_smokeExplosionOnClose
+                onToggled: behaviorPage.cfg_smokeExplosionOnClose = checked
             }
 
             Item { height: Kirigami.Units.largeSpacing }
@@ -158,11 +158,11 @@ ConfigPage {
                     Wrappers.i18n("Cycles through tasks of the current group (skip minimized)"),
                     Wrappers.i18n("Adjusts volume of the window")
                 ]
-                currentIndex: cfg_page.cfg_wheelAction
+                currentIndex: behaviorPage.cfg_wheelAction
                 onActivated: (index) => {
-                    cfg_page.cfg_wheelAction = index
-                    if (index === 5 && cfg_page.cfg_wheelCtrlAction === 5) {
-                        cfg_page.cfg_wheelCtrlAction = 0
+                    behaviorPage.cfg_wheelAction = index
+                    if (index === 5 && behaviorPage.cfg_wheelCtrlAction === 5) {
+                        behaviorPage.cfg_wheelCtrlAction = 0
                     }
                 }
             }
@@ -173,8 +173,8 @@ ConfigPage {
                 Item { implicitWidth: Kirigami.Units.gridUnit }
                 CheckBox {
                     text: Wrappers.i18n("Adjust system volume with Shift key")
-                    checked: cfg_page.cfg_wheelShiftSystemVolumeEnabled
-                    onToggled: cfg_page.cfg_wheelShiftSystemVolumeEnabled = checked
+                    checked: behaviorPage.cfg_wheelShiftSystemVolumeEnabled
+                    onToggled: behaviorPage.cfg_wheelShiftSystemVolumeEnabled = checked
                 }
             }
 
@@ -184,8 +184,8 @@ ConfigPage {
                 CheckBox {
                     id: cfg_wheelCtrlActionEnabled
                     text: Wrappers.i18n("Additional action with Ctrl key")
-                    checked: cfg_page.cfg_wheelCtrlActionEnabled
-                    onToggled: cfg_page.cfg_wheelCtrlActionEnabled = checked
+                    checked: behaviorPage.cfg_wheelCtrlActionEnabled
+                    onToggled: behaviorPage.cfg_wheelCtrlActionEnabled = checked
                 }
             }
 
@@ -212,18 +212,18 @@ ConfigPage {
                         textRole: "text"
                         currentIndex: {
                             for (let i = 0; i < model.length; i++) {
-                                if (model[i].originalIndex === cfg_page.cfg_wheelCtrlAction) return i;
+                                if (model[i].originalIndex === behaviorPage.cfg_wheelCtrlAction) return i;
                             }
                             return 0;
                         }
-                        onActivated: (index) => cfg_page.cfg_wheelCtrlAction = model[index].originalIndex
+                        onActivated: (index) => behaviorPage.cfg_wheelCtrlAction = model[index].originalIndex
                     }
 
                     CheckBox {
                         visible: cfg_wheelCtrlAction.model[cfg_wheelCtrlAction.currentIndex]?.originalIndex === 5
                         text: Wrappers.i18n("Adjust system volume with Shift key")
-                        checked: cfg_page.cfg_wheelShiftSystemVolumeEnabled
-                        onToggled: cfg_page.cfg_wheelShiftSystemVolumeEnabled = checked
+                        checked: behaviorPage.cfg_wheelShiftSystemVolumeEnabled
+                        onToggled: behaviorPage.cfg_wheelShiftSystemVolumeEnabled = checked
                     }
                 }
             }
@@ -231,8 +231,8 @@ ConfigPage {
             CheckBox {
                 id: enableToolTips
                 text: Wrappers.i18n("Show tooltips when hovering over task buttons")
-                checked: cfg_page.cfg_enableToolTips
-                onToggled: cfg_page.cfg_enableToolTips = checked
+                checked: behaviorPage.cfg_enableToolTips
+                onToggled: behaviorPage.cfg_enableToolTips = checked
             }
 
             RowLayout {
@@ -241,8 +241,8 @@ ConfigPage {
                 CheckBox {
                     id: showToolTips
                     text: Wrappers.i18n("Show window thumbnails in tooltips")
-                    checked: cfg_page.cfg_showToolTips
-                    onToggled: cfg_page.cfg_showToolTips = checked
+                    checked: behaviorPage.cfg_showToolTips
+                    onToggled: behaviorPage.cfg_showToolTips = checked
                 }
             }
 
@@ -252,8 +252,8 @@ ConfigPage {
                 CheckBox {
                     id: highlightWindows
                     text: Wrappers.i18n("Hide other windows when hovering over a window in the tooltip")
-                    checked: cfg_page.cfg_highlightWindows
-                    onToggled: cfg_page.cfg_highlightWindows = checked
+                    checked: behaviorPage.cfg_highlightWindows
+                    onToggled: behaviorPage.cfg_highlightWindows = checked
                 }
             }
 
@@ -263,8 +263,8 @@ ConfigPage {
                 CheckBox {
                     id: showMediaControls
                     text: Wrappers.i18n("Show media controls")
-                    checked: cfg_page.cfg_showMediaControls
-                    onToggled: cfg_page.cfg_showMediaControls = checked
+                    checked: behaviorPage.cfg_showMediaControls
+                    onToggled: behaviorPage.cfg_showMediaControls = checked
                 }
             }
 
@@ -282,8 +282,8 @@ ConfigPage {
                         Wrappers.i18n("On thumbnails (Overlay)"),
                         Wrappers.i18n("Under thumbnails")
                     ]
-                    currentIndex: cfg_page.cfg_mediaControlsLocation
-                    onActivated: (index) => cfg_page.cfg_mediaControlsLocation = index
+                    currentIndex: behaviorPage.cfg_mediaControlsLocation
+                    onActivated: (index) => behaviorPage.cfg_mediaControlsLocation = index
                 }
             }
 
@@ -301,8 +301,8 @@ ConfigPage {
                     Wrappers.i18n("Shows large window previews"),
                     Wrappers.i18n("Shows textual list"),
                 ]
-                currentIndex: cfg_page.cfg_groupedTaskVisualization
-                onActivated: (index) => cfg_page.cfg_groupedTaskVisualization = index
+                currentIndex: behaviorPage.cfg_groupedTaskVisualization
+                onActivated: (index) => behaviorPage.cfg_groupedTaskVisualization = index
             }
 
             Item { height: Kirigami.Units.largeSpacing }
@@ -313,22 +313,22 @@ ConfigPage {
             CheckBox {
                 id: cfg_showOnlyCurrentScreen
                 text: Wrappers.i18n("From current screen")
-                checked: cfg_page.cfg_showOnlyCurrentScreen
-                onToggled: cfg_page.cfg_showOnlyCurrentScreen = checked
+                checked: behaviorPage.cfg_showOnlyCurrentScreen
+                onToggled: behaviorPage.cfg_showOnlyCurrentScreen = checked
             }
 
             CheckBox {
                 id: cfg_showOnlyCurrentDesktop
                 text: Wrappers.i18n("From current desktop")
-                checked: cfg_page.cfg_showOnlyCurrentDesktop
-                onToggled: cfg_page.cfg_showOnlyCurrentDesktop = checked
+                checked: behaviorPage.cfg_showOnlyCurrentDesktop
+                onToggled: behaviorPage.cfg_showOnlyCurrentDesktop = checked
             }
 
             CheckBox {
                 id: cfg_showOnlyCurrentActivity
                 text: Wrappers.i18n("From current activity")
-                checked: cfg_page.cfg_showOnlyCurrentActivity
-                onToggled: cfg_page.cfg_showOnlyCurrentActivity = checked
+                checked: behaviorPage.cfg_showOnlyCurrentActivity
+                onToggled: behaviorPage.cfg_showOnlyCurrentActivity = checked
             }
 
 
@@ -337,24 +337,24 @@ ConfigPage {
             }
 
             RadioButton {
-                checked: cfg_page.cfg_minimizedFilter === 0
+                checked: behaviorPage.cfg_minimizedFilter === 0
                 text: Wrappers.i18n("In any state")
                 ButtonGroup.group: minimizedFilterButtonGroup
-                onToggled: if (checked) cfg_page.cfg_minimizedFilter = 0
+                onToggled: if (checked) behaviorPage.cfg_minimizedFilter = 0
             }
 
             RadioButton {
-                checked: cfg_page.cfg_minimizedFilter === 1
+                checked: behaviorPage.cfg_minimizedFilter === 1
                 text: Wrappers.i18n("Only minimized")
                 ButtonGroup.group: minimizedFilterButtonGroup
-                onToggled: if (checked) cfg_page.cfg_minimizedFilter = 1
+                onToggled: if (checked) behaviorPage.cfg_minimizedFilter = 1
             }
 
             RadioButton {
-                checked: cfg_page.cfg_minimizedFilter === 2
+                checked: behaviorPage.cfg_minimizedFilter === 2
                 text: Wrappers.i18n("Only not minimized")
                 ButtonGroup.group: minimizedFilterButtonGroup
-                onToggled: if (checked) cfg_page.cfg_minimizedFilter = 2
+                onToggled: if (checked) behaviorPage.cfg_minimizedFilter = 2
             }
 
             Item { height: Kirigami.Units.largeSpacing }
@@ -367,7 +367,7 @@ ConfigPage {
             }
 
             RadioButton {
-                checked: !cfg_page.cfg_reverseMode
+                checked: !behaviorPage.cfg_reverseMode
                 text: {
                     if (Plasmoid.formFactor === PlasmaCore.Types.Vertical) {
                         return Wrappers.i18n("On the bottom")
@@ -384,8 +384,8 @@ ConfigPage {
 
             RadioButton {
                 id: cfg_reverseMode
-                checked: cfg_page.cfg_reverseMode
-                onToggled: cfg_page.cfg_reverseMode = checked
+                checked: behaviorPage.cfg_reverseMode
+                onToggled: behaviorPage.cfg_reverseMode = checked
                 text: {
                     if (Plasmoid.formFactor === PlasmaCore.Types.Vertical) {
                         return Wrappers.i18n("On the top")

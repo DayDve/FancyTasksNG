@@ -4,11 +4,11 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Effects
 import org.kde.ksvg as KSvg
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
 import "code/tools.js" as TaskTools
 

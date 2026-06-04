@@ -14,7 +14,7 @@ import org.kde.plasma.plasmoid
 import "../ui/code/singletones"
 
 ConfigPage {
-    id: cfg_page
+    id: advancedPage
 
     ColumnLayout {
         anchors.fill: parent
@@ -48,8 +48,8 @@ ConfigPage {
                     id: overridePlasmaButtonDirection
                     text: Wrappers.i18n("Override system direction")
                     enabled: Plasmoid.location === PlasmaCore.Types.Floating
-                    checked: cfg_page.cfg_overridePlasmaButtonDirection
-                    onToggled: cfg_page.cfg_overridePlasmaButtonDirection = checked
+                    checked: advancedPage.cfg_overridePlasmaButtonDirection
+                    onToggled: advancedPage.cfg_overridePlasmaButtonDirection = checked
                 }
 
                 ComboBox {
@@ -63,8 +63,8 @@ ConfigPage {
                         Wrappers.i18n("As on left panel"),
                         Wrappers.i18n("As on right panel")
                     ]
-                    currentIndex: cfg_page.cfg_plasmaButtonDirection
-                    onActivated: (index) => cfg_page.cfg_plasmaButtonDirection = index
+                    currentIndex: advancedPage.cfg_plasmaButtonDirection
+                    onActivated: (index) => advancedPage.cfg_plasmaButtonDirection = index
                 }
 
                 Item { height: Kirigami.Units.largeSpacing }
@@ -80,17 +80,17 @@ ConfigPage {
                     id: cfg_unhideOnAttention
                     text: Wrappers.i18n("Unhide panel when a window wants attention")
                     enabled: Plasmoid.location !== PlasmaCore.Types.Floating
-                    checked: cfg_page.cfg_unhideOnAttention
-                    onToggled: cfg_page.cfg_unhideOnAttention = checked
+                    checked: advancedPage.cfg_unhideOnAttention
+                    onToggled: advancedPage.cfg_unhideOnAttention = checked
                 }
 
                 CheckBox {
                     id: cfg_animateAttentionStatus
                     text: Wrappers.i18n("Animate task icon when a window wants attention")
                     enabled: Plasmoid.location !== PlasmaCore.Types.Floating
-                    checked: cfg_page.cfg_animateAttentionStatus
-                    onToggled: cfg_page.cfg_animateAttentionStatus = checked
-                    visible: cfg_page.cfg_iconOnly === 1
+                    checked: advancedPage.cfg_animateAttentionStatus
+                    onToggled: advancedPage.cfg_animateAttentionStatus = checked
+                    visible: advancedPage.cfg_iconOnly === 1
                 }
 
                 Item { height: Kirigami.Units.largeSpacing }
@@ -99,7 +99,7 @@ ConfigPage {
                     text: Wrappers.i18n("Layout settings:")
                     opacity: fillEnabled ? 1.0 : 0.6
 
-                    readonly property bool fillEnabled: Plasmoid.location !== PlasmaCore.Types.Floating && cfg_page.cfg_iconOnly
+                    readonly property bool fillEnabled: Plasmoid.location !== PlasmaCore.Types.Floating && advancedPage.cfg_iconOnly
                 }
 
                 Kirigami.InlineMessage {
@@ -111,7 +111,7 @@ ConfigPage {
 
                 Kirigami.InlineMessage {
                     Layout.fillWidth: true
-                    visible: Plasmoid.location !== PlasmaCore.Types.Floating && !cfg_page.cfg_iconOnly
+                    visible: Plasmoid.location !== PlasmaCore.Types.Floating && !advancedPage.cfg_iconOnly
                     type: Kirigami.MessageType.Information
                     text: Wrappers.i18n("These options are only available in icon-only mode.")
                 }
@@ -119,9 +119,9 @@ ConfigPage {
                 CheckBox {
                     id: fill
                     text: Wrappers.i18n("Fill free space on panel")
-                    enabled: Plasmoid.location !== PlasmaCore.Types.Floating && cfg_page.cfg_iconOnly
-                    checked: cfg_page.cfg_fill
-                    onToggled: cfg_page.cfg_fill = checked
+                    enabled: Plasmoid.location !== PlasmaCore.Types.Floating && advancedPage.cfg_iconOnly
+                    checked: advancedPage.cfg_fill
+                    onToggled: advancedPage.cfg_fill = checked
                 }
 
                 RowLayout {
@@ -138,8 +138,8 @@ ConfigPage {
                             Wrappers.i18n("Edge"),
                             Wrappers.i18n("Center")
                         ]
-                        currentIndex: cfg_page.cfg_fillAlignment
-                        onActivated: (index) => cfg_page.cfg_fillAlignment = index
+                        currentIndex: advancedPage.cfg_fillAlignment
+                        onActivated: (index) => advancedPage.cfg_fillAlignment = index
                     }
                 }
 
@@ -152,8 +152,8 @@ ConfigPage {
                 CheckBox {
                     id: cfg_hideMoveToDesktopMenuWithOneDesktop
                     text: Wrappers.i18n("Hide 'Move to Desktop' if only one virtual desktop is used")
-                    checked: cfg_page.cfg_hideMoveToDesktopMenuWithOneDesktop
-                    onToggled: cfg_page.cfg_hideMoveToDesktopMenuWithOneDesktop = checked
+                    checked: advancedPage.cfg_hideMoveToDesktopMenuWithOneDesktop
+                    onToggled: advancedPage.cfg_hideMoveToDesktopMenuWithOneDesktop = checked
 
                     Layout.fillWidth: true
 
@@ -170,8 +170,8 @@ ConfigPage {
                 CheckBox {
                     id: cfg_showBrowserHistory
                     text: Wrappers.i18n("Show browsing history in the context menu of web browsers (Experimental)")
-                    checked: cfg_page.cfg_showBrowserHistory
-                    onToggled: cfg_page.cfg_showBrowserHistory = checked
+                    checked: advancedPage.cfg_showBrowserHistory
+                    onToggled: advancedPage.cfg_showBrowserHistory = checked
 
                     Layout.fillWidth: true
 
@@ -195,8 +195,8 @@ ConfigPage {
                         id: cfg_browserHistoryLimit
                         from: 1
                         to: 50
-                        value: cfg_page.cfg_browserHistoryLimit
-                        onValueModified: cfg_page.cfg_browserHistoryLimit = value
+                        value: advancedPage.cfg_browserHistoryLimit
+                        onValueModified: advancedPage.cfg_browserHistoryLimit = value
                     }
                 }
             } // FormLayout

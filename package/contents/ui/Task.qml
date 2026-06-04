@@ -30,7 +30,7 @@ import org.kde.plasma.components as PlasmaComponents3
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.plasmoid
 import QtQuick.Effects
-import org.kde.taskmanager as TaskManager
+
 
 import "code/layoutmetrics.js" as LayoutMetrics
 import "code/tools.js" as TaskTools
@@ -38,7 +38,7 @@ import "code/singletones"
 
 Item {
     id: task
-    readonly property alias frame: frame
+    readonly property alias frame: backgroundFrame
     z: highlighted ? 10 : (badgeVisible || playingAudio || muted) ? 1 : 0
 
     activeFocusOnTab: true
@@ -67,9 +67,9 @@ Item {
     readonly property int _cfgIconSize: Plasmoid.configuration.iconSizeOverride ? Plasmoid.configuration.iconSizePx : (Math.min(tasksRoot.width, tasksRoot.height) * Plasmoid.configuration.iconScale / 100)
     readonly property int _cfgZoom: (tasksRoot.iconsOnly && Plasmoid.configuration.taskHoverEffect) ? Plasmoid.configuration.iconZoomFactor : 0
     readonly property int _maxIconSize: _cfgIconSize + _cfgZoom
-    property alias taskIcon: iconBox.icon
+    property alias taskIcon: taskIconBox.icon
     readonly property bool iconOverflows: tasksRoot.vertical ? 
-        (iconBox.icon.width > tasksRoot.width) : (iconBox.icon.height > tasksRoot.height)
+        (taskIconBox.icon.width > tasksRoot.width) : (taskIconBox.icon.height > tasksRoot.height)
 
     Item {
         id: tooltipAnchor
@@ -209,7 +209,7 @@ Item {
     }
 
     function getGlobalRect(): /*QRect*/ var {
-        if (!task || !task.window) return Qt.rect(0, 0, 0, 0);
+        if (!task) return Qt.rect(0, 0, 0, 0);
         const pos = task.mapToGlobal(0, 0);
         return Qt.rect(pos.x, pos.y, task.width, task.height);
     }
@@ -263,9 +263,9 @@ Item {
     HoverHandler {
         id: hoverHandler
         onPointChanged: {
-            if (hovered && tasksRoot.instantHoveredTask === task) {
-                const fraction = tasksRoot.vertical ? (point.position.y / height) : (point.position.x / width);
-                tasksRoot.instantHoveredFraction = Math.max(0.0, Math.min(1.0, fraction));
+            if (hovered && task.tasksRoot.instantHoveredTask === task) {
+                const fraction = task.tasksRoot.vertical ? (point.position.y / task.height) : (point.position.x / task.width);
+                task.tasksRoot.instantHoveredFraction = Math.max(0.0, Math.min(1.0, fraction));
             }
         }
     }
@@ -400,7 +400,7 @@ Item {
         }
 
         let smartLauncherDescription = "";
-        if (task.model && iconBox.active) {
+        if (task.model && taskIconBox.active) {
             smartLauncherDescription += Wrappers.i18ncp("@info:tooltip", "There is %1 new message.", "There are %1 new messages.", task.badgeCount);
         }
 
@@ -554,8 +554,8 @@ Item {
     Indicators {
         id: indicator
         taskCount: task.childCount
-        task: task
-        frame: frame
+        taskItem: task
+        frameSvgItem: backgroundFrame
         tasksRoot: task.tasksRoot
         visible: {
             if (!Plasmoid.configuration.indicatorsEnabled || !task.model) return false;
@@ -665,7 +665,7 @@ Item {
     }
 
     KSvg.FrameSvgItem {
-        id: frame
+        id: backgroundFrame
         onIsHoveredChanged: {
         }
 
@@ -701,19 +701,19 @@ Item {
         prefix: isHovered ?
             TaskTools.taskPrefixHovered(basePrefix, Plasmoid.location) : TaskTools.taskPrefix(basePrefix, Plasmoid.location)
 
-        visible: (!task.model || task.model.IsLauncher || task.model.IsDemandingAttention || task.model.IsActive || frame.isHovered) ?
+        visible: (!task.model || task.model.IsLauncher || task.model.IsDemandingAttention || task.model.IsActive || backgroundFrame.isHovered) ?
             true : !Plasmoid.configuration.disableButtonInactiveSvg
 
         layer.enabled: (!task.model || task.model.IsLauncher || !Plasmoid.configuration.buttonColorize) ? false :
-                       (task.model.IsDemandingAttention && !frame.isHovered) ? false :
-                       (task.model.IsActive || frame.isHovered) ? true :
+                       (task.model.IsDemandingAttention && !backgroundFrame.isHovered) ? false :
+                       (task.model.IsActive || backgroundFrame.isHovered) ? true :
                        (!Plasmoid.configuration.disableButtonInactiveSvg && Plasmoid.configuration.buttonColorizeInactive)
 
         layer.effect: MultiEffect {
             brightness: 1.0
             colorization: 1.0
             colorizationColor: Plasmoid.configuration.buttonColorizeDominant ?
-                frame.indicatorColor : Plasmoid.configuration.buttonColorizeCustom
+                backgroundFrame.indicatorColor : Plasmoid.configuration.buttonColorizeCustom
         }
 
         // Avoid repositioning delegate item after dragFinished
@@ -736,13 +736,13 @@ Item {
 
             onActiveChanged: {
                 if (active) {
-                        const grabWidth = Math.floor(iconBox.icon.width);
-                        const grabHeight = Math.floor(iconBox.icon.height);
+                        const grabWidth = Math.floor(taskIconBox.icon.width);
+                        const grabHeight = Math.floor(taskIconBox.icon.height);
                         if (!isFinite(grabWidth) || !isFinite(grabHeight) || grabWidth <= 0 || grabHeight <= 0) {
                             return;
                         }
 
-                        iconBox.icon.grabToImage(result => {
+                        taskIconBox.icon.grabToImage(result => {
                             if (!dragHandler || !dragHandler.active || !task || !task.tasksRoot || !task.tasksRoot.dragHelper) {
                                 return;
                             }
@@ -766,7 +766,7 @@ Item {
                     // even when the user clearly dropped outside the panel area.
                     const isPureLauncher = task.model.IsLauncher && task.winIdList.length === 0;
                     if (Plasmoid.configuration.unpinByDrag && isPureLauncher) {
-                        const localPos = task.tasksRoot.mapFromScene(dragHandler.centroid.sceneCentroid);
+                        const localPos = task.tasksRoot.mapFromScene(dragHandler.centroid.scenePosition);
                         task.tasksRoot.dragEndedOutsidePanel = !task.tasksRoot.contains(localPos);
                     }
 
@@ -781,7 +781,7 @@ Item {
     Loader {
         id: taskProgressOverlayLoader
 
-        anchors.fill: frame
+        anchors.fill: backgroundFrame
         asynchronous: true
         active: !!(task.model && task.model.IsWindow) && !!(task.model && task.model.Progress > 0) && Plasmoid.configuration.indicatorProgressStyle > 0
 
@@ -798,7 +798,7 @@ Item {
 
     Loader {
         id: taskVolumeOverlayLoader
-        anchors.fill: frame
+        anchors.fill: backgroundFrame
         active: !Plasmoid.configuration.showMediaControls || !Plasmoid.configuration.showToolTips
         source: "TaskVolumeOverlay.qml"
     }
@@ -808,7 +808,7 @@ Item {
         active: Plasmoid.configuration.groupIconEnabled && !task.inPopup && !!task.model && task.model.IsWindow && task.model.IsGroupParent
         sourceComponent: Component {
             GroupExpanderOverlay {
-                iconBox: iconBox
+                iconBox: taskIconBox
                 taskModel: task.model
                 tasksRoot: task.tasksRoot
                 parent: task
@@ -819,7 +819,7 @@ Item {
 
 
     TaskIconBox {
-        id: iconBox
+        id: taskIconBox
         taskItem: task
         tasksRootContext: task.tasksRoot
         labelVisible: label.visible
@@ -836,7 +836,7 @@ Item {
 
     Loader {
         id: badgeLoader
-        parent: task.tasksRoot.iconsOnly ? iconBox : task
+        parent: task.tasksRoot.iconsOnly ? taskIconBox : task
         anchors.fill: parent
         active: Plasmoid.configuration.showBadges || task.audioIndicatorsEnabled
         source: "TaskBadgeOverlay.qml"
@@ -849,11 +849,11 @@ Item {
     PlasmaComponents3.Label {
         id: label
 
-        visible: (task.inPopup || !task.tasksRoot.iconsOnly && !task.model.IsLauncher && (parent.width - iconBox.height - Kirigami.Units.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText())
+        visible: (task.inPopup || !task.tasksRoot.iconsOnly && !task.model.IsLauncher && (parent.width - taskIconBox.height - Kirigami.Units.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText())
 
         anchors {
             fill: parent
-            leftMargin: LayoutMetrics.leftMargin() + iconBox.width + LayoutMetrics.labelMargin
+            leftMargin: LayoutMetrics.leftMargin() + taskIconBox.width + LayoutMetrics.labelMargin
             topMargin: LayoutMetrics.topMargin()
             rightMargin: LayoutMetrics.rightMargin()
             bottomMargin: LayoutMetrics.bottomMargin()

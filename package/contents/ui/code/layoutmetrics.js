@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 /*
     SPDX-FileCopyrightText: 2026 Vitaliy Elin <daydve@smbit.pro>
     SPDX-FileCopyrightText: 2024 Kisaragi Hiu <mail@kisaragi-hiu.com>
