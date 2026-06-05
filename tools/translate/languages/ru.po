@@ -830,12 +830,12 @@ msgstr "Заголовок окна"
 
 #: package/contents/config/LivePreview.qml
 msgid "%1 — %2"
-msgstr ""
+msgstr "%1 — %2"
 
 #: package/contents/ui/Badge.qml
 msgctxt "Invalid"
 msgid "—"
-msgstr ""
+msgstr "—"
 
 # --- ContextMenu.qml ---
 #: package/contents/ui/ContextMenu.qml
@@ -856,7 +856,7 @@ msgstr "Недавние документы"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Trash"
-msgstr ""
+msgstr "Корзина"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Forget Recent Files"

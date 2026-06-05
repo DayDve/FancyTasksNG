@@ -3,38 +3,21 @@
 # SPDX-FileCopyrightText: 2023 Alexandra <alexankitty@gmail.com>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# Stop execution on error
-set -e
-
-SCRIPT_DIR=$(dirname $(readlink -f "$0"))
-PACKAGE_DIR="$(readlink -f "$SCRIPT_DIR/../package")"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+source "${SCRIPT_DIR}/functions.sh"
 
 # Configuration
 PACKAGE_NAME="FancyTasksNG"
 ICON_NAME="icon" # Standardized KPackage icon name
-
-BUILD_DIR="$SCRIPT_DIR/build"
-RELEASE_DIR="$(readlink -f "$SCRIPT_DIR/../release")"
-
-# ANSI Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-NC='\033[0m' # No Color
-
-# Error handler function
-handle_error() {
-  local line_num="$1"
-  echo -e "${RED}Error: Build failed at line ${line_num}!${NC}"
-}
+PACKAGE_DIR="$(readlink -f "${SCRIPT_DIR}/../package")"
+BUILD_DIR="${SCRIPT_DIR}/build"
+RELEASE_DIR="$(readlink -f "${SCRIPT_DIR}/../release")"
 
 # Cleanup function
 cleanup() {
-  rm -rf "$BUILD_DIR"
+    rm -rf "${BUILD_DIR}"
 }
 
-# Set up traps
-# ERR trap fires when a command fails (because of set -e)
-trap 'handle_error $LINENO' ERR
 # EXIT trap fires when script finishes (successfully or after error)
 trap cleanup EXIT
 
@@ -42,23 +25,20 @@ trap cleanup EXIT
 
 # Run translation scripts in a subshell
 (
-  cd "$SCRIPT_DIR/translate/"
-  bash ./merge
-  bash ./build
+    "${SCRIPT_DIR}/extract_messages.sh"
+    "${SCRIPT_DIR}/compile_messages.sh"
 )
 
-
 # Prepare directories
-rm -rf "$RELEASE_DIR"
-mkdir -p "$BUILD_DIR"
-mkdir -p "$RELEASE_DIR"
+rm -rf "${RELEASE_DIR}"
+mkdir -p "${BUILD_DIR}" "${RELEASE_DIR}"
 
 # Copy package files
-cp -r "$PACKAGE_DIR"/{contents,metadata.json,"${ICON_NAME}.svg"} "$BUILD_DIR"
+cp -r "${PACKAGE_DIR}"/{contents,metadata.json,"${ICON_NAME}.svg"} "${BUILD_DIR}"
 
 # Create archive
-cd "$BUILD_DIR"
-zip -r "$RELEASE_DIR/${PACKAGE_NAME}.plasmoid" .
+cd "${BUILD_DIR}"
+zip -q -r "${RELEASE_DIR}/${PACKAGE_NAME}.plasmoid" .
 cd - > /dev/null
 
-echo -e "${GREEN}Build complete: $RELEASE_DIR/${PACKAGE_NAME}.plasmoid${NC}"
+log_success "Build complete: ${RELEASE_DIR}/${PACKAGE_NAME}.plasmoid"

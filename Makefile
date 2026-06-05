@@ -7,22 +7,23 @@
 all: build
 
 build:
-	@bash tools/build.sh
+	@./tools/build.sh
 
 install:
-	@bash tools/install.sh
+	@./tools/install.sh
 
 uninstall:
-	@bash tools/uninstall.sh
+	@./tools/uninstall.sh
 
 update:
-	@bash tools/update.sh
+	@./tools/update.sh
 
 test:
-	@bash tools/testing.sh
+	@./tools/testing.sh
 
 translate:
-	@cd tools/translate && bash ./merge && bash ./build
+	@./tools/extract_messages.sh
+	@./tools/compile_messages.sh
 
 clean:
 	@rm -rf build release

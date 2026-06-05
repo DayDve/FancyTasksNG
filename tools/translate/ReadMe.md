@@ -1,42 +1,33 @@
-> Version 7 of Zren's i18n scripts.
+# Translations
 
-With KDE Frameworks v5.37 and above, translations are bundled with the `*.plasmoid` file downloaded from the store.
+Translations are generated within the repository and automatically bundled into the compiled `*.plasmoid` package.
 
-## Install Translations
+## Updating and Compiling
 
-Go to `~/.local/share/plasma/plasmoids/Fancy Tasks/translate/` and run `sh ./build --restartplasma`.
+Everything is managed via `make` from the **root directory of the project**:
 
-## New Translations
+* `make translate` - Extracts new translation strings from QML/C++ code into `template.pot`, merges them into existing `.po` files, and then compiles the `.po` files into binary `.mo` format.
+* `make build` - Automatically triggers compiling translations before creating the plasmoid file.
 
-1. Fill out [`template.pot`](template.pot) with your translations then open a [new issue](https://github.com/daydve/FancyTasksNG/issues/new), name the file `spanish.txt`, attach the txt file to the issue (drag and drop).
+## Adding a New Translation
 
-Or if you know how to make a pull request
-
-1. Copy the `template.pot` file and name it your locale's code (Eg: `en`/`de`/`fr`) with the extension `.po`. Then fill out all the `msgstr ""`.
-
-## Scripts
-
-* `sh ./merge` will parse the `i18n()` calls in the `*.qml` files and write it to the `template.pot` file. Then it will merge any changes into the `*.po` language files.
-* `sh ./build` will convert the `*.po` files to it's binary `*.mo` version and move it to `contents/locale/...` which will bundle the translations in the `*.plasmoid` without needing the user to manually install them.
-* `sh ./plasmoidlocaletest` will run `./build` then `plasmoidviewer` (part of `plasma-sdk`).
+1. Copy the `tools/translate/languages/template.pot` file.
+2. Name it using your locale's code (e.g., `es.po` for Spanish, `de.po` for German).
+3. Place it in `tools/translate/languages/`.
+4. Run `make translate` to compile it.
+5. Create a Pull Request with your `.po` file!
 
 ## Links
 
-* https://zren.github.io/kde/docs/widget/#translations-i18n
-* https://techbase.kde.org/Development/Tutorials/Localization/i18n_Build_Systems
-* https://api.kde.org/frameworks/ki18n/html/prg_guide.html
-
-## Examples
-
-* https://l10n.kde.org/stats/gui/trunk-kf5/team/fr/plasma-desktop/
-* https://github.com/psifidotos/nowdock-plasmoid/tree/master/po
-* https://github.com/kotelnik/plasma-applet-redshift-control/tree/master/translations
+* [KDE Widget Translations](https://zren.github.io/kde/docs/widget/#translations-i18n)
+* [KDE Localization Tutorial](https://techbase.kde.org/Development/Tutorials/Localization/i18n_Build_Systems)
+* [KI18n Framework API](https://api.kde.org/frameworks/ki18n/html/prg_guide.html)
 
 ## Status
-|  Locale  |  Lines  | % Done|
-|----------|---------|-------|
-| Template |     207 |       |
-| nl       | 171/207 |   83% |
-| pt_BR    | 185/207 |   89% |
-| zh_CN    | 166/207 |   80% |
-| ru_RU    | 207/207 |  100% |
+| Locale   | Lines   | % Done |
+|----------|---------|--------|
+| Template | 255     |        |
+| nl       | 61/255  | 23%    |
+| pt_BR    | 65/255  | 25%    |
+| ru       | 255/255 | 100%   |
+| zh_CN    | 61/255  | 23%    |

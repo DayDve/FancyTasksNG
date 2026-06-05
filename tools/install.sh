@@ -4,12 +4,15 @@
 # SPDX-FileCopyrightText: 2022-2023 Alexandra <alexankitty@gmail.com>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-PACKAGE_DIR="$(readlink -f "$SCRIPT_DIR/../package")"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+source "${SCRIPT_DIR}/functions.sh"
 
-echo "Compiling translations..."
-bash "$SCRIPT_DIR/translate/build"
+PACKAGE_DIR="$(readlink -f "${SCRIPT_DIR}/../package")"
 
-echo "Installing plasmoid ..."
-kpackagetool6 -t Plasma/Applet --install "$PACKAGE_DIR"
-echo "Install complete."
+log_info "Compiling translations..."
+"${SCRIPT_DIR}/compile_messages.sh"
+
+log_info "Installing plasmoid ..."
+kpackagetool6 -t Plasma/Applet --install "${PACKAGE_DIR}"
+
+log_success "Install complete."
