@@ -57,8 +57,13 @@ Item {
     readonly property real distanceToCursor: (virtualCursorIndex !== -1 && myIndex !== -1) ? Math.abs(myIndex - virtualCursorIndex) : -1
 
     readonly property real zoomMultiplier: {
-        if (iconBox._contextMenuOpen || (iconBox.tasksRootContext && iconBox.tasksRootContext.currentHoveredTask === iconBox.taskItem)) {
+        if (iconBox._contextMenuOpen) {
             return 1.0;
+        }
+        if (iconBox.tasksRootContext && iconBox.tasksRootContext.currentHoveredTask === iconBox.taskItem) {
+            if (iconBox.tasksRootContext.isTooltipHovered || iconBox.tasksRootContext.instantHoveredIndex === -1) {
+                return 1.0;
+            }
         }
         if (hoveredIndex === -1 || myIndex === -1 || !iconBox._iconsOnly || !Plasmoid.configuration.taskHoverEffect) {
             return 0.0;
@@ -78,9 +83,11 @@ Item {
 
     property int growSize: Math.round(iconBox.zoomMultiplier * Plasmoid.configuration.iconZoomFactor)
 
+    readonly property bool isParabolicTracking: Plasmoid.configuration.taskHoverEffectStyle === 1 && iconBox.tasksRootContext && iconBox.tasksRootContext.instantHoveredIndex !== -1 && iconBox.myIndex !== -1 && !(iconBox._taskHasModel && iconBox.taskItem.model.IsStartup)
+
     Behavior on growSize {
         NumberAnimation {
-            duration: (!iconBox.tasksRootContext || iconBox.tasksRootContext.instantHoveredIndex === -1 || iconBox.myIndex === -1 || (iconBox._taskHasModel && iconBox.taskItem.model.IsStartup)) ? Plasmoid.configuration.iconZoomDuration : 0
+            duration: isParabolicTracking ? 30 : Plasmoid.configuration.iconZoomDuration
             easing.type: Easing.InOutQuad
         }
     }
