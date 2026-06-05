@@ -490,7 +490,7 @@ PlasmoidItem {
         const initialArgs = Object.assign(args, {
             visualParent: rootTask,
             modelIndex,
-            mpris2SourceModel,
+            mpris2Source: mpris2SourceModel,
             tasksModel: tasks.tasksModel,
             virtualDesktopInfo,
             activityInfo,

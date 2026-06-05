@@ -8,7 +8,7 @@
 */
 
 pragma ComponentBehavior: Bound
-pragma ComponentBehavior: Bound
+import QtQuick
 import QtQuick.Effects
 import org.kde.ksvg as KSvg
 import "code/tools.js" as TaskTools

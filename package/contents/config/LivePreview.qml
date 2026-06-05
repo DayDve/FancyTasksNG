@@ -443,11 +443,11 @@ Item {
                                 // 3. Progress overlay (reuses production component)
                                 FancyUI.TaskProgressOverlay {
                                     anchors.fill: taskBackground
-                                    visible: mockTask.showProgress && mockTask.cfg.cfg_indicatorProgressStyle > 0
-                                    pStyle: mockTask.cfg.cfg_indicatorProgressStyle
-                                    pColor: mockTask.cfg.cfg_indicatorProgressColor
-                                    pOpacity: mockTask.cfg.cfg_indicatorProgressOpacity / 100.0
-                                    pThick: mockTask.cfg.cfg_indicatorProgressThickness
+                                    visible: mockTask.showProgress && mockTask.cfgReady && mockTask.cfg.cfg_indicatorProgressStyle > 0
+                                    pStyle: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorProgressStyle : 0
+                                    pColor: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorProgressColor : "transparent"
+                                    pOpacity: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorProgressOpacity / 100.0 : 1.0
+                                    pThick: mockTask.cfgReady ? mockTask.cfg.cfg_indicatorProgressThickness : 2
                                     pPosition: 0.7
                                     panelLocation: previewRoot.simulatedLocation
                                 }
