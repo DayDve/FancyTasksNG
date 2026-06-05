@@ -584,7 +584,6 @@ Item {
 
                                         layer.enabled: mockTask.cfgReady && mockTask.cfg.cfg_clipIconToShape
                                         layer.smooth: true
-                                        layer.samples: 8
                                         layer.effect: MultiEffect {
                                             maskEnabled: mockTask.cfgReady && mockTask.cfg.cfg_clipIconToShape
                                             maskSource: previewIconMask

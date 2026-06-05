@@ -191,7 +191,6 @@ Item {
 
         layer.enabled: iconBox._iconOverflows || Plasmoid.configuration.clipIconToShape
         layer.smooth: true
-        layer.samples: 8
         layer.effect: MultiEffect {
             maskEnabled: Plasmoid.configuration.clipIconToShape
             maskSource: iconBox._iconMask
