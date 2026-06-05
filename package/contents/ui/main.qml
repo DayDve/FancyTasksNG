@@ -778,17 +778,20 @@ PlasmoidItem {
             readonly property real targetWidth: toolTipInstance.implicitWidth + winBgFrame.margins.left + winBgFrame.margins.right
             readonly property real targetHeight: toolTipInstance.implicitHeight + winBgFrame.margins.top + winBgFrame.margins.bottom
 
-            readonly property bool isBottom: tasks.effectiveLocation === PlasmaCore.Types.BottomEdge
             readonly property bool isTop: tasks.effectiveLocation === PlasmaCore.Types.TopEdge
             readonly property bool isLeft: tasks.effectiveLocation === PlasmaCore.Types.LeftEdge
             readonly property bool isRight: tasks.effectiveLocation === PlasmaCore.Types.RightEdge
+            readonly property bool isBottom: !isLeft && !isRight && !isTop
 
-            readonly property int gapSize: 2
+            // Shadow needs transparent space on free sides to prevent clipping.
+            readonly property int shadowPadding: 16
+            // 8px gap allows an 8px radius shadow to render fully on the panel side
+            readonly property int gapSize: 8
 
-            readonly property int marginTop: isTop ? gapSize : 0
-            readonly property int marginBottom: isBottom ? gapSize : 0
-            readonly property int marginLeft: isLeft ? gapSize : 0
-            readonly property int marginRight: isRight ? gapSize : 0
+            readonly property int marginTop: isTop ? gapSize : shadowPadding
+            readonly property int marginBottom: isBottom ? gapSize : shadowPadding
+            readonly property int marginLeft: isLeft ? gapSize : shadowPadding
+            readonly property int marginRight: isRight ? gapSize : shadowPadding
 
             implicitWidth: targetWidth + marginLeft + marginRight
             implicitHeight: targetHeight + marginTop + marginBottom
@@ -816,10 +819,10 @@ PlasmoidItem {
                 color: Kirigami.Theme.backgroundColor
                 radius: 4
 
-                shadow.size: 12
-                shadow.color: Qt.rgba(0, 0, 0, 0.3)
+                shadow.size: 16
+                shadow.color: Qt.rgba(0, 0, 0, 0.75)
                 shadow.xOffset: 0
-                shadow.yOffset: 2
+                shadow.yOffset: 0
 
                 anchors.fill: parent
                 anchors.topMargin: winContainer.marginTop

@@ -57,7 +57,7 @@ Item {
     readonly property real distanceToCursor: (virtualCursorIndex !== -1 && myIndex !== -1) ? Math.abs(myIndex - virtualCursorIndex) : -1
 
     readonly property real zoomMultiplier: {
-        if (iconBox._contextMenuOpen) {
+        if (iconBox._contextMenuOpen || (iconBox.tasksRootContext && iconBox.tasksRootContext.currentHoveredTask === iconBox.taskItem)) {
             return 1.0;
         }
         if (hoveredIndex === -1 || myIndex === -1 || !iconBox._iconsOnly || !Plasmoid.configuration.taskHoverEffect) {
