@@ -488,18 +488,16 @@ ConfigPage {
                     visible: true
                 }
 
-                ListView {
-                    id: pinnedAppsList
+                ConfigScrollView {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
 
-                    model: pinnedAppsModel
-
-                    // Disable animations during drag
-                    interactive: !cfg_page.isDragging
-
-                    // Add scrollbar when needed
-                    ScrollBar.vertical: ScrollBar {}
+                    ListView {
+                        id: pinnedAppsList
+                        model: pinnedAppsModel
+                        
+                        // Disable animations during drag
+                        interactive: !cfg_page.isDragging
 
                     // Drop indicator visual component
                     Component {
@@ -801,7 +799,8 @@ ConfigPage {
                         }
                     }
                 }
-
+                }
+                
                 ColumnLayout {
                     Layout.fillWidth: true
                     spacing: Kirigami.Units.smallSpacing
