@@ -264,51 +264,49 @@ ConfigPage {
                 enabled: !cfg_disableButtonSvg.checked
             }
 
-            ButtonGroup {
-                id: colorizeButtonGroup
-            }
+            RowLayout {
+                spacing: Kirigami.Units.smallSpacing
+                Layout.fillWidth: true
+                
+                ComboBox {
+                    id: buttonColorCombo
+                    Layout.fillWidth: true
+                    enabled: !cfg_disableButtonSvg.checked
+                    model: [
+                        Wrappers.i18n("Using Plasma Style/Accent"),
+                        Wrappers.i18n("Use dominant icon color"),
+                        Wrappers.i18n("Custom color")
+                    ]
+                    currentIndex: {
+                        if (!cfg_page.cfg_buttonColorize) return 0;
+                        if (cfg_page.cfg_buttonColorizeDominant) return 1;
+                        return 2;
+                    }
+                    onActivated: index => {
+                        if (index === 0) {
+                            cfg_page.cfg_buttonColorize = false;
+                            cfg_page.cfg_buttonColorizeDominant = false;
+                        } else if (index === 1) {
+                            cfg_page.cfg_buttonColorize = true;
+                            cfg_page.cfg_buttonColorizeDominant = true;
+                        } else if (index === 2) {
+                            cfg_page.cfg_buttonColorize = true;
+                            cfg_page.cfg_buttonColorizeDominant = false;
+                        }
+                    }
+                }
 
-            RadioButton {
-                enabled: !cfg_disableButtonSvg.checked
-                checked: !cfg_page.cfg_buttonColorize
-                text: Wrappers.i18n("Using Plasma Style/Accent")
-                ButtonGroup.group: colorizeButtonGroup
-                onToggled: if (checked) cfg_page.cfg_buttonColorize = false
-            }
-
-            RadioButton {
-                enabled: !cfg_disableButtonSvg.checked
-                id: cfg_buttonColorize
-                checked: cfg_page.cfg_buttonColorize
-                onToggled: if (checked) cfg_page.cfg_buttonColorize = true
-                text: Wrappers.i18n("Using Color Overlay")
-                ButtonGroup.group: colorizeButtonGroup
-            }
-
-            CheckBox {
-                id: cfg_buttonColorizeDominant
-                text: Wrappers.i18n("Use dominant icon color")
-                enabled: !cfg_disableButtonSvg.checked && cfg_page.cfg_buttonColorize
-                visible: cfg_page.cfg_buttonColorize
-                checked: cfg_page.cfg_buttonColorizeDominant
-                onToggled: cfg_page.cfg_buttonColorizeDominant = checked
-            }
-
-            Label {
-                visible: cfg_page.cfg_buttonColorize && !cfg_page.cfg_buttonColorizeDominant
-                text: Wrappers.i18n("Custom Color:")
-                enabled: !cfg_disableButtonSvg.checked
-            }
-            KQuickAddons.ColorButton {
-                id: cfg_buttonColorizeCustom
-                Layout.leftMargin: Kirigami.Units.gridUnit
-                showAlphaChannel: true
-                enabled: !cfg_disableButtonSvg.checked && cfg_page.cfg_buttonColorize && !cfg_page.cfg_buttonColorizeDominant
-                visible: cfg_page.cfg_buttonColorize && !cfg_page.cfg_buttonColorizeDominant
-                color: cfg_page.cfg_buttonColorizeCustom
-                onColorChanged: {
-                    if (!Qt.colorEqual(color, cfg_page.cfg_buttonColorizeCustom)) {
-                        cfg_page.cfg_buttonColorizeCustom = color
+                KQuickAddons.ColorButton {
+                    id: cfg_buttonColorizeCustom
+                    showAlphaChannel: true
+                    enabled: !cfg_disableButtonSvg.checked
+                    visible: cfg_page.cfg_buttonColorize && !cfg_page.cfg_buttonColorizeDominant
+                    Layout.maximumHeight: buttonColorCombo.height
+                    color: cfg_page.cfg_buttonColorizeCustom
+                    onColorChanged: {
+                        if (!Qt.colorEqual(color, cfg_page.cfg_buttonColorizeCustom)) {
+                            cfg_page.cfg_buttonColorizeCustom = color
+                        }
                     }
                 }
             }
@@ -413,16 +411,18 @@ ConfigPage {
                 onToggled: cfg_page.cfg_clipIconBackgroundEnabled = checked
             }
 
+            Label {
+                visible: cfg_page.cfg_clipIconToShape && cfg_page.cfg_clipIconBackgroundEnabled
+                text: Wrappers.i18n("Background color source:")
+            }
+
             RowLayout {
                 visible: cfg_page.cfg_clipIconToShape && cfg_page.cfg_clipIconBackgroundEnabled
                 spacing: Kirigami.Units.smallSpacing
-                Label {
-                    text: Wrappers.i18n("Background color source:")
-                }
+                Layout.fillWidth: true
                 ComboBox {
                     id: cfg_clipIconBackgroundColorMode
                     Layout.fillWidth: true
-                    Layout.minimumWidth: Kirigami.Units.gridUnit * 14
                     model: [
                         Wrappers.i18n("Custom color"),
                         Wrappers.i18n("Dominant icon color"),
@@ -432,17 +432,12 @@ ConfigPage {
                     currentIndex: cfg_page.cfg_clipIconBackgroundColorMode
                     onActivated: (index) => cfg_page.cfg_clipIconBackgroundColorMode = index
                 }
-            }
 
-            RowLayout {
-                visible: cfg_page.cfg_clipIconToShape && cfg_page.cfg_clipIconBackgroundEnabled && cfg_page.cfg_clipIconBackgroundColorMode === 0
-                spacing: Kirigami.Units.smallSpacing
-                Label {
-                    text: Wrappers.i18n("Background color:")
-                }
                 KQuickAddons.ColorButton {
                     id: clipIconBackgroundColorBtn
+                    visible: cfg_page.cfg_clipIconBackgroundColorMode === 0
                     showAlphaChannel: true
+                    Layout.maximumHeight: cfg_clipIconBackgroundColorMode.height
                     color: cfg_page.cfg_clipIconBackgroundColor
                     onColorChanged: {
                         if (!Qt.colorEqual(color, cfg_page.cfg_clipIconBackgroundColor)) {
