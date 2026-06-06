@@ -194,6 +194,11 @@ Item {
         if (!task.model) return 0;
         return (BadgeManager.countVersion >= 0) ? BadgeManager.getUnreadCount(task.model.AppId) : 0;
     }
+    
+    readonly property real taskProgress: {
+        if (!task.model) return -1.0;
+        return (BadgeManager.countVersion >= 0) ? BadgeManager.getProgress(task.model.AppId) : -1.0;
+    }
     readonly property bool badgeVisible: {
         if (badgeCount <= 0) return false;
         if (!Plasmoid.configuration.showBadgesOnLaunchers && task.winIdList.length === 0) {
@@ -794,7 +799,7 @@ Item {
 
         anchors.fill: backgroundFrame
         asynchronous: true
-        active: !!(task.model && task.model.IsWindow) && !!(task.model && task.model.Progress > 0) && Plasmoid.configuration.indicatorProgressStyle > 0
+        active: !!(task.model && task.model.IsWindow) && task.taskProgress >= 0 && Plasmoid.configuration.indicatorProgressStyle > 0
 
         source: "TaskProgressOverlay.qml"
         onLoaded: {
@@ -802,7 +807,7 @@ Item {
             item.pColor = Qt.binding(() => Plasmoid.configuration.indicatorProgressColor);
             item.pOpacity = Qt.binding(() => Plasmoid.configuration.indicatorProgressOpacity / 100.0);
             item.pThick = Qt.binding(() => Plasmoid.configuration.indicatorProgressThickness);
-            item.pPosition = Qt.binding(() => (task.model?.Progress ?? 0) / 100.0);
+            item.pPosition = Qt.binding(() => task.taskProgress);
             item.panelLocation = Qt.binding(() => Plasmoid.location);
         }
     }

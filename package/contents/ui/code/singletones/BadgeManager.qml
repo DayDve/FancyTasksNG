@@ -16,8 +16,9 @@ import org.kde.plasma.plasma5support as Plasma5Support
 Item {
     id: root
 
-    // Reactive store for unread counts
+    // Reactive store for unread counts and progress
     property var unityCounts: ({})
+    property var unityProgress: ({})
     property int countVersion: 0
 
     Component.onCompleted: bridgeStarter.start()
@@ -45,8 +46,9 @@ Item {
         path: "/Bridge"
         iface: "io.github.daydve.fancytasksng.BadgeUpdate"
         
-        function dbusUpdateSignal(appId, count) {
-            root.updateCount(String(appId), count);
+        function dbusUpdateSignal(appId, count, progress) {
+            console.log("FancyTasksNG BadgeBridge received:", appId, count, progress);
+            root.updateData(String(appId), count, progress);
         }
     }
 
@@ -67,9 +69,27 @@ Item {
     }
 
     /**
-     * Updates the count for an application and triggers UI refresh.
+     * Returns the progress (-1.0 if not visible) for a given AppId.
      */
-    function updateCount(appId, count) {
+    function getProgress(appId) {
+        if (!appId) return -1.0;
+        
+        let strId = String(appId);
+        let cleanId = strId;
+        if (cleanId.startsWith("application://")) cleanId = cleanId.slice(14);
+        if (cleanId.endsWith(".desktop")) cleanId = cleanId.slice(0, -8);
+        if (cleanId.startsWith("applications:")) cleanId = cleanId.slice(13);
+
+        if (unityProgress[strId] !== undefined) return unityProgress[strId];
+        if (unityProgress[cleanId] !== undefined) return unityProgress[cleanId];
+        if (unityProgress[cleanId + ".desktop"] !== undefined) return unityProgress[cleanId + ".desktop"];
+        return -1.0;
+    }
+
+    /**
+     * Updates the count and progress for an application and triggers UI refresh.
+     */
+    function updateData(appId, count, progress) {
         let strId = String(appId);
         let cleanId = strId;
         if (cleanId.startsWith("application://")) cleanId = cleanId.slice(14);
@@ -80,10 +100,18 @@ Item {
         for (let key in unityCounts) {
             newCounts[key] = unityCounts[key];
         }
+        let newProgress = {};
+        for (let key in unityProgress) {
+            newProgress[key] = unityProgress[key];
+        }
         
         newCounts[strId] = count;
         newCounts[cleanId] = count;
         newCounts[cleanId + ".desktop"] = count;
+
+        newProgress[strId] = progress;
+        newProgress[cleanId] = progress;
+        newProgress[cleanId + ".desktop"] = progress;
         
         // Handle dot-notation names (e.g. io.github.name)
         if (cleanId.includes(".")) {
@@ -91,9 +119,12 @@ Item {
             let baseName = dots[dots.length - 1];
             newCounts[baseName] = count;
             newCounts[baseName + ".desktop"] = count;
+            newProgress[baseName] = progress;
+            newProgress[baseName + ".desktop"] = progress;
         }
 
         root.unityCounts = newCounts;
+        root.unityProgress = newProgress;
         root.countVersion++;
     }
 }

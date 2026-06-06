@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-06-01 12:36+0300\n"
+"POT-Creation-Date: 2026-06-06 17:57+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -186,16 +186,12 @@ msgstr ""
 msgid "Using Plasma Style/Accent"
 msgstr ""
 
-#: package/contents/config/ConfigAppearance.qml
-msgid "Using Color Overlay"
-msgstr ""
-
 #: package/contents/config/ConfigAppearance.qml package/contents/config/ConfigIndicators.qml
 msgid "Use dominant icon color"
 msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml
-msgid "Custom Color:"
+msgid "Custom color"
 msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml
@@ -239,10 +235,6 @@ msgid "Background color source:"
 msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml
-msgid "Custom color"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
 msgid "Dominant icon color"
 msgstr ""
 
@@ -252,10 +244,6 @@ msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Plasma accent color"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Background color:"
 msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml

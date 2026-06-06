@@ -40,8 +40,8 @@ class BridgeEmitter(dbus.service.Object):
             print(f"Bridge error: {e}")
             sys.exit(1)
 
-    @dbus.service.signal('io.github.daydve.fancytasksng.BadgeUpdate', signature='si')
-    def UpdateSignal(self, appId, count):
+    @dbus.service.signal('io.github.daydve.fancytasksng.BadgeUpdate', signature='sid')
+    def UpdateSignal(self, appId, count, progress):
         # This signal will be sent to the bus
         pass
 
@@ -49,9 +49,13 @@ def handle_unity_update(appId, properties, **kwargs):
     count = properties.get("count", 0)
     visible = properties.get("count-visible", True)
     final_count = int(count) if visible else 0
+
+    progress = properties.get("progress", 0.0)
+    prog_visible = properties.get("progress-visible", False)
+    final_progress = float(progress) if prog_visible else -1.0
     
     # Re-emit on our private channel
-    emitter.UpdateSignal(str(appId), final_count)
+    emitter.UpdateSignal(str(appId), final_count, final_progress)
 
 if __name__ == '__main__':
     DBusGMainLoop(set_as_default=True)
