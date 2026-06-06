@@ -298,15 +298,25 @@ Item {
         }
     }
 
+    Timer {
+        id: switchTimer
+        interval: 150 // Small delay to allow diagonal movement without aggressive tooltip switching
+        onTriggered: {
+            if (task.containsMouse) {
+                task.openTooltip();
+            }
+        }
+    }
+
     onContainsMouseChanged: {
         if (containsMouse) {
             tasksRoot.instantHoveredTask = task;
             task.forceActiveFocus(Qt.MouseFocusReason);
             closeTimer.stop();
             
-            // If tooltip is already visible (switching between tasks), show immediately
+            // If tooltip is already visible (switching between tasks), delay slightly to allow diagonal movement
             if (tasksRoot.currentHoveredTask && tasksRoot.currentHoveredTask !== task) {
-                task.openTooltip();
+                switchTimer.restart();
             } else {
                 openTimer.restart();
             }
@@ -315,6 +325,7 @@ Item {
                 tasksRoot.instantHoveredTask = null;
             }
             openTimer.stop();
+            switchTimer.stop();
             closeTimer.start();
         }
     }
