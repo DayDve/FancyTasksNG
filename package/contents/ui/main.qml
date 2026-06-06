@@ -758,6 +758,8 @@ PlasmoidItem {
     }
     Component.onDestruction: TaskTools.taskManagerInstanceCount -= 1
 
+
+
     PlasmaCore.Dialog {
         id: windowTooltipDialog
 
@@ -798,6 +800,15 @@ PlasmoidItem {
             width: implicitWidth
             height: implicitHeight
 
+            Behavior on implicitWidth {
+                enabled: tasks.tooltipAnimationEnabled && windowTooltipDialog.shouldShow
+                NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+            }
+            Behavior on implicitHeight {
+                enabled: tasks.tooltipAnimationEnabled && windowTooltipDialog.shouldShow
+                NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+            }
+
             opacity: windowTooltipDialog.shouldShow ? 1 : 0
             Behavior on opacity {
                 enabled: tasks.tooltipAnimationEnabled
@@ -820,7 +831,7 @@ PlasmoidItem {
                 radius: 4
 
                 shadow.size: 16
-                shadow.color: Qt.rgba(0, 0, 0, 0.75)
+                shadow.color: Qt.rgba(0, 0, 0, 0.6)
                 shadow.xOffset: 0
                 shadow.yOffset: 0
 
@@ -840,6 +851,7 @@ PlasmoidItem {
 
                 ToolTipDelegate {
                     id: toolTipInstance
+                    clip: true
                     anchors.fill: parent
                     anchors.margins: winBgFrame.tooltipFramePadding
 

@@ -223,9 +223,15 @@ Loader {
                 
                 property var currentWin: (toolTipDelegate.windows && toolTipDelegate.windows.length > 0) ? toolTipDelegate.windows[0] : undefined
                 
+                Timer {
+                    id: reloadTimer
+                    interval: 1
+                    onTriggered: singleInstanceLoader.active = true
+                }
+
                 onCurrentWinChanged: {
                     active = false;
-                    Qt.callLater(() => { active = true; });
+                    reloadTimer.restart();
                 }
                 
                 sourceComponent: ToolTipInstance {    
