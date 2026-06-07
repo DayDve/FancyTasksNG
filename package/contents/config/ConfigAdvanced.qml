@@ -21,7 +21,7 @@ ConfigPage {
         spacing: Kirigami.Units.largeSpacing
 
         LivePreview {
-            cfg_page: cfg_page
+            cfg_page: advancedPage
             location: Plasmoid.location
             Layout.fillWidth: true
             visible: Plasmoid.location !== PlasmaCore.Types.Floating
