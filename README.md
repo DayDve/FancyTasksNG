@@ -1,13 +1,10 @@
-<p align="center">
-  <img src="package/icon.svg" alt="Fancy Tasks NG" width="96" height="96"/>
-</p>
-
 <h1 align="center">Fancy Tasks NG</h1>
-
 <p align="center">
-  <strong>A feature-rich, deeply customizable taskbar for KDE Plasma 6 — kept alive when everyone else gave up.</strong>
+  <img src="package/icon.svg" alt="Fancy Tasks NG"/>
 </p>
-
+<p align="center">
+  <strong>A feature-rich and highly customizable alternative task manager for KDE Plasma 6.</strong>
+</p>
 <p align="center">
   <a href="https://github.com/daydve/FancyTasksNG/releases/latest">
     <img src="https://img.shields.io/github/v/release/daydve/FancyTasksNG?style=flat-square&label=Latest%20Release&color=6c63ff" alt="Latest Release"/>
@@ -25,150 +22,90 @@
 
 ## What is this?
 
-**Fancy Tasks NG** is a replacement for the default KDE Plasma task manager — the panel widget that shows your open windows and pinned application launchers.
+**Fancy Tasks NG** is an alternative task manager for KDE Plasma 6. It builds upon the native task manager concepts by offering deeper customization and additional visual features like animated activity indicators, smart notification badges on app icons, volume scroll controls, dynamic hover zoom, centered alignment, and rich tooltips.
 
-While the stock Plasma taskbar is functional, it's plain. Fancy Tasks NG adds a layer of visual richness and configurability that power users have always wanted: animated activity indicators, unread notification badges right on the app icon, volume overlay controls, smooth hover-zoom animations, live window thumbnails in tooltips, and much more — all integrated seamlessly into the native Plasma 6 look and feel.
+## Why this fork exists (A personal story)
 
-Think of it as the Plasma taskbar that KDE *almost* shipped, but didn't.
+I used the original [FancyTasks](https://github.com/alexankitty/FancyTasks) by [alexankitty](https://github.com/alexankitty) for many years. When Plasma 6 came out, I thought the project was dead. Later, I found a fork ([FancyTasksPlus](https://github.com/SushiTrashXD/FancyTasksPlus) by [SushiTrashXD](https://github.com/SushiTrashXD)) that attempted to port it to Plasma 6. 
 
----
+Unfortunately, as Plasma continued to evolve (especially after 6.4), the code started breaking and the widget stopped working entirely. I temporarily went back to the standard Plasma task manager, but I really missed the features I was used to. 
 
-## Why this fork exists
+So, I decided to fork the project for myself just to restore basic compatibility with modern Plasma. After getting it to work, I started making a few small tweaks here and there. What started as a simple compatibility fix quickly grew into a major overhaul. I ended up completely rewriting large chunks of the codebase, removing legacy code, and adding a bunch of new features I had always wanted. Thus, **Fancy Tasks NG** (Next Generation) was born.
 
-The Fancy Tasks plasmoid has a long lineage:
+## Overview of Capabilities
 
-1. The original **[FancyTasks](https://github.com/alexankitty/FancyTasks)** by [Alexandra Stone (alexankitty)](https://github.com/alexankitty) — a brilliant reimagination of the Plasma 5 task manager, with animated indicators and badge support.
-2. **[FancyTasksPlus](https://github.com/SushiTrashXD/FancyTasksPlus)** by [SushiTrashXD](https://github.com/SushiTrashXD) — an initial port to Plasma 6.2, carrying the torch when the original was abandoned.
-3. **Fancy Tasks NG** (this project) — a complete modernization for **Plasma 6.5 and beyond**, started when FancyTasksPlus itself went unmaintained, leaving users on modern systems with a broken, glitchy widget.
+Fancy Tasks NG is a standalone task manager widget that includes the following features:
+- **Alignment:** Built-in option to align tasks to the center of the panel.
+- **Background Data Integration:** A custom D-Bus bridge enables the display of unread message badges and task progress bars directly on pinned icons, even if the application has no active windows.
+- **Interaction Shortcuts:** Support for adjusting the volume of individual applications via mouse wheel scroll over their icons.
+- **Configuration Preview:** A Live Preview component in the settings window displays changes in real time before they are applied.
+- **Visual Effects:** Configurable options for icon hover zoom animations, custom indicator styles, and particle effects when closing windows.
 
-Both predecessor projects were abandoned, and the collective effort of their contributors risked being lost. **Fancy Tasks NG** was created to ensure that this functionality — which simply doesn't exist anywhere else in the Plasma ecosystem — continues to work correctly on current systems and keeps improving.
-
----
-
-## Features
-
-While preserving and completely reimplementing the best concepts from its predecessors, Fancy Tasks NG introduces a wealth of original features and deep architectural improvements built specifically for the modern Plasma 6.5+ ecosystem.
-
-- **Full Plasma 6.5+ compatibility** — rebuilt from the ground up against modern Plasma APIs; no hacks, no workarounds
-- **Two display modes** — classic panel (icons + labels) or icon-only mode
-- **Centered icon alignment** — perfectly center your taskbar icons on the panel for a cleaner, modern look
-- **Activity indicators** — Line and Dashes styles; configurable color (plasma accent, dominant icon color, or custom), thickness, length, roundness, position, edge offset, max segment count, and animation
-- **Hover zoom** — icons grow on hover in icon-only mode; configurable zoom amount and animation duration
-- **Task button coloring** — colorize task button backgrounds using the dominant icon color or a custom color
-- **Reworked tooltip system** — smooth-morphing tooltips native to Plasma 6, with live window thumbnails, media controls, and window highlight on hover
-- **Unified grouped-task tooltips** — consistent tooltip appearance for grouped windows regardless of thumbnail settings
-- **Reworked pinned app manager** — redesigned settings interface for managing and reordering pinned launchers
-- **Smart launcher badges** — unread message counters appear directly on app icons (KMail, Telegram, and other supported apps)
-- **Volume overlay controls** — configurable mouse-wheel action to adjust window volume; Shift to adjust system volume instead; optional second action on Ctrl+wheel
-- **Progress overlays** — in-progress tasks (e.g. file copies) show a progress bar directly on the icon
-- **Desaturate minimized task indicators** — activity indicators fade to grayscale for minimized windows to help active apps stand out
-- **Close animation** — particle explosion effect when closing an application with a middle-click (icon-only mode)
-- **Configurable middle-click** — close, open new window, minimize/restore, toggle grouping, or bring to current desktop
-- **Multi-row / multi-column layout** — configurable number of rows (or columns on vertical panels)
-- **Plasma 6.6 compatibility** — fixed tooltip visibility, icon clipping, and highlight rendering regressions
-- **Russian localization** — full translation of the widget UI and all settings pages
-- **Full Wayland support**
-- **And much more...** — dozens of small tweaks and options to make the taskbar truly yours
-
----
+For a complete list of features and version history, refer to the [CHANGELOG](CHANGELOG.md).
 
 ## Requirements
 
-- **KDE Plasma** 6.5 or newer
-- **Qt** 6
-- **Python** 3 (with `python3-dbus` and `python3-gi` for backend features)
-- **kpackagetool6** (part of the standard `plasma-workspace` package)
+- **KDE Plasma 6.5** (or newer)
 
----
+## How to install
 
-## Installation
-
-### From source (recommended)
+### From source (Highly Recommended)
+This is the best way to ensure you have the absolute latest version:
 
 ```bash
-# 1. Clone the repository
+# 1. Grab the code
 git clone https://github.com/daydve/FancyTasksNG.git
 cd FancyTasksNG
 
-# 2. Build translations and install the plasmoid
+# 2. Build and install (this handles everything for you)
 make install
 ```
-
-Then right-click your panel → **Add Widgets** → search for **"Fancy Tasks NG"**.
+Once it's done, right-click your panel, select **Add Widgets**, and look for **"Fancy Tasks NG"**.
 
 ### From a pre-built package
-
-Download the latest `FancyTasksNG.plasmoid` from the [Releases page](https://github.com/daydve/FancyTasksNG/releases) and install it via:
+If you prefer not to use `make`, you can download the latest `FancyTasksNG.plasmoid` file from the [Releases page](https://github.com/daydve/FancyTasksNG/releases) and install it from the terminal:
 
 ```bash
 kpackagetool6 -t Plasma/Applet --install FancyTasksNG.plasmoid
 ```
 
-### From KDE Store
+### From the KDE Store
+You can also grab it from the [KDE Store](https://store.kde.org/p/2350434) straight through the Plasma "Get New Widgets" dialog.
+*(Note: The KDE Store version might occasionally be a bit behind the GitHub releases.)*
 
-The widget is also available on [KDE Store](https://store.kde.org/p/2350434) and can be installed directly from the **Get New Widgets** dialog in Plasma (right-click the panel → **Add Widgets** → **Get New Widgets**).
+## Keeping it updated
 
-> **Note:** The KDE Store release may lag behind the GitHub releases. For the latest version, install from source or a pre-built package from the [Releases page](https://github.com/daydve/FancyTasksNG/releases).
-
----
-
-## Updating
-
-If you installed from source, pull the latest changes and run:
+If you installed from source, updating is a breeze. Just open a terminal in your cloned `FancyTasksNG` folder and run:
 
 ```bash
 git pull
 make update
 ```
-
-`make update` compiles translations, upgrades the installed plasmoid package, and **automatically restarts Plasma** — no manual steps needed.
-
-> **Note:** Use `make update` for updates, not `make install`.
-
----
+This will fetch the latest code, recompile what's needed, install the update, and seamlessly restart Plasma for you. 
 
 ## Uninstallation
 
-Remove all running plasmoid instances first, then run:
+If you ever need to remove it, make sure you first delete any Fancy Tasks NG widgets from your panels. Then run:
 
 ```bash
 make uninstall
 ```
 
----
-
-## Other Makefile commands
-
-| Command | Description |
-|---|---|
-| `make build` | Package the plasmoid into a `.plasmoid` file in `release/` |
-| `make test` | Run the plasmoid in a standalone `plasmawindowed` instance for development testing |
-| `make translate` | Extract new translatable strings and compile existing translations |
-| `make clean` | Remove build artifacts and compiled translation files |
-
----
-
 ## Contributing
+Found a bug? Have a great idea for a feature? Want to help translate the widget into your language? All contributions are welcome! 
 
-Bug reports, feature requests, and pull requests are welcome via the [GitHub Issues tracker](https://github.com/daydve/FancyTasksNG/issues).
+Head over to the [GitHub Issues tracker](https://github.com/daydve/FancyTasksNG/issues) to report bugs or request features. If you want to help with translations, you'll find the `.po` files in the `tools/translate/` directory.
 
-### Translations
+## Acknowledgements
 
-Translation files are `.po` gettext files located in `tools/translate/`. To contribute a translation, edit the appropriate `.po` file and submit a pull request.
+This project wouldn't exist without the amazing work of the original authors and the KDE community. A massive thank you to:
 
----
-
-## Credits & Acknowledgements
-
-Fancy Tasks NG stands on the shoulders of everyone who came before:
-
-| Project | Author | Contribution |
-|---|---|---|
-| [FancyTasksPlus](https://github.com/SushiTrashXD/FancyTasksPlus) | [SushiTrashXD](https://github.com/SushiTrashXD) | Plasma 6 initial port — the direct upstream of this fork |
-| [FancyTasks](https://github.com/alexankitty/FancyTasks) | [Alexandra Stone (alexankitty)](https://github.com/alexankitty) | Original Plasma 5 reimplementation with indicators and badges |
-| [Hover-zoom branch](https://github.com/luisbocanegra/FancyTasks) | [Luis Bocanegra](https://github.com/luisbocanegra) | Hover zoom implementation |
-| KDE Plasma Task Manager | Eike Hein, Nate Graham, KDE Team | The original upstream task manager that everything is built upon |
-| — | ziomek64 and other contributors | Contributions to the original FancyTasks repository |
+| Who | What they did |
+|---|---|
+| [SushiTrashXD](https://github.com/SushiTrashXD) | Created FancyTasksPlus (the initial Plasma 6 port that served as the base for this fork). |
+| [Alexandra Stone](https://github.com/alexankitty) | Created the original FancyTasks for Plasma 5, pioneering the animated indicators and badges. |
+| [Luis Bocanegra](https://github.com/luisbocanegra) | Implemented the original hover-zoom logic. |
+| The Community | Everyone who has submitted bug reports, PRs, and ideas. |
 
 ---
 
