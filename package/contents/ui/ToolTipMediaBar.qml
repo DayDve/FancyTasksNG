@@ -21,6 +21,8 @@ Item {
 
     readonly property bool hasPlayer: mediaController ? mediaController.showPlayerControls : false
     readonly property bool hasVolume: mediaController ? mediaController.showVolumeControls : false
+    // Volume-only mode: no player controls, just audio stream
+    readonly property bool volumeOnlyMode: hasVolume && !hasPlayer
 
 
 
@@ -124,10 +126,10 @@ Item {
             }
         }
 
-        // [D] - Mute & Hover Volume Button
+        // [D] - Mute & Hover Volume Button (only when player controls are present)
         PlasmaComponents3.ToolButton {
             id: volumeButton
-            visible: barRoot.hasVolume
+            visible: barRoot.hasVolume && !barRoot.volumeOnlyMode
             implicitWidth: Kirigami.Units.gridUnit * 1.2
             implicitHeight: Kirigami.Units.gridUnit * 1.2
             padding: 0
@@ -321,6 +323,124 @@ Item {
 
                      }
                 }
+            }
+        }
+
+        // Inline horizontal volume slider for volume-only mode (no player controls)
+        RowLayout {
+            visible: barRoot.volumeOnlyMode
+            Layout.fillWidth: true
+            spacing: Kirigami.Units.smallSpacing
+            Layout.alignment: Qt.AlignVCenter
+
+            MouseArea {
+                anchors.fill: parent
+                z: 1
+                acceptedButtons: Qt.NoButton
+                onWheel: (wheel) => {
+                    if (barRoot.mediaController) {
+                        let step = Math.round(65536 * 0.05 * wheel.angleDelta.y / 120);
+                        if (step !== 0)
+                            barRoot.mediaController.adjustAppVolume(step);
+                        wheel.accepted = true;
+                    }
+                }
+            }
+
+            PlasmaComponents3.ToolButton {
+                implicitWidth: Kirigami.Units.gridUnit * 1.2
+                implicitHeight: Kirigami.Units.gridUnit * 1.2
+                padding: 0
+                icon.width: Kirigami.Units.iconSizes.small
+                icon.height: Kirigami.Units.iconSizes.small
+
+                icon.name: {
+                    if (checked) return "audio-volume-muted";
+                    let pct = Math.round(inlineVolumeSlider.value / inlineVolumeSlider.to * 100);
+                    if (pct <= 25) return "audio-volume-low";
+                    if (pct <= 75) return "audio-volume-medium";
+                    return "audio-volume-high";
+                }
+
+                text: Wrappers.i18n("Mute")
+                display: PlasmaComponents3.AbstractButton.IconOnly
+                checkable: true
+                checked: barRoot.mediaController ? barRoot.mediaController.muted : false
+                onClicked: {
+                    if (barRoot.mediaController)
+                        barRoot.mediaController.toggleMuted();
+                }
+            }
+
+            PlasmaComponents3.Slider {
+                id: inlineVolumeSlider
+                Layout.fillWidth: true
+                topPadding: 4
+                bottomPadding: 4
+
+                from: barRoot.mediaController && barRoot.mediaController.audioStreamManager ? barRoot.mediaController.audioStreamManager.item.minimalVolume : 0
+                to: barRoot.mediaController && barRoot.mediaController.audioStreamManager ? barRoot.mediaController.audioStreamManager.item.normalVolume : 65536
+
+                WheelHandler {
+                    acceptedButtons: Qt.NoButton
+                    onWheel: (event) => {
+                        event.accepted = true;
+                    }
+                }
+
+                Binding {
+                    target: inlineVolumeSlider
+                    property: "value"
+                    value: barRoot.mediaController ? barRoot.mediaController.appVolume : 0
+                    when: !inlineVolumeSlider.pressed
+                }
+
+                onMoved: {
+                    if (barRoot.mediaController)
+                        barRoot.mediaController.setVolume(value);
+                }
+
+                handle: Rectangle {
+                    x: inlineVolumeSlider.leftPadding + inlineVolumeSlider.visualPosition * (inlineVolumeSlider.availableWidth - width)
+                    y: inlineVolumeSlider.topPadding + (inlineVolumeSlider.availableHeight - height) / 2
+
+                    width: inlineHandleHover.hovered || inlineVolumeSlider.pressed ? 10 : 6
+                    height: width
+                    radius: width / 2
+
+                    color: inlineVolumeSlider.pressed ? Kirigami.Theme.highlightColor : Kirigami.Theme.textColor
+                    border.color: Kirigami.Theme.backgroundColor
+                    border.width: 1
+
+                    HoverHandler { id: inlineHandleHover }
+
+                    Behavior on width {
+                        NumberAnimation { duration: 120; easing.type: Easing.OutCubic }
+                    }
+                }
+
+                background: Rectangle {
+                    x: inlineVolumeSlider.leftPadding
+                    y: inlineVolumeSlider.topPadding + (inlineVolumeSlider.availableHeight - height) / 2
+                    width: inlineVolumeSlider.availableWidth
+                    height: 2
+                    radius: 1
+                    color: Qt.rgba(255, 255, 255, 0.15)
+
+                    Rectangle {
+                        width: inlineVolumeSlider.visualPosition * parent.width
+                        height: parent.height
+                        color: Kirigami.Theme.highlightColor
+                        radius: 1
+                    }
+                }
+            }
+
+            PlasmaComponents3.Label {
+                text: Math.round(inlineVolumeSlider.value / inlineVolumeSlider.to * 100) + "%"
+                Layout.minimumWidth: Kirigami.Units.gridUnit * 1.5
+                font.pixelSize: 10
+                horizontalAlignment: Text.AlignHCenter
             }
         }
     }
