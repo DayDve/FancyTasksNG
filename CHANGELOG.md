@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Tooltip Media Bar:** Show an inline volume slider in the media bar when playback controls (e.g. play/pause/prev/next) are not present.
+
+### Refactored
+- **Property Caching & Optimization:** Extensively cached configuration, global settings, and context properties across multiple QML components to resolve performance bottlenecks, reduce CPU load, and optimize binding evaluation. Affected components:
+  - **Task & TaskList:** Added asynchronous loading for badge, media, expander, and volume controls to make task list generation smoother. Optimized badge loading on-demand based on unread counters and audio state, and simplified `minimumWidth` calculation when in `iconsOnly` mode.
+  - **Task:** Cached parent and list configuration values.
+  - **TaskIconBox:** Cached configuration settings and context properties.
+  - **ToolTipDelegate:** Cached config properties to simplify delegate bindings.
+  - **ToolTipInstance:** Cached delegate-specific properties and configurations.
+  - **ToolTipMediaBar:** Cached media controller properties.
+
+### Fixed
+- **Reordering:** Optimized drag-and-drop performance by binding `taskRepeater` model directly to `tasksModel` when `minimizedFilter` is 0, reducing task switching freeze from 670ms to 34-40ms and restoring slide animations.
+- **Tooltip Volume Control:** Resolved layout-managed anchors and parent/sibling anchors constraints warnings in `ToolTipMediaBar.qml` by wrapping the volume `RowLayout` in a parent `Item` container.
+
 ## [2.0.1] - 2026-06-08
 
 ### Fixed
