@@ -35,7 +35,18 @@ import "code/singletones"
 Item {
     id: root
     
+    // Cached configuration property for optimization
+    readonly property var config: Plasmoid.configuration
 
+    // Cached delegate properties for performance optimization
+    readonly property bool showThumbnails: toolTipDelegate ? toolTipDelegate.showThumbnails : false
+    readonly property bool isWin: toolTipDelegate ? toolTipDelegate.isWin : false
+    readonly property bool isGroup: toolTipDelegate ? toolTipDelegate.isGroup : false
+    readonly property var parentTask: toolTipDelegate ? toolTipDelegate.parentTask : null
+    readonly property bool isLauncher: toolTipDelegate ? toolTipDelegate.isLauncher : false
+    readonly property var icon: toolTipDelegate ? toolTipDelegate.icon : null
+    readonly property var thumbnailCache: toolTipDelegate ? toolTipDelegate.thumbnailCache : null
+    readonly property int tooltipInstanceMaximumWidth: toolTipDelegate ? toolTipDelegate.tooltipInstanceMaximumWidth : Kirigami.Units.gridUnit * 14
 
     implicitWidth: mainLayout.implicitWidth
     implicitHeight: mainLayout.implicitHeight
@@ -52,7 +63,7 @@ Item {
     property var audioStreamManager
     
 
-    readonly property bool useOverlayStyle: toolTipDelegate && toolTipDelegate.showThumbnails
+    readonly property bool useOverlayStyle: root.showThumbnails
 
     HoverHandler {
         id: rootHover
@@ -61,7 +72,7 @@ Item {
     PlasmaExtras.Highlight {
         anchors.fill: parent
         anchors.margins: -Kirigami.Units.smallSpacing / 2
-        visible: (root.isHovered || (toolTipDelegate.isGroup && isWindowActive)) && !toolTipDelegate.showThumbnails
+        visible: (root.isHovered || (root.isGroup && isWindowActive)) && !root.showThumbnails
         opacity: root.isHovered ? 1.0 : (isWindowActive ? 0.6 : 0.0)
 
         pressed: (rootHover.item as MouseArea)?.containsPress ?? false
@@ -72,9 +83,9 @@ Item {
     // Mouse Interaction for Text Mode (when thumbnails hidden)
     Loader {
         anchors.fill: parent
-        active: !toolTipDelegate.showThumbnails && toolTipDelegate.isWin
+        active: !root.showThumbnails && root.isWin
         sourceComponent: ToolTipWindowMouseArea {
-            rootTask: toolTipDelegate ? toolTipDelegate.parentTask : null
+            rootTask: root.parentTask
             modelIndex: root.submodelIndex
             winId: root.currentWinId
             globalHovered: rootHover.hovered
@@ -120,12 +131,12 @@ Item {
     }
 
     readonly property string title: {
-        if (!toolTipDelegate.isWin) {
+        if (!root.isWin) {
             return toolTipDelegate.genericName;
         }
 
         let text = display;
-        if (toolTipDelegate.isGroup && text === "") {
+        if (root.isGroup && text === "") {
             return "";
         }
 
@@ -169,7 +180,7 @@ Item {
     Loader {
         id: mediaControllerLoader
         // Lazy load the backend media controller only when media controls are enabled in settings
-        active: Plasmoid.configuration && Plasmoid.configuration.showMediaControls
+        active: root.config && root.config.showMediaControls
         sourceComponent: ToolTipMediaController {
             toolTipDelegate: root.toolTipDelegate
             appPid: root.appPid
@@ -178,7 +189,7 @@ Item {
             audioStreamManager: root.audioStreamManager
             mpris2Model: root.mpris2Model
             index: root.index
-            thumbnailWinId: thumbnailSourceItem.winId
+            thumbnailWinId: root.currentWinId
             isPlayingAudio: root.isPlayingAudio
         }
     }
@@ -232,7 +243,7 @@ Item {
     PlasmaExtras.Highlight {
         anchors.fill: parent
         anchors.margins: -Kirigami.Units.smallSpacing / 2
-        visible: toolTipDelegate.isGroup && root.isHovered && !toolTipDelegate.showThumbnails
+        visible: root.isGroup && root.isHovered && !root.showThumbnails
         pressed: (rootHover.item as MouseArea)?.containsPress ?? false
         hovered: true
         z: -1
@@ -252,18 +263,18 @@ Item {
         Layout.preferredHeight: implicitHeight // Ensure height propagates to root
         spacing: Kirigami.Units.smallSpacing
 
-        Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
+        Layout.maximumWidth: root.tooltipInstanceMaximumWidth
         Layout.minimumWidth: Kirigami.Units.gridUnit * 12
         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-        Layout.margins: toolTipDelegate.showThumbnails ? Kirigami.Units.mediumSpacing : Kirigami.Units.smallSpacing
+        Layout.margins: root.showThumbnails ? Kirigami.Units.mediumSpacing : Kirigami.Units.smallSpacing
         Layout.fillWidth: true
 
         Kirigami.Icon {
-            source: toolTipDelegate.icon
+            source: root.icon
             Layout.preferredWidth: Kirigami.Units.iconSizes.medium
             Layout.preferredHeight: Kirigami.Units.iconSizes.medium
             Layout.alignment: Qt.AlignVCenter
-            visible: !toolTipDelegate.showThumbnails && toolTipDelegate.isWin
+            visible: !root.showThumbnails && root.isWin
         }
 
         ColumnLayout {
@@ -286,7 +297,7 @@ Item {
                 text: root.calculatedAppName
 
                 opacity: 1
-                visible: text.length !== 0 && toolTipDelegate.showThumbnails
+                visible: text.length !== 0 && root.showThumbnails
                 textFormat: Text.PlainText
                 horizontalAlignment: Text.AlignHCenter
             }
@@ -298,9 +309,9 @@ Item {
                 Layout.minimumWidth: 0
                 elide: Text.ElideRight
                 
-                text: toolTipDelegate.showThumbnails ? (root.titleIncludesTrack ? "" : root.title) : root.display
-                opacity: toolTipDelegate.showThumbnails ? 0.75 : 1.0
-                horizontalAlignment: toolTipDelegate.showThumbnails ? Text.AlignHCenter : Text.AlignLeft
+                text: root.showThumbnails ? (root.titleIncludesTrack ? "" : root.title) : root.display
+                opacity: root.showThumbnails ? 0.75 : 1.0
+                horizontalAlignment: root.showThumbnails ? Text.AlignHCenter : Text.AlignLeft
                 visible: text.length !== 0
                 textFormat: Text.PlainText
             }
@@ -315,7 +326,7 @@ Item {
                 text: toolTipDelegate.isWin ? root.generateSubText() : ""
                 opacity: 0.6
                 horizontalAlignment: Text.AlignHCenter
-                visible: toolTipDelegate.showThumbnails && text.length !== 0 && text !== appNameHeading.text
+                visible: root.showThumbnails && text.length !== 0 && text !== appNameHeading.text
                 textFormat: Text.PlainText
             }
         }
@@ -325,13 +336,13 @@ Item {
         PlasmaComponents3.ToolButton {
             id: closeButton
             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-            visible: toolTipDelegate.isWin && (toolTipDelegate.showThumbnails || root.isHovered)
+            visible: root.isWin && (root.showThumbnails || root.isHovered)
             icon.name: "window-close"
-            icon.width: !toolTipDelegate.showThumbnails ? Kirigami.Units.iconSizes.small : undefined
-            icon.height: !toolTipDelegate.showThumbnails ? Kirigami.Units.iconSizes.small : undefined
+            icon.width: !root.showThumbnails ? Kirigami.Units.iconSizes.small : undefined
+            icon.height: !root.showThumbnails ? Kirigami.Units.iconSizes.small : undefined
             onClicked: {
-                if (toolTipDelegate.parentTask && toolTipDelegate.parentTask.tasksRoot) {
-                    toolTipDelegate.parentTask.tasksRoot.cancelHighlightWindows();
+                if (root.parentTask && root.parentTask.tasksRoot) {
+                    root.parentTask.tasksRoot.cancelHighlightWindows();
                 }
                 const targetIndex = root.findMatchingTaskIndex();
                 tasksModel.requestClose(targetIndex);
@@ -343,10 +354,10 @@ Item {
     Loader {
         id: textModeControlsLoader
         Layout.fillWidth: true
-        Layout.maximumWidth: toolTipDelegate ? toolTipDelegate.tooltipInstanceMaximumWidth : Kirigami.Units.gridUnit * 14
+        Layout.maximumWidth: root.tooltipInstanceMaximumWidth
         Layout.topMargin: -Kirigami.Units.smallSpacing // Tighter spacing to header
         
-        active: !toolTipDelegate.showThumbnails && (root.controlsAreEffective || root.delayedControlsActive)
+        active: !root.showThumbnails && (root.controlsAreEffective || root.delayedControlsActive)
         visible: active
         
         sourceComponent: ToolTipMediaControls {
@@ -360,16 +371,13 @@ Item {
         readonly property int targetWidth: Kirigami.Units.gridUnit * 14
         readonly property int targetHeight: Math.round(targetWidth / (Screen.width / Screen.height))
 
-        Layout.preferredWidth: toolTipDelegate.showThumbnails ? targetWidth : 0
-        Layout.preferredHeight: toolTipDelegate.showThumbnails ? targetHeight : 0
+        Layout.preferredWidth: root.showThumbnails ? targetWidth : 0
+        Layout.preferredHeight: root.showThumbnails ? targetHeight : 0
 
         Layout.alignment: Qt.AlignCenter
         clip: false
         
-        visible: toolTipDelegate.isWin && Plasmoid.configuration.showToolTips && toolTipDelegate.showThumbnails
-
-        readonly property var winId: explicitWinId !== undefined ?
-            explicitWinId : (toolTipDelegate.isWin ? toolTipDelegate.windows[root.index] : undefined)
+        visible: root.isWin && root.config.showToolTips && root.showThumbnails
 
         readonly property bool thumbnailAreaHovered: thumbnailHoverHandler.hovered
 
@@ -381,7 +389,7 @@ Item {
             anchors.fill: hoverHandler
             
             // Use opacity for smooth transition matching the player controls
-            opacity: thumbnailSourceItem.thumbnailAreaHovered ? 1.0 : ((toolTipDelegate.isGroup && isWindowActive) ? 0.6 : 0.0)
+            opacity: thumbnailSourceItem.thumbnailAreaHovered ? 1.0 : ((root.isGroup && isWindowActive) ? 0.6 : 0.0)
             Behavior on opacity { NumberAnimation { duration: Kirigami.Units.longDuration } }
             
             visible: opacity > 0 // Optimization
@@ -392,7 +400,7 @@ Item {
 
         Loader {
             id: thumbnailLoader
-            active: !toolTipDelegate.isLauncher && !albumArtImage.visible && (Number.isInteger(thumbnailSourceItem.winId) || pipeWireLoader.item && !pipeWireLoader.item.hasThumbnail) && root.index !== -1
+            active: !root.isLauncher && !albumArtImage.visible && (Number.isInteger(root.currentWinId) || pipeWireLoader.item && !pipeWireLoader.item.hasThumbnail) && root.index !== -1
             asynchronous: true
             
             visible: active
@@ -405,7 +413,7 @@ Item {
             Component {
                 id: x11Thumbnail
                 PlasmaCore.WindowThumbnail {
-                    winId: Number.isInteger(thumbnailSourceItem.winId) ? thumbnailSourceItem.winId : 0
+                    winId: Number.isInteger(root.currentWinId) ? root.currentWinId : 0
                 }
             }
 
@@ -413,7 +421,7 @@ Item {
                 id: iconItem
                 Kirigami.Icon {
                     id: realIconItem
-                    source: toolTipDelegate.icon
+                    source: root.icon
                     animated: false
                     visible: valid
                     
@@ -454,14 +462,14 @@ Item {
             anchors.fill: hoverHandler
             anchors.margins: thumbnailLoader.anchors.margins
 
-            active: !toolTipDelegate.isLauncher && !albumArtImage.visible && Qt.platform.pluginName === "wayland" && root.index !== -1
+            active: !root.isLauncher && !albumArtImage.visible && Qt.platform.pluginName === "wayland" && root.index !== -1
             asynchronous: true
             source: "PipeWireThumbnail.qml"
 
             Binding {
                 target: pipeWireLoader.item
                 property: "winId"
-                value: thumbnailSourceItem.winId
+                value: root.currentWinId
             }
 
             Timer {
@@ -471,15 +479,15 @@ Item {
                 running: pipeWireLoader.status === Loader.Ready 
                          && pipeWireLoader.item 
                          && pipeWireLoader.item.hasThumbnail
-                         && thumbnailSourceItem.winId !== undefined
+                         && root.currentWinId !== undefined
                 
                 onTriggered: {
                     if (pipeWireLoader.item) {
                         if (pipeWireLoader.item.width <= 0 || pipeWireLoader.item.height <= 0) return;
                         pipeWireLoader.item.grabToImage(function(result) {
-                            if (result && thumbnailSourceItem.winId) {
+                            if (result && root.currentWinId) {
                                 // Store full result object to prevent garbage collection of the URL
-                                toolTipDelegate.thumbnailCache[thumbnailSourceItem.winId] = result;
+                                root.thumbnailCache[root.currentWinId] = result;
                             }
                         }, Qt.size(pipeWireLoader.item.width, pipeWireLoader.item.height));
                     }
@@ -494,8 +502,8 @@ Item {
              anchors.margins: thumbnailLoader.anchors.margins
              
              // Access .url from the stored ItemGrabResult object
-             source: (thumbnailSourceItem.winId && toolTipDelegate.thumbnailCache[thumbnailSourceItem.winId]) 
-                     ? toolTipDelegate.thumbnailCache[thumbnailSourceItem.winId].url 
+             source: (root.currentWinId && root.thumbnailCache[root.currentWinId]) 
+                     ? root.thumbnailCache[root.currentWinId].url 
                      : ""
              
              readonly property bool liveThumbnailReady: pipeWireLoader.active && pipeWireLoader.item && pipeWireLoader.item.hasThumbnail
@@ -538,9 +546,9 @@ Item {
             active: root.index !== -1
             anchors.fill: parent
             sourceComponent: ToolTipWindowMouseArea {
-                rootTask: toolTipDelegate.parentTask
+                rootTask: root.parentTask
                 modelIndex: root.submodelIndex
-                winId: thumbnailSourceItem.winId
+                winId: root.currentWinId
                 globalHovered: rootHover.hovered
                 tasksModel: root.tasksModel
                 toolTipDelegate: root.toolTipDelegate
@@ -550,7 +558,7 @@ Item {
         // Overlay Media Controls (Ghost Controls)
         Loader {
             id: overlayControlsLoader
-            active: toolTipDelegate.showThumbnails && Plasmoid.configuration.mediaControlsLocation === 0 && (root.controlsAreEffective || root.delayedControlsActive)
+            active: root.showThumbnails && root.config.mediaControlsLocation === 0 && (root.controlsAreEffective || root.delayedControlsActive)
             visible: active
             
             z: 2002 
@@ -570,7 +578,7 @@ Item {
         Item {
             id: titleOverlayContainer
             z: 9999
-            visible: root.useOverlayStyle && toolTipDelegate.isWin && titleOverlayLabel.text.length > 0
+            visible: root.useOverlayStyle && root.isWin && titleOverlayLabel.text.length > 0
             
             anchors.left: parent.left
             anchors.top: parent.top
@@ -624,9 +632,9 @@ Item {
                     }
                     
                     if (!titleText && root.display !== appName) {
-                         // Fallback to display only if it's not also redundant
-                         titleText = root.display;
-                         if (titleText && titleText.toLowerCase() === appName.toLowerCase()) return "";
+                          // Fallback to display only if it's not also redundant
+                          titleText = root.display;
+                          if (titleText && titleText.toLowerCase() === appName.toLowerCase()) return "";
                     }
 
                     return titleText || ""; 
@@ -643,7 +651,7 @@ Item {
         PlasmaComponents3.ToolButton {
             id: closeButtonOverlay
             z: 2003
-            visible: root.useOverlayStyle && toolTipDelegate.isWin
+            visible: root.useOverlayStyle && root.isWin
             
             anchors.right: parent.right
             anchors.top: parent.top
@@ -672,8 +680,8 @@ Item {
             }
 
             onClicked: {
-                if (toolTipDelegate.parentTask && toolTipDelegate.parentTask.tasksRoot) {
-                    toolTipDelegate.parentTask.tasksRoot.cancelHighlightWindows();
+                if (root.parentTask && root.parentTask.tasksRoot) {
+                    root.parentTask.tasksRoot.cancelHighlightWindows();
                 }
                 const targetIndex = root.findMatchingTaskIndex();
                 tasksModel.requestClose(targetIndex);
@@ -688,7 +696,7 @@ Item {
         Layout.topMargin: Kirigami.Units.smallSpacing
         Layout.bottomMargin: -Kirigami.Units.smallSpacing // Tighter padding
 
-        active: toolTipDelegate.showThumbnails && Plasmoid.configuration.mediaControlsLocation === 1 && (root.controlsAreEffective || root.delayedControlsActive)
+        active: root.showThumbnails && root.config.mediaControlsLocation === 1 && (root.controlsAreEffective || root.delayedControlsActive)
         visible: active
 
         sourceComponent: ToolTipMediaBar {
@@ -697,14 +705,9 @@ Item {
     }
 }
 
-
-
-
-
-
     function generateSubText(): string {
         const subTextEntries = [];
-        if (!Plasmoid.configuration.showOnlyCurrentDesktop && virtualDesktopInfo.numberOfDesktops > 1) {
+        if (!root.config.showOnlyCurrentDesktop && virtualDesktopInfo.numberOfDesktops > 1) {
             if (!isOnAllVirtualDesktops && virtualDesktops.length > 0) {
                 const virtualDesktopNameList = virtualDesktops.map(virtualDesktop => {
                     const index = virtualDesktopInfo.desktopIds.indexOf(virtualDesktop);
@@ -721,7 +724,7 @@ Item {
             subTextEntries.push(Wrappers.i18nc("Which virtual desktop a window is currently on", "Available on all activities"));
         } else if (activities.length > 0) {
             const activityNames = activities.filter(activity => activity !== activityInfo.currentActivity).map(activity => activityInfo.activityName(activity)).filter(activityName => activityName !== "");
-            if (Plasmoid.configuration.showOnlyCurrentActivity) {
+            if (root.config.showOnlyCurrentActivity) {
                 if (activityNames.length > 0) {
                     subTextEntries.push(Wrappers.i18nc("Activities a window is currently on (apart from the current one)", "Also available on %1", activityNames.join(", ")));
                 }
@@ -736,14 +739,14 @@ Item {
     function findMatchingTaskIndex() {
         // Function to find the child task index that owns this winId
         // Used to fix the close button closing the wrong window in a group
-        if (!tasksModel || !toolTipDelegate.parentTask || toolTipDelegate.parentTask.childCount === 0) return submodelIndex;
+        if (!tasksModel || !root.parentTask || root.parentTask.childCount === 0) return submodelIndex;
         
-        const winId = thumbnailSourceItem.winId;
+        const winId = root.currentWinId;
         if (winId === undefined) return submodelIndex;
 
         // Iterate through children of the parent task
-        const parentRow = toolTipDelegate.parentTask.index;
-        const childCount = toolTipDelegate.parentTask.childCount;
+        const parentRow = root.parentTask.index;
+        const childCount = root.parentTask.childCount;
         
         for (let i = 0; i < childCount; ++i) {
             // Create index for child i
