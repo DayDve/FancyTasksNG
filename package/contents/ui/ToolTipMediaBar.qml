@@ -24,7 +24,11 @@ Item {
     // Volume-only mode: no player controls, just audio stream
     readonly property bool volumeOnlyMode: hasVolume && !hasPlayer
 
-
+    // Local cached properties for optimized property bindings and less verbosity
+    readonly property var playerData: mediaController ? mediaController.playerData : null
+    readonly property var streamManager: mediaController ? mediaController.audioStreamManager : null
+    readonly property real appVolume: mediaController ? mediaController.appVolume : 0
+    readonly property bool muted: mediaController ? mediaController.muted : false
 
     RowLayout {
         anchors.fill: parent
@@ -46,9 +50,9 @@ Item {
                 icon.width: Kirigami.Units.iconSizes.small
                 icon.height: Kirigami.Units.iconSizes.small
 
-                enabled: barRoot.mediaController && barRoot.mediaController.playerData ? barRoot.mediaController.playerData.canGoPrevious : false
+                enabled: barRoot.playerData ? barRoot.playerData.canGoPrevious : false
                 icon.name: mirrored ? "media-skip-forward" : "media-skip-backward"
-                onClicked: if (barRoot.mediaController && barRoot.mediaController.playerData) barRoot.mediaController.playerData.Previous()
+                onClicked: if (barRoot.playerData) barRoot.playerData.Previous()
             }
 
             PlasmaComponents3.ToolButton {
@@ -58,15 +62,15 @@ Item {
                 icon.width: Kirigami.Units.iconSizes.small
                 icon.height: Kirigami.Units.iconSizes.small
 
-                readonly property bool isPlaying: barRoot.mediaController && barRoot.mediaController.playerData ? barRoot.mediaController.playerData.playbackStatus === Mpris.PlaybackStatus.Playing : false
-                enabled: barRoot.mediaController && barRoot.mediaController.playerData ? (isPlaying ? barRoot.mediaController.playerData.canPause : barRoot.mediaController.playerData.canPlay) : false
+                readonly property bool isPlaying: barRoot.playerData ? barRoot.playerData.playbackStatus === Mpris.PlaybackStatus.Playing : false
+                enabled: barRoot.playerData ? (isPlaying ? barRoot.playerData.canPause : barRoot.playerData.canPlay) : false
                 icon.name: isPlaying ? "media-playback-pause" : "media-playback-start"
                 onClicked: {
-                    if (barRoot.mediaController && barRoot.mediaController.playerData) {
+                    if (barRoot.playerData) {
                         if (!isPlaying) {
-                            barRoot.mediaController.playerData.Play();
+                            barRoot.playerData.Play();
                         } else {
-                            barRoot.mediaController.playerData.Pause();
+                            barRoot.playerData.Pause();
                         }
                     }
                 }
@@ -79,9 +83,9 @@ Item {
                 icon.width: Kirigami.Units.iconSizes.small
                 icon.height: Kirigami.Units.iconSizes.small
 
-                enabled: barRoot.mediaController && barRoot.mediaController.playerData ? barRoot.mediaController.playerData.canGoNext : false
+                enabled: barRoot.playerData ? barRoot.playerData.canGoNext : false
                 icon.name: mirrored ? "media-skip-backward" : "media-skip-forward"
-                onClicked: if (barRoot.mediaController && barRoot.mediaController.playerData) barRoot.mediaController.playerData.Next()
+                onClicked: if (barRoot.playerData) barRoot.playerData.Next()
             }
         }
 
@@ -102,9 +106,9 @@ Item {
                 font.pointSize: Kirigami.Theme.smallFont.pointSize
                 textFormat: Text.PlainText
                 text: {
-                    if (!barRoot.mediaController || !barRoot.mediaController.playerData) return "";
-                    let track = barRoot.mediaController.playerData.track || "";
-                    let artist = barRoot.mediaController.playerData.artist || "";
+                    if (!barRoot.playerData) return "";
+                    let track = barRoot.playerData.track || "";
+                    let artist = barRoot.playerData.artist || "";
                     if (track && artist) {
                         return artist + " - " + track;
                     }
@@ -138,10 +142,10 @@ Item {
             Layout.alignment: Qt.AlignVCenter
 
             icon.name: {
-                if (barRoot.mediaController && barRoot.mediaController.muted) {
+                if (barRoot.muted) {
                     return "audio-volume-muted";
                 }
-                let volPercent = barRoot.mediaController ? Math.round(barRoot.mediaController.appVolume / 65536 * 100) : 0;
+                let volPercent = Math.round(barRoot.appVolume / 65536 * 100);
                 if (volPercent <= 25) {
                     return "audio-volume-low";
                 } else if (volPercent <= 75) {
@@ -154,7 +158,7 @@ Item {
             text: Wrappers.i18n("Mute")
             display: PlasmaComponents3.AbstractButton.IconOnly
             checkable: true
-            checked: barRoot.mediaController ? barRoot.mediaController.muted : false
+            checked: barRoot.muted
             onClicked: {
                 if (barRoot.mediaController) {
                     barRoot.mediaController.toggleMuted();
@@ -232,7 +236,7 @@ Item {
 
                     PlasmaComponents3.Label {
                         text: {
-                            let volPercent = barRoot.mediaController ? Math.round(barRoot.mediaController.appVolume / 65536 * 100) : 0;
+                            let volPercent = Math.round(barRoot.appVolume / 65536 * 100);
                             return volPercent + "%";
                         }
                         color: "white"
@@ -253,22 +257,22 @@ Item {
                         topPadding: 6
                         bottomPadding: 6
 
-                        from: barRoot.mediaController && barRoot.mediaController.audioStreamManager ? barRoot.mediaController.audioStreamManager.item.minimalVolume : 0
-                        to: barRoot.mediaController && barRoot.mediaController.audioStreamManager ? barRoot.mediaController.audioStreamManager.item.normalVolume : 65536
+                        from: barRoot.streamManager ? barRoot.streamManager.item.minimalVolume : 0
+                        to: barRoot.streamManager ? barRoot.streamManager.item.normalVolume : 65536
                         // Block built-in QML Slider wheel handling completely to prevent duplicate scroll bugs!
-						WheelHandler {
-							acceptedButtons: Qt.NoButton
-							onWheel: (event) => {
-								event.accepted = true;
-							}
-						}
+                        WheelHandler {
+                            acceptedButtons: Qt.NoButton
+                            onWheel: (event) => {
+                                event.accepted = true;
+                            }
+                        }
 
-						Binding {
-							target: volumeSlider
-							property: "value"
-							value: barRoot.mediaController ? barRoot.mediaController.appVolume : 0
-							when: !volumeSlider.pressed
-						}
+                        Binding {
+                            target: volumeSlider
+                            property: "value"
+                            value: barRoot.appVolume
+                            when: !volumeSlider.pressed
+                        }
 
                         onMoved: {
                             if (barRoot.mediaController) {
@@ -365,7 +369,7 @@ Item {
                 text: Wrappers.i18n("Mute")
                 display: PlasmaComponents3.AbstractButton.IconOnly
                 checkable: true
-                checked: barRoot.mediaController ? barRoot.mediaController.muted : false
+                checked: barRoot.muted
                 onClicked: {
                     if (barRoot.mediaController)
                         barRoot.mediaController.toggleMuted();
@@ -378,8 +382,8 @@ Item {
                 topPadding: 4
                 bottomPadding: 4
 
-                from: barRoot.mediaController && barRoot.mediaController.audioStreamManager ? barRoot.mediaController.audioStreamManager.item.minimalVolume : 0
-                to: barRoot.mediaController && barRoot.mediaController.audioStreamManager ? barRoot.mediaController.audioStreamManager.item.normalVolume : 65536
+                from: barRoot.streamManager ? barRoot.streamManager.item.minimalVolume : 0
+                to: barRoot.streamManager ? barRoot.streamManager.item.normalVolume : 65536
 
                 WheelHandler {
                     acceptedButtons: Qt.NoButton
@@ -391,7 +395,7 @@ Item {
                 Binding {
                     target: inlineVolumeSlider
                     property: "value"
-                    value: barRoot.mediaController ? barRoot.mediaController.appVolume : 0
+                    value: barRoot.appVolume
                     when: !inlineVolumeSlider.pressed
                 }
 
