@@ -380,6 +380,7 @@ ConfigPage {
                     }
                 }
                 ButtonGroup.group: reverseModeRadioButtonGroup
+                onToggled: if (checked) behaviorPage.cfg_reverseMode = false
             }
 
             RadioButton {

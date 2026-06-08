@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **ToolTipMediaBar:** Cached media controller properties.
 
 ### Fixed
+- **Layout Direction:** Fixed the `reverseMode` setting getting stuck on "To the left" by adding the missing `onToggled` handler to the first RadioButton in the configuration UI.
+- **Parabolic Zoom:** Fixed the parabolic zoom animation being inverted and broken when `reverseMode` is active (for both mirrored horizontal layouts and rotated vertical layouts).
 - **Reordering:** Optimized drag-and-drop performance by binding `taskRepeater` model directly to `tasksModel` when `minimizedFilter` is 0, reducing task switching freeze from 670ms to 34-40ms and restoring slide animations.
 - **Tooltip Volume Control:** Resolved layout-managed anchors and parent/sibling anchors constraints warnings in `ToolTipMediaBar.qml` by wrapping the volume `RowLayout` in a parent `Item` container.
 

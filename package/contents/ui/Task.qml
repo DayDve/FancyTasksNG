@@ -269,7 +269,15 @@ Item {
         id: hoverHandler
         onPointChanged: {
             if (hovered && task.tasksRoot.instantHoveredTask === task) {
-                const fraction = task.tasksRoot.vertical ? (point.position.y / task.height) : (point.position.x / task.width);
+                let fraction;
+                if (task.tasksRoot.vertical) {
+                    const rawFraction = point.position.y / task.height;
+                    fraction = task.config.reverseMode ? (1.0 - rawFraction) : rawFraction;
+                } else {
+                    const rawFraction = point.position.x / task.width;
+                    const mirrored = task.tasksRoot.shouldBeMirrored(task.config.reverseMode, Qt.locale().textDirection, task.tasksRoot.vertical);
+                    fraction = mirrored ? (1.0 - rawFraction) : rawFraction;
+                }
                 task.tasksRoot.instantHoveredFraction = Math.max(0.0, Math.min(1.0, fraction));
             }
         }
