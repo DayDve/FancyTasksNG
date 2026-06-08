@@ -41,6 +41,8 @@ Loader {
     // Pass Cache from Root (tasks) down to Instances
     property var thumbnailCache: tasks.thumbnailCache
 
+    readonly property var config: Plasmoid.configuration
+
     readonly property bool isActive: (tasksModel && rootIndex.valid) ? tasksModel.data(rootIndex, TaskManager.AbstractTasksModel.IsActive) === true : false
     
     property int innerDragCount: 0
@@ -63,7 +65,7 @@ Loader {
             subTextEntries.push(genericName);
         }
 
-        if (!Plasmoid.configuration.showOnlyCurrentDesktop && virtualDesktopInfo.numberOfDesktops > 1) {
+        if (!toolTipDelegate.config.showOnlyCurrentDesktop && virtualDesktopInfo.numberOfDesktops > 1) {
             if (!isOnAllVirtualDesktops && virtualDesktops.length > 0) {
                 const virtualDesktopNameList = virtualDesktops.map(virtualDesktop => {
                     const index = virtualDesktopInfo.desktopIds.indexOf(virtualDesktop);
@@ -80,7 +82,7 @@ Loader {
             subTextEntries.push(Wrappers.i18nc("Which virtual desktop a window is currently on", "Available on all activities"));
         } else if (activities.length > 0) {
             const activityNames = activities.filter(activity => activity !== activityInfo.currentActivity).map(activity => activityInfo.activityName(activity)).filter(activityName => activityName !== "");
-            if (Plasmoid.configuration.showOnlyCurrentActivity) {
+            if (toolTipDelegate.config.showOnlyCurrentActivity) {
                 if (activityNames.length > 0) {
                     subTextEntries.push(Wrappers.i18nc("Activities a window is currently on (apart from the current one)", "Also available on %1", activityNames.join(", ")));
                 }
@@ -139,7 +141,7 @@ Loader {
     property bool forceTextMode: false
 
     // Thumbnails are shown only when both the parent tooltip toggle and the thumbnail sub-option are enabled.
-    readonly property bool showThumbnails: Plasmoid.configuration.enableToolTips && Plasmoid.configuration.showToolTips && !forceTextMode
+    readonly property bool showThumbnails: toolTipDelegate.config.enableToolTips && toolTipDelegate.config.showToolTips && !forceTextMode
 
     function getAppLayoutDirection(app) {
         return app.layoutDirection;
@@ -149,7 +151,7 @@ Loader {
 
     // Do not load the tooltip at all when tooltips are disabled — prevents PipeWireThumbnail from
     // attempting to grab invisible window images and emitting "grabToImage: item's window is not visible".
-    active: rootIndex !== undefined && Plasmoid.configuration.enableToolTips
+    active: rootIndex !== undefined && toolTipDelegate.config.enableToolTips
     asynchronous: false
 
     sourceComponent: isGroup ? groupToolTip : singleTooltip
@@ -158,10 +160,35 @@ Loader {
         id: singleTooltip
 
         Item {
+            id: singleRoot
             implicitWidth: singleLayout.implicitWidth
             implicitHeight: singleLayout.implicitHeight
 
             property bool isHovered: singleHover.hovered || singleDrop.containsDrag
+
+            // Cached delegate properties
+            readonly property bool showThumbnails: toolTipDelegate.showThumbnails
+            readonly property bool isWin: toolTipDelegate.isWin
+            readonly property string calculatedAppName: toolTipDelegate.calculatedAppName
+            readonly property string appId: toolTipDelegate.appId
+            readonly property var config: toolTipDelegate.config
+            readonly property var parentTask: toolTipDelegate.parentTask
+            readonly property int tooltipInstanceMaximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
+            readonly property var windows: toolTipDelegate.windows
+            
+            readonly property var rootIndex: toolTipDelegate.rootIndex
+            readonly property int pidParent: toolTipDelegate.pidParent
+            readonly property string display: toolTipDelegate.display
+            readonly property bool isMinimized: toolTipDelegate.isMinimized
+            readonly property bool isOnAllVirtualDesktops: toolTipDelegate.isOnAllVirtualDesktops
+            readonly property var virtualDesktops: toolTipDelegate.virtualDesktops
+            readonly property var activities: toolTipDelegate.activities
+            readonly property bool isActive: toolTipDelegate.isActive
+            readonly property var tasksModel: toolTipDelegate.tasksModel
+            readonly property var mpris2Model: toolTipDelegate.mpris2Model
+            readonly property var audioStreamManager: toolTipDelegate.audioStreamManager
+            readonly property bool isPlayingAudio: toolTipDelegate.isPlayingAudio
+            readonly property bool isMuted: toolTipDelegate.isMuted
 
             HoverHandler {
                 id: singleHover
@@ -178,23 +205,23 @@ Loader {
 
                 Row {
                     Layout.alignment: Qt.AlignHCenter
-                    visible: toolTipDelegate.calculatedAppName.length > 0 && (!toolTipDelegate.isWin || toolTipDelegate.showThumbnails)
+                    visible: singleRoot.calculatedAppName.length > 0 && (!singleRoot.isWin || singleRoot.showThumbnails)
                     opacity: 0.8
                     spacing: Kirigami.Units.smallSpacing
 
                     PlasmaComponents3.Label {
                         id: nameLabel
-                        text: toolTipDelegate.calculatedAppName
+                        text: singleRoot.calculatedAppName
                         font.bold: true
                         elide: Text.ElideRight
-                        width: Math.min(implicitWidth, toolTipDelegate.tooltipInstanceMaximumWidth - (badge.visible ? badge.width + parent.spacing : 0) - Kirigami.Units.gridUnit)
+                        width: Math.min(implicitWidth, singleRoot.tooltipInstanceMaximumWidth - (badge.visible ? badge.width + parent.spacing : 0) - Kirigami.Units.gridUnit)
                     }
 
                     Badge {
                         id: badge
-                        visible: plasmoid.configuration.showBadges && (parentTask ? parentTask.badgeVisible : false)
-                        appId: toolTipDelegate.appId
-                        isUrgent: (Plasmoid.configuration.badgeHighlightNew && parentTask) ? parentTask.hasUnseenNotifications : false
+                        visible: singleRoot.config.showBadges && (singleRoot.parentTask ? singleRoot.parentTask.badgeVisible : false)
+                        appId: singleRoot.appId
+                        isUrgent: (singleRoot.config.badgeHighlightNew && singleRoot.parentTask) ? singleRoot.parentTask.hasUnseenNotifications : false
                         height: Math.round(Kirigami.Units.gridUnit * 0.85)
                         isRound: false
                         fontPointSize: 8
@@ -207,21 +234,21 @@ Loader {
                 Layout.fillWidth: true
                 Layout.leftMargin: Kirigami.Units.gridUnit / 2
                 Layout.rightMargin: Kirigami.Units.gridUnit / 2
-                Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth - Layout.leftMargin - Layout.rightMargin
+                Layout.maximumWidth: singleRoot.tooltipInstanceMaximumWidth - Layout.leftMargin - Layout.rightMargin
                 horizontalAlignment: Text.AlignHCenter
                 
                 text: toolTipDelegate.generateSubText()
                 wrapMode: Text.Wrap
-                visible: text.length > 0 && (!toolTipDelegate.isWin || toolTipDelegate.showThumbnails)
+                visible: text.length > 0 && (!singleRoot.isWin || singleRoot.showThumbnails)
                 opacity: 0.6
                 textFormat: Text.PlainText
             }
 
             Loader {
                 id: singleInstanceLoader
-                visible: toolTipDelegate.windows.length > 0
+                visible: singleRoot.windows.length > 0
                 
-                property var currentWin: (toolTipDelegate.windows && toolTipDelegate.windows.length > 0) ? toolTipDelegate.windows[0] : undefined
+                property var currentWin: singleRoot.isWin ? singleRoot.windows[0] : undefined
                 
                 Timer {
                     id: reloadTimer
@@ -237,27 +264,27 @@ Loader {
                 sourceComponent: ToolTipInstance {    
                     index: 0 
                     height: implicitHeight
-                    submodelIndex: toolTipDelegate.rootIndex
+                    submodelIndex: singleRoot.rootIndex
                     explicitWinId: singleInstanceLoader.currentWin
                     
-                    appPid: toolTipDelegate.pidParent
-                    appId: (toolTipDelegate.parentTask && toolTipDelegate.parentTask.appId) ? toolTipDelegate.parentTask.appId : "" // Fallback
-                    display: toolTipDelegate.display
-                    isMinimized: toolTipDelegate.isMinimized
-                    isOnAllVirtualDesktops: toolTipDelegate.isOnAllVirtualDesktops
-                    virtualDesktops: toolTipDelegate.virtualDesktops
-                    activities: toolTipDelegate.activities
+                    appPid: singleRoot.pidParent
+                    appId: (singleRoot.parentTask && singleRoot.parentTask.appId) ? singleRoot.parentTask.appId : ""
+                    display: singleRoot.display
+                    isMinimized: singleRoot.isMinimized
+                    isOnAllVirtualDesktops: singleRoot.isOnAllVirtualDesktops
+                    virtualDesktops: singleRoot.virtualDesktops
+                    activities: singleRoot.activities
                     
-                    isWindowActive: toolTipDelegate.isActive
+                    isWindowActive: singleRoot.isActive
                     
-                    tasksModel: toolTipDelegate.tasksModel
+                    tasksModel: singleRoot.tasksModel
                     toolTipDelegate: toolTipDelegate
 
-                    mpris2Model: toolTipDelegate.mpris2Model
-                    audioStreamManager: toolTipDelegate.audioStreamManager
+                    mpris2Model: singleRoot.mpris2Model
+                    audioStreamManager: singleRoot.audioStreamManager
                     
-                    isPlayingAudio: toolTipDelegate.isPlayingAudio
-                    isMuted: toolTipDelegate.isMuted
+                    isPlayingAudio: singleRoot.isPlayingAudio
+                    isMuted: singleRoot.isMuted
                 }
             }
         }
@@ -268,10 +295,27 @@ Loader {
         id: groupToolTip
 
         Item {
+            id: groupRoot
             implicitWidth: groupLayout.implicitWidth
             implicitHeight: groupLayout.implicitHeight
 
             property bool isHovered: groupHover.hovered || groupDrop.containsDrag
+
+            // Cached delegate properties
+            readonly property bool showThumbnails: toolTipDelegate.showThumbnails
+            readonly property bool isWin: toolTipDelegate.isWin
+            readonly property string calculatedAppName: toolTipDelegate.calculatedAppName
+            readonly property string appId: toolTipDelegate.appId
+            readonly property var config: toolTipDelegate.config
+            readonly property var parentTask: toolTipDelegate.parentTask
+            readonly property int tooltipInstanceMaximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
+            readonly property var windows: toolTipDelegate.windows
+            readonly property bool isVerticalPanel: toolTipDelegate.isVerticalPanel
+            
+            readonly property var rootIndex: toolTipDelegate.rootIndex
+            readonly property var tasksModel: toolTipDelegate.tasksModel
+            readonly property var mpris2Model: toolTipDelegate.mpris2Model
+            readonly property var audioStreamManager: toolTipDelegate.audioStreamManager
             
             HoverHandler {
                 id: groupHover
@@ -286,24 +330,24 @@ Loader {
                 id: groupLayout
                 spacing: Kirigami.Units.smallSpacing
                 
-                readonly property int safeCount: toolTipDelegate.windows.length > 0 ? toolTipDelegate.windows.length : 1
+                readonly property int safeCount: groupRoot.isWin ? groupRoot.windows.length : 1
                 readonly property int maxTooltipWidth: Screen.width - Kirigami.Units.gridUnit * 2
                 readonly property int maxTooltipHeight: Screen.height - Kirigami.Units.gridUnit * 2
                 readonly property real contentTargetWidth: {
                      // Use same logic as DelegateModel
-                     const count = (!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ? 1 : safeCount;
-                     return Math.ceil(count * toolTipDelegate.tooltipInstanceMaximumWidth + Math.max(0, count - 1) * Kirigami.Units.smallSpacing);
+                     const count = (!groupRoot.showThumbnails || groupRoot.isVerticalPanel) ? 1 : safeCount;
+                     return Math.ceil(count * groupRoot.tooltipInstanceMaximumWidth + Math.max(0, count - 1) * Kirigami.Units.smallSpacing);
                 }
                 
                 Row {
                     Layout.alignment: Qt.AlignHCenter
-                    visible: toolTipDelegate.calculatedAppName.length > 0 && toolTipDelegate.showThumbnails
+                    visible: groupRoot.calculatedAppName.length > 0 && groupRoot.showThumbnails
                     opacity: 0.8
                     spacing: Kirigami.Units.smallSpacing
 
                     PlasmaComponents3.Label {
                         id: groupNameLabel
-                        text: toolTipDelegate.calculatedAppName
+                        text: groupRoot.calculatedAppName
                         font.bold: true
                         elide: Text.ElideRight
                         width: Math.min(implicitWidth, groupLayout.contentTargetWidth - (groupBadge.visible ? groupBadge.width + parent.spacing : 0) - Kirigami.Units.gridUnit)
@@ -311,9 +355,9 @@ Loader {
 
                     Badge {
                         id: groupBadge
-                        visible: plasmoid.configuration.showBadges && (parentTask ? parentTask.badgeVisible : false)
-                        appId: toolTipDelegate.appId
-                        isUrgent: (Plasmoid.configuration.badgeHighlightNew && parentTask) ? parentTask.hasUnseenNotifications : false
+                        visible: groupRoot.config.showBadges && (groupRoot.parentTask ? groupRoot.parentTask.badgeVisible : false)
+                        appId: groupRoot.appId
+                        isUrgent: (groupRoot.config.badgeHighlightNew && groupRoot.parentTask) ? groupRoot.parentTask.hasUnseenNotifications : false
                         height: Math.round(Kirigami.Units.gridUnit * 0.85)
                         isRound: false
                         fontPointSize: 8
@@ -332,7 +376,7 @@ Loader {
                 text: toolTipDelegate.generateSubText()
                 font: Kirigami.Theme.smallFont
                 elide: Text.ElideRight
-                visible: toolTipDelegate.showThumbnails && text.length > 0
+                visible: groupRoot.showThumbnails && text.length > 0
                 opacity: 0.6
                 textFormat: Text.PlainText
             }
@@ -342,9 +386,9 @@ Loader {
                 // hovered is now handled by groupHover on the parent ColumnLayout
                 
                 // In text mode (no thumbnails), extend to tooltip edges
-                Layout.leftMargin: toolTipDelegate.showThumbnails ? 0 : -6
-                Layout.rightMargin: toolTipDelegate.showThumbnails ? 0 : -6
-                Layout.bottomMargin: toolTipDelegate.showThumbnails ? 0 : -6
+                Layout.leftMargin: groupRoot.showThumbnails ? 0 : -6
+                Layout.rightMargin: groupRoot.showThumbnails ? 0 : -6
+                Layout.bottomMargin: groupRoot.showThumbnails ? 0 : -6
                 
                 // Remove default padding/background to prevent size mismatch
                 padding: 0
@@ -362,10 +406,10 @@ Loader {
                 
                 // Match content size strictly, but cap at screen limits
                 Layout.preferredWidth: Math.min(groupLayout.contentTargetWidth, groupLayout.maxTooltipWidth)
-                Layout.preferredHeight: Math.min(Math.max(groupToolTipListView.contentHeight, toolTipDelegate.showThumbnails ? delegateModel.estimatedHeight : 0), groupLayout.maxTooltipHeight)
+                Layout.preferredHeight: Math.min(Math.max(groupToolTipListView.contentHeight, groupRoot.showThumbnails ? delegateModel.estimatedHeight : 0), groupLayout.maxTooltipHeight)
                 Layout.fillWidth: false 
                 
-                implicitHeight: Math.min(Math.max(groupToolTipListView.contentHeight, toolTipDelegate.showThumbnails ? delegateModel.estimatedHeight : 0), groupLayout.maxTooltipHeight)
+                implicitHeight: Math.min(Math.max(groupToolTipListView.contentHeight, groupRoot.showThumbnails ? delegateModel.estimatedHeight : 0), groupLayout.maxTooltipHeight)
                 implicitWidth: Math.min(groupToolTipListView.width, groupLayout.maxTooltipWidth)
 
                 ListView {
@@ -378,7 +422,7 @@ Loader {
                     model: delegateModel
                     
                     // FORCE VERTICAL LIST if thumbnails are disabled
-                    orientation: (!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ?
+                    orientation: (!groupRoot.showThumbnails || groupRoot.isVerticalPanel) ?
                         ListView.Vertical : ListView.Horizontal
                         
                     reuseItems: true
@@ -390,13 +434,13 @@ Loader {
                 DelegateModel {
                     id: delegateModel
 
-                    readonly property int safeCount: toolTipDelegate.windows.length > 0 ? toolTipDelegate.windows.length : count
+                    readonly property int safeCount: groupRoot.isWin ? groupRoot.windows.length : count
 
                     readonly property real screenRatio: Screen.width / Screen.height
                     
                     // If thumbnails disabled -> height is 0
-                    readonly property int instanceThumbHeight: toolTipDelegate.showThumbnails ? 
-                        Math.round(toolTipDelegate.tooltipInstanceMaximumWidth / screenRatio) : 0
+                    readonly property int instanceThumbHeight: groupRoot.showThumbnails ? 
+                        Math.round(groupRoot.tooltipInstanceMaximumWidth / screenRatio) : 0
                     
                     // Reduced padding for overlay style (was * 3)
                     // Fallback to 2 grid units for Text Mode items
@@ -405,18 +449,18 @@ Loader {
 
                     
                     readonly property real estimatedHeight: {
-                        const count = (!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ? safeCount : 1;
+                        const count = (!groupRoot.showThumbnails || groupRoot.isVerticalPanel) ? safeCount : 1;
                         return count * singleItemHeight + Math.max(0, count - 1) * Kirigami.Units.smallSpacing;
                     }
 
-                    model: toolTipDelegate.tasksModel
-                    rootIndex: toolTipDelegate.rootIndex
+                    model: groupRoot.tasksModel
+                    rootIndex: groupRoot.rootIndex
                     onRootIndexChanged: groupToolTipListView.positionViewAtBeginning()
 
                     delegate: ToolTipInstance {
                         required property var model
                         
-                        width: toolTipDelegate.tooltipInstanceMaximumWidth
+                        width: groupRoot.tooltipInstanceMaximumWidth
                         height: implicitHeight
                         
                         index: index 
@@ -436,12 +480,12 @@ Loader {
                         isMuted: model.IsMuted !== undefined ? model.IsMuted : false
                         isWindowActive: model.IsActive !== undefined ? model.IsActive : false
 
-                        submodelIndex: tasksModel.makeModelIndex(toolTipDelegate.rootIndex.row, index)
-                        tasksModel: toolTipDelegate.tasksModel
+                        submodelIndex: groupRoot.tasksModel.makeModelIndex(groupRoot.rootIndex.row, index)
+                        tasksModel: groupRoot.tasksModel
                         toolTipDelegate: toolTipDelegate
 
-                        mpris2Model: toolTipDelegate.mpris2Model
-                        audioStreamManager: toolTipDelegate.audioStreamManager
+                        mpris2Model: groupRoot.mpris2Model
+                        audioStreamManager: groupRoot.audioStreamManager
                     }
                 }
             }
