@@ -25,8 +25,8 @@ Item {
     readonly property bool volumeOnlyMode: hasVolume && !hasPlayer
 
     // Local cached properties for optimized property bindings and less verbosity
-    readonly property var playerData: mediaController ? mediaController.playerData : null
-    readonly property var streamManager: mediaController ? mediaController.audioStreamManager : null
+    readonly property var player: mediaController ? mediaController.playerData : null
+    readonly property var streamMgr: mediaController ? mediaController.audioStreamManager : null
     readonly property real appVolume: mediaController ? mediaController.appVolume : 0
     readonly property bool muted: mediaController ? mediaController.muted : false
 
@@ -50,9 +50,9 @@ Item {
                 icon.width: Kirigami.Units.iconSizes.small
                 icon.height: Kirigami.Units.iconSizes.small
 
-                enabled: barRoot.playerData ? barRoot.playerData.canGoPrevious : false
+                enabled: barRoot.player ? barRoot.player.canGoPrevious : false
                 icon.name: mirrored ? "media-skip-forward" : "media-skip-backward"
-                onClicked: if (barRoot.playerData) barRoot.playerData.Previous()
+                onClicked: if (barRoot.player) barRoot.player.Previous()
             }
 
             PlasmaComponents3.ToolButton {
@@ -62,15 +62,15 @@ Item {
                 icon.width: Kirigami.Units.iconSizes.small
                 icon.height: Kirigami.Units.iconSizes.small
 
-                readonly property bool isPlaying: barRoot.playerData ? barRoot.playerData.playbackStatus === Mpris.PlaybackStatus.Playing : false
-                enabled: barRoot.playerData ? (isPlaying ? barRoot.playerData.canPause : barRoot.playerData.canPlay) : false
+                readonly property bool isPlaying: barRoot.player ? barRoot.player.playbackStatus === Mpris.PlaybackStatus.Playing : false
+                enabled: barRoot.player ? (isPlaying ? barRoot.player.canPause : barRoot.player.canPlay) : false
                 icon.name: isPlaying ? "media-playback-pause" : "media-playback-start"
                 onClicked: {
-                    if (barRoot.playerData) {
+                    if (barRoot.player) {
                         if (!isPlaying) {
-                            barRoot.playerData.Play();
+                            barRoot.player.Play();
                         } else {
-                            barRoot.playerData.Pause();
+                            barRoot.player.Pause();
                         }
                     }
                 }
@@ -83,9 +83,9 @@ Item {
                 icon.width: Kirigami.Units.iconSizes.small
                 icon.height: Kirigami.Units.iconSizes.small
 
-                enabled: barRoot.playerData ? barRoot.playerData.canGoNext : false
+                enabled: barRoot.player ? barRoot.player.canGoNext : false
                 icon.name: mirrored ? "media-skip-backward" : "media-skip-forward"
-                onClicked: if (barRoot.playerData) barRoot.playerData.Next()
+                onClicked: if (barRoot.player) barRoot.player.Next()
             }
         }
 
@@ -106,9 +106,9 @@ Item {
                 font.pointSize: Kirigami.Theme.smallFont.pointSize
                 textFormat: Text.PlainText
                 text: {
-                    if (!barRoot.playerData) return "";
-                    let track = barRoot.playerData.track || "";
-                    let artist = barRoot.playerData.artist || "";
+                    if (!barRoot.player) return "";
+                    let track = barRoot.player.track || "";
+                    let artist = barRoot.player.artist || "";
                     if (track && artist) {
                         return artist + " - " + track;
                     }
@@ -257,8 +257,8 @@ Item {
                         topPadding: 6
                         bottomPadding: 6
 
-                        from: barRoot.streamManager ? barRoot.streamManager.item.minimalVolume : 0
-                        to: barRoot.streamManager ? barRoot.streamManager.item.normalVolume : 65536
+                        from: barRoot.streamMgr ? barRoot.streamMgr.item.minimalVolume : 0
+                        to: barRoot.streamMgr ? barRoot.streamMgr.item.normalVolume : 65536
                         // Block built-in QML Slider wheel handling completely to prevent duplicate scroll bugs!
                         WheelHandler {
                             acceptedButtons: Qt.NoButton
@@ -382,8 +382,8 @@ Item {
                 topPadding: 4
                 bottomPadding: 4
 
-                from: barRoot.streamManager ? barRoot.streamManager.item.minimalVolume : 0
-                to: barRoot.streamManager ? barRoot.streamManager.item.normalVolume : 65536
+                from: barRoot.streamMgr ? barRoot.streamMgr.item.minimalVolume : 0
+                to: barRoot.streamMgr ? barRoot.streamMgr.item.normalVolume : 65536
 
                 WheelHandler {
                     acceptedButtons: Qt.NoButton
