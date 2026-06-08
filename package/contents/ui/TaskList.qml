@@ -28,7 +28,7 @@ GridLayout {
         animating = animationsRunning > 0;
     }
 
-    readonly property real minimumWidth: children
+    readonly property real minimumWidth: tasks.iconsOnly ? LayoutMetrics.preferredMaxWidth() : children
         .filter(item => item.visible && item.width > 0)
         .reduce((minimumWidth, item) => Math.min(minimumWidth, item.width), Infinity)
 

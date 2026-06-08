@@ -818,12 +818,14 @@ Item {
     Loader {
         id: taskVolumeOverlayLoader
         anchors.fill: backgroundFrame
+        asynchronous: true
         active: !task.config.showMediaControls || !task.config.showToolTips
         source: "TaskVolumeOverlay.qml"
     }
 
     Loader {
         id: groupExpanderLoader
+        asynchronous: true
         active: task.config.groupIconEnabled && !task.inPopup && !!task.model && task.model.IsWindow && task.model.IsGroupParent
         sourceComponent: Component {
             GroupExpanderOverlay {
@@ -844,6 +846,7 @@ Item {
 
     Loader {
         id: mediaControllerLoader
+        asynchronous: true
         active: !!task.model && task.model.IsWindow
         source: "TaskMediaController.qml"
         onLoaded: {
@@ -855,7 +858,8 @@ Item {
         id: badgeLoader
         parent: task.tasksRoot.iconsOnly ? taskIconBox : task
         anchors.fill: parent
-        active: task.config.showBadges || task.audioIndicatorsEnabled
+        asynchronous: true
+        active: (task.config.showBadges && task.badgeVisible) || (task.audioIndicatorsEnabled && (task.playingAudio || task.muted))
         source: "TaskBadgeOverlay.qml"
         onLoaded: {
             item.parentTask = task;
