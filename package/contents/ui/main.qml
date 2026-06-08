@@ -66,6 +66,7 @@ PlasmoidItem {
     property Item dropIndicator: dropIndicatorRect
     property int dropIndex: -1
     property Item dragSource: null
+    property alias taskRepeater: taskRepeater
     // Set to true in Task.qml when drag ends with cursor outside the panel bounds.
     // Used in Drag.onDragFinished to trigger unpin regardless of the dropAction
     // (some Plasma components may accept the drop and return non-IgnoreAction).
@@ -722,8 +723,20 @@ PlasmoidItem {
                 }
                 readonly property real widthOccupation: taskRepeater.count / columns
                 readonly property real heightOccupation: taskRepeater.count / rows
-                Layout.maximumWidth: widthOccupation > 0 ? Math.round(children.reduce((acc, child) => isFinite(child.Layout.maximumWidth) ? acc + child.Layout.maximumWidth : acc, 0) / widthOccupation) : 0
-                Layout.maximumHeight: heightOccupation > 0 ? Math.round(children.reduce((acc, child) => isFinite(child.Layout.maximumHeight) ? acc + child.Layout.maximumHeight : acc, 0) / heightOccupation) : 0
+                Layout.maximumWidth: {
+                    if (widthOccupation <= 0) return 0;
+                    if (tasks.iconsOnly) {
+                        return Math.round((taskRepeater.count * LayoutMetrics.preferredMaxWidth()) / widthOccupation);
+                    }
+                    return Math.round(children.reduce((acc, child) => (child && child.visible && isFinite(child.Layout.maximumWidth)) ? acc + child.Layout.maximumWidth : acc, 0) / widthOccupation);
+                }
+                Layout.maximumHeight: {
+                    if (heightOccupation <= 0) return 0;
+                    if (tasks.iconsOnly) {
+                        return Math.round((taskRepeater.count * LayoutMetrics.preferredMaxHeight()) / heightOccupation);
+                    }
+                    return Math.round(children.reduce((acc, child) => (child && child.visible && isFinite(child.Layout.maximumHeight)) ? acc + child.Layout.maximumHeight : acc, 0) / heightOccupation);
+                }
                 width: tasks.shouldShrinkToZero ? 0 : (tasks.vertical ? tasks.width * Math.min(1, widthOccupation) : Math.min(tasks.width, Layout.maximumWidth))
                 height: tasks.shouldShrinkToZero ? 0 : (tasks.vertical ? Math.min(tasks.height, Layout.maximumHeight) : tasks.height * Math.min(1, heightOccupation))
                 flow: tasks.vertical ? (Plasmoid.configuration.forceStripes ? Grid.LeftToRight : Grid.TopToBottom) : (Plasmoid.configuration.forceStripes ? Grid.TopToBottom : Grid.LeftToRight)
@@ -731,11 +744,11 @@ PlasmoidItem {
 
                 Repeater {
                     id: taskRepeater
-                    model: filteredTasksModel
+                    model: Plasmoid.configuration.minimizedFilter === 0 ? tasksModel : filteredTasksModel
                     delegate: Task {
                         tasksRoot: tasks
                     }
-                    onItemRemoved: (index, item) => {
+                    onItemRemoved: {
                         tasks.needLayoutRefresh = true;
                     }
                 }

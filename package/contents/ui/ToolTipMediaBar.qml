@@ -331,25 +331,16 @@ Item {
         }
 
         // Inline horizontal volume slider for volume-only mode (no player controls)
-        RowLayout {
+        Item {
             visible: barRoot.volumeOnlyMode
             Layout.fillWidth: true
-            spacing: Kirigami.Units.smallSpacing
+            Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
 
-            MouseArea {
+            RowLayout {
+                id: inlineVolumeLayout
                 anchors.fill: parent
-                z: 1
-                acceptedButtons: Qt.NoButton
-                onWheel: (wheel) => {
-                    if (barRoot.mediaController) {
-                        let step = Math.round(65536 * 0.05 * wheel.angleDelta.y / 120);
-                        if (step !== 0)
-                            barRoot.mediaController.adjustAppVolume(step);
-                        wheel.accepted = true;
-                    }
-                }
-            }
+                spacing: Kirigami.Units.smallSpacing
 
             PlasmaComponents3.ToolButton {
                 implicitWidth: Kirigami.Units.gridUnit * 1.2
@@ -446,6 +437,22 @@ Item {
                 font.pixelSize: 10
                 horizontalAlignment: Text.AlignHCenter
             }
+
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                z: 1
+                acceptedButtons: Qt.NoButton
+                onWheel: (wheel) => {
+                    if (barRoot.mediaController) {
+                        let step = Math.round(65536 * 0.05 * wheel.angleDelta.y / 120);
+                        if (step !== 0)
+                            barRoot.mediaController.adjustAppVolume(step);
+                        wheel.accepted = true;
+                    }
+                }
+            }
         }
     }
 
@@ -486,4 +493,5 @@ Item {
             }
         }
     }
+
 }
