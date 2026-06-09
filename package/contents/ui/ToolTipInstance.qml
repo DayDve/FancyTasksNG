@@ -24,7 +24,6 @@ import QtQuick
 import QtQuick.Layouts
 
 import org.kde.plasma.plasmoid
-import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents3
 import org.kde.plasma.extras as PlasmaExtras
 import org.kde.kirigami as Kirigami
@@ -398,6 +397,8 @@ Item {
             hovered: true
         }
 
+        readonly property bool showIcon: Qt.platform.pluginName === "wayland" || root.isMinimized || (pipeWireLoader.item !== null && pipeWireLoader.item !== undefined)
+
         Loader {
             id: thumbnailLoader
             active: !root.isLauncher && !albumArtImage.visible && (Number.isInteger(root.currentWinId) || pipeWireLoader.item && !pipeWireLoader.item.hasThumbnail) && root.index !== -1
@@ -408,13 +409,13 @@ Item {
             anchors.fill: hoverHandler
             anchors.margins: Kirigami.Units.smallSpacing
 
-            sourceComponent: (Qt.platform.pluginName === "wayland" || root.isMinimized || pipeWireLoader.item) ? iconItem : x11Thumbnail
+            source: thumbnailLoader.active && !thumbnailSourceItem.showIcon ? "X11Thumbnail.qml" : ""
+            sourceComponent: thumbnailLoader.active && thumbnailSourceItem.showIcon ? iconItem : null
 
-            Component {
-                id: x11Thumbnail
-                PlasmaCore.WindowThumbnail {
-                    winId: Number.isInteger(root.currentWinId) ? root.currentWinId : 0
-                }
+            Binding {
+                target: (thumbnailLoader.item && String(thumbnailLoader.source).indexOf("X11Thumbnail.qml") !== -1) ? thumbnailLoader.item : null
+                property: "winId"
+                value: Number.isInteger(root.currentWinId) ? root.currentWinId : 0
             }
 
             Component {
