@@ -346,6 +346,7 @@ PlasmoidItem {
     }
 
     readonly property alias tasksModelAlias: tasksModel // keep compatibility if needed
+    readonly property var effectiveTasksModel: Plasmoid.configuration.minimizedFilter === 0 ? tasksModel : filteredTasksModel
 
     Timer {
         id: modelUpdateTimer
@@ -369,7 +370,7 @@ PlasmoidItem {
 
         tasks.tasksModel.hideActivatedLaunchers = tasks.iconsOnly || tasks.tasksModel.launchInPlace;
         tasks.tasksModel.sortMode = tasks.sortModeEnumValue(Plasmoid.configuration.sortingStrategy);
-        tasks.tasksModel.launchInPlace = (Plasmoid.configuration.sortingStrategy === 1);
+        tasks.tasksModel.launchInPlace = (Plasmoid.configuration.sortingStrategy === 1 || Plasmoid.configuration.sortingStrategy === 0);
         tasks.tasksModel.separateLaunchers = (Plasmoid.configuration.sortingStrategy !== 1);
 
         tasks.tasksModel.groupMode = tasks.groupModeEnumValue(Plasmoid.configuration.groupingStrategy);
@@ -709,13 +710,13 @@ PlasmoidItem {
             LayoutMirroring.enabled: tasks.shouldBeMirrored(Plasmoid.configuration.reverseMode, Qt.locale().textDirection, tasks.vertical)
             x: centerAlign && !tasks.vertical ? Math.round((parent.width - width) / 2) : 0
             y: centerAlign && tasks.vertical ? Math.round((parent.height - height) / 2) : 0
-            height: taskListView.childrenRect.height
-            width: taskListView.childrenRect.width
+            height: taskListView.height
+            width: taskListView.width
 
             TaskList {
                 id: taskListView
                 tasks: tasks
-                tasksModel: filteredTasksModel
+                tasksModel: tasks.effectiveTasksModel
                 LayoutMirroring.enabled: tasks.shouldBeMirrored(Plasmoid.configuration.reverseMode, Qt.locale().textDirection, tasks.vertical)
                 anchors {
                     left: parent.left
@@ -744,7 +745,7 @@ PlasmoidItem {
 
                 Repeater {
                     id: taskRepeater
-                    model: Plasmoid.configuration.minimizedFilter === 0 ? tasksModel : filteredTasksModel
+                    model: tasks.effectiveTasksModel
                     delegate: Task {
                         tasksRoot: tasks
                     }
@@ -754,7 +755,7 @@ PlasmoidItem {
                 }
 
                 Connections {
-                    target: filteredTasksModel
+                    target: tasks.effectiveTasksModel
                     function onRowsAboutToBeRemoved(parent, first, last) {
                         for (let i = first; i <= last; ++i) {
                             tasks.handleItemRemoval(taskRepeater.itemAt(i));
