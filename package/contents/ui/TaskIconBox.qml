@@ -23,7 +23,7 @@ Item {
     property var taskItem: null
     property var tasksRootContext: null
     property bool labelVisible: false
-    property alias icon: innerIcon
+    property alias icon: iconWrapper
     property bool active: innerIcon.active
 
     // Local cached properties for optimization
@@ -106,15 +106,17 @@ Item {
             id: zoomScale
             origin.x: {
                 if (iconBox.config.iconScaleFromEdge) {
-                    if (iconBox.location === PlasmaCore.Types.LeftEdge) return iconBox.icon.anchors.leftMargin;
-                    if (iconBox.location === PlasmaCore.Types.RightEdge) return iconBox.width - iconBox.icon.anchors.rightMargin;
+                    if (iconBox.location === PlasmaCore.Types.LeftEdge) return iconBox.icon.x;
+                    if (iconBox.location === PlasmaCore.Types.RightEdge) return iconBox.icon.x + iconBox.icon.width;
+                    if (iconBox.location === PlasmaCore.Types.Floating && iconBox.tasksRoot && iconBox.tasksRoot.vertical) return iconBox.icon.x;
                 }
                 return iconBox.width / 2;
             }
             origin.y: {
                 if (iconBox.config.iconScaleFromEdge) {
-                    if (iconBox.location === PlasmaCore.Types.TopEdge) return iconBox.icon.anchors.topMargin;
-                    if (iconBox.location === PlasmaCore.Types.BottomEdge) return iconBox.height - iconBox.icon.anchors.bottomMargin;
+                    if (iconBox.location === PlasmaCore.Types.TopEdge) return iconBox.icon.y;
+                    if (iconBox.location === PlasmaCore.Types.BottomEdge) return iconBox.icon.y + iconBox.icon.height;
+                    if (iconBox.location === PlasmaCore.Types.Floating && (!iconBox.tasksRoot || !iconBox.tasksRoot.vertical)) return iconBox.icon.y + iconBox.icon.height;
                 }
                 return iconBox.height / 2;
             }
@@ -161,8 +163,8 @@ Item {
         return margin;
     }
 
-    Kirigami.Icon {
-        id: innerIcon
+    Item {
+        id: iconWrapper
         
         property bool sizeOverride: iconBox.config.iconSizeOverride
         property int fixedSize: iconBox.config.iconSizePx
@@ -180,41 +182,81 @@ Item {
         height: iconSize
 
         x: {
-            if (iconBox.location === PlasmaCore.Types.LeftEdge) return edgeMarginH;
+            if (iconBox.location === PlasmaCore.Types.LeftEdge || (iconBox.location === PlasmaCore.Types.Floating && iconBox.tasksRoot && iconBox.tasksRoot.vertical)) return edgeMarginH;
             if (iconBox.location === PlasmaCore.Types.RightEdge) return parent.width - width - edgeMarginH;
             return (parent.width - width) / 2;
         }
 
         y: {
             if (iconBox.location === PlasmaCore.Types.TopEdge) return edgeMarginV;
-            if (iconBox.location === PlasmaCore.Types.BottomEdge) return parent.height - height - edgeMarginV;
+            if (iconBox.location === PlasmaCore.Types.BottomEdge || (iconBox.location === PlasmaCore.Types.Floating && (!iconBox.tasksRoot || !iconBox.tasksRoot.vertical))) return parent.height - height - edgeMarginV;
             return (parent.height - height) / 2;
         }
 
-        roundToIconSize: false
-        active: iconBox._taskHighlighted
-        enabled: true
+        readonly property int maxZoom: iconBox.config.iconZoomFactor
+        readonly property int targetRenderSize: iconSize + maxZoom
 
-        source: iconBox._taskHasModel ? iconBox.taskItem.model.decoration : ""
-        opacity: 1.0
-        Behavior on opacity {
-            NumberAnimation { duration: 250 }
-        }
+        Item {
+            id: renderScaleItem
+            anchors.centerIn: parent
+            width: parent.targetRenderSize
+            height: parent.targetRenderSize
+            scale: parent.iconSize / Math.max(1, parent.targetRenderSize)
 
-        layer.enabled: iconBox._iconOverflows || iconBox.config.clipIconToShape
-        layer.smooth: true
-        layer.effect: MultiEffect {
-            maskEnabled: iconBox.config.clipIconToShape
-            maskSource: iconBox._iconMask
-            maskThresholdMin: 0.5
-            maskSpreadAtMin: 1.0
+            Kirigami.Icon {
+                id: innerIcon
+                anchors.fill: parent
 
-            shadowEnabled: iconBox._iconOverflows
-            shadowBlur: 1.0
-            shadowHorizontalOffset: 0
-            shadowVerticalOffset: 0
-            shadowColor: Qt.rgba(0, 0, 0, 0.5)
-            autoPaddingEnabled: true
+                roundToIconSize: false
+                active: iconBox._taskHighlighted
+                enabled: true
+
+                source: iconBox._taskHasModel ? iconBox.taskItem.model.decoration : ""
+                opacity: 1.0
+                Behavior on opacity {
+                    NumberAnimation { duration: 250 }
+                }
+
+                layer.enabled: iconBox._iconOverflows || iconBox.config.clipIconToShape
+                layer.smooth: true
+                layer.effect: MultiEffect {
+                    maskEnabled: iconBox.config.clipIconToShape
+                    maskSource: iconBox._iconMask
+                    maskThresholdMin: 0.5
+                    maskSpreadAtMin: 1.0
+
+                    shadowEnabled: iconBox._iconOverflows
+                    shadowBlur: 1.0
+                    shadowHorizontalOffset: 0
+                    shadowVerticalOffset: 0
+                    shadowColor: Qt.rgba(0, 0, 0, 0.5)
+                    autoPaddingEnabled: true
+                }
+            }
+
+            Rectangle {
+                id: iconBackgroundCard
+                anchors.fill: innerIcon
+                radius: (iconBox.config.iconClipRadius / 200) * Math.min(innerIcon.width, innerIcon.height)
+                antialiasing: true
+                color: {
+                    const mode = iconBox.config.clipIconBackgroundColorMode;
+                    if (mode === 1) {
+                        const domColor = iconColorsLoader.item ? (iconColorsLoader.item as Kirigami.ImageColors).dominant : "transparent";
+                        return TaskTools.harmonizeIconColor(domColor, domColor, Kirigami.Theme.backgroundColor, false);
+                    } else if (mode === 2) {
+                        const avgColor = iconColorsLoader.item ? TaskTools.getAveragePaletteColor((iconColorsLoader.item as Kirigami.ImageColors).palette, (iconColorsLoader.item as Kirigami.ImageColors).average) : "transparent";
+                        const domColor = iconColorsLoader.item ? (iconColorsLoader.item as Kirigami.ImageColors).dominant : "transparent";
+                        return TaskTools.harmonizeIconColor(avgColor, domColor, Kirigami.Theme.backgroundColor, true);
+                    } else if (mode === 3) {
+                        return Kirigami.Theme.highlightColor;
+                    }
+                    return iconBox.config.clipIconBackgroundColor;
+                }
+                opacity: iconBox.config.clipIconBackgroundOpacity / 100
+                visible: iconBox.config.clipIconToShape && iconBox.config.clipIconBackgroundEnabled
+                z: -1
+            }
         }
     }
 
@@ -241,30 +283,6 @@ Item {
         sourceComponent: Kirigami.ImageColors {
             source: innerIcon.source
         }
-    }
-
-    Rectangle {
-        id: iconBackgroundCard
-        anchors.fill: innerIcon
-        radius: (iconBox.config.iconClipRadius / 200) * Math.min(innerIcon.width, innerIcon.height)
-        antialiasing: true
-        color: {
-            const mode = iconBox.config.clipIconBackgroundColorMode;
-            if (mode === 1) {
-                const domColor = iconColorsLoader.item ? (iconColorsLoader.item as Kirigami.ImageColors).dominant : "transparent";
-                return TaskTools.harmonizeIconColor(domColor, domColor, Kirigami.Theme.backgroundColor, false);
-            } else if (mode === 2) {
-                const avgColor = iconColorsLoader.item ? TaskTools.getAveragePaletteColor((iconColorsLoader.item as Kirigami.ImageColors).palette, (iconColorsLoader.item as Kirigami.ImageColors).average) : "transparent";
-                const domColor = iconColorsLoader.item ? (iconColorsLoader.item as Kirigami.ImageColors).dominant : "transparent";
-                return TaskTools.harmonizeIconColor(avgColor, domColor, Kirigami.Theme.backgroundColor, true);
-            } else if (mode === 3) {
-                return Kirigami.Theme.highlightColor;
-            }
-            return iconBox.config.clipIconBackgroundColor;
-        }
-        opacity: iconBox.config.clipIconBackgroundOpacity / 100
-        visible: iconBox.config.clipIconToShape && iconBox.config.clipIconBackgroundEnabled
-        z: -1
     }
 
     Loader {
