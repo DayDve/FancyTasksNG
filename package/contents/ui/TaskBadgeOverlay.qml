@@ -40,14 +40,15 @@ Item {
     readonly property real audioBadgeDiam: effectiveBadgeDiam * 1.4
 
     // ── Panel location ─────────────────────────────────────────────
-    readonly property int loc: Plasmoid.location
-    readonly property bool isVertPanel: loc === PlasmaCore.Types.LeftEdge
-                                        || loc === PlasmaCore.Types.RightEdge
+    readonly property int location: Plasmoid.location
+    readonly property var config: Plasmoid.configuration
+    readonly property bool isVertPanel: location === PlasmaCore.Types.LeftEdge
+                                        || location === PlasmaCore.Types.RightEdge
 
     readonly property real innerSign: {
-        if (loc === PlasmaCore.Types.TopEdge) return 1;
-        if (loc === PlasmaCore.Types.LeftEdge) return 1;
-        if (loc === PlasmaCore.Types.RightEdge) return -1;
+        if (location === PlasmaCore.Types.TopEdge) return 1;
+        if (location === PlasmaCore.Types.LeftEdge) return 1;
+        if (location === PlasmaCore.Types.RightEdge) return -1;
         return -1; // BottomEdge / Floating
     }
 
@@ -172,7 +173,7 @@ Item {
         visible: !!root.parentTask?.badgeVisible
         appId: root.parentTask?.model?.AppId || ""
 
-        isUrgent: (Plasmoid.configuration.badgeHighlightNew && !!root.parentTask?.hasUnseenNotifications)
+        isUrgent: (root.config.badgeHighlightNew && !!root.parentTask?.hasUnseenNotifications)
                   || !!root.parentTask?.model?.DemandsAttention
         isRound: true
         isBold: false
