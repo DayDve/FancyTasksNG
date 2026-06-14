@@ -43,6 +43,7 @@ PlasmaExtras.Menu {
     readonly property var atm: TaskManager.AbstractTasksModel
 
     property bool showAllPlaces: false
+    property var firstMediaItem: null
 
     placement: {
         if (tasksRoot.effectiveLocation === PlasmaCore.Types.LeftEdge) {
@@ -114,8 +115,8 @@ PlasmaExtras.Menu {
     property var _dynamicDesktopItems: []
 
     function _insertDesktopActions(result, launcherUrl) {
-        // Find where to insert (before startNewInstanceItem)
-        let insertItem = startNewInstanceItem;
+        // Find where to insert (before firstMediaItem or startNewInstanceItem)
+        let insertItem = menu.firstMediaItem || startNewInstanceItem;
 
         // Clean up any previously added dynamic items to avoid duplicates on re-open
         _dynamicDesktopItems.forEach(item => {
@@ -317,6 +318,7 @@ PlasmaExtras.Menu {
         if (playerData && playerData.canControl && !(menu.get(menu.atm.WinIdList) !== undefined && menu.get(menu.atm.WinIdList).length > 1)) {
             const playing = playerData.playbackStatus === Mpris.PlaybackStatus.Playing;
             let menuItem = menu.newMenuItem(menu);
+            menu.firstMediaItem = menuItem;
             menuItem.text = Wrappers.i18nc("Play previous track", "Previous Track");
             menuItem.icon = "media-skip-backward";
             menuItem.enabled = Qt.binding(() => {
@@ -413,15 +415,17 @@ PlasmaExtras.Menu {
         // so you still have it ringing later on.
         if ((menu.visualParent as Task).hasAudioStream) {
             const muteItem = menu.newMenuItem(menu);
-            muteItem.checkable = true;
-            muteItem.checked = Qt.binding(() => {
-                return menu.visualParent && (menu.visualParent as Task).muted;
+            muteItem.text = Qt.binding(() => {
+                const isMuted = menu.visualParent && (menu.visualParent as Task).muted;
+                return isMuted ? Wrappers.i18n("Unmute") : Wrappers.i18n("Mute");
+            });
+            muteItem.icon = Qt.binding(() => {
+                const isMuted = menu.visualParent && (menu.visualParent as Task).muted;
+                return isMuted ? "audio-volume-muted" : "audio-volume-high";
             });
             muteItem.clicked.connect(() => {
                 (menu.visualParent as Task).toggleMuted();
             });
-            muteItem.text = Wrappers.i18n("Mute");
-            muteItem.icon = "audio-volume-muted";
             menu.addMenuItem(muteItem, startNewInstanceItem);
 
             menu.addMenuItem(newSeparator(menu), startNewInstanceItem);
