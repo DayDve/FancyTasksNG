@@ -23,6 +23,7 @@ DropArea {
     property var target
     property var hoveredItem
     property bool isGroupDialog: false
+    readonly property var config: Plasmoid.configuration
 
     property alias handleWheelEvents: wheelHandler.handleWheelEvents
 
@@ -53,7 +54,7 @@ DropArea {
             return;
         }
 
-        if (above.model && Plasmoid.configuration.sortingStrategy === 1) {
+        if (above.model && config.sortingStrategy === 1) {
             const dragSource = dropArea.tasks.dragSource;
             if (dragSource && dragSource.model) {
                 const tasks = dropArea.tasks;
@@ -208,7 +209,7 @@ DropArea {
 
         property bool handleWheelEvents: true
 
-        enabled: handleWheelEvents && (Plasmoid.configuration.wheelAction !== 0 || (Plasmoid.configuration.wheelCtrlActionEnabled && Plasmoid.configuration.wheelCtrlAction !== 0))
+        enabled: handleWheelEvents && (dropArea.config.wheelAction !== 0 || (dropArea.config.wheelCtrlActionEnabled && dropArea.config.wheelCtrlAction !== 0))
 
         onWheel: event => {
             dropArea._rotationAccumulator += (event.angleDelta.y / 8.0);
@@ -225,8 +226,8 @@ DropArea {
             if (increment === 0) return;
 
             const anchor = dropArea.target.childAt(event.x, event.y);
-            const isCtrl = (event.modifiers & Qt.ControlModifier) && Plasmoid.configuration.wheelCtrlActionEnabled;
-            const action = isCtrl ? Plasmoid.configuration.wheelCtrlAction : Plasmoid.configuration.wheelAction;
+            const isCtrl = (event.modifiers & Qt.ControlModifier) && dropArea.config.wheelCtrlActionEnabled;
+            const action = isCtrl ? dropArea.config.wheelCtrlAction : dropArea.config.wheelAction;
 
             if (action >= 1 && action <= 4) { // Cycle Tasks
                 const skipMinimized = (action === 2 || action === 4);
@@ -236,7 +237,7 @@ DropArea {
                     increment += (increment < 0) ? 1 : -1;
                 }
             } else if (action === 5) { // Adjust Volume
-                const isShift = (event.modifiers & Qt.ShiftModifier) && Plasmoid.configuration.wheelShiftSystemVolumeEnabled;
+                const isShift = (event.modifiers & Qt.ShiftModifier) && dropArea.config.wheelShiftSystemVolumeEnabled;
                 if (anchor && anchor.adjustVolume) {
                     anchor.adjustVolume(increment, isShift);
                 } else if (isShift && dropArea.tasks.adjustGlobalVolume) {
