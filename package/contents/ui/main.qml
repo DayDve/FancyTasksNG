@@ -45,10 +45,14 @@ PlasmoidItem {
 
     Plasmoid.backgroundHints: PlasmaCore.Types.DefaultBackground | PlasmaCore.Types.ConfigurableBackground
 
-    rotation: Plasmoid.configuration.reverseMode && tasks.vertical ? 180 : 0
+    readonly property var config: Plasmoid.configuration
+    readonly property int location: Plasmoid.location
+    readonly property var containment: Plasmoid.containment
+
+    rotation: tasks.config.reverseMode && tasks.vertical ? 180 : 0
 
     readonly property bool shouldShrinkToZero: !!tasks.tasksModel && tasks.tasksModel.count === 0
-    readonly property int effectiveLocation: FloatingLogic.getEffectiveLocation(Plasmoid.location, Plasmoid.configuration, PlasmaCore.Types)
+    readonly property int effectiveLocation: FloatingLogic.getEffectiveLocation(tasks.location, tasks.config, PlasmaCore.Types)
 
     readonly property bool vertical: {
         if (effectiveLocation === PlasmaCore.Types.LeftEdge || effectiveLocation === PlasmaCore.Types.RightEdge) {
@@ -59,8 +63,8 @@ PlasmoidItem {
         }
         return Plasmoid.formFactor === PlasmaCore.Types.Vertical;
     }
-    readonly property bool iconsOnly: Plasmoid.configuration.iconOnly
-    property bool showBadges: Plasmoid.configuration.showBadges
+    readonly property bool iconsOnly: tasks.config.iconOnly
+    property bool showBadges: tasks.config.showBadges
 
     property alias globalVolumeOverlay: globalVolumeOverlayLoader
     property Item dropIndicator: dropIndicatorRect
@@ -87,9 +91,9 @@ PlasmoidItem {
     }
 
     Connections {
-        target: Plasmoid.configuration
+        target: tasks.config
         function onShowBadgesChanged() {
-            tasks.showBadges = Plasmoid.configuration.showBadges;
+            tasks.showBadges = tasks.config.showBadges;
         }
 
         function onShowOnlyCurrentDesktopChanged() {
@@ -107,6 +111,17 @@ PlasmoidItem {
         }
         function onGroupingStrategyChanged() {
             modelUpdateTimer.restart();
+        }
+
+        function onMinimizedFilterChanged() {
+            filteredTasksModel.invalidateFilter();
+        }
+
+        function onLaunchersChanged(): void {
+            if (tasks.tasksModel && !tasks._isInternalLauncherUpdate) {
+                tasks.tasksModel.launcherList = tasks.config.launchers;
+                tasks.tasksModel.syncLaunchers();
+            }
         }
     }
 
@@ -175,14 +190,10 @@ PlasmoidItem {
     preferredRepresentation: fullRepresentation
     Plasmoid.constraintHints: Plasmoid.CanFillArea
 
-    Plasmoid.onUserConfiguringChanged: {
-        if (Plasmoid.userConfiguring) {
-            // No action needed for group dialog since it's removed
-        }
-    }
 
-    Layout.fillWidth: vertical ? true : Plasmoid.configuration.fill
-    Layout.fillHeight: !vertical ? true : Plasmoid.configuration.fill
+
+    Layout.fillWidth: vertical ? true : tasks.config.fill
+    Layout.fillHeight: !vertical ? true : tasks.config.fill
     Layout.minimumWidth: {
         if (shouldShrinkToZero)
             return Kirigami.Units.gridUnit;
@@ -196,7 +207,7 @@ PlasmoidItem {
     Layout.preferredWidth: {
         if (shouldShrinkToZero)
             return 0.01;
-        if (Plasmoid.location === PlasmaCore.Types.Floating)
+        if (tasks.location === PlasmaCore.Types.Floating)
             return -1; // Let Plasma manage and persist manual resizes
         if (vertical)
             return Kirigami.Units.gridUnit * (iconsOnly ? 2.5 : 10);
@@ -205,7 +216,7 @@ PlasmoidItem {
     Layout.preferredHeight: {
         if (shouldShrinkToZero)
             return 0.01;
-        if (Plasmoid.location === PlasmaCore.Types.Floating)
+        if (tasks.location === PlasmaCore.Types.Floating)
             return -1; // Let Plasma manage and persist manual resizes
         if (vertical)
             return taskListView.Layout.maximumHeight;
@@ -229,7 +240,7 @@ PlasmoidItem {
     }
 
     onWindowsHovered: (winIds, hovered) => {
-        if (!Plasmoid.configuration.highlightWindows || !Plasmoid.configuration.enableToolTips)
+        if (!tasks.config.highlightWindows || !tasks.config.enableToolTips)
             return;
         DBus.SessionBus.asyncCall({
             service: "org.kde.KWin.HighlightWindow",
@@ -286,13 +297,13 @@ PlasmoidItem {
         id: tasksModel
 
         virtualDesktop: virtualDesktopInfo.currentDesktop
-        screenGeometry: Plasmoid.containment.screenGeometry
+        screenGeometry: tasks.containment.screenGeometry
         activity: activityInfo.currentActivity
 
         onLauncherListChanged: {
             if (!tasks._isApplyingConfig) {
                 tasks._isInternalLauncherUpdate = true;
-                Plasmoid.configuration.launchers = launcherList;
+                tasks.config.launchers = launcherList;
                 // Defer reset to ensure the config change signal has finished propagating
                 Qt.callLater(() => {
                     if (tasks)
@@ -302,19 +313,19 @@ PlasmoidItem {
         }
         onGroupingAppIdBlacklistChanged: {
             if (!tasks._isApplyingConfig) {
-                Plasmoid.configuration.groupingAppIdBlacklist = groupingAppIdBlacklist;
+                tasks.config.groupingAppIdBlacklist = groupingAppIdBlacklist;
             }
         }
         onGroupingLauncherUrlBlacklistChanged: {
             if (!tasks._isApplyingConfig) {
-                Plasmoid.configuration.groupingLauncherUrlBlacklist = groupingLauncherUrlBlacklist;
+                tasks.config.groupingLauncherUrlBlacklist = groupingLauncherUrlBlacklist;
             }
         }
 
         Component.onCompleted: {
-            launcherList = Plasmoid.configuration.launchers;
-            groupingAppIdBlacklist = Plasmoid.configuration.groupingAppIdBlacklist;
-            groupingLauncherUrlBlacklist = Plasmoid.configuration.groupingLauncherUrlBlacklist;
+            launcherList = tasks.config.launchers;
+            groupingAppIdBlacklist = tasks.config.groupingAppIdBlacklist;
+            groupingLauncherUrlBlacklist = tasks.config.groupingLauncherUrlBlacklist;
             tasks.applyModelConfiguration();
             startupTimer.start();
         }
@@ -327,9 +338,9 @@ PlasmoidItem {
             const idx = tasksModel.index(source_row, 0, source_parent);
             const isMinimized = tasksModel.data(idx, TaskManager.AbstractTasksModel.IsMinimized) === true;
 
-            if (Plasmoid.configuration.minimizedFilter === 1) { // Only Minimized
+            if (tasks.config.minimizedFilter === 1) { // Only Minimized
                 return isMinimized;
-            } else if (Plasmoid.configuration.minimizedFilter === 2) { // Only Not Minimized
+            } else if (tasks.config.minimizedFilter === 2) { // Only Not Minimized
                 return !isMinimized;
             }
 
@@ -337,16 +348,8 @@ PlasmoidItem {
         }
     }
 
-    // Invalidate filter when config changes
-    Connections {
-        target: Plasmoid.configuration
-        function onMinimizedFilterChanged() {
-            filteredTasksModel.invalidateFilter();
-        }
-    }
-
     readonly property alias tasksModelAlias: tasksModel // keep compatibility if needed
-    readonly property var effectiveTasksModel: Plasmoid.configuration.minimizedFilter === 0 ? tasksModel : filteredTasksModel
+    readonly property var effectiveTasksModel: tasks.config.minimizedFilter === 0 ? tasksModel : filteredTasksModel
 
     Timer {
         id: modelUpdateTimer
@@ -361,20 +364,20 @@ PlasmoidItem {
 
         tasks._isApplyingConfig = true;
 
-        tasks.tasksModel.filterByVirtualDesktop = Plasmoid.configuration.showOnlyCurrentDesktop;
-        tasks.tasksModel.filterByScreen = Plasmoid.configuration.showOnlyCurrentScreen;
-        tasks.tasksModel.filterByActivity = Plasmoid.configuration.showOnlyCurrentActivity;
-        // tasks.tasksModel.filterNotMinimized = Plasmoid.configuration.showOnlyMinimized;
+        tasks.tasksModel.filterByVirtualDesktop = tasks.config.showOnlyCurrentDesktop;
+        tasks.tasksModel.filterByScreen = tasks.config.showOnlyCurrentScreen;
+        tasks.tasksModel.filterByActivity = tasks.config.showOnlyCurrentActivity;
+        // tasks.tasksModel.filterNotMinimized = tasks.config.showOnlyMinimized;
         // The above is now handled by filteredTasksModel proxy to prevent crashes.
         tasks.tasksModel.filterNotMinimized = false;
 
         tasks.tasksModel.hideActivatedLaunchers = tasks.iconsOnly || tasks.tasksModel.launchInPlace;
-        tasks.tasksModel.sortMode = tasks.sortModeEnumValue(Plasmoid.configuration.sortingStrategy);
-        tasks.tasksModel.launchInPlace = (Plasmoid.configuration.sortingStrategy === 1 || Plasmoid.configuration.sortingStrategy === 0);
-        tasks.tasksModel.separateLaunchers = (Plasmoid.configuration.sortingStrategy !== 1);
+        tasks.tasksModel.sortMode = tasks.sortModeEnumValue(tasks.config.sortingStrategy);
+        tasks.tasksModel.launchInPlace = (tasks.config.sortingStrategy === 1 || tasks.config.sortingStrategy === 0);
+        tasks.tasksModel.separateLaunchers = (tasks.config.sortingStrategy !== 1);
 
-        tasks.tasksModel.groupMode = tasks.groupModeEnumValue(Plasmoid.configuration.groupingStrategy);
-        tasks.tasksModel.groupInline = !Plasmoid.configuration.groupPopups;
+        tasks.tasksModel.groupMode = tasks.groupModeEnumValue(tasks.config.groupingStrategy);
+        tasks.tasksModel.groupInline = !tasks.config.groupPopups;
         tasks.tasksModel.groupingWindowTasksThreshold = 0;
 
         tasks._isApplyingConfig = false;
@@ -430,7 +433,7 @@ PlasmoidItem {
     }
 
     Connections {
-        target: Plasmoid.containment
+        target: tasks.containment
         function onScreenGeometryChanged(): void {
             iconGeometryTimer.start();
         }
@@ -447,7 +450,7 @@ PlasmoidItem {
         // a model transition (e.g. Launcher -> Startup -> Window), not a real closure.
         if (taskItem.model.IsLauncher || taskItem.model.IsStartup) return;
 
-        if (Plasmoid.configuration.smokeExplosionOnClose && Plasmoid.configuration.iconOnly === 1) {
+        if (tasks.config.smokeExplosionOnClose && tasks.config.iconOnly === 1) {
             if (taskItem.wasMiddleClicked) {
                 explosionManager.spawn(tasks, taskItem, true);
             }
@@ -548,7 +551,7 @@ PlasmoidItem {
             running: true
             repeat: false
             onTriggered: {
-                tasks.tasksModel.launcherList = Plasmoid.configuration.launchers;
+                tasks.tasksModel.launcherList = tasks.config.launchers;
                 tasks.tasksModel.syncLaunchers();
             }
         }
@@ -556,18 +559,8 @@ PlasmoidItem {
         Binding {
             target: Plasmoid
             property: "status"
-            value: (tasks.tasksModel && tasks.tasksModel.anyTaskDemandsAttention && Plasmoid.configuration.unhideOnAttention ? PlasmaCore.Types.NeedsAttentionStatus : PlasmaCore.Types.PassiveStatus)
+            value: (tasks.tasksModel && tasks.tasksModel.anyTaskDemandsAttention && tasks.config.unhideOnAttention ? PlasmaCore.Types.NeedsAttentionStatus : PlasmaCore.Types.PassiveStatus)
             restoreMode: Binding.RestoreBinding
-        }
-
-        Connections {
-            target: Plasmoid.configuration
-            function onLaunchersChanged(): void {
-                if (tasks.tasksModel && !tasks._isInternalLauncherUpdate) {
-                    tasks.tasksModel.launcherList = Plasmoid.configuration.launchers;
-                    tasks.tasksModel.syncLaunchers();
-                }
-            }
         }
 
         Component {
@@ -609,14 +602,14 @@ PlasmoidItem {
                 const source = tasks.dragSource;
                 let pModel = "model";
                 let pWinIdList = "winIdList";
-                if (Plasmoid.configuration.unpinByDrag
+                if (tasks.config.unpinByDrag
                         && (dropAction === Qt.IgnoreAction || tasks.dragEndedOutsidePanel)
                         && source
                         && source[pModel]
                         && source[pModel].IsLauncher
                         && source[pWinIdList].length === 0) {
-                    if (Plasmoid.configuration.unpinByDragExplosion
-                            && Plasmoid.configuration.iconOnly === 1) {
+                    if (tasks.config.unpinByDragExplosion
+                            && tasks.config.iconOnly === 1) {
                         explosionManager.spawn(tasks, source, true);
                         // Delay removal so the explosion animation plays before the item disappears.
                         dragHelper.pendingUnpinUrl = source[pModel].LauncherUrlWithoutIcon.toString();
@@ -693,7 +686,7 @@ PlasmoidItem {
             active: tasks.currentHoveredTask !== null
             blockFirstEnter: false
             edge: {
-                switch (Plasmoid.location) {
+                switch (tasks.location) {
                 case PlasmaCore.Types.BottomEdge:
                     return Qt.TopEdge;
                 case PlasmaCore.Types.TopEdge:
@@ -706,8 +699,8 @@ PlasmoidItem {
                     return Qt.TopEdge;
                 }
             }
-            readonly property bool centerAlign: tasks.iconsOnly && Plasmoid.configuration.fill && Plasmoid.configuration.fillAlignment === 1
-            LayoutMirroring.enabled: tasks.shouldBeMirrored(Plasmoid.configuration.reverseMode, Qt.locale().textDirection, tasks.vertical)
+            readonly property bool centerAlign: tasks.iconsOnly && tasks.config.fill && tasks.config.fillAlignment === 1
+            LayoutMirroring.enabled: tasks.shouldBeMirrored(tasks.config.reverseMode, Qt.locale().textDirection, tasks.vertical)
             x: centerAlign && !tasks.vertical ? Math.round((parent.width - width) / 2) : 0
             y: centerAlign && tasks.vertical ? Math.round((parent.height - height) / 2) : 0
             height: taskListView.height
@@ -717,7 +710,7 @@ PlasmoidItem {
                 id: taskListView
                 tasks: tasks
                 tasksModel: tasks.effectiveTasksModel
-                LayoutMirroring.enabled: tasks.shouldBeMirrored(Plasmoid.configuration.reverseMode, Qt.locale().textDirection, tasks.vertical)
+                LayoutMirroring.enabled: tasks.shouldBeMirrored(tasks.config.reverseMode, Qt.locale().textDirection, tasks.vertical)
                 anchors {
                     left: parent.left
                     top: parent.top
@@ -740,7 +733,7 @@ PlasmoidItem {
                 }
                 width: tasks.shouldShrinkToZero ? 0 : (tasks.vertical ? tasks.width * Math.min(1, widthOccupation) : Math.min(tasks.width, Layout.maximumWidth))
                 height: tasks.shouldShrinkToZero ? 0 : (tasks.vertical ? Math.min(tasks.height, Layout.maximumHeight) : tasks.height * Math.min(1, heightOccupation))
-                flow: tasks.vertical ? (Plasmoid.configuration.forceStripes ? Grid.LeftToRight : Grid.TopToBottom) : (Plasmoid.configuration.forceStripes ? Grid.TopToBottom : Grid.LeftToRight)
+                flow: tasks.vertical ? (tasks.config.forceStripes ? Grid.LeftToRight : Grid.TopToBottom) : (tasks.config.forceStripes ? Grid.TopToBottom : Grid.LeftToRight)
                 onAnimatingChanged: if (!animating) iconGeometryTimer.restart()
 
                 Repeater {
@@ -896,7 +889,7 @@ PlasmoidItem {
                     isPlayingAudio: taskModel ? (taskModel.IsPlayingAudio === true) : false
                     isMuted: taskModel ? (taskModel.IsMuted === true) : false
 
-                    forceTextMode: tasks.toolTipOpenedByClick !== null && Plasmoid.configuration.groupedTaskVisualization !== 1
+                    forceTextMode: tasks.toolTipOpenedByClick !== null && tasks.config.groupedTaskVisualization !== 1
             }
         }
     }
