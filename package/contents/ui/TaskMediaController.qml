@@ -14,7 +14,8 @@ Item {
 
     // Audio stream manager from tasksRoot
     readonly property var audioStreamManager: taskItem && taskItem.tasksRoot ? taskItem.tasksRoot.audioStreamManager : null
-    readonly property bool audioIndicatorsEnabled: Plasmoid.configuration ? Plasmoid.configuration.indicateAudioStreams : false
+    readonly property var config: Plasmoid.configuration
+    readonly property bool audioIndicatorsEnabled: config ? config.indicateAudioStreams : false
 
     // Exposed Audio State Properties
     property var audioStreams: []
