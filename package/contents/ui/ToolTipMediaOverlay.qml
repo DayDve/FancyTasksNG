@@ -14,8 +14,13 @@ Item {
     required property var mediaController
     required property bool hoveredState
 
+    readonly property int smallSpacing: Kirigami.Units.smallSpacing
+    readonly property int longDuration: Kirigami.Units.longDuration
+    readonly property int gridUnit: Kirigami.Units.gridUnit
+    readonly property int iconSmall: Kirigami.Units.iconSizes.small
+
     width: parent.width
-    height: controlsColumn.implicitHeight + (Kirigami.Units.smallSpacing * 2)
+    height: controlsColumn.implicitHeight + (overlayRoot.smallSpacing * 2)
 
     readonly property bool isHovered: overlayHover.hovered
 
@@ -26,12 +31,12 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: Qt.rgba(0, 0, 0, 0.6)
-        radius: Kirigami.Units.smallSpacing
+        radius: overlayRoot.smallSpacing
 
         opacity: overlayRoot.hoveredState ? 1.0 : 0.0
         Behavior on opacity {
             NumberAnimation {
-                duration: Kirigami.Units.longDuration
+                duration: overlayRoot.longDuration
             }
         }
     }
@@ -39,13 +44,13 @@ Item {
     ColumnLayout {
         id: controlsColumn
         anchors.centerIn: parent
-        width: parent.width - (Kirigami.Units.smallSpacing * 2)
-        spacing: Kirigami.Units.smallSpacing
+        width: parent.width - (overlayRoot.smallSpacing * 2)
+        spacing: overlayRoot.smallSpacing
 
         opacity: overlayRoot.hoveredState ? 1.0 : 0.4
         Behavior on opacity {
             NumberAnimation {
-                duration: Kirigami.Units.longDuration
+                duration: overlayRoot.longDuration
             }
         }
 
@@ -71,11 +76,11 @@ Item {
         RowLayout {
             visible: overlayRoot.mediaController ? overlayRoot.mediaController.showVolumeControls : false
             Layout.fillWidth: true
-            spacing: Kirigami.Units.smallSpacing
+            spacing: overlayRoot.smallSpacing
 
             PlasmaComponents3.ToolButton {
-                icon.width: Kirigami.Units.iconSizes.small
-                icon.height: Kirigami.Units.iconSizes.small
+                icon.width: overlayRoot.iconSmall
+                icon.height: overlayRoot.iconSmall
               
                 icon.name: if (checked) {
                     "audio-volume-muted";
@@ -128,7 +133,7 @@ Item {
             
             PlasmaComponents3.Label {
                 text: Math.round(slider.value / slider.to * 100) + "%"
-                Layout.minimumWidth: Kirigami.Units.gridUnit * 1.5
+                Layout.minimumWidth: overlayRoot.gridUnit * 1.5
                 font.pixelSize: 10
                 horizontalAlignment: Text.AlignHCenter
             }
