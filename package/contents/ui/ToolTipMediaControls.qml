@@ -15,10 +15,14 @@ RowLayout {
 
     required property var mediaController
 
-    spacing: Kirigami.Units.smallSpacing
+    readonly property int smallSpacing: Kirigami.Units.smallSpacing
+    readonly property int gridUnit: Kirigami.Units.gridUnit
+    readonly property int iconSmall: Kirigami.Units.iconSizes.small
+
+    spacing: controlsRoot.smallSpacing
     
     // Strict width constraint for text mode to prevent stretching tooltips
-    Layout.maximumWidth: mediaController && mediaController.toolTipDelegate ? mediaController.toolTipDelegate.tooltipInstanceMaximumWidth : Kirigami.Units.gridUnit * 14
+    Layout.maximumWidth: mediaController && mediaController.toolTipDelegate ? mediaController.toolTipDelegate.tooltipInstanceMaximumWidth : controlsRoot.gridUnit * 14
     Layout.fillWidth: true
 
     // MPRIS Player Controls (Compact: no text, just buttons)
@@ -42,14 +46,14 @@ RowLayout {
     RowLayout {
         visible: controlsRoot.mediaController ? controlsRoot.mediaController.showVolumeControls : false
         Layout.fillWidth: true
-        spacing: Kirigami.Units.smallSpacing
+        spacing: controlsRoot.smallSpacing
 
         PlasmaComponents3.ToolButton {
-            implicitWidth: Kirigami.Units.gridUnit * 1.2
-            implicitHeight: Kirigami.Units.gridUnit * 1.2
+            implicitWidth: controlsRoot.gridUnit * 1.2
+            implicitHeight: controlsRoot.gridUnit * 1.2
             padding: 0
-            icon.width: Kirigami.Units.iconSizes.small
-            icon.height: Kirigami.Units.iconSizes.small
+            icon.width: controlsRoot.iconSmall
+            icon.height: controlsRoot.iconSmall
           
             icon.name: if (checked) {
                 "audio-volume-muted";
@@ -103,7 +107,7 @@ RowLayout {
         
         PlasmaComponents3.Label {
             text: Math.round(sliderInline.value / sliderInline.to * 100) + "%"
-            Layout.minimumWidth: Kirigami.Units.gridUnit * 1.5
+            Layout.minimumWidth: controlsRoot.gridUnit * 1.5
             font.pixelSize: 10
             horizontalAlignment: Text.AlignHCenter
         }
