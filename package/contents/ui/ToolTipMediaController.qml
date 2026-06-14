@@ -21,7 +21,8 @@ Item {
     property var thumbnailWinId
     property bool isPlayingAudio: false
 
-    readonly property bool audioIndicatorsEnabled: Plasmoid.configuration ? Plasmoid.configuration.indicateAudioStreams : false
+    readonly property var config: Plasmoid.configuration
+    readonly property bool audioIndicatorsEnabled: config ? config.indicateAudioStreams : false
 
     // Media Player Data
     readonly property var playerData: {
@@ -203,6 +204,6 @@ Item {
         return hasWindowSpecificStream(thumbnailWinId) || titleIncludesTrack || isPlayingAudio || hasAudioStream;
     }
     readonly property bool showVolumeControls: index !== -1 && audioStreamManager && audioStreamManager.item !== null && audioIndicatorsEnabled && (hasWindowSpecificStream(thumbnailWinId) || titleIncludesTrack || hasAudioStream)
-    readonly property bool controlsAreEffective: Plasmoid.configuration && Plasmoid.configuration.showMediaControls && (showPlayerControls || showVolumeControls)
+    readonly property bool controlsAreEffective: config && config.showMediaControls && (showPlayerControls || showVolumeControls)
 }
 
