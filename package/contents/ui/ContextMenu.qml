@@ -39,6 +39,7 @@ PlasmaExtras.Menu {
     required property TaskManager.ActivityInfo activityInfo
     required property var tasksRoot
 
+    readonly property var config: Plasmoid.configuration
     readonly property var atm: TaskManager.AbstractTasksModel
 
     property bool showAllPlaces: false
@@ -90,7 +91,7 @@ PlasmaExtras.Menu {
         Plasmoid.contextualActionsAboutToShow();
 
         loadDynamicLaunchActions(get(atm.LauncherUrlWithoutIcon), () => {
-            openRelative();
+            menu.openRelative();
         });
     }
 
@@ -303,8 +304,8 @@ PlasmaExtras.Menu {
 
     function loadDynamicLaunchActions(launcherUrl: url, onReady: var): void {
         // Query desktop file actions and recent documents
-        const showHistory = get(atm.AppPid) > 0 && Plasmoid.configuration.showBrowserHistory;
-        DesktopActionsManager.query(launcherUrl, get(atm.AppPid), showHistory, Plasmoid.configuration.browserHistoryLimit, result => {
+        const showHistory = get(atm.AppPid) > 0 && config.showBrowserHistory;
+        DesktopActionsManager.query(launcherUrl, get(atm.AppPid), showHistory, config.browserHistoryLimit, result => {
             _insertDesktopActions(result, launcherUrl);
             if (onReady)
                 onReady();
@@ -441,7 +442,7 @@ PlasmaExtras.Menu {
     PlasmaExtras.MenuItem {
         id: virtualDesktopsMenuItem
 
-        visible: (menu.virtualDesktopInfo.numberOfDesktops > 1 || !Plasmoid.configuration.hideMoveToDesktopMenuWithOneDesktop) && (menu.visualParent && !menu.get(menu.atm.IsLauncher) && !menu.get(menu.atm.IsStartup) && menu.get(menu.atm.IsVirtualDesktopsChangeable))
+        visible: (menu.virtualDesktopInfo.numberOfDesktops > 1 || !config.hideMoveToDesktopMenuWithOneDesktop) && (menu.visualParent && !menu.get(menu.atm.IsLauncher) && !menu.get(menu.atm.IsStartup) && menu.get(menu.atm.IsVirtualDesktopsChangeable))
 
         enabled: visible
 
@@ -643,15 +644,15 @@ PlasmaExtras.Menu {
 
         function isPinned(): bool {
             var url = get(atm.LauncherUrlWithoutIcon).toString();
-            return Plasmoid.configuration.launchers.indexOf(url) !== -1;
+            return config.launchers.indexOf(url) !== -1;
         }
 
         onClicked: {
-            var launchers = Plasmoid.configuration.launchers.slice();
+            var launchers = config.launchers.slice();
             var url = get(atm.LauncherUrlWithoutIcon).toString();
             if (launchers.indexOf(url) === -1) {
                 launchers.push(url);
-                Plasmoid.configuration.launchers = launchers;
+                config.launchers = launchers;
             }
         }
     }
@@ -663,12 +664,12 @@ PlasmaExtras.Menu {
         icon: "window-unpin"
 
         onClicked: {
-            var launchers = Plasmoid.configuration.launchers.slice();
+            var launchers = config.launchers.slice();
             var url = get(atm.LauncherUrlWithoutIcon).toString();
             var index = launchers.indexOf(url);
             if (index !== -1) {
                 launchers.splice(index, 1);
-                Plasmoid.configuration.launchers = launchers;
+                config.launchers = launchers;
             }
         }
     }
@@ -807,7 +808,7 @@ PlasmaExtras.Menu {
             }
 
             PlasmaExtras.MenuItem {
-                visible: (Plasmoid.configuration.groupingStrategy !== 0) && menu.get(atm.IsWindow)
+                visible: (config.groupingStrategy !== 0) && menu.get(atm.IsWindow)
 
                 checkable: true
                 checked: menu.visualParent && menu.get(atm.IsGroupable)
