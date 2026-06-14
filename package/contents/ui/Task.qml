@@ -818,7 +818,7 @@ Item {
         id: taskVolumeOverlayLoader
         anchors.fill: backgroundFrame
         asynchronous: true
-        active: !task.config.showMediaControls || !task.config.showToolTips
+        active: task.hasAudioStream
         source: "TaskVolumeOverlay.qml"
     }
 
