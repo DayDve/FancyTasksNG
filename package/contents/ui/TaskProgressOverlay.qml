@@ -63,32 +63,10 @@ Item {
             visible: control.pStyle >= 3 && control.pStyle <= 6
             color: control.pColor
 
-            states: [
-                State {
-                    name: "top"
-                    when: control.pStyle === 3
-                    AnchorChanges { target: progressStrip; anchors.top: parent.top; anchors.left: parent.left; anchors.bottom: undefined; anchors.right: undefined }
-                    PropertyChanges { target: progressStrip; width: parent.width * control.pPosition; height: control.pThick }
-                },
-                State {
-                    name: "bottom"
-                    when: control.pStyle === 4
-                    AnchorChanges { target: progressStrip; anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.top: undefined; anchors.right: undefined }
-                    PropertyChanges { target: progressStrip; width: parent.width * control.pPosition; height: control.pThick }
-                },
-                State {
-                    name: "left"
-                    when: control.pStyle === 5
-                    AnchorChanges { target: progressStrip; anchors.left: parent.left; anchors.bottom: parent.bottom; anchors.right: undefined; anchors.top: undefined }
-                    PropertyChanges { target: progressStrip; height: parent.height * control.pPosition; width: control.pThick }
-                },
-                State {
-                    name: "right"
-                    when: control.pStyle === 6
-                    AnchorChanges { target: progressStrip; anchors.right: parent.right; anchors.bottom: parent.bottom; anchors.left: undefined; anchors.top: undefined }
-                    PropertyChanges { target: progressStrip; height: parent.height * control.pPosition; width: control.pThick }
-                }
-            ]
+            x: control.pStyle === 6 ? parent.width - width : 0
+            y: control.pStyle === 3 ? 0 : parent.height - height
+            width: (control.pStyle === 3 || control.pStyle === 4) ? parent.width * control.pPosition : control.pThick
+            height: (control.pStyle === 5 || control.pStyle === 6) ? parent.height * control.pPosition : control.pThick
         }
     }
 }
