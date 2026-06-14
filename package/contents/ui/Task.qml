@@ -40,15 +40,19 @@ Item {
     readonly property alias frame: backgroundFrame
     z: highlighted ? 10 : (badgeVisible || playingAudio || muted) ? 1 : 0
 
+    // Cached properties for optimization
+    readonly property var config: Plasmoid.configuration
+    readonly property int location: Plasmoid.location
+    readonly property int smallSpacing: Kirigami.Units.smallSpacing
+    readonly property int shortDuration: Kirigami.Units.shortDuration
+    readonly property int longDuration: Kirigami.Units.longDuration
+    readonly property color themeBgColor: Kirigami.Theme.backgroundColor
+
     activeFocusOnTab: true
     opacity: tasksRoot.dragSource === task ? (task.inPopup ? 1.0 : 0.5) : 1.0
     Behavior on opacity {
-        NumberAnimation { duration: Kirigami.Units.shortDuration }
+        NumberAnimation { duration: task.shortDuration }
     }
-
-
-    // Cached configuration property for optimization
-    readonly property var config: Plasmoid.configuration
 
     readonly property int _cfgIconSize: task.config.iconSizeOverride ? task.config.iconSizePx : (Math.min(tasksRoot.width, tasksRoot.height) * task.config.iconScale / 100)
     readonly property int _cfgZoom: (tasksRoot.iconsOnly && task.config.taskHoverEffect) ? task.config.iconZoomFactor : 0
@@ -60,12 +64,12 @@ Item {
     Item {
         id: tooltipAnchor
         anchors.centerIn: parent
-        width: task.tasksRoot.vertical ? (Math.max(task.tasksRoot.width, task._maxIconSize) + Kirigami.Units.smallSpacing * 2) : parent.width
-        height: !task.tasksRoot.vertical ? (Math.max(task.tasksRoot.height, task._maxIconSize) + Kirigami.Units.smallSpacing * 2) : parent.height
+        width: task.tasksRoot.vertical ? (Math.max(task.tasksRoot.width, task._maxIconSize) + task.smallSpacing * 2) : parent.width
+        height: !task.tasksRoot.vertical ? (Math.max(task.tasksRoot.height, task._maxIconSize) + task.smallSpacing * 2) : parent.height
         visible: false
     }
     property alias tooltipAnchor: tooltipAnchor
-    property string tintColor: Kirigami.ColorUtils.brightnessForColor(Kirigami.Theme.backgroundColor) === Kirigami.ColorUtils.Dark ?
+    property string tintColor: Kirigami.ColorUtils.brightnessForColor(task.themeBgColor) === Kirigami.ColorUtils.Dark ?
         "#ffffff" : "#000000"
 
     rotation: (tasksRoot && task.config.reverseMode && tasksRoot.vertical) ?
@@ -384,14 +388,14 @@ Item {
                 properties: "x"
                 to: 0
                 easing.type: Easing.OutQuad
-                duration: Kirigami.Units.longDuration
+                duration: task.longDuration
             }
             NumberAnimation {
                 target: translateTransform
                 properties: "y"
                 to: 0
                 easing.type: Easing.OutQuad
-                duration: Kirigami.Units.longDuration
+                duration: task.longDuration
             }
         }
     }
@@ -577,7 +581,7 @@ Item {
             return !task.config.disableInactiveIndicators;
         }
         flow: Flow.LeftToRight
-        spacing: Kirigami.Units.smallSpacing
+        spacing: task.smallSpacing
         clip: false
     }
 
@@ -678,8 +682,6 @@ Item {
 
     KSvg.FrameSvgItem {
         id: backgroundFrame
-        onIsHoveredChanged: {
-        }
 
         // qmllint disable unqualified
         Kirigami.ImageColors {
@@ -712,7 +714,7 @@ Item {
                                     task.model.IsActive ? "focus" : "normal"
         
         prefix: isHovered ?
-            TaskTools.taskPrefixHovered(basePrefix, Plasmoid.location) : TaskTools.taskPrefix(basePrefix, Plasmoid.location)
+            TaskTools.taskPrefixHovered(basePrefix, task.location) : TaskTools.taskPrefix(basePrefix, task.location)
 
         visible: (!task.model || task.model.IsLauncher || task.model.IsDemandingAttention || task.model.IsActive || backgroundFrame.isHovered) ?
             true : !task.config.disableButtonInactiveSvg
@@ -808,7 +810,7 @@ Item {
             item.pOpacity = Qt.binding(() => task.config.indicatorProgressOpacity / 100.0);
             item.pThick = Qt.binding(() => task.config.indicatorProgressThickness);
             item.pPosition = Qt.binding(() => task.taskProgress);
-            item.panelLocation = Qt.binding(() => Plasmoid.location);
+            item.panelLocation = Qt.binding(() => task.location);
         }
     }
 
@@ -867,7 +869,7 @@ Item {
     PlasmaComponents3.Label {
         id: label
 
-        visible: (task.inPopup || !task.tasksRoot.iconsOnly && !task.model.IsLauncher && (parent.width - taskIconBox.height - Kirigami.Units.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText())
+        visible: (task.inPopup || !task.tasksRoot.iconsOnly && !task.model.IsLauncher && (parent.width - taskIconBox.height - task.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText())
 
         anchors {
             fill: parent
