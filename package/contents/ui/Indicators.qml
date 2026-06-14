@@ -22,12 +22,14 @@ Flow {
     required property var frameSvgItem
     required property var tasksRoot
 
+    readonly property var config: Plasmoid.configuration
+
     // Max possible cross-axis thickness across all indicator states
     readonly property int maxIndicatorThickness: Math.max(
-        Plasmoid.configuration.indicatorSize,
-        Plasmoid.configuration.indicatorActiveSize,
-        Plasmoid.configuration.indicatorHoverSize,
-        Plasmoid.configuration.indicatorGroupSize
+        config.indicatorSize,
+        config.indicatorActiveSize,
+        config.indicatorHoverSize,
+        config.indicatorGroupSize
     )
 
     function getActiveChildIndex() {
@@ -63,7 +65,7 @@ Flow {
 
     Repeater {
         model: {
-            if(!Plasmoid.configuration.indicatorsEnabled)
+            if(!indicatorsFlow.config.indicatorsEnabled)
             return 0;
             if(indicatorsFlow.taskItem.isSubTask)//Target only the main task items.
             return 0;
@@ -72,7 +74,7 @@ Flow {
             }
             return Math.min((indicatorsFlow.taskCount === 0) ? 1 : indicatorsFlow.taskCount, maxStates);
         }
-        readonly property int maxStates: Plasmoid.configuration.indicatorMaxLimit
+        readonly property int maxStates: indicatorsFlow.config.indicatorMaxLimit
         
         Item {
             id: segmentWrapper
@@ -85,16 +87,16 @@ Flow {
                 return false;
             }
             readonly property color decoColor: indicatorsFlow.frameSvgItem.indicatorColor
-            readonly property int maxStates: Plasmoid.configuration.indicatorMaxLimit
+            readonly property int maxStates: indicatorsFlow.config.indicatorMaxLimit
             readonly property bool isFirst: index === 0
-            readonly property int adjust: Plasmoid.configuration.indicatorShrink
-            readonly property int indicatorLength: Plasmoid.configuration.indicatorLength
+            readonly property int adjust: indicatorsFlow.config.indicatorShrink
+            readonly property int indicatorLength: indicatorsFlow.config.indicatorLength
             readonly property int spacing: Kirigami.Units.smallSpacing
             readonly property bool isVertical: {
-                if (indicatorsFlow.tasksRoot.vertical && !Plasmoid.configuration.indicatorOverride) {
+                if (indicatorsFlow.tasksRoot.vertical && !indicatorsFlow.config.indicatorOverride) {
                     return true;
                 }
-                if (Plasmoid.configuration.indicatorOverride && (Plasmoid.configuration.indicatorLocation === 1 || Plasmoid.configuration.indicatorLocation === 2)) {
+                if (indicatorsFlow.config.indicatorOverride && (indicatorsFlow.config.indicatorLocation === 1 || indicatorsFlow.config.indicatorLocation === 2)) {
                     return true;
                 }
                 return false;
@@ -109,55 +111,55 @@ Flow {
                 var parentSpacingAdjust = indicatorsFlow.taskCount >= 1 && maxStates >= 2 ? (spacing * 2.5) : 0
 
                 colorEval = TaskTools.resolveIndicatorBaseColor(
-                    Plasmoid.configuration.indicatorAccentColor,
-                    Plasmoid.configuration.indicatorDominantColor,
+                    indicatorsFlow.config.indicatorAccentColor,
+                    indicatorsFlow.config.indicatorDominantColor,
                     Kirigami.Theme.highlightColor,
                     decoColor,
-                    Plasmoid.configuration.indicatorCustomColor
+                    indicatorsFlow.config.indicatorCustomColor
                 );
 
                 let segLength = indicatorLength;
-                let segSize = Plasmoid.configuration.indicatorSize;
+                let segSize = indicatorsFlow.config.indicatorSize;
 
                 // 1. Active styling
                 if (isActiveWindow) {
-                    if (Plasmoid.configuration.indicatorResize) {
-                        if (indicatorsFlow.taskCount > 1 && Plasmoid.configuration.indicatorGroupSeparate) {
-                            segLength = Plasmoid.configuration.indicatorGroupLength;
-                            segSize = Plasmoid.configuration.indicatorGroupSize;
+                    if (indicatorsFlow.config.indicatorResize) {
+                        if (indicatorsFlow.taskCount > 1 && indicatorsFlow.config.indicatorGroupSeparate) {
+                            segLength = indicatorsFlow.config.indicatorGroupLength;
+                            segSize = indicatorsFlow.config.indicatorGroupSize;
                         } else {
-                            segLength = Plasmoid.configuration.indicatorActiveLength;
-                            segSize = Plasmoid.configuration.indicatorActiveSize;
+                            segLength = indicatorsFlow.config.indicatorActiveLength;
+                            segSize = indicatorsFlow.config.indicatorActiveSize;
                         }
                     }
                 }
 
                 // 2. Hover styling
                 if (indicatorsFlow.taskItem.containsMouse || indicatorsFlow.taskItem.isHovered) {
-                    if (Plasmoid.configuration.indicatorResize) {
-                        if (Plasmoid.configuration.indicatorHoverSeparate) {
-                            segLength = Plasmoid.configuration.indicatorHoverLength;
-                            segSize = Plasmoid.configuration.indicatorHoverSize;
+                    if (indicatorsFlow.config.indicatorResize) {
+                        if (indicatorsFlow.config.indicatorHoverSeparate) {
+                            segLength = indicatorsFlow.config.indicatorHoverLength;
+                            segSize = indicatorsFlow.config.indicatorHoverSize;
                         } else {
-                            if (indicatorsFlow.taskCount > 1 && Plasmoid.configuration.indicatorGroupSeparate) {
-                                segLength = Plasmoid.configuration.indicatorGroupLength;
-                                segSize = Plasmoid.configuration.indicatorGroupSize;
+                            if (indicatorsFlow.taskCount > 1 && indicatorsFlow.config.indicatorGroupSeparate) {
+                                segLength = indicatorsFlow.config.indicatorGroupLength;
+                                segSize = indicatorsFlow.config.indicatorGroupSize;
                             } else {
-                                segLength = Plasmoid.configuration.indicatorActiveLength;
-                                segSize = Plasmoid.configuration.indicatorActiveSize;
+                                segLength = indicatorsFlow.config.indicatorActiveLength;
+                                segSize = indicatorsFlow.config.indicatorActiveSize;
                             }
                         }
                     }
                 }
 
                 // If overflow '+' icon is shown, make the last segment a perfect square of size segSize
-                if (Plasmoid.configuration.indicatorShowPlus && index === (maxStates - 1) && indicatorsFlow.taskCount > maxStates) {
+                if (indicatorsFlow.config.indicatorShowPlus && index === (maxStates - 1) && indicatorsFlow.taskCount > maxStates) {
                     segLength = segSize;
                 }
 
                 if(isFirst){
                     let mainSize = (parentSize + parentSpacingAdjust);
-                    switch(Plasmoid.configuration.indicatorStyle){
+                    switch(indicatorsFlow.config.indicatorStyle){
                         case 0: // Line
                         indicatorComputedSize = mainSize - (Math.min(indicatorsFlow.taskCount, maxStates === 1 ? 0 : maxStates)  * (spacing + segLength)) - adjust
                         break
@@ -174,14 +176,14 @@ Flow {
 
                 var baseColor = colorEval;
 
-                if(Plasmoid.configuration.indicatorDesaturate && indicatorsFlow.taskItem.taskState === "minimized") {
+                if(indicatorsFlow.config.indicatorDesaturate && indicatorsFlow.taskItem.taskState === "minimized") {
                     colorCalc = Qt.hsla(baseColor.hslHue, 0.0, baseColor.hslLightness, baseColor.a * 0.5)
                 } else {
                     colorCalc = baseColor
                 }
 
                 // If there are multiple segments (grouped task) and highlight is enabled, apply 40% opacity to non-active segments to highlight the active one
-                if (indicatorsFlow.taskCount > 1 && Plasmoid.configuration.indicatorHighlightActive && !isActiveWindow) {
+                if (indicatorsFlow.taskCount > 1 && indicatorsFlow.config.indicatorHighlightActive && !isActiveWindow) {
                     colorCalc = Qt.rgba(colorCalc.r, colorCalc.g, colorCalc.b, colorCalc.a * 0.4)
                 }
 
@@ -189,12 +191,12 @@ Flow {
             }
 
             // Wrapper = base indicatorSize; visual rect overflows when active/hovered
-            width: isVertical ? Plasmoid.configuration.indicatorSize : computedVar.length
-            height: isVertical ? computedVar.length : Plasmoid.configuration.indicatorSize
+            width: isVertical ? indicatorsFlow.config.indicatorSize : computedVar.length
+            height: isVertical ? computedVar.length : indicatorsFlow.config.indicatorSize
             clip: false
 
-            Behavior on height { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-            Behavior on width { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+            Behavior on height { PropertyAnimation {duration: indicatorsFlow.config.indicatorsAnimated ? 250 : 0} }
+            Behavior on width { PropertyAnimation {duration: indicatorsFlow.config.indicatorsAnimated ? 250 : 0} }
 
             Rectangle {
                 id: stateRect
@@ -203,45 +205,45 @@ Flow {
                 height: segmentWrapper.isVertical ? parent.height : segmentWrapper.computedVar.thickness
 
                 Behavior on width {
-                    enabled: segmentWrapper.isVertical && Plasmoid.configuration.indicatorsAnimated
+                    enabled: segmentWrapper.isVertical && indicatorsFlow.config.indicatorsAnimated
                     PropertyAnimation { duration: 250 }
                 }
                 Behavior on height {
-                    enabled: !segmentWrapper.isVertical && Plasmoid.configuration.indicatorsAnimated
+                    enabled: !segmentWrapper.isVertical && indicatorsFlow.config.indicatorsAnimated
                     PropertyAnimation { duration: 250 }
                 }
-                Behavior on color { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
-                Behavior on radius { PropertyAnimation {duration: Plasmoid.configuration.indicatorsAnimated ? 250 : 0} }
+                Behavior on color { PropertyAnimation {duration: indicatorsFlow.config.indicatorsAnimated ? 250 : 0} }
+                Behavior on radius { PropertyAnimation {duration: indicatorsFlow.config.indicatorsAnimated ? 250 : 0} }
                 Behavior on x {
-                    enabled: segmentWrapper.isVertical && Plasmoid.configuration.indicatorsAnimated
+                    enabled: segmentWrapper.isVertical && indicatorsFlow.config.indicatorsAnimated
                     PropertyAnimation { duration: 250 }
                 }
                 Behavior on y {
-                    enabled: !segmentWrapper.isVertical && Plasmoid.configuration.indicatorsAnimated
+                    enabled: !segmentWrapper.isVertical && indicatorsFlow.config.indicatorsAnimated
                     PropertyAnimation { duration: 250 }
                 }
 
                 // Cross-axis positioning: 0=Align Top/Left, 1=Align Center, 2=Align Bottom/Right
                 x: {
                     if (!segmentWrapper.isVertical) return 0;
-                    let diff = Plasmoid.configuration.indicatorSize - width;
-                    let a = Plasmoid.configuration.indicatorAlignment;
+                    let diff = indicatorsFlow.config.indicatorSize - width;
+                    let a = indicatorsFlow.config.indicatorAlignment;
                     return a === 0 ? 0 : a === 1 ? diff / 2 : diff;
                 }
                 y: {
                     if (segmentWrapper.isVertical) return 0;
-                    let diff = Plasmoid.configuration.indicatorSize - height;
-                    let a = Plasmoid.configuration.indicatorAlignment;
+                    let diff = indicatorsFlow.config.indicatorSize - height;
+                    let a = indicatorsFlow.config.indicatorAlignment;
                     return a === 0 ? 0 : a === 1 ? diff / 2 : diff;
                 }
 
-                color: (Plasmoid.configuration.indicatorShowPlus && (segmentWrapper.index === (segmentWrapper.maxStates - 1)) && (indicatorsFlow.taskCount > segmentWrapper.maxStates)) ? "transparent" : segmentWrapper.computedVar.colorCalc
-                radius: Math.min(width, height) * (Plasmoid.configuration.indicatorRadius / 200)
+                color: (indicatorsFlow.config.indicatorShowPlus && (segmentWrapper.index === (segmentWrapper.maxStates - 1)) && (indicatorsFlow.taskCount > segmentWrapper.maxStates)) ? "transparent" : segmentWrapper.computedVar.colorCalc
+                radius: Math.min(width, height) * (indicatorsFlow.config.indicatorRadius / 200)
 
                 Item {
                     id: plusIcon
                     anchors.fill: parent
-                    visible: Plasmoid.configuration.indicatorShowPlus && (segmentWrapper.index === (segmentWrapper.maxStates - 1)) && (indicatorsFlow.taskCount > segmentWrapper.maxStates)
+                    visible: indicatorsFlow.config.indicatorShowPlus && (segmentWrapper.index === (segmentWrapper.maxStates - 1)) && (indicatorsFlow.taskCount > segmentWrapper.maxStates)
 
                     // Horizontal bar of the plus sign
                     Rectangle {
@@ -268,11 +270,11 @@ Flow {
     states:[
         State {
             name: "bottom"
-            when: (Plasmoid.configuration.indicatorOverride && Plasmoid.configuration.indicatorLocation === 0)
-                || (!Plasmoid.configuration.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.BottomEdge && !Plasmoid.configuration.indicatorReverse)
-                || (!Plasmoid.configuration.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.TopEdge && Plasmoid.configuration.indicatorReverse)
-                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorLocation === 0)
-                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && !Plasmoid.configuration.indicatorOverride && !Plasmoid.configuration.indicatorReverse)
+            when: (indicatorsFlow.config.indicatorOverride && indicatorsFlow.config.indicatorLocation === 0)
+                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.BottomEdge && !indicatorsFlow.config.indicatorReverse)
+                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.TopEdge && indicatorsFlow.config.indicatorReverse)
+                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && indicatorsFlow.config.indicatorLocation === 0)
+                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && !indicatorsFlow.config.indicatorOverride && !indicatorsFlow.config.indicatorReverse)
 
             AnchorChanges {
                 target: indicatorsFlow
@@ -282,20 +284,20 @@ Flow {
             PropertyChanges {
                 target: indicatorsFlow
                 width: undefined
-                height: Plasmoid.configuration.indicatorSize
+                height: indicatorsFlow.config.indicatorSize
                 
                 anchors.topMargin: 0;
-                anchors.bottomMargin: Plasmoid.configuration.indicatorEdgeOffset;
+                anchors.bottomMargin: indicatorsFlow.config.indicatorEdgeOffset;
                 anchors.leftMargin: 0;
                 anchors.rightMargin: 0;
             }
         },
         State {
             name: "left"
-            when: (Plasmoid.configuration.indicatorOverride && Plasmoid.configuration.indicatorLocation === 1)
-                || (!Plasmoid.configuration.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.LeftEdge && !Plasmoid.configuration.indicatorReverse)
-                || (!Plasmoid.configuration.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.RightEdge && Plasmoid.configuration.indicatorReverse)
-                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorLocation === 1 && Plasmoid.configuration.indicatorOverride)
+            when: (indicatorsFlow.config.indicatorOverride && indicatorsFlow.config.indicatorLocation === 1)
+                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.LeftEdge && !indicatorsFlow.config.indicatorReverse)
+                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.RightEdge && indicatorsFlow.config.indicatorReverse)
+                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && indicatorsFlow.config.indicatorLocation === 1 && indicatorsFlow.config.indicatorOverride)
 
             AnchorChanges {
                 target: indicatorsFlow
@@ -305,19 +307,19 @@ Flow {
             PropertyChanges {
                 target: indicatorsFlow
                 height: undefined
-                width: Plasmoid.configuration.indicatorSize
+                width: indicatorsFlow.config.indicatorSize
                 anchors.topMargin: 0;
                 anchors.bottomMargin: 0;
-                anchors.leftMargin: Plasmoid.configuration.indicatorEdgeOffset;
+                anchors.leftMargin: indicatorsFlow.config.indicatorEdgeOffset;
                 anchors.rightMargin: 0;
             }
         },
         State {
             name: "right"
-            when: (Plasmoid.configuration.indicatorOverride && Plasmoid.configuration.indicatorLocation === 2)
-                || (!Plasmoid.configuration.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.RightEdge && !Plasmoid.configuration.indicatorReverse)
-                || (!Plasmoid.configuration.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.LeftEdge && Plasmoid.configuration.indicatorReverse)
-                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorLocation === 2 && Plasmoid.configuration.indicatorOverride)
+            when: (indicatorsFlow.config.indicatorOverride && indicatorsFlow.config.indicatorLocation === 2)
+                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.RightEdge && !indicatorsFlow.config.indicatorReverse)
+                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.LeftEdge && indicatorsFlow.config.indicatorReverse)
+                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && indicatorsFlow.config.indicatorLocation === 2 && indicatorsFlow.config.indicatorOverride)
 
             AnchorChanges {
                 target: indicatorsFlow
@@ -327,20 +329,20 @@ Flow {
             PropertyChanges {
                 target: indicatorsFlow
                 height: undefined
-                width: Plasmoid.configuration.indicatorSize
+                width: indicatorsFlow.config.indicatorSize
                 anchors.topMargin: 0;
                 anchors.bottomMargin: 0;
                 anchors.leftMargin: 0;
-                anchors.rightMargin: Plasmoid.configuration.indicatorEdgeOffset;
+                anchors.rightMargin: indicatorsFlow.config.indicatorEdgeOffset;
             }
         },
         State {
             name: "top"
-            when: (Plasmoid.configuration.indicatorOverride && Plasmoid.configuration.indicatorLocation === 3)
-                || (!Plasmoid.configuration.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.TopEdge && !Plasmoid.configuration.indicatorReverse)
-                || (!Plasmoid.configuration.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.BottomEdge && Plasmoid.configuration.indicatorReverse)
-                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorLocation === 3 && Plasmoid.configuration.indicatorOverride)
-                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && Plasmoid.configuration.indicatorReverse && !Plasmoid.configuration.indicatorOverride)
+            when: (indicatorsFlow.config.indicatorOverride && indicatorsFlow.config.indicatorLocation === 3)
+                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.TopEdge && !indicatorsFlow.config.indicatorReverse)
+                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.BottomEdge && indicatorsFlow.config.indicatorReverse)
+                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && indicatorsFlow.config.indicatorLocation === 3 && indicatorsFlow.config.indicatorOverride)
+                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && indicatorsFlow.config.indicatorReverse && !indicatorsFlow.config.indicatorOverride)
 
             AnchorChanges {
                 target: indicatorsFlow
@@ -350,8 +352,8 @@ Flow {
             PropertyChanges {
                 target: indicatorsFlow
                 width: undefined
-                height: Plasmoid.configuration.indicatorSize
-                anchors.topMargin: Plasmoid.configuration.indicatorEdgeOffset;
+                height: indicatorsFlow.config.indicatorSize
+                anchors.topMargin: indicatorsFlow.config.indicatorEdgeOffset;
                 anchors.bottomMargin: 0;
                 anchors.leftMargin: 0;
                 anchors.rightMargin: 0;
