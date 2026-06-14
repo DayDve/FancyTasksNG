@@ -18,6 +18,7 @@ Item {
 
     property double volume: 0
     property bool muted: false
+    readonly property int location: Plasmoid.location
 
     function show() {
         opacity = 1;
@@ -57,7 +58,7 @@ Item {
                 anchors.bottom: parent.bottom
                 imagePath: "widgets/tasks"
                 // Using 'progress' prefix for consistency with task progress
-                prefix: TaskTools.taskPrefix("progress", Plasmoid.location)
+                prefix: TaskTools.taskPrefix("progress", control.location)
                 enabledBorders: KSvg.FrameSvg.NoBorder
                 layer.enabled: true
                 layer.effect: MultiEffect {
