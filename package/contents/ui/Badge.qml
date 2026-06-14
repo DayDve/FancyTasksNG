@@ -37,13 +37,18 @@ Rectangle {
 
     readonly property string defaultNotificationIcon: "notifications-symbolic"
 
+    // Cached theme colors to optimize lookups in child bindings
+    readonly property color _highlightColor: Kirigami.Theme.highlightColor
+    readonly property color _highlightedTextColor: Kirigami.Theme.highlightedTextColor
+    readonly property color _textColor: Kirigami.Theme.textColor
+    readonly property color _backgroundColor: Kirigami.Theme.backgroundColor
+    readonly property color _negativeTextColor: Kirigami.Theme.negativeTextColor
+
     // Visual state coloring - Bound to theme palette
-    property color highlightColor: Kirigami.Theme.highlightColor
-    property color themeTextColor: showBackground ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
-    property color themeBgColor: Kirigami.Theme.backgroundColor
+    property color highlightColor: badgeRect._highlightColor
     
     // Configurable color for the text-based icon, defaulting to theme logic
-    property color textIconColor: isUrgent ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
+    property color textIconColor: isUrgent ? badgeRect._highlightedTextColor : badgeRect._textColor
 
     // Height should be set from outside, width is adaptive
     width: {
@@ -56,10 +61,10 @@ Rectangle {
     antialiasing: true
     // Theme-aware background: uses system background color, but stays red for urgent items
     // When showNumber is false (dot mode), we use highlight color directly for better saturation
-    color: showBackground ? (isUrgent ? Kirigami.Theme.negativeTextColor : (badgeRect.showNumber ? Kirigami.Theme.backgroundColor : Kirigami.Theme.highlightColor)) : "transparent"
+    color: showBackground ? (isUrgent ? badgeRect._negativeTextColor : (badgeRect.showNumber ? badgeRect._backgroundColor : badgeRect._highlightColor)) : "transparent"
 
     // Bright border using highlight color, but subtle when not urgent
-    border.color: showBackground ? ((isUrgent || !badgeRect.showNumber) ? "transparent" : Kirigami.Theme.highlightColor) : "transparent"
+    border.color: showBackground ? ((isUrgent || !badgeRect.showNumber) ? "transparent" : badgeRect._highlightColor) : "transparent"
     border.width: 1 // Keep it thin and elegant
     opacity: isUrgent ? 1 : 0.85
     
@@ -84,7 +89,7 @@ Rectangle {
         roundToIconSize: false
 
         // Adaptive icon color: white on red background, theme-aware otherwise
-        color: badgeRect.isUrgent ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
+        color: badgeRect.isUrgent ? badgeRect._highlightedTextColor : badgeRect._textColor
         
         // Visual feedback for interaction and mirroring support
         scale: (badgeRect.mirrorText ? -1 : 1) * (badgeRect.hovered ? 1.2 : 1.0)
@@ -125,7 +130,7 @@ Rectangle {
         
         font.pixelSize: Math.round(parent.height * 1.1) // Slightly larger than parent but not overwhelming
         font.bold: true
-        color: Kirigami.Theme.negativeTextColor
+        color: badgeRect._negativeTextColor
         
         // Scale with the base icon
         scale: badgeRect.hovered ? 1.2 : 1.0
@@ -190,7 +195,7 @@ Rectangle {
         anchors.centerIn: textIcon
         width: Math.round(parent.height * 1.05)
         height: Math.max(2, Math.round(parent.height * 0.15)) // Even thicker
-        color: Kirigami.Theme.negativeTextColor
+        color: badgeRect._negativeTextColor
         rotation: 45 
         visible: badgeRect.isCrossed
         antialiasing: true
@@ -237,7 +242,7 @@ Rectangle {
         
         renderType: Text.QtRendering
         antialiasing: true
-        color: badgeRect.isUrgent ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
+        color: badgeRect.isUrgent ? badgeRect._highlightedTextColor : badgeRect._textColor
         visible: badgeRect.number > 0 && badgeRect.showNumber
         
         text: {
