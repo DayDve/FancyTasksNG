@@ -40,30 +40,23 @@ MouseArea {
         }
     }
 
-    states: [
-        State {
-            name: ""
-            PropertyChanges {
-                target: root.textItem
-                x: 0
-            }
-        },
-        State {
-            name: "ShowRight"
-            PropertyChanges {
-                target: root.textItem
-                x: root.width - root.textItem.implicitWidth
+    onStateChanged: {
+        if (state === "ShowRight") {
+            scrollAnimation.restart();
+        } else {
+            scrollAnimation.stop();
+            if (textItem) {
+                textItem.x = 0;
             }
         }
-    ]
+    }
 
-    transitions: Transition {
-        to: "ShowRight"
-        NumberAnimation {
-            target: root.textItem
-            properties: "x"
-            easing.type: Easing.Linear
-            duration: Math.abs(root.textItem.implicitWidth - root.width) * 25
-        }
+    NumberAnimation {
+        id: scrollAnimation
+        target: root.textItem
+        property: "x"
+        to: root.width - (root.textItem ? root.textItem.implicitWidth : 0)
+        duration: Math.abs((root.textItem ? root.textItem.implicitWidth : 0) - root.width) * 25
+        easing.type: Easing.Linear
     }
 }
