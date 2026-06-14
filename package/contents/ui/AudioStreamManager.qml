@@ -55,10 +55,7 @@ QtObject {
             function setVolume(vol): void {
                 model.Volume = vol;
             }
-            Component.onCompleted: {
-                if (pid > 0) restoreVolume();
-            }
-            
+
             onPidChanged: {
                 if (pid > 0) restoreVolume();
             }
