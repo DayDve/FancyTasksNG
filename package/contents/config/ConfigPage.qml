@@ -6,6 +6,7 @@
 
 import QtQuick
 import org.kde.kirigami as Kirigami
+import org.kde.plasma.plasmoid
 
 Kirigami.Page {
     // --- Properties to silence KCM errors ---
@@ -245,4 +246,28 @@ Kirigami.Page {
     property bool cfg_showBrowserHistoryDefault: false
     property int cfg_browserHistoryLimit: 10
     property int cfg_browserHistoryLimitDefault: 10
+
+    // --- Cached global properties for child pages ---
+    // Kirigami.Units
+    readonly property int gridUnit: Kirigami.Units.gridUnit
+    readonly property int smallSpacing: Kirigami.Units.smallSpacing
+    readonly property int largeSpacing: Kirigami.Units.largeSpacing
+    readonly property int iconSizeSmall: Kirigami.Units.iconSizes.small
+    readonly property int iconSizeSmallMedium: Kirigami.Units.iconSizes.smallMedium
+
+    // Kirigami.Theme
+    readonly property color themeHoverColor: Kirigami.Theme.hoverColor
+    readonly property color themeHighlightColor: Kirigami.Theme.highlightColor
+    readonly property color themeTextColor: Kirigami.Theme.textColor
+    readonly property color themeNegativeTextColor: Kirigami.Theme.negativeTextColor
+    readonly property font themeSmallFont: Kirigami.Theme.smallFont
+    readonly property font themeDefaultFont: Kirigami.Theme.defaultFont
+
+    // Kirigami.Settings
+    readonly property bool tabletMode: Kirigami.Settings.tabletMode
+
+    // Plasmoid context
+    readonly property int plasmoidLocation: Plasmoid.location
+    readonly property int plasmoidFormFactor: Plasmoid.formFactor
+    readonly property var plasmoidConfiguration: Plasmoid.configuration
 }
