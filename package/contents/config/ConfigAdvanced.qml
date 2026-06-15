@@ -9,7 +9,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.plasmoid
 
 import "../ui/code/singletones"
 
@@ -18,36 +17,37 @@ ConfigPage {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: Kirigami.Units.largeSpacing
+        spacing: advancedPage.largeSpacing
 
         LivePreview {
             cfg_page: advancedPage
-            location: Plasmoid.location
+            location: advancedPage.plasmoidLocation
             Layout.fillWidth: true
-            visible: Plasmoid.location !== PlasmaCore.Types.Floating
+            visible: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating
         }
 
         ConfigScrollView {
+            cfg_page: advancedPage
 
             Kirigami.FormLayout {
-                width: parent.width - Kirigami.Units.gridUnit * 2
+                width: parent.width - advancedPage.gridUnit * 2
                 
                 Kirigami.InlineMessage {
                     Layout.fillWidth: true
-                    visible: Plasmoid.location !== PlasmaCore.Types.Floating
+                    visible: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating
                     type: Kirigami.MessageType.Information
                     text: Wrappers.i18n("This option is disabled when the widget is on a panel.")
                 }
 
                 Label {
                     text: Wrappers.i18n("Floating Mode Settings:")
-                    opacity: Plasmoid.location === PlasmaCore.Types.Floating ? 1.0 : 0.6
+                    opacity: advancedPage.plasmoidLocation === PlasmaCore.Types.Floating ? 1.0 : 0.6
                 }
 
                 CheckBox {
                     id: overridePlasmaButtonDirection
                     text: Wrappers.i18n("Override system direction")
-                    enabled: Plasmoid.location === PlasmaCore.Types.Floating
+                    enabled: advancedPage.plasmoidLocation === PlasmaCore.Types.Floating
                     checked: advancedPage.cfg_overridePlasmaButtonDirection
                     onToggled: advancedPage.cfg_overridePlasmaButtonDirection = checked
                 }
@@ -67,19 +67,19 @@ ConfigPage {
                     onActivated: (index) => advancedPage.cfg_plasmaButtonDirection = index
                 }
 
-                Item { height: Kirigami.Units.largeSpacing }
+                Item { height: advancedPage.largeSpacing }
 
                 Label {
                     text: Wrappers.i18n("Panel Settings:")
                     opacity: panelSettingsEnabled ? 1.0 : 0.6
 
-                    readonly property bool panelSettingsEnabled: Plasmoid.location !== PlasmaCore.Types.Floating
+                    readonly property bool panelSettingsEnabled: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating
                 }
 
                 CheckBox {
                     id: cfg_unhideOnAttention
                     text: Wrappers.i18n("Unhide panel when a window wants attention")
-                    enabled: Plasmoid.location !== PlasmaCore.Types.Floating
+                    enabled: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating
                     checked: advancedPage.cfg_unhideOnAttention
                     onToggled: advancedPage.cfg_unhideOnAttention = checked
                 }
@@ -87,31 +87,31 @@ ConfigPage {
                 CheckBox {
                     id: cfg_animateAttentionStatus
                     text: Wrappers.i18n("Animate task icon when a window wants attention")
-                    enabled: Plasmoid.location !== PlasmaCore.Types.Floating
+                    enabled: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating
                     checked: advancedPage.cfg_animateAttentionStatus
                     onToggled: advancedPage.cfg_animateAttentionStatus = checked
                     visible: advancedPage.cfg_iconOnly === 1
                 }
 
-                Item { height: Kirigami.Units.largeSpacing }
+                Item { height: advancedPage.largeSpacing }
 
                 Label {
                     text: Wrappers.i18n("Layout settings:")
                     opacity: fillEnabled ? 1.0 : 0.6
 
-                    readonly property bool fillEnabled: Plasmoid.location !== PlasmaCore.Types.Floating && advancedPage.cfg_iconOnly
+                    readonly property bool fillEnabled: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating && advancedPage.cfg_iconOnly
                 }
 
                 Kirigami.InlineMessage {
                     Layout.fillWidth: true
-                    visible: Plasmoid.location === PlasmaCore.Types.Floating
+                    visible: advancedPage.plasmoidLocation === PlasmaCore.Types.Floating
                     type: Kirigami.MessageType.Information
                     text: Wrappers.i18n("These options are only available when the widget is on a panel.")
                 }
 
                 Kirigami.InlineMessage {
                     Layout.fillWidth: true
-                    visible: Plasmoid.location !== PlasmaCore.Types.Floating && !advancedPage.cfg_iconOnly
+                    visible: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating && !advancedPage.cfg_iconOnly
                     type: Kirigami.MessageType.Information
                     text: Wrappers.i18n("These options are only available in icon-only mode.")
                 }
@@ -119,14 +119,14 @@ ConfigPage {
                 CheckBox {
                     id: fill
                     text: Wrappers.i18n("Fill free space on panel")
-                    enabled: Plasmoid.location !== PlasmaCore.Types.Floating && advancedPage.cfg_iconOnly
+                    enabled: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating && advancedPage.cfg_iconOnly
                     checked: advancedPage.cfg_fill
                     onToggled: advancedPage.cfg_fill = checked
                 }
 
                 RowLayout {
                     visible: fill.checked && fill.enabled
-                    Item { implicitWidth: Kirigami.Units.gridUnit }
+                    Item { implicitWidth: advancedPage.gridUnit }
 
                     Label {
                         text: Wrappers.i18n("Alignment:")
@@ -143,7 +143,7 @@ ConfigPage {
                     }
                 }
 
-                Item { height: Kirigami.Units.largeSpacing }
+                Item { height: advancedPage.largeSpacing }
 
                 Label {
                     text: Wrappers.i18n("Context menu:")
@@ -160,7 +160,7 @@ ConfigPage {
                     contentItem: Text {
                         text: cfg_hideMoveToDesktopMenuWithOneDesktop.text
                         font: cfg_hideMoveToDesktopMenuWithOneDesktop.font
-                        color: Kirigami.Theme.textColor
+                        color: advancedPage.themeTextColor
                         wrapMode: Text.WordWrap
                         verticalAlignment: Text.AlignVCenter
                         leftPadding: cfg_hideMoveToDesktopMenuWithOneDesktop.indicator.width + cfg_hideMoveToDesktopMenuWithOneDesktop.spacing
@@ -178,7 +178,7 @@ ConfigPage {
                     contentItem: Text {
                         text: cfg_showBrowserHistory.text
                         font: cfg_showBrowserHistory.font
-                        color: Kirigami.Theme.textColor
+                        color: advancedPage.themeTextColor
                         wrapMode: Text.WordWrap
                         verticalAlignment: Text.AlignVCenter
                         leftPadding: cfg_showBrowserHistory.indicator.width + cfg_showBrowserHistory.spacing
@@ -187,7 +187,7 @@ ConfigPage {
 
                 RowLayout {
                     visible: cfg_showBrowserHistory.checked
-                    Item { implicitWidth: Kirigami.Units.gridUnit }
+                    Item { implicitWidth: advancedPage.gridUnit }
                     Label {
                         text: Wrappers.i18n("Number of browser history items:")
                     }
