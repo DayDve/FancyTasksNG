@@ -11,7 +11,6 @@ import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.plasmoid
 
 import "../ui/code/singletones"
 
@@ -19,26 +18,27 @@ ConfigPage {
     id: behaviorPage
     ColumnLayout {
         anchors.fill: parent
-        spacing: Kirigami.Units.largeSpacing
+        spacing: behaviorPage.largeSpacing
 
         LivePreview {
             cfg_page: behaviorPage
-            location: Plasmoid.location
+            location: behaviorPage.plasmoidLocation
             Layout.fillWidth: true
-            visible: Plasmoid.location !== PlasmaCore.Types.Floating
+            visible: behaviorPage.plasmoidLocation !== PlasmaCore.Types.Floating
         }
 
         ConfigScrollView {
+            cfg_page: behaviorPage
 
         Kirigami.FormLayout {
-            width: parent.width - Kirigami.Units.gridUnit * 2
+            width: parent.width - behaviorPage.gridUnit * 2
 
             Label {
                 text: Wrappers.i18n("Grouping of tasks:")
             }
 
             ColumnLayout {
-                Layout.leftMargin: Kirigami.Units.gridUnit
+                Layout.leftMargin: behaviorPage.gridUnit
 
                 RadioButton {
                     id: groupDisabled
@@ -70,7 +70,7 @@ ConfigPage {
 
                 CheckBox {
                     id: groupIconEnabled
-                    Layout.leftMargin: Kirigami.Units.gridUnit * 2
+                    Layout.leftMargin: behaviorPage.gridUnit * 2
                     visible: groupCollapsed.checked
                     text: Wrappers.i18n("Standard group overlay")
                     checked: behaviorPage.cfg_groupIconEnabled
@@ -78,11 +78,11 @@ ConfigPage {
                 }
             }
 
-            Item { height: Kirigami.Units.largeSpacing }
+            Item { height: behaviorPage.largeSpacing }
 
 
 
-            Item { height: Kirigami.Units.largeSpacing }
+            Item { height: behaviorPage.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Sort tasks:")
@@ -90,7 +90,7 @@ ConfigPage {
             ComboBox {
                 id: cfg_sortingStrategy
                 Layout.fillWidth: true
-                Layout.minimumWidth: Kirigami.Units.gridUnit * 14
+                Layout.minimumWidth: behaviorPage.gridUnit * 14
                 model: [
                     Wrappers.i18n("Do not sort"),
                     Wrappers.i18n("Manually"),
@@ -105,7 +105,7 @@ ConfigPage {
 
 
 
-            Item { height: Kirigami.Units.largeSpacing }
+            Item { height: behaviorPage.largeSpacing }
 
             CheckBox {
                 id: cfg_minimizeActiveTaskOnClick
@@ -120,7 +120,7 @@ ConfigPage {
             ComboBox {
                 id: cfg_middleClickAction
                 Layout.fillWidth: true
-                Layout.minimumWidth: Kirigami.Units.gridUnit * 14
+                Layout.minimumWidth: behaviorPage.gridUnit * 14
                 model: [
                     Wrappers.i18n("Does nothing"),
                     Wrappers.i18n("Closes window or group"),
@@ -141,7 +141,7 @@ ConfigPage {
                 onToggled: behaviorPage.cfg_smokeExplosionOnClose = checked
             }
 
-            Item { height: Kirigami.Units.largeSpacing }
+            Item { height: behaviorPage.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Mouse wheel:")
@@ -149,7 +149,7 @@ ConfigPage {
             ComboBox {
                 id: cfg_wheelAction
                 Layout.fillWidth: true
-                Layout.minimumWidth: Kirigami.Units.gridUnit * 14
+                Layout.minimumWidth: behaviorPage.gridUnit * 14
                 model: [
                     Wrappers.i18n("Does nothing"),
                     Wrappers.i18n("Cycles through all tasks"),
@@ -170,7 +170,7 @@ ConfigPage {
             // Опция Shift для основного действия
             RowLayout {
                 visible: cfg_wheelAction.currentIndex === 5
-                Item { implicitWidth: Kirigami.Units.gridUnit }
+                Item { implicitWidth: behaviorPage.gridUnit }
                 CheckBox {
                     text: Wrappers.i18n("Adjust system volume with Shift key")
                     checked: behaviorPage.cfg_wheelShiftSystemVolumeEnabled
@@ -180,7 +180,7 @@ ConfigPage {
 
             // Галочка Ctrl
             RowLayout {
-                Item { implicitWidth: Kirigami.Units.gridUnit }
+                Item { implicitWidth: behaviorPage.gridUnit }
                 CheckBox {
                     id: cfg_wheelCtrlActionEnabled
                     text: Wrappers.i18n("Additional action with Ctrl key")
@@ -192,10 +192,10 @@ ConfigPage {
             // Сабопции Ctrl
             RowLayout {
                 visible: cfg_wheelCtrlActionEnabled.checked
-                Item { implicitWidth: Kirigami.Units.gridUnit * 2 }
+                Item { implicitWidth: behaviorPage.gridUnit * 2 }
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: Kirigami.Units.smallSpacing
+                    spacing: behaviorPage.smallSpacing
                     ComboBox {
                         id: cfg_wheelCtrlAction
                         Layout.fillWidth: true
@@ -237,7 +237,7 @@ ConfigPage {
 
             RowLayout {
                 visible: enableToolTips.checked
-                Item { implicitWidth: Kirigami.Units.gridUnit }
+                Item { implicitWidth: behaviorPage.gridUnit }
                 CheckBox {
                     id: showToolTips
                     text: Wrappers.i18n("Show window thumbnails in tooltips")
@@ -248,7 +248,7 @@ ConfigPage {
 
             RowLayout {
                 visible: enableToolTips.checked
-                Item { implicitWidth: Kirigami.Units.gridUnit }
+                Item { implicitWidth: behaviorPage.gridUnit }
                 CheckBox {
                     id: highlightWindows
                     text: Wrappers.i18n("Hide other windows when hovering over a window in the tooltip")
@@ -259,7 +259,7 @@ ConfigPage {
 
             RowLayout {
                 visible: enableToolTips.checked
-                Item { implicitWidth: Kirigami.Units.gridUnit }
+                Item { implicitWidth: behaviorPage.gridUnit }
                 CheckBox {
                     id: showMediaControls
                     text: Wrappers.i18n("Show media controls")
@@ -270,14 +270,14 @@ ConfigPage {
 
             RowLayout {
                 visible: enableToolTips.checked && showToolTips.checked && showMediaControls.checked
-                Item { implicitWidth: Kirigami.Units.gridUnit * 2 }
+                Item { implicitWidth: behaviorPage.gridUnit * 2 }
                 Label {
                     text: Wrappers.i18n("Media controls location:")
                 }
                 ComboBox {
                     id: cfg_mediaControlsLocation
                     Layout.fillWidth: true
-                    Layout.minimumWidth: Kirigami.Units.gridUnit * 12
+                    Layout.minimumWidth: behaviorPage.gridUnit * 12
                     model: [
                         Wrappers.i18n("On thumbnails (Overlay)"),
                         Wrappers.i18n("Under thumbnails")
@@ -293,7 +293,7 @@ ConfigPage {
             ComboBox {
                 id: cfg_groupedTaskVisualization
                 Layout.fillWidth: true
-                Layout.minimumWidth: Kirigami.Units.gridUnit * 14
+                Layout.minimumWidth: behaviorPage.gridUnit * 14
                 
                 model: [
                     Wrappers.i18n("Cycles through tasks"),
@@ -305,7 +305,7 @@ ConfigPage {
                 onActivated: (index) => behaviorPage.cfg_groupedTaskVisualization = index
             }
 
-            Item { height: Kirigami.Units.largeSpacing }
+            Item { height: behaviorPage.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Show only tasks:")
@@ -357,7 +357,7 @@ ConfigPage {
                 onToggled: if (checked) behaviorPage.cfg_minimizedFilter = 2
             }
 
-            Item { height: Kirigami.Units.largeSpacing }
+            Item { height: behaviorPage.largeSpacing }
             Label {
                 text: Wrappers.i18n("New tasks appear:")
             }
@@ -369,7 +369,7 @@ ConfigPage {
             RadioButton {
                 checked: !behaviorPage.cfg_reverseMode
                 text: {
-                    if (Plasmoid.formFactor === PlasmaCore.Types.Vertical) {
+                    if (behaviorPage.plasmoidFormFactor === PlasmaCore.Types.Vertical) {
                         return Wrappers.i18n("On the bottom")
                     }
                     // horizontal
@@ -388,7 +388,7 @@ ConfigPage {
                 checked: behaviorPage.cfg_reverseMode
                 onToggled: behaviorPage.cfg_reverseMode = checked
                 text: {
-                    if (Plasmoid.formFactor === PlasmaCore.Types.Vertical) {
+                    if (behaviorPage.plasmoidFormFactor === PlasmaCore.Types.Vertical) {
                         return Wrappers.i18n("On the top")
                     }
                     // horizontal
