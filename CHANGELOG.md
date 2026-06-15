@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **X11 Window Thumbnails (Plasma 6.7+):** Dynamically load X11 `WindowThumbnail` components only during active X11 sessions, preventing loading failures and warnings on Wayland under newer Plasma versions (fixes #25).
 - **Icon Blur & Scale Origin:** Fixed icon scaling starting from the center instead of the panel edge. Resolved visual blurriness by utilizing a dynamic rendering size—using native resolution when idle to maintain pixel-perfect sharpness, and switching to high-resolution texture on hover for smooth zooming (fixes #27).
 - **Audio Controls & Context Menu:** Resolved context menu mute button toggle state inconsistencies and fixed potential audio control race conditions.
+- **Plasmoid Sizing:** Fixed an issue where the plasmoid did not shrink to zero size when all visible tasks were filtered out (e.g., in "only minimized" or "only not minimized" modes), leaving an empty space on the panel (fixes #30).
 
 ## [2.0.1] - 2026-06-08
 

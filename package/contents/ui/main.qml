@@ -51,7 +51,7 @@ PlasmoidItem {
 
     rotation: tasks.config.reverseMode && tasks.vertical ? 180 : 0
 
-    readonly property bool shouldShrinkToZero: !!tasks.tasksModel && tasks.tasksModel.count === 0
+    readonly property bool shouldShrinkToZero: !!tasks.effectiveTasksModel && tasks.effectiveTasksModel.count === 0
     readonly property int effectiveLocation: FloatingLogic.getEffectiveLocation(tasks.location, tasks.config, PlasmaCore.Types)
 
     readonly property bool vertical: {
