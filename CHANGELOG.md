@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **ToolTipDelegate:** Cached config properties to simplify delegate bindings.
   - **ToolTipInstance:** Cached delegate-specific properties and configurations.
   - **ToolTipMediaBar:** Cached media controller properties.
+  - **Settings Pages & Live Preview:** Cached layout metrics, units, theme colors, and configuration properties. Resolved `qmllint` warnings regarding ID shadowing, unqualified property access, and legacy `PropertyChanges` syntax.
+  - **Task Controls & Context Menus:** Cached properties in `ContextMenu`, `PlayerController`, and `MouseHandler`. Removed redundant audio stream manager volume initialization.
 
 ### Fixed
 - **Layout Direction:** Fixed the `reverseMode` setting getting stuck on "To the left" by adding the missing `onToggled` handler to the first RadioButton in the configuration UI (fixes #23).
@@ -25,6 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Pinned Tasks:** Fixed pinned applications order not being respected and launched applications jumping to the end of the panel (fixes #24, #23).
 - **Reordering:** Optimized drag-and-drop performance by reducing task switching delay and restoring smooth slide animations.
 - **Tooltip Volume Control:** Resolved layout-managed anchors and parent/sibling anchors constraints warnings in `ToolTipMediaBar.qml` by wrapping the volume `RowLayout` in a parent `Item` container.
+- **X11 Window Thumbnails (Plasma 6.7+):** Dynamically load X11 `WindowThumbnail` components only during active X11 sessions, preventing loading failures and warnings on Wayland under newer Plasma versions (fixes #25).
+- **Icon Blur & Scale Origin:** Fixed icon scaling starting from the center instead of the panel edge. Resolved visual blurriness by utilizing a dynamic rendering size—using native resolution when idle to maintain pixel-perfect sharpness, and switching to high-resolution texture on hover for smooth zooming (fixes #27).
+- **Audio Controls & Context Menu:** Resolved context menu mute button toggle state inconsistencies and fixed potential audio control race conditions.
 
 ## [2.0.1] - 2026-06-08
 
