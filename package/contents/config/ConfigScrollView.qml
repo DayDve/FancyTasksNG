@@ -12,6 +12,11 @@ import org.kde.kirigami as Kirigami
 Item {
     id: containerWrapper
 
+    property var cfg_page: null
+
+    readonly property int gridUnit: cfg_page ? cfg_page.gridUnit : Kirigami.Units.gridUnit
+    readonly property int shortDuration: cfg_page ? cfg_page.shortDuration : Kirigami.Units.shortDuration
+
     Layout.fillWidth: true
     Layout.fillHeight: true
     clip: true
@@ -21,17 +26,25 @@ Item {
     property int scrollDir: 0
     property real _lastY: 0
 
-    Component.onCompleted: _lastY = scrollView.contentItem.contentY
+    Component.onCompleted: {
+        let flick = scrollView.contentItem as Flickable
+        if (flick) {
+            _lastY = flick.contentY
+        }
+    }
 
     Connections {
-        target: scrollView.contentItem
+        target: scrollView.contentItem as Flickable
+        ignoreUnknownSignals: true
         function onContentYChanged() {
-            let dy = scrollView.contentItem.contentY - containerWrapper._lastY
+            let flick = scrollView.contentItem as Flickable
+            if (!flick) return
+            let dy = flick.contentY - containerWrapper._lastY
             if (Math.abs(dy) > 0.5) {
                 containerWrapper.scrollDir = dy > 0 ? 1 : -1
                 scrollDirTimer.restart()
             }
-            containerWrapper._lastY = scrollView.contentItem.contentY
+            containerWrapper._lastY = flick.contentY
         }
     }
 
@@ -56,11 +69,11 @@ Item {
         anchors.rightMargin: scrollView.ScrollBar.vertical.width > 0 ? scrollView.ScrollBar.vertical.width : 0
 
         property real activeFactor: containerWrapper.scrollDir === -1 ? 1.0 : 0.0
-        Behavior on activeFactor { NumberAnimation { duration: Kirigami.Units.shortDuration } }
+        Behavior on activeFactor { NumberAnimation { duration: containerWrapper.shortDuration } }
 
-        height: Kirigami.Units.gridUnit * 0.75 + (Kirigami.Units.gridUnit * 0.25 * activeFactor)
+        height: containerWrapper.gridUnit * 0.75 + (containerWrapper.gridUnit * 0.25 * activeFactor)
         opacity: scrollView.ScrollBar.vertical.position > 0.01 ? 1 : 0
-        Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
+        Behavior on opacity { NumberAnimation { duration: containerWrapper.shortDuration } }
 
         onPaint: {
             let ctx = getContext("2d");
@@ -93,11 +106,11 @@ Item {
         anchors.rightMargin: scrollView.ScrollBar.vertical.width > 0 ? scrollView.ScrollBar.vertical.width : 0
 
         property real activeFactor: containerWrapper.scrollDir === 1 ? 1.0 : 0.0
-        Behavior on activeFactor { NumberAnimation { duration: Kirigami.Units.shortDuration } }
+        Behavior on activeFactor { NumberAnimation { duration: containerWrapper.shortDuration } }
 
-        height: Kirigami.Units.gridUnit * 0.75 + (Kirigami.Units.gridUnit * 0.25 * activeFactor)
+        height: containerWrapper.gridUnit * 0.75 + (containerWrapper.gridUnit * 0.25 * activeFactor)
         opacity: scrollView.ScrollBar.vertical.position < (1.0 - scrollView.ScrollBar.vertical.size) - 0.01 ? 1 : 0
-        Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
+        Behavior on opacity { NumberAnimation { duration: containerWrapper.shortDuration } }
 
         onPaint: {
             let ctx = getContext("2d");

@@ -34,8 +34,9 @@ ConfigPage {
         }
 
         ConfigScrollView {
+            cfg_page: indicatorsPage
 
-                Kirigami.FormLayout {
+            Kirigami.FormLayout {
                     width: parent.width - indicatorsPage.gridUnit * 2
 
             Label {
