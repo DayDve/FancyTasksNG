@@ -34,9 +34,9 @@ ConfigPage {
     // ---------------------------------------
     QtObject {
         id: appListStyle
-        property int iconSize: Kirigami.Units.iconSizes.smallMedium
-        property int spacing: Kirigami.Units.smallSpacing
-        property int padding: Kirigami.Units.smallSpacing
+        property int iconSize: cfg_page.iconSizeSmallMedium
+        property int spacing: cfg_page.smallSpacing
+        property int padding: cfg_page.smallSpacing
     }
 
     // ---------------------------------------
@@ -479,7 +479,7 @@ ConfigPage {
             
             ColumnLayout {
                 anchors.fill: parent
-                spacing: Kirigami.Units.largeSpacing
+                spacing: cfg_page.largeSpacing
 
                 Kirigami.InlineMessage {
                     Layout.fillWidth: true
@@ -489,6 +489,7 @@ ConfigPage {
                 }
 
                 ConfigScrollView {
+                    cfg_page: cfg_page
                     Layout.fillWidth: true
                     Layout.fillHeight: true
 
@@ -513,7 +514,7 @@ ConfigPage {
                                 onPaint: {
                                     var ctx = getContext("2d");
                                     ctx.clearRect(0, 0, width, height);
-                                    ctx.fillStyle = Kirigami.Theme.highlightColor;
+                                    ctx.fillStyle = cfg_page.themeHighlightColor;
                                     ctx.beginPath();
                                     ctx.moveTo(0, 0);
                                     ctx.lineTo(width, height / 2);
@@ -531,7 +532,7 @@ ConfigPage {
                                 onPaint: {
                                     var ctx = getContext("2d");
                                     ctx.clearRect(0, 0, width, height);
-                                    ctx.fillStyle = Kirigami.Theme.highlightColor;
+                                    ctx.fillStyle = cfg_page.themeHighlightColor;
                                     ctx.beginPath();
                                     ctx.moveTo(width, 0);
                                     ctx.lineTo(0, height / 2);
@@ -547,7 +548,7 @@ ConfigPage {
                                 anchors.leftMargin: 8
                                 anchors.rightMargin: 8
                                 height: 2
-                                color: Kirigami.Theme.highlightColor
+                                color: cfg_page.themeHighlightColor
                             }
                         }
                     }
@@ -688,7 +689,7 @@ ConfigPage {
 
                             Rectangle {
                                 anchors.fill: parent
-                                color: rowHoverHandler.hovered ? Kirigami.Theme.hoverColor : "transparent"
+                                color: rowHoverHandler.hovered ? cfg_page.themeHoverColor : "transparent"
                                 opacity: 0.3
                                 radius: 3
                                 visible: !cfg_page.isDragging
@@ -757,7 +758,7 @@ ConfigPage {
                                         visible: text !== ""
                                         text: pinnedAppDelegate.model.genericName || ""
                                         elide: Text.ElideRight
-                                        font.pointSize: Kirigami.Theme.smallFont.pointSize
+                                        font.pointSize: cfg_page.themeSmallFont.pointSize
                                         opacity: 0.7
                                     }
                                 }
@@ -770,11 +771,11 @@ ConfigPage {
 
                                     Kirigami.Icon {
                                         anchors.centerIn: parent
-                                        width: Kirigami.Units.iconSizes.small
-                                        height: Kirigami.Units.iconSizes.small
+                                        width: cfg_page.iconSizeSmall
+                                        height: cfg_page.iconSizeSmall
                                         source: "user-trash"
                                         isMask: true
-                                        color: removeMouseArea.containsMouse ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.textColor
+                                        color: removeMouseArea.containsMouse ? cfg_page.themeNegativeTextColor : cfg_page.themeTextColor
                                     }
 
                                     MouseArea {
@@ -803,7 +804,7 @@ ConfigPage {
                 
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: Kirigami.Units.smallSpacing
+                    spacing: cfg_page.smallSpacing
 
                     CheckBox {
                         id: cfg_unpinByDrag
@@ -814,7 +815,7 @@ ConfigPage {
 
                     RowLayout {
                         visible: cfg_unpinByDrag.checked && cfg_page.cfg_iconOnly === 1
-                        Item { implicitWidth: Kirigami.Units.gridUnit }
+                        Item { implicitWidth: cfg_page.gridUnit }
                         CheckBox {
                             id: cfg_unpinByDragExplosion
                             text: Wrappers.i18n("Play removal animation")
@@ -898,7 +899,7 @@ ConfigPage {
                 // Header
                 RowLayout {
                     Layout.fillWidth: true
-                    Layout.margins: Kirigami.Units.smallSpacing
+                    Layout.margins: cfg_page.smallSpacing
 
                     Button {
                         icon.name: "go-previous"
@@ -909,9 +910,9 @@ ConfigPage {
                     Label {
                         text: Wrappers.i18n("Add Application")
                         font.bold: true
-                        font.pointSize: Kirigami.Theme.defaultFont.pointSize * 1.2
+                        font.pointSize: cfg_page.themeDefaultFont.pointSize * 1.2
                         Layout.alignment: Qt.AlignVCenter
-                        color: Kirigami.Theme.textColor
+                        color: cfg_page.themeTextColor
                     }
 
                     Item { Layout.fillWidth: true }
@@ -921,24 +922,24 @@ ConfigPage {
                 TextField {
                     id: searchField
                     Layout.fillWidth: true
-                    Layout.margins: Kirigami.Units.smallSpacing
+                    Layout.margins: cfg_page.smallSpacing
                     placeholderText: Wrappers.i18n("Search applications...")
                     text: cfg_page.currentSearchText
                     onTextChanged: {
                         cfg_page.currentSearchText = text
                         searchTimer.restart()
                     }
-                    leftPadding: searchIcon.width + Kirigami.Units.smallSpacing * 2
+                    leftPadding: searchIcon.width + cfg_page.smallSpacing * 2
                     
                     Kirigami.Icon {
                         id: searchIcon
                         source: "search"
-                        width: Kirigami.Units.iconSizes.smallMedium
+                        width: cfg_page.iconSizeSmallMedium
                         height: width
                         anchors.left: parent.left
-                        anchors.leftMargin: Kirigami.Units.smallSpacing
+                        anchors.leftMargin: cfg_page.smallSpacing
                         anchors.verticalCenter: parent.verticalCenter
-                        color: Kirigami.Theme.textColor
+                        color: cfg_page.themeTextColor
                         opacity: 0.7
                     }
                 }
@@ -989,7 +990,7 @@ ConfigPage {
                             ToolTip.delay: 1000
 
                             contentItem: RowLayout {
-                                spacing: Kirigami.Units.smallSpacing
+                                spacing: cfg_page.smallSpacing
 
                                 Kirigami.Icon {
                                     source: appsDelegate.model.icon || "application-x-executable"
@@ -1006,7 +1007,7 @@ ConfigPage {
                                         Layout.fillWidth: true
                                         text: appsDelegate.model.name || appsDelegate.model.url
                                         wrapMode: Text.Wrap
-                                        color: Kirigami.Theme.textColor
+                                        color: cfg_page.themeTextColor
                                     }
 
                                     Label {
@@ -1014,9 +1015,9 @@ ConfigPage {
                                         visible: text !== ""
                                         text: appsDelegate.model.genericName || ""
                                         elide: Text.ElideRight
-                                        font.pointSize: Kirigami.Theme.smallFont.pointSize
+                                        font.pointSize: cfg_page.themeSmallFont.pointSize
                                         opacity: 0.7
-                                        color: Kirigami.Theme.textColor
+                                        color: cfg_page.themeTextColor
                                     }
                                 }
                             }
