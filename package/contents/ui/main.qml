@@ -70,7 +70,7 @@ PlasmoidItem {
     property Item dropIndicator: dropIndicatorRect
     property int dropIndex: -1
     property Item dragSource: null
-    property alias taskRepeater: taskRepeater
+    property alias taskRepeater: internalTaskRepeater
     // Set to true in Task.qml when drag ends with cursor outside the panel bounds.
     // Used in Drag.onDragFinished to trigger unpin regardless of the dropAction
     // (some Plasma components may accept the drop and return non-IgnoreAction).
@@ -114,7 +114,7 @@ PlasmoidItem {
         }
 
         function onMinimizedFilterChanged() {
-            filteredTasksModel.invalidateFilter();
+            tasks.filteredTasksModel.invalidateFilter();
         }
 
         function onLaunchersChanged(): void {
@@ -181,7 +181,7 @@ PlasmoidItem {
     property alias mpris2Source: mpris2SourceModel
     property alias dragHelper: dragHelper
     property alias taskFrame: taskFrame
-    property alias filteredTasksModel: filteredTasksModel
+    property alias filteredTasksModel: internalFilteredTasksModel
     property alias busyIndicator: busyIndicator
     FancyTasksExplosion {
         id: explosionManager
@@ -293,8 +293,9 @@ PlasmoidItem {
         }
     }
 
-    readonly property TaskManager.TasksModel tasksModel: TaskManager.TasksModel {
-        id: tasksModel
+    readonly property TaskManager.TasksModel tasksModel: internalTasksModel
+    TaskManager.TasksModel {
+        id: internalTasksModel
 
         virtualDesktop: virtualDesktopInfo.currentDesktop
         screenGeometry: tasks.containment.screenGeometry
@@ -332,11 +333,11 @@ PlasmoidItem {
     }
 
     KItemModels.KSortFilterProxyModel {
-        id: filteredTasksModel
-        sourceModel: tasksModel
+        id: internalFilteredTasksModel
+        sourceModel: internalTasksModel
         filterRowCallback: (source_row, source_parent) => {
-            const idx = tasksModel.index(source_row, 0, source_parent);
-            const isMinimized = tasksModel.data(idx, TaskManager.AbstractTasksModel.IsMinimized) === true;
+            const idx = internalTasksModel.index(source_row, 0, source_parent);
+            const isMinimized = internalTasksModel.data(idx, TaskManager.AbstractTasksModel.IsMinimized) === true;
 
             if (tasks.config.minimizedFilter === 1) { // Only Minimized
                 return isMinimized;
@@ -348,8 +349,8 @@ PlasmoidItem {
         }
     }
 
-    readonly property alias tasksModelAlias: tasksModel // keep compatibility if needed
-    readonly property var effectiveTasksModel: tasks.config.minimizedFilter === 0 ? tasksModel : filteredTasksModel
+    readonly property alias tasksModelAlias: internalTasksModel // keep compatibility if needed
+    readonly property var effectiveTasksModel: tasks.config.minimizedFilter === 0 ? internalTasksModel : internalFilteredTasksModel
 
     Timer {
         id: modelUpdateTimer
@@ -471,7 +472,7 @@ PlasmoidItem {
     function activateTaskAtIndex(index: var): void {
         if (typeof index !== "number")
             return;
-        const task = taskRepeater.itemAt(index) as Task;
+        const task = internalTaskRepeater.itemAt(index) as Task;
         if (task)
             TaskTools.activateTask(task.modelIndex(), task.model, null, task, Plasmoid, tasks, windowViewEffectWatcher.registered);
     }
@@ -661,7 +662,7 @@ PlasmoidItem {
             target: taskList
             tasks: tasks
             tasksModel: tasks.tasksModel
-            proxyModel: filteredTasksModel
+            proxyModel: internalFilteredTasksModel
             onUrlsDropped: urls => {
                 const isApp = (url) => {
                     let s = url.toString();
@@ -715,19 +716,19 @@ PlasmoidItem {
                     left: parent.left
                     top: parent.top
                 }
-                readonly property real widthOccupation: taskRepeater.count / columns
-                readonly property real heightOccupation: taskRepeater.count / rows
+                readonly property real widthOccupation: internalTaskRepeater.count / columns
+                readonly property real heightOccupation: internalTaskRepeater.count / rows
                 Layout.maximumWidth: {
                     if (widthOccupation <= 0) return 0;
                     if (tasks.iconsOnly) {
-                        return Math.round((taskRepeater.count * LayoutMetrics.preferredMaxWidth()) / widthOccupation);
+                        return Math.round((internalTaskRepeater.count * LayoutMetrics.preferredMaxWidth()) / widthOccupation);
                     }
                     return Math.round(children.reduce((acc, child) => (child && child.visible && isFinite(child.Layout.maximumWidth)) ? acc + child.Layout.maximumWidth : acc, 0) / widthOccupation);
                 }
                 Layout.maximumHeight: {
                     if (heightOccupation <= 0) return 0;
                     if (tasks.iconsOnly) {
-                        return Math.round((taskRepeater.count * LayoutMetrics.preferredMaxHeight()) / heightOccupation);
+                        return Math.round((internalTaskRepeater.count * LayoutMetrics.preferredMaxHeight()) / heightOccupation);
                     }
                     return Math.round(children.reduce((acc, child) => (child && child.visible && isFinite(child.Layout.maximumHeight)) ? acc + child.Layout.maximumHeight : acc, 0) / heightOccupation);
                 }
@@ -737,7 +738,7 @@ PlasmoidItem {
                 onAnimatingChanged: if (!animating) iconGeometryTimer.restart()
 
                 Repeater {
-                    id: taskRepeater
+                    id: internalTaskRepeater
                     model: tasks.effectiveTasksModel
                     delegate: Task {
                         tasksRoot: tasks
@@ -751,7 +752,7 @@ PlasmoidItem {
                     target: tasks.effectiveTasksModel
                     function onRowsAboutToBeRemoved(parent, first, last) {
                         for (let i = first; i <= last; ++i) {
-                            tasks.handleItemRemoval(taskRepeater.itemAt(i));
+                            tasks.handleItemRemoval(internalTaskRepeater.itemAt(i));
                         }
                     }
                 }
@@ -871,7 +872,7 @@ PlasmoidItem {
 
                     readonly property var taskModel: parentTask ? parentTask.model : null
 
-                    rootIndex: tasksModel.makeModelIndex(parentTask ? parentTask.index : 0, -1)
+                    rootIndex: internalTasksModel.makeModelIndex(parentTask ? parentTask.index : 0, -1)
                     appName: taskModel ? taskModel.AppName : ""
                     pidParent: taskModel ? taskModel.AppPid : 0
                     windows: taskModel ? taskModel.WinIdList : []

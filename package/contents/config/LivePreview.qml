@@ -458,7 +458,7 @@ Item {
                                     active: (mockTask.cfgReady && mockTask.cfg.cfg_groupIconEnabled) && mockTask.isGroupParent
                                     sourceComponent: Component {
                                          FancyUI.GroupExpanderOverlay {
-                                            iconBox: iconBox
+                                            iconBox: previewIconBox
                                             taskModel: ({ "IsGroupParent": true, "IsWindow": false })
                                             parent: mockTask
                                             locationOverride: mockTask.effLoc
@@ -468,7 +468,7 @@ Item {
 
                                 // 4. Icon & badges
                                 Item {
-                                    id: iconBox
+                                    id: previewIconBox
 
                                     readonly property int mLeft: previewRoot.adjustMargin(true, parent.width, taskFrame.margins.left)
                                     readonly property int mRight: previewRoot.adjustMargin(true, parent.width, taskFrame.margins.right)
@@ -487,7 +487,7 @@ Item {
                                             name: "iconsOnly"
                                             when: !mockTask.showText
                                             AnchorChanges {
-                                                target: iconBox
+                                                target: previewIconBox
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                                 anchors.verticalCenter: parent.verticalCenter
                                                 anchors.left: undefined
@@ -498,15 +498,15 @@ Item {
                                             name: "classic"
                                             when: mockTask.showText
                                             AnchorChanges {
-                                                target: iconBox
+                                                target: previewIconBox
                                                 anchors.horizontalCenter: previewRoot.isVertical ? parent.horizontalCenter : undefined
                                                 anchors.left: previewRoot.isVertical ? undefined : parent.left
                                                 anchors.verticalCenter: previewRoot.isVertical ? undefined : parent.verticalCenter
                                                 anchors.top: previewRoot.isVertical ? parent.top : undefined
                                             }
                                             PropertyChanges {
-                                                iconBox.anchors.leftMargin: previewRoot.isVertical ? 0 : mLeft
-                                                iconBox.anchors.topMargin: previewRoot.isVertical ? mTop : 0
+                                                previewIconBox.anchors.leftMargin: previewRoot.isVertical ? 0 : mLeft
+                                                previewIconBox.anchors.topMargin: previewRoot.isVertical ? mTop : 0
                                             }
                                         }
                                     ]
@@ -709,11 +709,11 @@ Item {
                                     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
                                     anchors {
-                                        left: previewRoot.isVertical ? parent.left : iconBox.right
+                                        left: previewRoot.isVertical ? parent.left : previewIconBox.right
                                         leftMargin: Kirigami.Units.smallSpacing
                                         right: parent.right
                                         rightMargin: Kirigami.Units.smallSpacing
-                                        top: previewRoot.isVertical ? iconBox.bottom : parent.top
+                                        top: previewRoot.isVertical ? previewIconBox.bottom : parent.top
                                         bottom: parent.bottom
                                     }
 

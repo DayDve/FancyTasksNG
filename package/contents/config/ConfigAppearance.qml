@@ -16,38 +16,38 @@ import org.kde.kquickcontrols as KQuickAddons
 import "../ui/code/singletones"
 
 ConfigPage {
-    id: cfg_page
+    id: appearancePage
     
     // Silence KCM errors for legacy/removed properties
     readonly property bool plasmaPaAvailable: true
-    readonly property bool plasmoidVertical: cfg_page.plasmoidFormFactor === PlasmaCore.Types.Vertical
-    readonly property bool iconOnly: cfg_page.plasmoidConfiguration.iconOnly
+    readonly property bool plasmoidVertical: appearancePage.plasmoidFormFactor === PlasmaCore.Types.Vertical
+    readonly property bool iconOnly: appearancePage.plasmoidConfiguration.iconOnly
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: cfg_page.largeSpacing
+        spacing: appearancePage.largeSpacing
 
         LivePreview {
-            cfg_page: cfg_page
-            location: cfg_page.plasmoidLocation
+            cfg_page: appearancePage
+            location: appearancePage.plasmoidLocation
             Layout.fillWidth: true
-            visible: cfg_page.plasmoidLocation !== PlasmaCore.Types.Floating
+            visible: appearancePage.plasmoidLocation !== PlasmaCore.Types.Floating
         }
 
         ConfigScrollView {
-            cfg_page: cfg_page
+            cfg_page: appearancePage
 
                 Kirigami.FormLayout {
-                    width: parent.width - cfg_page.gridUnit * 2
+                    width: parent.width - appearancePage.gridUnit * 2
 
                 CheckBox {
                 id: useBorders
                 text: Wrappers.i18n("Use plasma borders")
-                checked: cfg_page.cfg_useBorders
-                onToggled: cfg_page.cfg_useBorders = checked
+                checked: appearancePage.cfg_useBorders
+                onToggled: appearancePage.cfg_useBorders = checked
             }
 
-            Item { height: cfg_page.largeSpacing }
+            Item { height: appearancePage.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Display:")
@@ -55,16 +55,16 @@ ConfigPage {
             ComboBox {
                 id: cfg_iconOnly
                 Layout.fillWidth: true
-                Layout.minimumWidth: cfg_page.gridUnit * 14
+                Layout.minimumWidth: appearancePage.gridUnit * 14
                 model: [Wrappers.i18n("Classic panel"), Wrappers.i18n("Show icons only")]
-                currentIndex: cfg_page.cfg_iconOnly
-                onActivated: (index) => cfg_page.cfg_iconOnly = index
+                currentIndex: appearancePage.cfg_iconOnly
+                onActivated: (index) => appearancePage.cfg_iconOnly = index
             }
 
-            Item { height: cfg_page.largeSpacing }
+            Item { height: appearancePage.largeSpacing }
 
             RowLayout {
-                spacing: cfg_page.smallSpacing
+                spacing: appearancePage.smallSpacing
                 Label {
                     text: Wrappers.i18n("Icon size:")
                 }
@@ -72,15 +72,15 @@ ConfigPage {
                     id: iconSizeOverrideCombo
                     Layout.fillWidth: true
                     model: [Wrappers.i18n("Relative"), Wrappers.i18n("Absolute")]
-                    currentIndex: cfg_page.cfg_iconSizeOverride ? 1 : 0
-                    onActivated: (index) => cfg_page.cfg_iconSizeOverride = (index === 1)
+                    currentIndex: appearancePage.cfg_iconSizeOverride ? 1 : 0
+                    onActivated: (index) => appearancePage.cfg_iconSizeOverride = (index === 1)
                 }
             }
 
             RowLayout {
                 Layout.fillWidth: true
-                visible: !cfg_page.cfg_iconSizeOverride
-                spacing: cfg_page.smallSpacing
+                visible: !appearancePage.cfg_iconSizeOverride
+                spacing: appearancePage.smallSpacing
 
                 Slider {
                     id: iconScale
@@ -88,8 +88,8 @@ ConfigPage {
                     from: 0
                     to: 300
                     stepSize: 1.0
-                    value: cfg_page.cfg_iconScale
-                    onMoved: cfg_page.cfg_iconScale = value
+                    value: appearancePage.cfg_iconScale
+                    onMoved: appearancePage.cfg_iconScale = value
                 }
 
                 SpinBox {
@@ -98,7 +98,7 @@ ConfigPage {
                     to: 300
                     editable: true
                     value: Math.round(iconScale.value)
-                    onValueModified: cfg_page.cfg_iconScale = value
+                    onValueModified: appearancePage.cfg_iconScale = value
                 }
 
                 Label {
@@ -108,7 +108,7 @@ ConfigPage {
                 Button {
                     icon.name: "edit-reset"
                     flat: true
-                    onClicked: cfg_page.cfg_iconScale = 100
+                    onClicked: appearancePage.cfg_iconScale = 100
                     ToolTip.text: Wrappers.i18n("Reset to default")
                     ToolTip.visible: hovered
                     ToolTip.delay: 1000
@@ -117,8 +117,8 @@ ConfigPage {
 
             RowLayout {
                 Layout.fillWidth: true
-                visible: cfg_page.cfg_iconSizeOverride
-                spacing: cfg_page.smallSpacing
+                visible: appearancePage.cfg_iconSizeOverride
+                spacing: appearancePage.smallSpacing
 
                 Slider {
                     id: iconSizePx
@@ -126,8 +126,8 @@ ConfigPage {
                     from: 0
                     to: 100
                     stepSize: 1
-                    value: cfg_page.cfg_iconSizePx
-                    onMoved: cfg_page.cfg_iconSizePx = value
+                    value: appearancePage.cfg_iconSizePx
+                    onMoved: appearancePage.cfg_iconSizePx = value
                 }
 
                 SpinBox {
@@ -136,7 +136,7 @@ ConfigPage {
                     to: 100
                     editable: true
                     value: iconSizePx.value
-                    onValueModified: cfg_page.cfg_iconSizePx = value
+                    onValueModified: appearancePage.cfg_iconSizePx = value
                 }
 
                 Label {
@@ -146,7 +146,7 @@ ConfigPage {
                 Button {
                     icon.name: "edit-reset"
                     flat: true
-                    onClicked: cfg_page.cfg_iconSizePx = 32
+                    onClicked: appearancePage.cfg_iconSizePx = 32
                     ToolTip.text: Wrappers.i18n("Reset to default")
                     ToolTip.visible: hovered
                     ToolTip.delay: 1000
@@ -156,13 +156,13 @@ ConfigPage {
             CheckBox {
                 id: iconScaleFromEdge
                 text: Wrappers.i18n("Scale icons from panel edge")
-                checked: cfg_page.cfg_iconScaleFromEdge
-                onToggled: cfg_page.cfg_iconScaleFromEdge = checked
+                checked: appearancePage.cfg_iconScaleFromEdge
+                onToggled: appearancePage.cfg_iconScaleFromEdge = checked
             }
 
             RowLayout {
                 visible: iconScaleFromEdge.checked
-                spacing: cfg_page.smallSpacing
+                spacing: appearancePage.smallSpacing
                 Label {
                     text: Wrappers.i18n("Edge offset (px):")
                 }
@@ -171,46 +171,46 @@ ConfigPage {
                     from: 0
                     to: 15
                     stepSize: 1
-                    value: cfg_page.cfg_iconEdgeOffset
-                    onValueModified: cfg_page.cfg_iconEdgeOffset = value
+                    value: appearancePage.cfg_iconEdgeOffset
+                    onValueModified: appearancePage.cfg_iconEdgeOffset = value
                 }
             }
 
             Item { 
-                height: cfg_page.largeSpacing 
-                visible: cfg_page.cfg_iconOnly === 1
+                height: appearancePage.largeSpacing 
+                visible: appearancePage.cfg_iconOnly === 1
             }
 
             CheckBox {
                 id: cfg_taskHoverEffect
                 text: Wrappers.i18n("Icon hover effects")
-                visible: cfg_page.cfg_iconOnly === 1
-                checked: cfg_page.cfg_taskHoverEffect
-                onToggled: cfg_page.cfg_taskHoverEffect = checked
+                visible: appearancePage.cfg_iconOnly === 1
+                checked: appearancePage.cfg_taskHoverEffect
+                onToggled: appearancePage.cfg_taskHoverEffect = checked
             }
 
             RowLayout {
-                visible: cfg_page.cfg_iconOnly === 1 && cfg_taskHoverEffect.checked
-                spacing: cfg_page.smallSpacing
+                visible: appearancePage.cfg_iconOnly === 1 && cfg_taskHoverEffect.checked
+                spacing: appearancePage.smallSpacing
                 Label {
                     text: Wrappers.i18n("Hover style:")
                 }
                 ComboBox {
                     id: cfg_taskHoverEffectStyle
                     Layout.fillWidth: true
-                    Layout.minimumWidth: cfg_page.gridUnit * 14
+                    Layout.minimumWidth: appearancePage.gridUnit * 14
                     model: [
                         Wrappers.i18n("Simple"),
                         Wrappers.i18n("Parabolic")
                     ]
-                    currentIndex: cfg_page.cfg_taskHoverEffectStyle
-                    onActivated: (index) => cfg_page.cfg_taskHoverEffectStyle = index
+                    currentIndex: appearancePage.cfg_taskHoverEffectStyle
+                    onActivated: (index) => appearancePage.cfg_taskHoverEffectStyle = index
                 }
             }
 
             RowLayout {
-                visible: cfg_page.cfg_iconOnly === 1 && cfg_taskHoverEffect.checked
-                spacing: cfg_page.smallSpacing
+                visible: appearancePage.cfg_iconOnly === 1 && cfg_taskHoverEffect.checked
+                spacing: appearancePage.smallSpacing
                 Label {
                     text: Wrappers.i18n("Icon zoom factor (px):")
                 }
@@ -219,8 +219,8 @@ ConfigPage {
                     from: 0
                     to: 50
                     stepSize: 1
-                    value: cfg_page.cfg_iconZoomFactor
-                    onValueModified: cfg_page.cfg_iconZoomFactor = value
+                    value: appearancePage.cfg_iconZoomFactor
+                    onValueModified: appearancePage.cfg_iconZoomFactor = value
 
                     ToolTip.delay: 1000
                     ToolTip.visible: hovered
@@ -229,8 +229,8 @@ ConfigPage {
             }
 
             RowLayout {
-                visible: cfg_page.cfg_iconOnly === 1 && cfg_taskHoverEffect.checked
-                spacing: cfg_page.smallSpacing
+                visible: appearancePage.cfg_iconOnly === 1 && cfg_taskHoverEffect.checked
+                spacing: appearancePage.smallSpacing
                 Label {
                     text: Wrappers.i18n("Zoom animation duration (ms):")
                 }
@@ -239,8 +239,8 @@ ConfigPage {
                     from: 0
                     to: 1000
                     stepSize: 50
-                    value: cfg_page.cfg_iconZoomDuration
-                    onValueModified: cfg_page.cfg_iconZoomDuration = value
+                    value: appearancePage.cfg_iconZoomDuration
+                    onValueModified: appearancePage.cfg_iconZoomDuration = value
 
                     ToolTip.delay: 1000
                     ToolTip.visible: hovered
@@ -248,16 +248,16 @@ ConfigPage {
                 }
             }
 
-            Item { height: cfg_page.largeSpacing }
+            Item { height: appearancePage.largeSpacing }
 
             CheckBox {
                 id: cfg_disableButtonSvg
                 text: Wrappers.i18n("Disable plasma context decorations")
-                checked: cfg_page.cfg_disableButtonSvg
-                onToggled: cfg_page.cfg_disableButtonSvg = checked
+                checked: appearancePage.cfg_disableButtonSvg
+                onToggled: appearancePage.cfg_disableButtonSvg = checked
             }
 
-            Item { height: cfg_page.largeSpacing }
+            Item { height: appearancePage.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Button Colors:")
@@ -265,7 +265,7 @@ ConfigPage {
             }
 
             RowLayout {
-                spacing: cfg_page.smallSpacing
+                spacing: appearancePage.smallSpacing
                 Layout.fillWidth: true
                 
                 ComboBox {
@@ -278,20 +278,20 @@ ConfigPage {
                         Wrappers.i18n("Custom color")
                     ]
                     currentIndex: {
-                        if (!cfg_page.cfg_buttonColorize) return 0;
-                        if (cfg_page.cfg_buttonColorizeDominant) return 1;
+                        if (!appearancePage.cfg_buttonColorize) return 0;
+                        if (appearancePage.cfg_buttonColorizeDominant) return 1;
                         return 2;
                     }
                     onActivated: index => {
                         if (index === 0) {
-                            cfg_page.cfg_buttonColorize = false;
-                            cfg_page.cfg_buttonColorizeDominant = false;
+                            appearancePage.cfg_buttonColorize = false;
+                            appearancePage.cfg_buttonColorizeDominant = false;
                         } else if (index === 1) {
-                            cfg_page.cfg_buttonColorize = true;
-                            cfg_page.cfg_buttonColorizeDominant = true;
+                            appearancePage.cfg_buttonColorize = true;
+                            appearancePage.cfg_buttonColorizeDominant = true;
                         } else if (index === 2) {
-                            cfg_page.cfg_buttonColorize = true;
-                            cfg_page.cfg_buttonColorizeDominant = false;
+                            appearancePage.cfg_buttonColorize = true;
+                            appearancePage.cfg_buttonColorizeDominant = false;
                         }
                     }
                 }
@@ -300,18 +300,18 @@ ConfigPage {
                     id: cfg_buttonColorizeCustom
                     showAlphaChannel: true
                     enabled: !cfg_disableButtonSvg.checked
-                    visible: cfg_page.cfg_buttonColorize && !cfg_page.cfg_buttonColorizeDominant
+                    visible: appearancePage.cfg_buttonColorize && !appearancePage.cfg_buttonColorizeDominant
                     Layout.maximumHeight: buttonColorCombo.height
-                    color: cfg_page.cfg_buttonColorizeCustom
+                    color: appearancePage.cfg_buttonColorizeCustom
                     onColorChanged: {
-                        if (!Qt.colorEqual(color, cfg_page.cfg_buttonColorizeCustom)) {
-                            cfg_page.cfg_buttonColorizeCustom = color
+                        if (!Qt.colorEqual(color, appearancePage.cfg_buttonColorizeCustom)) {
+                            appearancePage.cfg_buttonColorizeCustom = color
                         }
                     }
                 }
             }
 
-            Item { height: cfg_page.largeSpacing }
+            Item { height: appearancePage.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("For inactive buttons:")
@@ -322,35 +322,35 @@ ConfigPage {
                 id: cfg_disableButtonInactiveSvg
                 text: Wrappers.i18n("Hide backgrounds for inactive buttons")
                 enabled: !cfg_disableButtonSvg.checked
-                checked: cfg_page.cfg_disableButtonInactiveSvg
-                onToggled: cfg_page.cfg_disableButtonInactiveSvg = checked
+                checked: appearancePage.cfg_disableButtonInactiveSvg
+                onToggled: appearancePage.cfg_disableButtonInactiveSvg = checked
             }
 
             CheckBox {
                 id: cfg_buttonColorizeInactive
                 text: Wrappers.i18n("Colorize inactive buttons")
-                enabled: !cfg_disableButtonSvg.checked && cfg_page.cfg_buttonColorize && !cfg_disableButtonInactiveSvg.checked
-                checked: cfg_page.cfg_buttonColorizeInactive
-                onToggled: cfg_page.cfg_buttonColorizeInactive = checked
+                enabled: !cfg_disableButtonSvg.checked && appearancePage.cfg_buttonColorize && !cfg_disableButtonInactiveSvg.checked
+                checked: appearancePage.cfg_buttonColorizeInactive
+                onToggled: appearancePage.cfg_buttonColorizeInactive = checked
             }
 
-            Item { height: cfg_page.largeSpacing }
+            Item { height: appearancePage.largeSpacing }
 
             Label {
-                visible: cfg_page.cfg_iconOnly === 0 && !cfg_page.plasmoidVertical
+                visible: appearancePage.cfg_iconOnly === 0 && !appearancePage.plasmoidVertical
                 text: Wrappers.i18n("Maximum button width (px):")
             }
             SpinBox {
                 id: maxButtonLength
-                visible: cfg_page.cfg_iconOnly === 0 && !cfg_page.plasmoidVertical
+                visible: appearancePage.cfg_iconOnly === 0 && !appearancePage.plasmoidVertical
                 from: 40
                 to: 1000
-                value: cfg_page.cfg_maxButtonLength
-                onValueModified: cfg_page.cfg_maxButtonLength = value
+                value: appearancePage.cfg_maxButtonLength
+                onValueModified: appearancePage.cfg_maxButtonLength = value
             }
 
             RowLayout {
-                spacing: cfg_page.smallSpacing
+                spacing: appearancePage.smallSpacing
                 Label {
                     text: Wrappers.i18n("Space between taskbar items (px):")
                 }
@@ -358,12 +358,12 @@ ConfigPage {
                     id: taskSpacingSize
                     from: 0
                     to: 99
-                    value: cfg_page.cfg_taskSpacingSize
-                    onValueModified: cfg_page.cfg_taskSpacingSize = value
+                    value: appearancePage.cfg_taskSpacingSize
+                    onValueModified: appearancePage.cfg_taskSpacingSize = value
                 }
             }
 
-            Item { height: cfg_page.largeSpacing }
+            Item { height: appearancePage.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Icon Shape:")
@@ -372,13 +372,13 @@ ConfigPage {
             CheckBox {
                 id: clipIconToShape
                 text: Wrappers.i18n("Clip icons to a custom shape")
-                checked: cfg_page.cfg_clipIconToShape
-                onToggled: cfg_page.cfg_clipIconToShape = checked
+                checked: appearancePage.cfg_clipIconToShape
+                onToggled: appearancePage.cfg_clipIconToShape = checked
             }
 
             RowLayout {
-                visible: cfg_page.cfg_clipIconToShape
-                spacing: cfg_page.smallSpacing
+                visible: appearancePage.cfg_clipIconToShape
+                spacing: appearancePage.smallSpacing
                 Label {
                     text: Wrappers.i18n("Icon corner radius:")
                 }
@@ -388,8 +388,8 @@ ConfigPage {
                     from: 0
                     to: 100
                     stepSize: 1
-                    value: cfg_page.cfg_iconClipRadius
-                    onMoved: cfg_page.cfg_iconClipRadius = value
+                    value: appearancePage.cfg_iconClipRadius
+                    onMoved: appearancePage.cfg_iconClipRadius = value
                 }
                 SpinBox {
                     id: iconClipRadiusSpin
@@ -397,7 +397,7 @@ ConfigPage {
                     to: 100
                     editable: true
                     value: iconClipRadiusSlider.value
-                    onValueModified: cfg_page.cfg_iconClipRadius = value
+                    onValueModified: appearancePage.cfg_iconClipRadius = value
                     textFromValue: function(value, locale) { return value + "%" }
                     valueFromText: function(text, locale) { return parseInt(text) }
                 }
@@ -405,20 +405,20 @@ ConfigPage {
 
             CheckBox {
                 id: clipIconBackgroundEnabled
-                visible: cfg_page.cfg_clipIconToShape
+                visible: appearancePage.cfg_clipIconToShape
                 text: Wrappers.i18n("Show background under clipped icons")
-                checked: cfg_page.cfg_clipIconBackgroundEnabled
-                onToggled: cfg_page.cfg_clipIconBackgroundEnabled = checked
+                checked: appearancePage.cfg_clipIconBackgroundEnabled
+                onToggled: appearancePage.cfg_clipIconBackgroundEnabled = checked
             }
 
             Label {
-                visible: cfg_page.cfg_clipIconToShape && cfg_page.cfg_clipIconBackgroundEnabled
+                visible: appearancePage.cfg_clipIconToShape && appearancePage.cfg_clipIconBackgroundEnabled
                 text: Wrappers.i18n("Background color source:")
             }
 
             RowLayout {
-                visible: cfg_page.cfg_clipIconToShape && cfg_page.cfg_clipIconBackgroundEnabled
-                spacing: cfg_page.smallSpacing
+                visible: appearancePage.cfg_clipIconToShape && appearancePage.cfg_clipIconBackgroundEnabled
+                spacing: appearancePage.smallSpacing
                 Layout.fillWidth: true
                 ComboBox {
                     id: cfg_clipIconBackgroundColorMode
@@ -429,27 +429,27 @@ ConfigPage {
                         Wrappers.i18n("Average icon color"),
                         Wrappers.i18n("Plasma accent color")
                     ]
-                    currentIndex: cfg_page.cfg_clipIconBackgroundColorMode
-                    onActivated: (index) => cfg_page.cfg_clipIconBackgroundColorMode = index
+                    currentIndex: appearancePage.cfg_clipIconBackgroundColorMode
+                    onActivated: (index) => appearancePage.cfg_clipIconBackgroundColorMode = index
                 }
 
                 KQuickAddons.ColorButton {
                     id: clipIconBackgroundColorBtn
-                    visible: cfg_page.cfg_clipIconBackgroundColorMode === 0
+                    visible: appearancePage.cfg_clipIconBackgroundColorMode === 0
                     showAlphaChannel: true
                     Layout.maximumHeight: cfg_clipIconBackgroundColorMode.height
-                    color: cfg_page.cfg_clipIconBackgroundColor
+                    color: appearancePage.cfg_clipIconBackgroundColor
                     onColorChanged: {
-                        if (!Qt.colorEqual(color, cfg_page.cfg_clipIconBackgroundColor)) {
-                            cfg_page.cfg_clipIconBackgroundColor = color
+                        if (!Qt.colorEqual(color, appearancePage.cfg_clipIconBackgroundColor)) {
+                            appearancePage.cfg_clipIconBackgroundColor = color
                         }
                     }
                 }
             }
 
             RowLayout {
-                visible: cfg_page.cfg_clipIconToShape && cfg_page.cfg_clipIconBackgroundEnabled
-                spacing: cfg_page.smallSpacing
+                visible: appearancePage.cfg_clipIconToShape && appearancePage.cfg_clipIconBackgroundEnabled
+                spacing: appearancePage.smallSpacing
                 Label {
                     text: Wrappers.i18n("Background opacity:")
                 }
@@ -459,8 +459,8 @@ ConfigPage {
                     from: 0
                     to: 100
                     stepSize: 5
-                    value: cfg_page.cfg_clipIconBackgroundOpacity
-                    onMoved: cfg_page.cfg_clipIconBackgroundOpacity = value
+                    value: appearancePage.cfg_clipIconBackgroundOpacity
+                    onMoved: appearancePage.cfg_clipIconBackgroundOpacity = value
                 }
                 SpinBox {
                     id: clipIconBackgroundOpacitySpin
@@ -468,25 +468,25 @@ ConfigPage {
                     to: 100
                     editable: true
                     value: clipIconBackgroundOpacitySlider.value
-                    onValueModified: cfg_page.cfg_clipIconBackgroundOpacity = value
+                    onValueModified: appearancePage.cfg_clipIconBackgroundOpacity = value
                     textFromValue: function(value, locale) { return value + "%" }
                     valueFromText: function(text, locale) { return parseInt(text) }
                 }
             }
 
-            Item { height: cfg_page.largeSpacing }
+            Item { height: appearancePage.largeSpacing }
 
             Label {
-                text: cfg_page.plasmoidVertical ? Wrappers.i18n("Use multi-column view:") : Wrappers.i18n("Use multi-row view:")
+                text: appearancePage.plasmoidVertical ? Wrappers.i18n("Use multi-column view:") : Wrappers.i18n("Use multi-row view:")
             }
 
             RadioButton {
                 id: forbidStripes
                 text: Wrappers.i18n("Never")
-                checked: cfg_page.cfg_maxStripes === 1
+                checked: appearancePage.cfg_maxStripes === 1
                 onToggled: {
                     if (checked) {
-                        cfg_page.cfg_maxStripes = 1;
+                        appearancePage.cfg_maxStripes = 1;
                     }
                 }
             }
@@ -494,11 +494,11 @@ ConfigPage {
             RadioButton {
                 id: allowStripes
                 text: Wrappers.i18n("When panel is low on space and thick enough")
-                checked: cfg_page.cfg_maxStripes > 1 && !cfg_page.cfg_forceStripes
+                checked: appearancePage.cfg_maxStripes > 1 && !appearancePage.cfg_forceStripes
                 onToggled: {
                     if (checked) {
-                        cfg_page.cfg_maxStripes = Math.max(2, cfg_page.cfg_maxStripes);
-                        cfg_page.cfg_forceStripes = false;
+                        appearancePage.cfg_maxStripes = Math.max(2, appearancePage.cfg_maxStripes);
+                        appearancePage.cfg_forceStripes = false;
                     }
                 }
             }
@@ -506,32 +506,32 @@ ConfigPage {
             RadioButton {
                 id: forceStripes
                 text: Wrappers.i18n("Always when panel is thick enough")
-                checked: cfg_page.cfg_maxStripes > 1 && cfg_page.cfg_forceStripes
+                checked: appearancePage.cfg_maxStripes > 1 && appearancePage.cfg_forceStripes
                 onToggled: {
                     if (checked) {
-                        cfg_page.cfg_maxStripes = Math.max(2, cfg_page.cfg_maxStripes);
-                        cfg_page.cfg_forceStripes = true;
+                        appearancePage.cfg_maxStripes = Math.max(2, appearancePage.cfg_maxStripes);
+                        appearancePage.cfg_forceStripes = true;
                     }
                 }
             }
 
             Label {
-                visible: cfg_page.cfg_maxStripes > 1
-                text: cfg_page.plasmoidVertical ? Wrappers.i18n("Maximum columns:") : Wrappers.i18n("Maximum rows:")
+                visible: appearancePage.cfg_maxStripes > 1
+                text: appearancePage.plasmoidVertical ? Wrappers.i18n("Maximum columns:") : Wrappers.i18n("Maximum rows:")
             }
             SpinBox {
                 id: maxStripes
-                visible: cfg_page.cfg_maxStripes > 1
+                visible: appearancePage.cfg_maxStripes > 1
                 from: 1
-                value: cfg_page.cfg_maxStripes
-                onValueModified: cfg_page.cfg_maxStripes = value
+                value: appearancePage.cfg_maxStripes
+                onValueModified: appearancePage.cfg_maxStripes = value
             }
 
-            Item { height: cfg_page.largeSpacing }
+            Item { height: appearancePage.largeSpacing }
 
             RowLayout {
                 visible: true
-                spacing: cfg_page.smallSpacing
+                spacing: appearancePage.smallSpacing
                 Label {
                     text: Wrappers.i18n("Inner padding:")
                 }
@@ -556,14 +556,14 @@ ConfigPage {
                     ]
 
                     textRole: "label"
-                    visible: !cfg_page.tabletMode
+                    visible: !appearancePage.tabletMode
 
                     currentIndex: {
-                        if (cfg_page.tabletMode) {
+                        if (appearancePage.tabletMode) {
                             return 3; // Large
                         }
 
-                        switch (cfg_page.cfg_iconSpacing) {
+                        switch (appearancePage.cfg_iconSpacing) {
                         case 0:
                             return 0; // Small
                         case 1:
@@ -575,15 +575,15 @@ ConfigPage {
                         }
                     }
                     onActivated: index => {
-                        cfg_page.cfg_iconSpacing = model[currentIndex]["spacing"];
+                        appearancePage.cfg_iconSpacing = model[currentIndex]["spacing"];
                     }
                 }
             }
 
             Label {
-                visible: cfg_page.tabletMode
+                visible: appearancePage.tabletMode
                 text: Wrappers.i18n("Automatically set to Large when in Touch mode")
-                font: cfg_page.themeSmallFont
+                font: appearancePage.themeSmallFont
             }
             } // FormLayout
         } // ConfigScrollView
