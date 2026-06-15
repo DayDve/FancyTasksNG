@@ -11,7 +11,6 @@ import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.plasmoid
 import org.kde.kquickcontrols as KQuickAddons
 
 import "../ui/code/singletones"
@@ -21,24 +20,25 @@ ConfigPage {
     
     // Silence KCM errors for legacy/removed properties
     readonly property bool plasmaPaAvailable: true
-    readonly property bool plasmoidVertical: Plasmoid.formFactor === PlasmaCore.Types.Vertical
-    readonly property bool iconOnly: Plasmoid.configuration.iconOnly
+    readonly property bool plasmoidVertical: cfg_page.plasmoidFormFactor === PlasmaCore.Types.Vertical
+    readonly property bool iconOnly: cfg_page.plasmoidConfiguration.iconOnly
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: Kirigami.Units.largeSpacing
+        spacing: cfg_page.largeSpacing
 
         LivePreview {
             cfg_page: cfg_page
-            location: Plasmoid.location
+            location: cfg_page.plasmoidLocation
             Layout.fillWidth: true
-            visible: Plasmoid.location !== PlasmaCore.Types.Floating
+            visible: cfg_page.plasmoidLocation !== PlasmaCore.Types.Floating
         }
 
         ConfigScrollView {
+            cfg_page: cfg_page
 
                 Kirigami.FormLayout {
-                    width: parent.width - Kirigami.Units.gridUnit * 2
+                    width: parent.width - cfg_page.gridUnit * 2
 
                 CheckBox {
                 id: useBorders
@@ -47,7 +47,7 @@ ConfigPage {
                 onToggled: cfg_page.cfg_useBorders = checked
             }
 
-            Item { height: Kirigami.Units.largeSpacing }
+            Item { height: cfg_page.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Display:")
@@ -55,16 +55,16 @@ ConfigPage {
             ComboBox {
                 id: cfg_iconOnly
                 Layout.fillWidth: true
-                Layout.minimumWidth: Kirigami.Units.gridUnit * 14
+                Layout.minimumWidth: cfg_page.gridUnit * 14
                 model: [Wrappers.i18n("Classic panel"), Wrappers.i18n("Show icons only")]
                 currentIndex: cfg_page.cfg_iconOnly
                 onActivated: (index) => cfg_page.cfg_iconOnly = index
             }
 
-            Item { height: Kirigami.Units.largeSpacing }
+            Item { height: cfg_page.largeSpacing }
 
             RowLayout {
-                spacing: Kirigami.Units.smallSpacing
+                spacing: cfg_page.smallSpacing
                 Label {
                     text: Wrappers.i18n("Icon size:")
                 }
@@ -80,7 +80,7 @@ ConfigPage {
             RowLayout {
                 Layout.fillWidth: true
                 visible: !cfg_page.cfg_iconSizeOverride
-                spacing: Kirigami.Units.smallSpacing
+                spacing: cfg_page.smallSpacing
 
                 Slider {
                     id: iconScale
@@ -118,7 +118,7 @@ ConfigPage {
             RowLayout {
                 Layout.fillWidth: true
                 visible: cfg_page.cfg_iconSizeOverride
-                spacing: Kirigami.Units.smallSpacing
+                spacing: cfg_page.smallSpacing
 
                 Slider {
                     id: iconSizePx
@@ -162,7 +162,7 @@ ConfigPage {
 
             RowLayout {
                 visible: iconScaleFromEdge.checked
-                spacing: Kirigami.Units.smallSpacing
+                spacing: cfg_page.smallSpacing
                 Label {
                     text: Wrappers.i18n("Edge offset (px):")
                 }
@@ -177,7 +177,7 @@ ConfigPage {
             }
 
             Item { 
-                height: Kirigami.Units.largeSpacing 
+                height: cfg_page.largeSpacing 
                 visible: cfg_page.cfg_iconOnly === 1
             }
 
@@ -191,14 +191,14 @@ ConfigPage {
 
             RowLayout {
                 visible: cfg_page.cfg_iconOnly === 1 && cfg_taskHoverEffect.checked
-                spacing: Kirigami.Units.smallSpacing
+                spacing: cfg_page.smallSpacing
                 Label {
                     text: Wrappers.i18n("Hover style:")
                 }
                 ComboBox {
                     id: cfg_taskHoverEffectStyle
                     Layout.fillWidth: true
-                    Layout.minimumWidth: Kirigami.Units.gridUnit * 14
+                    Layout.minimumWidth: cfg_page.gridUnit * 14
                     model: [
                         Wrappers.i18n("Simple"),
                         Wrappers.i18n("Parabolic")
@@ -210,7 +210,7 @@ ConfigPage {
 
             RowLayout {
                 visible: cfg_page.cfg_iconOnly === 1 && cfg_taskHoverEffect.checked
-                spacing: Kirigami.Units.smallSpacing
+                spacing: cfg_page.smallSpacing
                 Label {
                     text: Wrappers.i18n("Icon zoom factor (px):")
                 }
@@ -230,7 +230,7 @@ ConfigPage {
 
             RowLayout {
                 visible: cfg_page.cfg_iconOnly === 1 && cfg_taskHoverEffect.checked
-                spacing: Kirigami.Units.smallSpacing
+                spacing: cfg_page.smallSpacing
                 Label {
                     text: Wrappers.i18n("Zoom animation duration (ms):")
                 }
@@ -248,7 +248,7 @@ ConfigPage {
                 }
             }
 
-            Item { height: Kirigami.Units.largeSpacing }
+            Item { height: cfg_page.largeSpacing }
 
             CheckBox {
                 id: cfg_disableButtonSvg
@@ -257,7 +257,7 @@ ConfigPage {
                 onToggled: cfg_page.cfg_disableButtonSvg = checked
             }
 
-            Item { height: Kirigami.Units.largeSpacing }
+            Item { height: cfg_page.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Button Colors:")
@@ -265,7 +265,7 @@ ConfigPage {
             }
 
             RowLayout {
-                spacing: Kirigami.Units.smallSpacing
+                spacing: cfg_page.smallSpacing
                 Layout.fillWidth: true
                 
                 ComboBox {
@@ -311,7 +311,7 @@ ConfigPage {
                 }
             }
 
-            Item { height: Kirigami.Units.largeSpacing }
+            Item { height: cfg_page.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("For inactive buttons:")
@@ -334,7 +334,7 @@ ConfigPage {
                 onToggled: cfg_page.cfg_buttonColorizeInactive = checked
             }
 
-            Item { height: Kirigami.Units.largeSpacing }
+            Item { height: cfg_page.largeSpacing }
 
             Label {
                 visible: cfg_page.cfg_iconOnly === 0 && !cfg_page.plasmoidVertical
@@ -350,7 +350,7 @@ ConfigPage {
             }
 
             RowLayout {
-                spacing: Kirigami.Units.smallSpacing
+                spacing: cfg_page.smallSpacing
                 Label {
                     text: Wrappers.i18n("Space between taskbar items (px):")
                 }
@@ -363,7 +363,7 @@ ConfigPage {
                 }
             }
 
-            Item { height: Kirigami.Units.largeSpacing }
+            Item { height: cfg_page.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Icon Shape:")
@@ -378,7 +378,7 @@ ConfigPage {
 
             RowLayout {
                 visible: cfg_page.cfg_clipIconToShape
-                spacing: Kirigami.Units.smallSpacing
+                spacing: cfg_page.smallSpacing
                 Label {
                     text: Wrappers.i18n("Icon corner radius:")
                 }
@@ -418,7 +418,7 @@ ConfigPage {
 
             RowLayout {
                 visible: cfg_page.cfg_clipIconToShape && cfg_page.cfg_clipIconBackgroundEnabled
-                spacing: Kirigami.Units.smallSpacing
+                spacing: cfg_page.smallSpacing
                 Layout.fillWidth: true
                 ComboBox {
                     id: cfg_clipIconBackgroundColorMode
@@ -449,7 +449,7 @@ ConfigPage {
 
             RowLayout {
                 visible: cfg_page.cfg_clipIconToShape && cfg_page.cfg_clipIconBackgroundEnabled
-                spacing: Kirigami.Units.smallSpacing
+                spacing: cfg_page.smallSpacing
                 Label {
                     text: Wrappers.i18n("Background opacity:")
                 }
@@ -474,7 +474,7 @@ ConfigPage {
                 }
             }
 
-            Item { height: Kirigami.Units.largeSpacing }
+            Item { height: cfg_page.largeSpacing }
 
             Label {
                 text: cfg_page.plasmoidVertical ? Wrappers.i18n("Use multi-column view:") : Wrappers.i18n("Use multi-row view:")
@@ -527,11 +527,11 @@ ConfigPage {
                 onValueModified: cfg_page.cfg_maxStripes = value
             }
 
-            Item { height: Kirigami.Units.largeSpacing }
+            Item { height: cfg_page.largeSpacing }
 
             RowLayout {
                 visible: true
-                spacing: Kirigami.Units.smallSpacing
+                spacing: cfg_page.smallSpacing
                 Label {
                     text: Wrappers.i18n("Inner padding:")
                 }
@@ -556,10 +556,10 @@ ConfigPage {
                     ]
 
                     textRole: "label"
-                    visible: !Kirigami.Settings.tabletMode
+                    visible: !cfg_page.tabletMode
 
                     currentIndex: {
-                        if (Kirigami.Settings.tabletMode) {
+                        if (cfg_page.tabletMode) {
                             return 3; // Large
                         }
 
@@ -581,9 +581,9 @@ ConfigPage {
             }
 
             Label {
-                visible: Kirigami.Settings.tabletMode
+                visible: cfg_page.tabletMode
                 text: Wrappers.i18n("Automatically set to Large when in Touch mode")
-                font: Kirigami.Theme.smallFont
+                font: cfg_page.themeSmallFont
             }
             } // FormLayout
         } // ConfigScrollView
