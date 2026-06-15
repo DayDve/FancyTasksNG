@@ -505,9 +505,8 @@ Item {
                                                 anchors.top: previewRoot.isVertical ? parent.top : undefined
                                             }
                                             PropertyChanges {
-                                                target: iconBox
-                                                anchors.leftMargin: previewRoot.isVertical ? 0 : mLeft
-                                                anchors.topMargin: previewRoot.isVertical ? mTop : 0
+                                                iconBox.anchors.leftMargin: previewRoot.isVertical ? 0 : mLeft
+                                                iconBox.anchors.topMargin: previewRoot.isVertical ? mTop : 0
                                             }
                                         }
                                     ]
@@ -563,19 +562,19 @@ Item {
                                                 name: "top"
                                                 when: previewRoot.simulatedLocation === previewRoot.locationTop
                                                 AnchorChanges { target: taskIcon; anchors.top: parent.top; anchors.bottom: undefined; anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: undefined; anchors.left: undefined; anchors.right: undefined }
-                                                PropertyChanges { target: taskIcon; anchors.topMargin: taskIcon.edgeMarginV; anchors.bottomMargin: 0; anchors.leftMargin: 0; anchors.rightMargin: 0 }
+                                                PropertyChanges { taskIcon.anchors.topMargin: taskIcon.edgeMarginV; taskIcon.anchors.bottomMargin: 0; taskIcon.anchors.leftMargin: 0; taskIcon.anchors.rightMargin: 0 }
                                             },
                                             State {
                                                 name: "left"
                                                 when: previewRoot.simulatedLocation === previewRoot.locationLeft
                                                 AnchorChanges { target: taskIcon; anchors.left: parent.left; anchors.right: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.top: undefined; anchors.bottom: undefined }
-                                                PropertyChanges { target: taskIcon; anchors.leftMargin: taskIcon.edgeMarginH; anchors.rightMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
+                                                PropertyChanges { taskIcon.anchors.leftMargin: taskIcon.edgeMarginH; taskIcon.anchors.rightMargin: 0; taskIcon.anchors.topMargin: 0; taskIcon.anchors.bottomMargin: 0 }
                                             },
                                             State {
                                                 name: "right"
                                                 when: previewRoot.simulatedLocation === previewRoot.locationRight
                                                 AnchorChanges { target: taskIcon; anchors.right: parent.right; anchors.left: undefined; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: undefined; anchors.top: undefined; anchors.bottom: undefined }
-                                                PropertyChanges { target: taskIcon; anchors.rightMargin: taskIcon.edgeMarginH; anchors.leftMargin: 0; anchors.topMargin: 0; anchors.bottomMargin: 0 }
+                                                PropertyChanges { taskIcon.anchors.rightMargin: taskIcon.edgeMarginH; taskIcon.anchors.leftMargin: 0; taskIcon.anchors.topMargin: 0; taskIcon.anchors.bottomMargin: 0 }
                                             }
                                         ]
 
@@ -733,14 +732,43 @@ Item {
 
                                     readonly property int effLoc: mockTask.effLoc
                                     
-                                    anchors {
-                                        horizontalCenter: (effLoc === 0 || effLoc === 3) ? parent.horizontalCenter : undefined
-                                        verticalCenter: (effLoc === 1 || effLoc === 2) ? parent.verticalCenter : undefined
-                                        bottom: effLoc === 0 ? parent.bottom : undefined
-                                        top: effLoc === 3 ? parent.top : undefined
-                                        left: effLoc === 1 ? parent.left : undefined
-                                        right: effLoc === 2 ? parent.right : undefined
-                                    }
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    anchors.bottom: parent.bottom
+
+                                    states: [
+                                        State {
+                                            name: "left"
+                                            when: groupArrow.effLoc === 1
+                                            AnchorChanges {
+                                                target: groupArrow
+                                                anchors.left: parent.left
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.horizontalCenter: undefined
+                                                anchors.bottom: undefined
+                                            }
+                                        },
+                                        State {
+                                            name: "right"
+                                            when: groupArrow.effLoc === 2
+                                            AnchorChanges {
+                                                target: groupArrow
+                                                anchors.right: parent.right
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.horizontalCenter: undefined
+                                                anchors.bottom: undefined
+                                            }
+                                        },
+                                        State {
+                                            name: "top"
+                                            when: groupArrow.effLoc === 3
+                                            AnchorChanges {
+                                                target: groupArrow
+                                                anchors.top: parent.top
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                                anchors.bottom: undefined
+                                            }
+                                        }
+                                    ]
 
                                     implicitWidth: Math.min(naturalSize.width, 16)
                                     implicitHeight: Math.min(naturalSize.height, 16)
