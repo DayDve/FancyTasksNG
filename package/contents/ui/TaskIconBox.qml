@@ -62,6 +62,9 @@ Item {
     readonly property real distanceToCursor: (virtualCursorIndex !== -1 && myIndex !== -1) ? Math.abs(myIndex - virtualCursorIndex) : -1
 
     readonly property real zoomMultiplier: {
+        if (!iconBox._iconsOnly || !iconBox.config.taskHoverEffect) {
+            return 0.0;
+        }
         if (iconBox._contextMenuOpen) {
             return 1.0;
         }
@@ -70,7 +73,7 @@ Item {
                 return 1.0;
             }
         }
-        if (hoveredIndex === -1 || myIndex === -1 || !iconBox._iconsOnly || !iconBox.config.taskHoverEffect) {
+        if (hoveredIndex === -1 || myIndex === -1) {
             return 0.0;
         }
 
