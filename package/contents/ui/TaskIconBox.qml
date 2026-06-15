@@ -194,7 +194,7 @@ Item {
         }
 
         readonly property int maxZoom: iconBox.config.iconZoomFactor
-        readonly property int targetRenderSize: iconSize + maxZoom
+        readonly property int targetRenderSize: iconBox.growSize > 0 ? (iconSize + maxZoom) : iconSize
 
         Item {
             id: renderScaleItem
