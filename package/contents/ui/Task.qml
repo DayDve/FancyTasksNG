@@ -856,7 +856,8 @@ Item {
     Loader {
         id: badgeLoader
         parent: task.tasksRoot.iconsOnly ? taskIconBox : task
-        anchors.fill: parent
+        width: parent ? parent.width : 0
+        height: parent ? parent.height : 0
         asynchronous: true
         active: (task.config.showBadges && task.badgeVisible) || (task.audioIndicatorsEnabled && (task.playingAudio || task.muted))
         source: "TaskBadgeOverlay.qml"
