@@ -51,7 +51,10 @@ PlasmoidItem {
 
     rotation: tasks.config.reverseMode && tasks.vertical ? 180 : 0
 
-    readonly property bool shouldShrinkToZero: !!tasks.effectiveTasksModel && tasks.effectiveTasksModel.count === 0
+    // Prevent shrinking to zero during startup before the tasks model is fully initialized.
+    // Otherwise, in Wayland with "Fit Content" panel, the panel shrinks to zero size
+    // and becomes invisible until edit mode is entered.
+    readonly property bool shouldShrinkToZero: !tasks._initialStartup && !!tasks.effectiveTasksModel && tasks.effectiveTasksModel.count === 0
     readonly property int effectiveLocation: FloatingLogic.getEffectiveLocation(tasks.location, tasks.config, PlasmaCore.Types)
 
     readonly property bool vertical: {
