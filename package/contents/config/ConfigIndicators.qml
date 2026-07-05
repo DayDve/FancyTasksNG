@@ -279,7 +279,7 @@ ConfigPage {
             }
 
             RowLayout {
-                visible: indicatorsEnabled.checked && indicatorResize.checked
+                visible: indicatorsEnabled.checked
                 spacing: indicatorsPage.smallSpacing
                 Item { implicitWidth: indicatorsPage.gridUnit }
                 CheckBox {

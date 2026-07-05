@@ -182,8 +182,8 @@ Flow {
                     colorCalc = baseColor
                 }
 
-                // If there are multiple segments (grouped task) and highlight is enabled, apply 40% opacity to non-active segments to highlight the active one
-                if (indicatorsFlow.taskCount > 1 && indicatorsFlow.config.indicatorHighlightActive && !isActiveWindow) {
+                // If highlight is enabled, apply 40% opacity to non-active segments to highlight the active one
+                if (indicatorsFlow.config.indicatorHighlightActive && !isActiveWindow) {
                     colorCalc = Qt.rgba(colorCalc.r, colorCalc.g, colorCalc.b, colorCalc.a * 0.4)
                 }
 
