@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Task Controls & Context Menus:** Cached properties in `ContextMenu`, `PlayerController`, and `MouseHandler`. Removed redundant audio stream manager volume initialization.
 
 ### Fixed
+- **Wayland Startup & Fit Content Panel:** Fixed the panel becoming invisible after logging into a Wayland session in "Fit Content" mode by preventing the plasmoid from shrinking to zero width/height during the initial startup phase before the tasks model is populated (fixes #35).
 - **Layout Direction:** Fixed the `reverseMode` setting getting stuck on "To the left" by adding the missing `onToggled` handler to the first RadioButton in the configuration UI (fixes #23).
 - **Parabolic Zoom:** Fixed the parabolic zoom animation being inverted and broken when `reverseMode` is active (for both mirrored horizontal layouts and rotated vertical layouts).
 - **Pinned Tasks:** Fixed pinned applications order not being respected and launched applications jumping to the end of the panel (fixes #24, #23).
@@ -32,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Audio Controls & Context Menu:** Resolved context menu mute button toggle state inconsistencies and fixed potential audio control race conditions.
 - **Plasmoid Sizing:** Fixed an issue where the plasmoid did not shrink to zero size when all visible tasks were filtered out (e.g., in "only minimized" or "only not minimized" modes), leaving an empty space on the panel (fixes #30).
 - **Icon Sizing:** Fixed icons scaling up to giant sizes on right-click (context menu) when in classic mode or when hover zoom effects are disabled (fixes #29).
+- **Tooltip Shrinkage:** Fixed an issue where the tooltip window would shrink to a small dot on show/hide and during transitions between task icons (fixes #32).
 
 ## [2.0.1] - 2026-06-08
 

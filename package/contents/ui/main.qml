@@ -51,7 +51,10 @@ PlasmoidItem {
 
     rotation: tasks.config.reverseMode && tasks.vertical ? 180 : 0
 
-    readonly property bool shouldShrinkToZero: !!tasks.effectiveTasksModel && tasks.effectiveTasksModel.count === 0
+    // Prevent shrinking to zero during startup before the tasks model is fully initialized.
+    // Otherwise, in Wayland with "Fit Content" panel, the panel shrinks to zero size
+    // and becomes invisible until edit mode is entered.
+    readonly property bool shouldShrinkToZero: !tasks._initialStartup && !!tasks.effectiveTasksModel && tasks.effectiveTasksModel.count === 0
     readonly property int effectiveLocation: FloatingLogic.getEffectiveLocation(tasks.location, tasks.config, PlasmaCore.Types)
 
     readonly property bool vertical: {
@@ -779,7 +782,7 @@ PlasmoidItem {
         hideOnWindowDeactivate: false
 
         readonly property bool shouldShow: tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup
-        visible: shouldShow || winContainer.opacity > 0
+        visible: (shouldShow && toolTipInstance.implicitWidth > 0) || winContainer.opacity > 0
         visualParent: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : tasks.lastTooltipParent
 
         mainItem: Item {
@@ -803,8 +806,26 @@ PlasmoidItem {
             readonly property int marginLeft: isLeft ? gapSize : shadowPadding
             readonly property int marginRight: isRight ? gapSize : shadowPadding
 
-            implicitWidth: targetWidth + marginLeft + marginRight
-            implicitHeight: targetHeight + marginTop + marginBottom
+            // Cache the last valid dimensions when the tooltip was loaded.
+            // When toolTipInstance.implicitWidth drops to 0 during closure or reload, 
+            // we use the cached dimensions to prevent the dialog window from 
+            // instantly shrinking to borders (margins) size.
+            property real lastWidth: 0
+            property real lastHeight: 0
+
+            onTargetWidthChanged: {
+                if (toolTipInstance.implicitWidth > 0) {
+                    lastWidth = targetWidth;
+                }
+            }
+            onTargetHeightChanged: {
+                if (toolTipInstance.implicitHeight > 0) {
+                    lastHeight = targetHeight;
+                }
+            }
+
+            implicitWidth: (toolTipInstance.implicitWidth > 0 ? targetWidth : lastWidth) + marginLeft + marginRight
+            implicitHeight: (toolTipInstance.implicitHeight > 0 ? targetHeight : lastHeight) + marginTop + marginBottom
             width: implicitWidth
             height: implicitHeight
 
