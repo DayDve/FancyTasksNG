@@ -107,7 +107,7 @@ Item {
         }
 
         height: root.iconsOnly ? root.audioBadgeDiam : Math.round(Kirigami.Units.gridUnit * 0.85)
-        visible: root.parentTask ? (root.parentTask.playingAudio || root.parentTask.muted) : false
+        visible: root.parentTask ? (root.config.indicateAudioStreams && (root.parentTask.playingAudio || root.parentTask.muted)) : false
 
         textSource: "🕪"
         mirrorText: true
