@@ -1,0 +1,42 @@
+name: Feature request
+description: Suggest a new option, behavior, or improvement.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion. Please keep it focused and concrete.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What can't you currently do, or what is awkward?
+      placeholder: "I can't tell which window is active when multiple windows of the same app are open."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: The solution I'd like
+      description: What you expect to happen instead, as specifically as possible.
+      placeholder: "Add an option in the Appearance page to highlight only the active window's indicator."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives I've considered
+      description: Other ways you tried to solve this, and why they didn't work for you.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-flight checks
+      options:
+        - label: I checked existing open and closed issues for duplicates.
+          required: true

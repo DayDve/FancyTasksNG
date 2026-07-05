@@ -10,5 +10,6 @@ package/contents/ui/unity/bin/
 package/contents/ui/unity/*.so
 package/contents/ui/unity/qmldir
 _plasma_src/
+fancytasks-diag.txt
 **/__pycache__/
 **/*.mo

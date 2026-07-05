@@ -1,0 +1,119 @@
+name: Bug report
+description: Something is broken or behaves incorrectly.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report. Fill in the fields below.
+        The more precise you are, the faster it can be reproduced and fixed.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the problem. What did you expect, and what actually happened?
+      placeholder: "When I hover over an icon, a small square artifact appears above the panel."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps to trigger the issue on a fresh setup.
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: input
+    id: fancytasks-version
+    attributes:
+      label: Fancy Tasks NG version
+      description: Found in the widget's "About" page in the settings.
+      placeholder: "2.0.1"
+    validations:
+      required: true
+
+  - type: textarea
+    id: diagnostic
+    attributes:
+      label: Diagnostic report
+      description: |
+        Clone this repository (or just download `tools/diag.sh`), then from the
+        repo root run:
+        ```
+        make diag
+        ```
+        This writes a file `fancytasks-diag.txt` next to the Makefile, with
+        personal data (username, home path, hostname, MAC addresses) masked.
+        Drag that file here to attach it.
+    validations:
+      required: true
+
+  - type: input
+    id: screen-resolution
+    attributes:
+      label: Screen resolution and scale
+      description: e.g. "2560x1600, 125%" or "1920x1080, 100%"
+      placeholder: "1920x1080, 100%"
+    validations:
+      required: true
+
+  - type: input
+    id: theme
+    attributes:
+      label: Plasma theme / color scheme
+      description: The name shown in System Settings → Appearance → Global Theme.
+      placeholder: "Breeze, Breeze Dark, ..."
+    validations:
+      required: true
+
+  - type: input
+    id: panel-location
+    attributes:
+      label: Panel location
+      placeholder: "bottom"
+    validations:
+      required: true
+
+  - type: input
+    id: panel-width
+    attributes:
+      label: Panel width mode
+      description: "Fill / Fit Content / Custom (in pixels)"
+      placeholder: "Fill"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: panel-coloration
+    attributes:
+      label: Panel Coloration (adaptive opacity/blur) enabled?
+      options:
+        - "Yes"
+        - "No"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or screen recording
+      description: A picture is worth a thousand words. Drag files here to attach.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-flight checks
+      options:
+        - label: I am on Plasma 6.5 or newer (Fancy Tasks NG does not support Plasma 5).
+          required: true
+        - label: I checked existing open and closed issues for duplicates.
+          required: true

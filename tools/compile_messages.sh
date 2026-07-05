@@ -22,9 +22,8 @@ if [ -z "$plasmoidName" ]; then
 fi
 
 if ! command -v msgfmt &> /dev/null; then
-    log_error "msgfmt command not found. Need to install gettext."
-    log_info "Running 'sudo apt install gettext'"
-    sudo apt install gettext
+    log_error "msgfmt command not found."
+    require_cmd msgfmt gettext || exit 1
 fi
 
 log_info "Compiling messages for ${projectName}"

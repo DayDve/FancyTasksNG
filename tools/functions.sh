@@ -56,7 +56,50 @@ get_metadata() {
     echo "$val"
 }
 
-# Function to update translation status in ReadMe.md
+# Detect the system package manager and the install command (sudo + invocation).
+# Prints the full command to install a package, e.g. "sudo apt-get install -y pkg".
+# Falls back to an empty string if nothing known is found.
+detect_install_cmd() {
+    local pkg="$1"
+    if command -v apt-get &> /dev/null; then
+        echo "sudo apt-get install -y ${pkg}"
+    elif command -v dnf &> /dev/null; then
+        echo "sudo dnf install -y ${pkg}"
+    elif command -v yum &> /dev/null; then
+        echo "sudo yum install -y ${pkg}"
+    elif command -v pacman &> /dev/null; then
+        echo "sudo pacman -S --noconfirm ${pkg}"
+    elif command -v zypper &> /dev/null; then
+        echo "sudo zypper install -y ${pkg}"
+    elif command -v apk &> /dev/null; then
+        echo "sudo apk add ${pkg}"
+    elif command -v emerge &> /dev/null; then
+        echo "sudo emerge ${pkg}"
+    elif command -v eopkg &> /dev/null; then
+        echo "sudo eopkg install ${pkg}"
+    else
+        return 1
+    fi
+}
+
+# Prompt the user to install a missing command-line dependency using the
+# detected system package manager. Aborts gracefully if no manager is found.
+# Usage: require_cmd <command> <package-name>
+require_cmd() {
+    local cmd="$1"
+    local pkg="$2"
+    if command -v "${cmd}" &> /dev/null; then
+        return 0
+    fi
+    log_error "'${cmd}' command not found. Required package: ${pkg}"
+    local install_cmd
+    if install_cmd=$(detect_install_cmd "${pkg}"); then
+        log_info "To install, run:  ${install_cmd}"
+    else
+        log_info "Please install the '${pkg}' package using your distribution's package manager."
+    fi
+    return 1
+}
 update_translation_status() {
     local lang_dir="$1"
     local readme_file="$2"

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 # FancyTasksNG Makefile
-.PHONY: all build install update test clean translate
+.PHONY: all build install update test clean translate diag
 
 all: build
 
@@ -29,3 +29,6 @@ clean:
 	@rm -rf build release
 	@rm -rf package/contents/locale/*
 	@echo "Cleanup complete."
+
+diag:
+	@./tools/diag.sh

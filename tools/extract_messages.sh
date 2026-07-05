@@ -26,8 +26,7 @@ fi
 
 if ! command -v xgettext &> /dev/null; then
     log_error "xgettext command not found."
-    log_info "Running 'sudo apt install gettext'"
-    sudo apt install gettext
+    require_cmd xgettext gettext || exit 1
 fi
 
 log_info "Extracting messages"
