@@ -101,12 +101,19 @@ PlasmoidItem {
 
         function onShowOnlyCurrentDesktopChanged() {
             modelUpdateTimer.restart();
+            tasks.filteredTasksModel.invalidateFilter();
         }
         function onShowOnlyCurrentScreenChanged() {
             modelUpdateTimer.restart();
+            tasks.filteredTasksModel.invalidateFilter();
         }
         function onShowOnlyCurrentActivityChanged() {
             modelUpdateTimer.restart();
+            tasks.filteredTasksModel.invalidateFilter();
+        }
+        function onReverseFiltersChanged() {
+            modelUpdateTimer.restart();
+            tasks.filteredTasksModel.invalidateFilter();
         }
 
         function onSortingStrategyChanged() {
@@ -192,8 +199,6 @@ PlasmoidItem {
 
     preferredRepresentation: fullRepresentation
     Plasmoid.constraintHints: Plasmoid.CanFillArea
-
-
 
     Layout.fillWidth: vertical ? true : tasks.config.fill
     Layout.fillHeight: !vertical ? true : tasks.config.fill
@@ -340,12 +345,55 @@ PlasmoidItem {
         sourceModel: internalTasksModel
         filterRowCallback: (source_row, source_parent) => {
             const idx = internalTasksModel.index(source_row, 0, source_parent);
-            const isMinimized = internalTasksModel.data(idx, TaskManager.AbstractTasksModel.IsMinimized) === true;
 
+            // Minimized Filter
+            const isMinimized = internalTasksModel.data(idx, TaskManager.AbstractTasksModel.IsMinimized) === true;
             if (tasks.config.minimizedFilter === 1) { // Only Minimized
-                return isMinimized;
+                if (!isMinimized)
+                    return false;
             } else if (tasks.config.minimizedFilter === 2) { // Only Not Minimized
-                return !isMinimized;
+                if (isMinimized)
+                    return false;
+            }
+
+            // Reverse Filters (hide instead of show)
+            if (tasks.config.reverseFilters) {
+                // Screen Filter: hide tasks on the current screen
+                if (tasks.config.showOnlyCurrentScreen) {
+                    const taskScreen = internalTasksModel.data(idx, TaskManager.AbstractTasksModel.ScreenGeometry);
+                    const currentScreen = tasks.tasksModel.screenGeometry;
+                    if (taskScreen && taskScreen.x === currentScreen.x && taskScreen.y === currentScreen.y && taskScreen.width === currentScreen.width && taskScreen.height === currentScreen.height) {
+                        return false;
+                    }
+                }
+
+                // Desktop Filter: hide tasks on the current virtual desktop
+                if (tasks.config.showOnlyCurrentDesktop) {
+                    const isOnAllDesktops = internalTasksModel.data(idx, TaskManager.AbstractTasksModel.IsOnAllVirtualDesktops) === true;
+                    const demandsAttention = internalTasksModel.data(idx, TaskManager.AbstractTasksModel.IsDemandingAttention) === true;
+                    if (!isOnAllDesktops && !demandsAttention) {
+                        const virtualDesktops = internalTasksModel.data(idx, TaskManager.AbstractTasksModel.VirtualDesktops);
+                        const currentDesktop = tasks.tasksModel.virtualDesktop;
+                        if (Array.isArray(virtualDesktops) && virtualDesktops.indexOf(currentDesktop) !== -1) {
+                            return false;
+                        }
+                    }
+                }
+
+                // Activity Filter: hide tasks on the current activity
+                if (tasks.config.showOnlyCurrentActivity) {
+                    const demandsAttention = internalTasksModel.data(idx, TaskManager.AbstractTasksModel.IsDemandingAttention) === true;
+                    if (!demandsAttention) {
+                        const activities = internalTasksModel.data(idx, TaskManager.AbstractTasksModel.Activities);
+                        const currentActivity = tasks.tasksModel.activity;
+                        if (Array.isArray(activities) && activities.length > 0) {
+                            const isOnAllActivities = activities.indexOf("00000000-0000-0000-0000-000000000000") !== -1;
+                            if (!isOnAllActivities && activities.indexOf(currentActivity) !== -1) {
+                                return false;
+                            }
+                        }
+                    }
+                }
             }
 
             return true;
@@ -353,7 +401,7 @@ PlasmoidItem {
     }
 
     readonly property alias tasksModelAlias: internalTasksModel // keep compatibility if needed
-    readonly property var effectiveTasksModel: tasks.config.minimizedFilter === 0 ? internalTasksModel : internalFilteredTasksModel
+    readonly property var effectiveTasksModel: (tasks.config.minimizedFilter === 0 && !tasks.config.reverseFilters) ? internalTasksModel : internalFilteredTasksModel
 
     Timer {
         id: modelUpdateTimer
@@ -368,9 +416,9 @@ PlasmoidItem {
 
         tasks._isApplyingConfig = true;
 
-        tasks.tasksModel.filterByVirtualDesktop = tasks.config.showOnlyCurrentDesktop;
-        tasks.tasksModel.filterByScreen = tasks.config.showOnlyCurrentScreen;
-        tasks.tasksModel.filterByActivity = tasks.config.showOnlyCurrentActivity;
+        tasks.tasksModel.filterByVirtualDesktop = tasks.config.showOnlyCurrentDesktop && !tasks.config.reverseFilters;
+        tasks.tasksModel.filterByScreen = tasks.config.showOnlyCurrentScreen && !tasks.config.reverseFilters;
+        tasks.tasksModel.filterByActivity = tasks.config.showOnlyCurrentActivity && !tasks.config.reverseFilters;
         // tasks.tasksModel.filterNotMinimized = tasks.config.showOnlyMinimized;
         // The above is now handled by filteredTasksModel proxy to prevent crashes.
         tasks.tasksModel.filterNotMinimized = false;
@@ -383,6 +431,8 @@ PlasmoidItem {
         tasks.tasksModel.groupMode = tasks.groupModeEnumValue(tasks.config.groupingStrategy);
         tasks.tasksModel.groupInline = !tasks.config.groupPopups;
         tasks.tasksModel.groupingWindowTasksThreshold = 0;
+
+        internalFilteredTasksModel.invalidateFilter();
 
         tasks._isApplyingConfig = false;
     }
@@ -448,11 +498,13 @@ PlasmoidItem {
     }
 
     function handleItemRemoval(taskItem) {
-        if (!taskItem || !taskItem.model) return;
-        
+        if (!taskItem || !taskItem.model)
+            return;
+
         // Do not spawn ghosts for Launchers or Startups, as their removal is typically
         // a model transition (e.g. Launcher -> Startup -> Window), not a real closure.
-        if (taskItem.model.IsLauncher || taskItem.model.IsStartup) return;
+        if (taskItem.model.IsLauncher || taskItem.model.IsStartup)
+            return;
 
         if (tasks.config.smokeExplosionOnClose && tasks.config.iconOnly === 1) {
             if (taskItem.wasMiddleClicked) {
@@ -483,7 +535,8 @@ PlasmoidItem {
         const audioManager = audioStreamManagerLoader.item;
         const pSink = "preferredSink";
         const pAdj = "adjustObjectVolume";
-        if (!audioManager || !audioManager[pSink]) return;
+        if (!audioManager || !audioManager[pSink])
+            return;
 
         const lastResult = audioManager[pAdj](audioManager[pSink], increment);
         if (lastResult && globalVolumeOverlayLoader.item) {
@@ -606,14 +659,8 @@ PlasmoidItem {
                 const source = tasks.dragSource;
                 let pModel = "model";
                 let pWinIdList = "winIdList";
-                if (tasks.config.unpinByDrag
-                        && (dropAction === Qt.IgnoreAction || tasks.dragEndedOutsidePanel)
-                        && source
-                        && source[pModel]
-                        && source[pModel].IsLauncher
-                        && source[pWinIdList].length === 0) {
-                    if (tasks.config.unpinByDragExplosion
-                            && tasks.config.iconOnly === 1) {
+                if (tasks.config.unpinByDrag && (dropAction === Qt.IgnoreAction || tasks.dragEndedOutsidePanel) && source && source[pModel] && source[pModel].IsLauncher && source[pWinIdList].length === 0) {
+                    if (tasks.config.unpinByDragExplosion && tasks.config.iconOnly === 1) {
                         explosionManager.spawn(tasks, source, true);
                         // Delay removal so the explosion animation plays before the item disappears.
                         dragHelper.pendingUnpinUrl = source[pModel].LauncherUrlWithoutIcon.toString();
@@ -667,7 +714,7 @@ PlasmoidItem {
             tasksModel: tasks.tasksModel
             proxyModel: internalFilteredTasksModel
             onUrlsDropped: urls => {
-                const isApp = (url) => {
+                const isApp = url => {
                     let s = url.toString();
                     return s.endsWith(".desktop") || s.startsWith("applications:") || s.startsWith("application://");
                 };
@@ -722,14 +769,16 @@ PlasmoidItem {
                 readonly property real widthOccupation: internalTaskRepeater.count / columns
                 readonly property real heightOccupation: internalTaskRepeater.count / rows
                 Layout.maximumWidth: {
-                    if (widthOccupation <= 0) return 0;
+                    if (widthOccupation <= 0)
+                        return 0;
                     if (tasks.iconsOnly) {
                         return Math.round((internalTaskRepeater.count * LayoutMetrics.preferredMaxWidth()) / widthOccupation);
                     }
                     return Math.round(children.reduce((acc, child) => (child && child.visible && isFinite(child.Layout.maximumWidth)) ? acc + child.Layout.maximumWidth : acc, 0) / widthOccupation);
                 }
                 Layout.maximumHeight: {
-                    if (heightOccupation <= 0) return 0;
+                    if (heightOccupation <= 0)
+                        return 0;
                     if (tasks.iconsOnly) {
                         return Math.round((internalTaskRepeater.count * LayoutMetrics.preferredMaxHeight()) / heightOccupation);
                     }
@@ -738,7 +787,8 @@ PlasmoidItem {
                 width: tasks.shouldShrinkToZero ? 0 : (tasks.vertical ? tasks.width * Math.min(1, widthOccupation) : Math.min(tasks.width, Layout.maximumWidth))
                 height: tasks.shouldShrinkToZero ? 0 : (tasks.vertical ? Math.min(tasks.height, Layout.maximumHeight) : tasks.height * Math.min(1, heightOccupation))
                 flow: tasks.vertical ? (tasks.config.forceStripes ? Grid.LeftToRight : Grid.TopToBottom) : (tasks.config.forceStripes ? Grid.TopToBottom : Grid.LeftToRight)
-                onAnimatingChanged: if (!animating) iconGeometryTimer.restart()
+                onAnimatingChanged: if (!animating)
+                    iconGeometryTimer.restart()
 
                 Repeater {
                     id: internalTaskRepeater
@@ -768,8 +818,6 @@ PlasmoidItem {
         requestLayout.connect(iconGeometryTimer.restart);
     }
     Component.onDestruction: TaskTools.taskManagerInstanceCount -= 1
-
-
 
     PlasmaCore.Dialog {
         id: windowTooltipDialog
@@ -807,8 +855,8 @@ PlasmoidItem {
             readonly property int marginRight: isRight ? gapSize : shadowPadding
 
             // Cache the last valid dimensions when the tooltip was loaded.
-            // When toolTipInstance.implicitWidth drops to 0 during closure or reload, 
-            // we use the cached dimensions to prevent the dialog window from 
+            // When toolTipInstance.implicitWidth drops to 0 during closure or reload,
+            // we use the cached dimensions to prevent the dialog window from
             // instantly shrinking to borders (margins) size.
             property real lastWidth: 0
             property real lastHeight: 0
@@ -831,11 +879,17 @@ PlasmoidItem {
 
             Behavior on implicitWidth {
                 enabled: tasks.tooltipAnimationEnabled && windowTooltipDialog.shouldShow
-                NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+                NumberAnimation {
+                    duration: 150
+                    easing.type: Easing.OutCubic
+                }
             }
             Behavior on implicitHeight {
                 enabled: tasks.tooltipAnimationEnabled && windowTooltipDialog.shouldShow
-                NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+                NumberAnimation {
+                    duration: 150
+                    easing.type: Easing.OutCubic
+                }
             }
 
             opacity: windowTooltipDialog.shouldShow ? 1 : 0
@@ -912,8 +966,8 @@ PlasmoidItem {
                     isMuted: taskModel ? (taskModel.IsMuted === true) : false
 
                     forceTextMode: tasks.toolTipOpenedByClick !== null && tasks.config.groupedTaskVisualization !== 1
+                }
             }
         }
     }
-}
 }

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-06-14 14:30+0300\n"
+"POT-Creation-Date: 2026-07-28 12:28+0300\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -481,6 +481,14 @@ msgstr "Huidig bureaublad"
 #: package/contents/config/ConfigBehavior.qml
 msgid "From current activity"
 msgstr "Huidige activiteit"
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Invert selected filters"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Hide matching tasks instead of showing them."
+msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "In any state"

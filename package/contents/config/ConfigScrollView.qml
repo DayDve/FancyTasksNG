@@ -14,8 +14,8 @@ Item {
 
     property var cfg_page: null
 
-    readonly property int gridUnit: cfg_page ? cfg_page.gridUnit : Kirigami.Units.gridUnit
-    readonly property int shortDuration: cfg_page ? cfg_page.shortDuration : Kirigami.Units.shortDuration
+    readonly property int gridUnit: (cfg_page && cfg_page.gridUnit !== undefined) ? cfg_page.gridUnit : Kirigami.Units.gridUnit
+    readonly property int shortDuration: (cfg_page && cfg_page.shortDuration !== undefined) ? cfg_page.shortDuration : Kirigami.Units.shortDuration
 
     Layout.fillWidth: true
     Layout.fillHeight: true
