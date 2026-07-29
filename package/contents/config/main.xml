@@ -249,10 +249,6 @@
       <label>Opacity of the progress indicator line (%)</label>
       <default>100</default>
     </entry>
-    <entry name="disableInactiveIndicators" type="Bool">
-      <label>Disables the indicator for inactive windows</label>
-      <default>false</default>
-    </entry>
     <entry name="indicatorsAnimated" type="Bool">
       <label>Enable animating indicators</label>
       <default>true</default>

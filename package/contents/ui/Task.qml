@@ -577,8 +577,7 @@ Item {
             if (!task.config.indicatorsEnabled || !task.model) return false;
             // Indicators should only be visible for running tasks, not pure launchers
             if (task.taskState === "launcher") return false;
-            if (task.model.IsDemandingAttention || task.model.IsActive) return true;
-            return !task.config.disableInactiveIndicators;
+            return true;
         }
         flow: Flow.LeftToRight
         spacing: task.smallSpacing

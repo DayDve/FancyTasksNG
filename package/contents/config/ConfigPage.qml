@@ -160,8 +160,6 @@ Kirigami.Page {
     property int cfg_indicatorProgressThicknessDefault: 2
     property int cfg_indicatorProgressOpacity: 100
     property int cfg_indicatorProgressOpacityDefault: 100
-    property bool cfg_disableInactiveIndicators: false
-    property bool cfg_disableInactiveIndicatorsDefault: false
     property bool cfg_indicatorsAnimated: true
     property bool cfg_indicatorsAnimatedDefault: true
     property int cfg_groupIconEnabled: 0
