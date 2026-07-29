@@ -471,6 +471,14 @@
       <label>Show notification badges on pinned application icons.</label>
       <default>true</default>
     </entry>
+    <entry name="badgeColorMode" type="Enum">
+      <label>Notification badge background color mode: 0 = Theme background, 1 = Fixed red, 2 = System accent color, 3 = Custom color</label>
+      <default>0</default>
+    </entry>
+    <entry name="badgeCustomColor" type="Color">
+      <label>Custom background color for notification badges.</label>
+      <default>#ff3b30</default>
+    </entry>
     <entry name="showBrowserHistory" type="Bool">
       <label>Show browsing history in the context menu of web browsers.</label>
       <default>false</default>

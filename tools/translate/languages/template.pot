@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-07-29 11:33+0300\n"
+"POT-Creation-Date: 2026-07-29 17:00+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -190,7 +190,7 @@ msgstr ""
 msgid "Use dominant icon color"
 msgstr ""
 
-#: package/contents/config/ConfigAppearance.qml
+#: package/contents/config/ConfigAppearance.qml package/contents/config/ConfigIndicators.qml
 msgid "Custom color"
 msgstr ""
 
@@ -678,6 +678,26 @@ msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "Show counters even when the application has no windows in the current view (e.g., minimized to tray or on another screen/desktop/activity)."
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Badge background color:"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Adaptive (theme color)"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Fixed red (Classic)"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "System accent color"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Custom badge color:"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml

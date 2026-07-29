@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-07-29 11:33+0300\n"
+"POT-Creation-Date: 2026-07-29 17:00+0300\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -189,7 +189,7 @@ msgstr "Стиль Plasma / Акцентный цвет"
 msgid "Use dominant icon color"
 msgstr "Основной цвет значка"
 
-#: package/contents/config/ConfigAppearance.qml
+#: package/contents/config/ConfigAppearance.qml package/contents/config/ConfigIndicators.qml
 msgid "Custom color"
 msgstr "Пользовательский цвет"
 
@@ -680,6 +680,26 @@ msgid "Show counters even when the application has no windows in the current vie
 msgstr "Отображать счётчики для запущенных приложений при отсутствии видимых окон (например, если приложение свёрнуто в трей или находится на другом рабочем столе/экране/в другой комнате)."
 
 #: package/contents/config/ConfigIndicators.qml
+msgid "Badge background color:"
+msgstr "Цвет фона бейджей:"
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Adaptive (theme color)"
+msgstr "Адаптивный (цвет темы)"
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Fixed red (Classic)"
+msgstr "Сплошной красный (Классический)"
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "System accent color"
+msgstr "Акцентный цвет системы"
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Custom badge color:"
+msgstr "Пользовательский цвет бейджей:"
+
+#: package/contents/config/ConfigIndicators.qml
 msgid "Mark applications playing audio"
 msgstr "Отмечать приложения со звуком"
 
@@ -1062,6 +1082,9 @@ msgstr "Также доступно в %1"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Доступно в %1"
+
+#~ msgid "Theme background"
+#~ msgstr "По теме оформления"
 
 #~ msgid "Disables the indicator for inactive windows"
 #~ msgstr "Отключать индикатор для неактивных окон"

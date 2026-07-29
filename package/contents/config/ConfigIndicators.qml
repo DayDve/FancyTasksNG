@@ -501,6 +501,41 @@ ConfigPage {
                             }
                         }
                     }
+                    RowLayout {
+                        spacing: indicatorsPage.smallSpacing
+                        Label {
+                            text: Wrappers.i18n("Badge background color:")
+                        }
+                        ComboBox {
+                            id: cfg_badgeColorMode
+                            Layout.fillWidth: true
+                            model: [
+                                Wrappers.i18n("Adaptive (theme color)"),
+                                Wrappers.i18n("Fixed red (Classic)"),
+                                Wrappers.i18n("System accent color"),
+                                Wrappers.i18n("Custom color")
+                            ]
+                            currentIndex: indicatorsPage.cfg_badgeColorMode
+                            onActivated: (index) => indicatorsPage.cfg_badgeColorMode = index
+                        }
+                    }
+                    RowLayout {
+                        visible: cfg_badgeColorMode.currentIndex === 3
+                        spacing: indicatorsPage.smallSpacing
+                        Label {
+                            text: Wrappers.i18n("Custom badge color:")
+                        }
+                        KQuickAddons.ColorButton {
+                            id: badgeCustomColor
+                            showAlphaChannel: true
+                            color: indicatorsPage.cfg_badgeCustomColor
+                            onColorChanged: {
+                                if (!Qt.colorEqual(color, indicatorsPage.cfg_badgeCustomColor)) {
+                                    indicatorsPage.cfg_badgeCustomColor = color
+                                }
+                            }
+                        }
+                    }
                 }
             }
 

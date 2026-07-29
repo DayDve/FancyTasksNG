@@ -10,6 +10,7 @@
 import QtQuick
 import org.kde.kirigami as Kirigami
 import QtQuick.Effects
+import org.kde.plasma.plasmoid
 import "code/singletones"
 
 Rectangle {
@@ -44,11 +45,15 @@ Rectangle {
     readonly property color _backgroundColor: Kirigami.Theme.backgroundColor
     readonly property color _negativeTextColor: Kirigami.Theme.negativeTextColor
 
+    // Configurable color mode: 0 = Theme background, 1 = Fixed red, 2 = System accent, 3 = Custom color
+    readonly property int badgeColorMode: (Plasmoid.configuration && Plasmoid.configuration.badgeColorMode !== undefined) ? Plasmoid.configuration.badgeColorMode : 0
+    readonly property color badgeCustomColor: (Plasmoid.configuration && Plasmoid.configuration.badgeCustomColor) ? Plasmoid.configuration.badgeCustomColor : "#ff3b30"
+
     // Visual state coloring - Bound to theme palette
     property color highlightColor: badgeRect._highlightColor
     
     // Configurable color for the text-based icon, defaulting to theme logic
-    property color textIconColor: isUrgent ? badgeRect._highlightedTextColor : badgeRect._textColor
+    property color textIconColor: (badgeColorMode === 1 || badgeColorMode === 2 || badgeColorMode === 3 || isUrgent) ? badgeRect._highlightedTextColor : badgeRect._textColor
 
     // Height should be set from outside, width is adaptive
     width: {
@@ -59,14 +64,26 @@ Rectangle {
 
     radius: height / 2
     antialiasing: true
-    // Theme-aware background: uses system background color, but stays red for urgent items
-    // When showNumber is false (dot mode), we use highlight color directly for better saturation
-    color: showBackground ? (isUrgent ? badgeRect._negativeTextColor : (badgeRect.showNumber ? badgeRect._backgroundColor : badgeRect._highlightColor)) : "transparent"
+    // Mode 0: Theme background, red for urgent, highlightColor for dot mode
+    // Mode 1: Fixed red (negativeTextColor)
+    // Mode 2: System accent color (highlightColor)
+    // Mode 3: Custom color
+    color: {
+        if (!showBackground) return "transparent";
+        if (isUrgent) return badgeRect._negativeTextColor;
+        if (badgeColorMode === 1) return badgeRect._negativeTextColor;
+        if (badgeColorMode === 2) return badgeRect._highlightColor;
+        if (badgeColorMode === 3) return badgeRect.badgeCustomColor;
+        return badgeRect.showNumber ? badgeRect._backgroundColor : badgeRect._highlightColor;
+    }
 
-    // Bright border using highlight color, but subtle when not urgent
-    border.color: showBackground ? ((isUrgent || !badgeRect.showNumber) ? "transparent" : badgeRect._highlightColor) : "transparent"
+    // Bright border using highlight color, subtle when not urgent in Theme mode, transparent in Fixed modes
+    border.color: {
+        if (!showBackground || badgeColorMode === 1 || badgeColorMode === 2 || badgeColorMode === 3) return "transparent";
+        return (isUrgent || !badgeRect.showNumber) ? "transparent" : badgeRect._highlightColor;
+    }
     border.width: 1 // Keep it thin and elegant
-    opacity: isUrgent ? 1 : 0.85
+    opacity: (badgeColorMode === 1 || badgeColorMode === 2 || badgeColorMode === 3 || isUrgent) ? 1.0 : 0.85
     
     visible: (number > 0) || (iconSource !== "") || (textSource !== "")
 
@@ -242,7 +259,7 @@ Rectangle {
         
         renderType: Text.QtRendering
         antialiasing: true
-        color: badgeRect.isUrgent ? badgeRect._highlightedTextColor : badgeRect._textColor
+        color: (badgeRect.badgeColorMode === 1 || badgeRect.badgeColorMode === 2 || badgeRect.badgeColorMode === 3 || badgeRect.isUrgent) ? badgeRect._highlightedTextColor : badgeRect._textColor
         visible: badgeRect.number > 0 && badgeRect.showNumber
         
         text: {

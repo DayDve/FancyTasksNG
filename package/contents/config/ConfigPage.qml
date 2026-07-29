@@ -242,6 +242,10 @@ Kirigami.Page {
     property bool cfg_unpinByDragExplosionDefault: false
     property bool cfg_showBadgesOnLaunchers: true
     property bool cfg_showBadgesOnLaunchersDefault: true
+    property int cfg_badgeColorMode: 0
+    property int cfg_badgeColorModeDefault: 0
+    property string cfg_badgeCustomColor: "#ff3b30"
+    property string cfg_badgeCustomColorDefault: "#ff3b30"
     property bool cfg_showBrowserHistory: false
     property bool cfg_showBrowserHistoryDefault: false
     property int cfg_browserHistoryLimit: 10
