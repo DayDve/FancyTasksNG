@@ -105,8 +105,8 @@ Rectangle {
         smooth: true // Enable smooth for best quality
         roundToIconSize: false
 
-        // Adaptive icon color: white on red background, theme-aware otherwise
-        color: badgeRect.isUrgent ? badgeRect._highlightedTextColor : badgeRect._textColor
+        // Adaptive icon color: contrast text color on colored backgrounds, theme-aware otherwise
+        color: (badgeRect.badgeColorMode === 1 || badgeRect.badgeColorMode === 2 || badgeRect.badgeColorMode === 3 || badgeRect.isUrgent) ? badgeRect._highlightedTextColor : badgeRect._textColor
         
         // Visual feedback for interaction and mirroring support
         scale: (badgeRect.mirrorText ? -1 : 1) * (badgeRect.hovered ? 1.2 : 1.0)
