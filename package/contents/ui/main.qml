@@ -829,7 +829,7 @@ PlasmoidItem {
         flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WA_TranslucentBackground | Qt.BypassWindowManagerHint
         hideOnWindowDeactivate: false
 
-        readonly property bool shouldShow: tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup
+        readonly property bool shouldShow: tasks.config.enableToolTips && tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup
         visible: (shouldShow && toolTipInstance.implicitWidth > 0) || winContainer.opacity > 0
         visualParent: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : tasks.lastTooltipParent
 
