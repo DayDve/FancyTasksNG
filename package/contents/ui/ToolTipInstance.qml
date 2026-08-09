@@ -401,7 +401,7 @@ Item {
 
         Loader {
             id: thumbnailLoader
-            active: !root.isLauncher && !albumArtImage.visible && (Number.isInteger(root.currentWinId) || pipeWireLoader.item && !pipeWireLoader.item.hasThumbnail) && root.index !== -1
+            active: root.showThumbnails && !root.isLauncher && !albumArtImage.visible && (Number.isInteger(root.currentWinId) || pipeWireLoader.item && !pipeWireLoader.item.hasThumbnail) && root.index !== -1
             asynchronous: true
             
             visible: active
@@ -463,7 +463,7 @@ Item {
             anchors.fill: hoverHandler
             anchors.margins: thumbnailLoader.anchors.margins
 
-            active: !root.isLauncher && !albumArtImage.visible && Qt.platform.pluginName === "wayland" && root.index !== -1
+            active: root.showThumbnails && !root.isLauncher && !albumArtImage.visible && Qt.platform.pluginName === "wayland" && root.index !== -1
             asynchronous: true
             source: "PipeWireThumbnail.qml"
 
