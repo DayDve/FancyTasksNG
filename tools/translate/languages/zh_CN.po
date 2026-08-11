@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-07-29 17:00+0300\n"
+"POT-Creation-Date: 2026-08-12 01:11+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -616,11 +616,19 @@ msgid "Separate settings for hovered indicators"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
+msgid "Separate settings for group indicators"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
 msgid "Highlight active window in group"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
-msgid "Separate settings for group indicators"
+msgid "Dim inactive indicators"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgid "Inactive indicator opacity:"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml

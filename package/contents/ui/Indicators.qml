@@ -182,9 +182,15 @@ Flow {
                     colorCalc = baseColor
                 }
 
-                // If highlight is enabled, apply 40% opacity to non-active segments to highlight the active one
-                if (indicatorsFlow.config.indicatorHighlightActive && !isActiveWindow) {
-                    colorCalc = Qt.rgba(colorCalc.r, colorCalc.g, colorCalc.b, colorCalc.a * 0.4)
+                // 1) Highlight active window in group (applies strictly to grouped tasks)
+                if (indicatorsFlow.taskCount > 1 && indicatorsFlow.config.indicatorHighlightActive && !isActiveWindow) {
+                    let groupOpacity = indicatorsFlow.config.indicatorDimInactive ? (indicatorsFlow.config.indicatorInactiveOpacity / 100.0) : 0.4;
+                    colorCalc = Qt.rgba(colorCalc.r, colorCalc.g, colorCalc.b, colorCalc.a * groupOpacity);
+                }
+                // 2) Global dimming of inactive indicators
+                else if (indicatorsFlow.config.indicatorDimInactive && !isActiveWindow) {
+                    let inactiveOpacity = indicatorsFlow.config.indicatorInactiveOpacity / 100.0;
+                    colorCalc = Qt.rgba(colorCalc.r, colorCalc.g, colorCalc.b, colorCalc.a * inactiveOpacity);
                 }
 
                 return {length: indicatorComputedSize, thickness: segSize, colorCalc: colorCalc}

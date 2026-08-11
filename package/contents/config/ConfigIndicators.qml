@@ -171,22 +171,6 @@ ConfigPage {
                 Item { implicitWidth: indicatorsPage.gridUnit }
 
                 Label {
-                    text: Wrappers.i18n("Length:")
-                }
-                SpinBox {
-                    id: indicatorActiveLength
-                    from: 1
-                    to: 999
-                    value: indicatorsPage.cfg_indicatorActiveLength
-                    onValueModified: indicatorsPage.cfg_indicatorActiveLength = value
-                }
-                Label {
-                    text: "px"
-                }
-
-                Item { implicitWidth: indicatorsPage.largeSpacing }
-
-                Label {
                     text: Wrappers.i18n("Thickness:")
                 }
                 SpinBox {
@@ -195,6 +179,22 @@ ConfigPage {
                     to: 999
                     value: indicatorsPage.cfg_indicatorActiveSize
                     onValueModified: indicatorsPage.cfg_indicatorActiveSize = value
+                }
+                Label {
+                    text: "px"
+                }
+
+                Item { implicitWidth: indicatorsPage.largeSpacing }
+
+                Label {
+                    text: Wrappers.i18n("Length:")
+                }
+                SpinBox {
+                    id: indicatorActiveLength
+                    from: 1
+                    to: 999
+                    value: indicatorsPage.cfg_indicatorActiveLength
+                    onValueModified: indicatorsPage.cfg_indicatorActiveLength = value
                 }
                 Label {
                     text: "px"
@@ -279,21 +279,9 @@ ConfigPage {
             }
 
             RowLayout {
-                visible: indicatorsEnabled.checked
+                visible: indicatorsEnabled.checked && indicatorResize.checked
                 spacing: indicatorsPage.smallSpacing
                 Item { implicitWidth: indicatorsPage.gridUnit }
-                CheckBox {
-                    id: indicatorHighlightActive
-                    text: Wrappers.i18n("Highlight active window in group")
-                    checked: indicatorsPage.cfg_indicatorHighlightActive
-                    onToggled: indicatorsPage.cfg_indicatorHighlightActive = checked
-                }
-            }
-
-            RowLayout {
-                visible: indicatorsEnabled.checked && indicatorResize.checked && indicatorHighlightActive.checked
-                spacing: indicatorsPage.smallSpacing
-                Item { implicitWidth: indicatorsPage.gridUnit * 2 }
                 CheckBox {
                     id: indicatorGroupSeparate
                     text: Wrappers.i18n("Separate settings for group indicators")
@@ -303,9 +291,9 @@ ConfigPage {
             }
 
             RowLayout {
-                visible: indicatorsEnabled.checked && indicatorResize.checked && indicatorHighlightActive.checked && indicatorGroupSeparate.checked
+                visible: indicatorsEnabled.checked && indicatorResize.checked && indicatorGroupSeparate.checked
                 spacing: indicatorsPage.smallSpacing
-                Item { implicitWidth: indicatorsPage.gridUnit * 3 }
+                Item { implicitWidth: indicatorsPage.gridUnit * 2 }
 
                 Label {
                     text: Wrappers.i18n("Thickness:")
@@ -335,6 +323,49 @@ ConfigPage {
                 }
                 Label {
                     text: "px"
+                }
+            }
+
+            RowLayout {
+                visible: indicatorsEnabled.checked
+                spacing: indicatorsPage.smallSpacing
+                CheckBox {
+                    id: indicatorHighlightActive
+                    text: Wrappers.i18n("Highlight active window in group")
+                    checked: indicatorsPage.cfg_indicatorHighlightActive
+                    onToggled: indicatorsPage.cfg_indicatorHighlightActive = checked
+                }
+            }
+
+            RowLayout {
+                visible: indicatorsEnabled.checked
+                spacing: indicatorsPage.smallSpacing
+                CheckBox {
+                    id: indicatorDimInactive
+                    text: Wrappers.i18n("Dim inactive indicators")
+                    checked: indicatorsPage.cfg_indicatorDimInactive
+                    onToggled: indicatorsPage.cfg_indicatorDimInactive = checked
+                }
+            }
+
+            RowLayout {
+                visible: indicatorsEnabled.checked && indicatorDimInactive.checked
+                spacing: indicatorsPage.smallSpacing
+                Item { implicitWidth: indicatorsPage.gridUnit }
+
+                Label {
+                    text: Wrappers.i18n("Inactive indicator opacity:")
+                }
+                SpinBox {
+                    id: indicatorInactiveOpacity
+                    from: 0
+                    to: 100
+                    stepSize: 5
+                    value: indicatorsPage.cfg_indicatorInactiveOpacity
+                    onValueModified: indicatorsPage.cfg_indicatorInactiveOpacity = value
+                }
+                Label {
+                    text: "%"
                 }
             }
 
