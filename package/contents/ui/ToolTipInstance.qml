@@ -426,10 +426,10 @@ Item {
                     animated: false
                     visible: valid
                     
-                    // FIX: Hide ONLY when PipeWire thumbnail is ACTUALLY READY.
-                    // If loader is active but item is null or not ready, keep icon visible.
+                    // Avoid flashing the fallback while the PipeWire stream starts normally.
                     property bool thumbnailReady: pipeWireLoader.active && pipeWireLoader.item && pipeWireLoader.item.hasThumbnail
-                    opacity: thumbnailReady ? 0 : 1
+                    property bool fallbackDelayElapsed: false
+                    opacity: thumbnailReady || !fallbackDelayElapsed ? 0 : 1
                     
                     anchors.fill: parent
                     anchors.margins: Kirigami.Units.gridUnit 
@@ -442,16 +442,16 @@ Item {
                         }
                     }
 
-                    SequentialAnimation {
-                        running: true
-                        PauseAnimation { duration: Kirigami.Units.humanMoment }
-                        NumberAnimation {
-                            id: showAnimation
-                            duration: Kirigami.Units.longDuration
-                            easing.type: Easing.OutCubic
-                            property: "opacity"
-                            target: realIconItem
-                            to: 1
+                    Timer {
+                        interval: Kirigami.Units.humanMoment
+                        running: !realIconItem.thumbnailReady && !realIconItem.fallbackDelayElapsed
+                        onTriggered: realIconItem.fallbackDelayElapsed = true
+                    }
+
+                    Connections {
+                        target: root
+                        function onCurrentWinIdChanged(): void {
+                            realIconItem.fallbackDelayElapsed = false;
                         }
                     }
                 }
