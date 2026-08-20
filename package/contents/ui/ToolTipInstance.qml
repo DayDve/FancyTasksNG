@@ -46,6 +46,7 @@ Item {
     readonly property var icon: toolTipDelegate ? toolTipDelegate.icon : null
     readonly property var thumbnailCache: toolTipDelegate ? toolTipDelegate.thumbnailCache : null
     readonly property int tooltipInstanceMaximumWidth: toolTipDelegate ? toolTipDelegate.tooltipInstanceMaximumWidth : Kirigami.Units.gridUnit * 14
+    readonly property int tooltipThumbnailHeight: toolTipDelegate ? toolTipDelegate.tooltipThumbnailHeight : Math.round(tooltipInstanceMaximumWidth * 9 / 16)
 
     implicitWidth: mainLayout.implicitWidth
     implicitHeight: mainLayout.implicitHeight
@@ -367,8 +368,8 @@ Item {
     Item {
         id: thumbnailSourceItem
 
-        readonly property int targetWidth: Kirigami.Units.gridUnit * 14
-        readonly property int targetHeight: Math.round(targetWidth / (Screen.width / Screen.height))
+        readonly property int targetWidth: root.tooltipInstanceMaximumWidth
+        readonly property int targetHeight: root.tooltipThumbnailHeight
 
         Layout.preferredWidth: root.showThumbnails ? targetWidth : 0
         Layout.preferredHeight: root.showThumbnails ? targetHeight : 0
