@@ -77,12 +77,6 @@ PlasmaExtras.Menu {
 
     Component.onDestruction: {}
 
-    function showContextMenuWithAllPlaces(): void {
-        const parentTask = visualParent as Task;
-        parentTask.showContextMenu({
-            showAllPlaces: true
-        });
-    }
 
     function get(modelProp: int): var {
         return menu.tasksModel.data(modelIndex, modelProp);

@@ -250,7 +250,7 @@ Item {
         (!task.inPopup && (containsMouse || isHovered)) || (tasksRoot.currentHoveredTask === task) || 
         (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open)
 
-    property int itemIndex: index
+
 
     property bool isAudioHovered: false
     readonly property bool containsMouse: hoverHandler.hovered || isAudioHovered
@@ -521,13 +521,7 @@ Item {
         return undefined;
     }
 
-    function modelRow(): int {
-        if (tasksRoot && tasksRoot.filteredTasksModel) {
-            const proxyIdx = tasksRoot.filteredTasksModel.index(task.index, 0);
-            return tasksRoot.filteredTasksModel.mapToSource(proxyIdx).row;
-        }
-        return task.index;
-    }
+
 
     function openTooltip(): void {
         if (!task.config.enableToolTips)

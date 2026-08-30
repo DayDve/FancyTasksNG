@@ -22,10 +22,6 @@ Kirigami.Page {
     property bool cfg_reverseFiltersDefault: false
     property int cfg_minimizedFilter: 0
     property int cfg_minimizedFilterDefault: 0
-    property var cfg_showOnlyMinimized: false
-    property var cfg_showOnlyMinimizedDefault: false
-    property var cfg_showOnlyNotMinimized: false
-    property var cfg_showOnlyNotMinimizedDefault: false
     property bool cfg_unhideOnAttention: false
     property bool cfg_unhideOnAttentionDefault: true
     property bool cfg_animateAttentionStatus: true
@@ -52,8 +48,6 @@ Kirigami.Page {
     property bool cfg_wheelShiftSystemVolumeEnabledDefault: true
     property bool cfg_showMediaControls: true
     property bool cfg_showMediaControlsDefault: true
-    property bool cfg_wheelSkipMinimized: false
-    property bool cfg_wheelSkipMinimizedDefault: false
     property bool cfg_highlightWindows: true
     property bool cfg_highlightWindowsDefault: true
     property bool cfg_indicateAudioStreams: true
@@ -168,8 +162,6 @@ Kirigami.Page {
     property int cfg_indicatorLocationDefault: 0
     property int cfg_indicatorStyle: 0
     property int cfg_indicatorStyleDefault: 0
-    property int cfg_indicatorMinLimit: 0
-    property int cfg_indicatorMinLimitDefault: 0
     property int cfg_indicatorMaxLimit: 0
     property int cfg_indicatorMaxLimitDefault: 4
     property bool cfg_indicatorDesaturate: false
@@ -196,10 +188,6 @@ Kirigami.Page {
     property int cfg_indicatorHoverSizeDefault: 5
     property bool cfg_indicatorResize: true
     property bool cfg_indicatorResizeDefault: true
-    property bool cfg_indicatorResizeLength: true
-    property bool cfg_indicatorResizeLengthDefault: true
-    property bool cfg_indicatorResizeThickness: true
-    property bool cfg_indicatorResizeThicknessDefault: true
     property bool cfg_indicatorHoverSeparate: false
     property bool cfg_indicatorHoverSeparateDefault: false
     property bool cfg_indicatorGroupSeparate: false
@@ -224,8 +212,6 @@ Kirigami.Page {
     property bool cfg_indicatorAccentColorDefault: true
     property string cfg_indicatorCustomColor: ""
     property string cfg_indicatorCustomColorDefault: "white"
-    property bool cfg_indicatorReverse: false
-    property bool cfg_indicatorReverseDefault: false
     property bool cfg_indicatorOverride: false
     property bool cfg_indicatorOverrideDefault: false
     property bool cfg_iconScaleFromEdge: false

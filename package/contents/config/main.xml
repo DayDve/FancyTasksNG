@@ -266,10 +266,6 @@
       <label>Indicator style. 0 = Line, 1 = Dashes</label>
       <default>0</default>
     </entry>
-    <entry name="indicatorMinLimit" type="Int">
-      <label>Set the minimum number of running indicators to display.</label>
-      <default>0</default>
-    </entry>
     <entry name="indicatorMaxLimit" type="Int">
       <label>Set the maximum number of running indicators to display.</label>
       <default>4</default>
@@ -317,14 +313,6 @@
     </entry>
     <entry name="indicatorResize" type="Bool">
       <label>Enable resizing of indicators on activation and hover</label>
-      <default>true</default>
-    </entry>
-    <entry name="indicatorResizeLength" type="Bool">
-      <label>Resize length of active and hovered indicators</label>
-      <default>true</default>
-    </entry>
-    <entry name="indicatorResizeThickness" type="Bool">
-      <label>Resize thickness of active and hovered indicators</label>
       <default>true</default>
     </entry>
     <entry name="indicatorHoverSeparate" type="Bool">
@@ -440,10 +428,6 @@
       <label
             >Direction of the plasma button SVG: 0 = North, 1 = West, 2 = South, 3 = East</label>
       <default>0</default>
-    </entry>
-    <entry name="indicatorReverse" type="Bool">
-      <label>Reerse the side the indicator is shown on.</label>
-      <default>false</default>
     </entry>
     <entry name="indicatorOverride" type="Bool">
       <label>Enable override the indicator's shown side.</label>
