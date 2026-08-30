@@ -68,6 +68,9 @@ PlasmaExtras.Menu {
             if (virtualDesktopsMenuItem.visible) {
                 virtualDesktopsMenuItem._virtualDesktopsMenu.refresh();
             }
+            if (showLauncherInActivitiesItem.visible) {
+                showLauncherInActivitiesItem._activitiesLaunchersMenu.refresh();
+            }
         } else if (status === PlasmaExtras.Menu.Closed) {
             menu.destroy();
         }
@@ -639,42 +642,130 @@ PlasmaExtras.Menu {
     PlasmaExtras.MenuItem {
         id: launcherToggleAction
 
-        visible: visualParent && !get(atm.IsLauncher) && !get(atm.IsStartup) && Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable && !isPinned()
+        visible: visualParent && !get(atm.IsLauncher) && !get(atm.IsStartup) && Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable && (menu.activityInfo.numberOfRunningActivities < 2) && !isPinned() && !doesBelongToCurrentActivity()
 
         enabled: visualParent && get(atm.LauncherUrlWithoutIcon).toString() !== ""
 
         text: Wrappers.i18n("&Pin to Task Manager")
         icon: "window-pin"
 
+        // A launcher is "pinned" if it exists in the TasksModel's launcher list.
+        // We must check the model (not Plasmoid.configuration.launchers), because
+        // activity-scoped entries are serialized as "[uuid]\nurl" and would not
+        // match a plain indexOf() on the raw config list.
         function isPinned(): bool {
-            var url = get(atm.LauncherUrlWithoutIcon).toString();
-            return config.launchers.indexOf(url) !== -1;
+            return menu.tasksModel.launcherPosition(get(atm.LauncherUrlWithoutIcon)) !== -1;
+        }
+
+        // Also hide "Pin to Task Manager" when the app is already pinned to
+        // the current activity (single-activity case).
+        function doesBelongToCurrentActivity(): bool {
+            return menu.tasksModel.launcherActivities(get(atm.LauncherUrlWithoutIcon)).some(activity => activity === menu.activityInfo.currentActivity || activity === menu.activityInfo.nullUuid);
         }
 
         onClicked: {
-            var launchers = config.launchers.slice();
-            var url = get(atm.LauncherUrlWithoutIcon).toString();
-            if (launchers.indexOf(url) === -1) {
-                launchers.push(url);
-                config.launchers = launchers;
+            // Go through the model so the serialized form (including the
+            // activity assignment) is persisted to Plasmoid.configuration.launchers
+            // automatically via onLauncherListChanged in main.qml.
+            menu.tasksModel.requestAddLauncher(get(atm.LauncherUrlWithoutIcon));
+        }
+    }
+
+    PlasmaExtras.MenuItem {
+        id: showLauncherInActivitiesItem
+
+        text: Wrappers.i18n("&Pin to Task Manager")
+        icon: "window-pin"
+
+        // Unlike launcherToggleAction this also shows for pinned shortcuts
+        // (IsLauncher), letting the user re-pin them to other activities.
+        visible: visualParent && get(atm.IsStartup) !== true && Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable && (menu.activityInfo.numberOfRunningActivities >= 2)
+
+        readonly property Connections activitiesLaunchersMenuConnections: Connections {
+            target: menu.activityInfo
+
+            function onNumberOfRunningActivitiesChanged(): void {
+                showLauncherInActivitiesItem._activitiesLaunchersMenu["refresh"]();
+            }
+        }
+
+        readonly property PlasmaExtras.Menu _activitiesLaunchersMenu: PlasmaExtras.Menu {
+            id: activitiesLaunchersMenu
+
+            visualParent: showLauncherInActivitiesItem.action
+
+            function refresh(): void {
+                clearMenuItems();
+
+                if (menu.visualParent === null) {
+                    return;
+                }
+
+                // The model reports a launcher's activity assignments as UUIDs
+                // (launcherActivities()); the all-zeros nullUuid means "all
+                // activities". The model persists them as "[uuid1,uuid2]\nurl"
+                // entries in the launchers config.
+                const createNewItem = (id, title, iconName, url, activities) => {
+                    var result = menu.newMenuItem(activitiesLaunchersMenu);
+                    result.text = title;
+                    result.icon = iconName;
+
+                    result.visible = true;
+                    result.checkable = true;
+
+                    result.checked = activities.some(activity => activity === id);
+
+                    // For checkable menu items "clicked" fires after the check
+                    // state has already toggled, so result.checked is the NEW
+                    // state: checked -> pin to this activity, unchecked -> unpin.
+                    result.clicked.connect(() => {
+                        if (result.checked) {
+                            menu.tasksModel.requestAddLauncherToActivity(url, id);
+                        } else {
+                            menu.tasksModel.requestRemoveLauncherFromActivity(url, id);
+                        }
+                    });
+
+                    return result;
+                };
+
+                const url = menu.get(atm.LauncherUrlWithoutIcon);
+
+                const activities = menu.tasksModel.launcherActivities(url);
+
+                createNewItem(menu.activityInfo.nullUuid, Wrappers.i18n("On All Activities"), "", url, activities);
+
+                if (menu.activityInfo.numberOfRunningActivities <= 1) {
+                    return;
+                }
+
+                createNewItem(menu.activityInfo.currentActivity, Wrappers.i18n("On The Current Activity"), menu.activityInfo.activityIcon(menu.activityInfo.currentActivity), url, activities);
+
+                menu.newSeparator(activitiesLaunchersMenu);
+
+                const runningActivities = menu.activityInfo.runningActivities();
+                for (let i = 0; i < runningActivities.length; ++i) {
+                    const activityId = runningActivities[i];
+                    createNewItem(activityId, menu.activityInfo.activityName(activityId), menu.activityInfo.activityIcon(activityId), url, activities);
+                }
+            }
+
+            Component.onCompleted: {
+                menu.visualParentChanged.connect(refresh);
+                refresh();
             }
         }
     }
 
     PlasmaExtras.MenuItem {
-        visible: visualParent && get(atm.IsStartup) !== true && Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable && (get(atm.IsLauncher) || launcherToggleAction.isPinned())
+        visible: visualParent && get(atm.IsStartup) !== true && Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable && !launcherToggleAction.visible && menu.activityInfo.numberOfRunningActivities < 2
 
         text: Wrappers.i18n("Unpin from Task Manager")
         icon: "window-unpin"
 
         onClicked: {
-            var launchers = config.launchers.slice();
-            var url = get(atm.LauncherUrlWithoutIcon).toString();
-            var index = launchers.indexOf(url);
-            if (index !== -1) {
-                launchers.splice(index, 1);
-                config.launchers = launchers;
-            }
+            // Go through the model so the config list stays in sync.
+            menu.tasksModel.requestRemoveLauncher(get(atm.LauncherUrlWithoutIcon));
         }
     }
 
