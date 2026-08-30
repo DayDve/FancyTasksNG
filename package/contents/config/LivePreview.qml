@@ -724,65 +724,7 @@ Item {
                                     maximumLineCount: 1
                                 }
 
-                                // 6. Group expander overlay (Matching GroupExpanderOverlay.qml)
-                                KSvg.SvgItem {
-                                    id: groupArrow
-                                    visible: mockTask.isGroup && mockTask.cfgReady && mockTask.cfg.cfg_groupIconEnabled
-                                    z: 60
-
-                                    readonly property int effLoc: mockTask.effLoc
-                                    
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    anchors.bottom: parent.bottom
-
-                                    states: [
-                                        State {
-                                            name: "left"
-                                            when: groupArrow.effLoc === 1
-                                            AnchorChanges {
-                                                target: groupArrow
-                                                anchors.left: parent.left
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                anchors.horizontalCenter: undefined
-                                                anchors.bottom: undefined
-                                            }
-                                        },
-                                        State {
-                                            name: "right"
-                                            when: groupArrow.effLoc === 2
-                                            AnchorChanges {
-                                                target: groupArrow
-                                                anchors.right: parent.right
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                anchors.horizontalCenter: undefined
-                                                anchors.bottom: undefined
-                                            }
-                                        },
-                                        State {
-                                            name: "top"
-                                            when: groupArrow.effLoc === 3
-                                            AnchorChanges {
-                                                target: groupArrow
-                                                anchors.top: parent.top
-                                                anchors.horizontalCenter: parent.horizontalCenter
-                                                anchors.bottom: undefined
-                                            }
-                                        }
-                                    ]
-
-                                    implicitWidth: Math.min(naturalSize.width, 16)
-                                    implicitHeight: Math.min(naturalSize.height, 16)
-
-                                    imagePath: "widgets/tasks"
-                                    elementId: {
-                                        switch (effLoc) {
-                                            case 1: return "group-expander-left";
-                                            case 3: return "group-expander-top";
-                                            case 2: return "group-expander-right";
-                                            default: return "group-expander-bottom";
-                                        }
-                                    }
-                                }
+                                // 6. Group expander overlay is rendered by groupExpanderLoader above
 
                                 // 6. Indicator
                                 Item {

@@ -123,9 +123,6 @@ Item {
             }
         }
 
-        if (name && toolTipDelegate.smartLauncherCountVisible && toolTipDelegate.smartLauncherCount > 0) {
-             return name + " (" + toolTipDelegate.smartLauncherCount + ")";
-        }
         return name;
     }
 
@@ -487,8 +484,7 @@ Item {
                         if (pipeWireLoader.item.width <= 0 || pipeWireLoader.item.height <= 0) return;
                         pipeWireLoader.item.grabToImage(function(result) {
                             if (result && root.currentWinId) {
-                                // Store full result object to prevent garbage collection of the URL
-                                root.thumbnailCache[root.currentWinId] = result;
+                                tasks.cacheThumbnail(root.currentWinId, result);
                             }
                         }, Qt.size(pipeWireLoader.item.width, pipeWireLoader.item.height));
                     }
@@ -502,10 +498,13 @@ Item {
              anchors.fill: hoverHandler
              anchors.margins: thumbnailLoader.anchors.margins
              
-             // Access .url from the stored ItemGrabResult object
-             source: (root.currentWinId && root.thumbnailCache[root.currentWinId]) 
-                     ? root.thumbnailCache[root.currentWinId].url 
-                     : ""
+             // Access .url from the stored { result, stamp } cache entry; stale entries (>TTL) are ignored
+             source: {
+                 const entry = root.currentWinId ? root.thumbnailCache[root.currentWinId] : null;
+                 if (!entry) return "";
+                 if (Date.now() - entry.stamp > root.thumbnailCacheTtlMs) return "";
+                 return entry.result.url;
+             }
              
              readonly property bool liveThumbnailReady: pipeWireLoader.active && pipeWireLoader.item && pipeWireLoader.item.hasThumbnail
              

@@ -130,7 +130,7 @@ Item {
     property bool inPopup: false
 
     property bool isWindow: !!(task.model && task.model.IsWindow)
-    readonly property bool isHovered: (tasksRoot && tasksRoot.mouseHandler) ? (tasksRoot.mouseHandler.hoveredItem === task) : false
+    readonly property bool isHovered: tasksRoot.mouseHandler.hoveredItem === task
     
     // Modern taskState property for internal and Indicators.qml usage
     readonly property string taskState: {
@@ -911,7 +911,11 @@ Item {
         task.completed = true;
 
         if (task.model && task.model.LauncherUrlWithoutIcon) {
-            DesktopActionsManager.prefetch(task.model.LauncherUrlWithoutIcon);
+            // Same parameters ContextMenu.query() will use, so the prefetched cache entry actually hits
+            DesktopActionsManager.prefetch(task.model.LauncherUrlWithoutIcon,
+                task.model.AppPid,
+                task.model.AppPid > 0 && task.config.showBrowserHistory,
+                task.config.browserHistoryLimit);
         }
     }
     Component.onDestruction: {
