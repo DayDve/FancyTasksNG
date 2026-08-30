@@ -196,26 +196,7 @@ Item {
     readonly property var playerData: mediaController ? mediaController.playerData : null
     readonly property bool titleIncludesTrack: mediaController ? mediaController.titleIncludesTrack : false
     
-    // Audio Streams (Bridged to controller with fallbacks to task model)
-    readonly property var audioStreams: mediaController ? mediaController.audioStreams : []
-    readonly property bool hasAudioStream: mediaController ? mediaController.hasAudioStream : false
-    readonly property bool muted: mediaController ? mediaController.muted : root.isMuted
-    readonly property bool playingAudio: mediaController ? mediaController.playingAudio : root.isPlayingAudio
 
-    function toggleMuted() {
-        if (mediaController) {
-            mediaController.toggleMuted();
-        }
-    }
-    
-    function adjustAppVolume(increment) {
-        if (mediaController) {
-            mediaController.adjustAppVolume(increment);
-        }
-    }
-
-    readonly property bool showPlayerControls: mediaController ? mediaController.showPlayerControls : false
-    readonly property bool showVolumeControls: mediaController ? mediaController.showVolumeControls : false
     readonly property bool controlsAreEffective: mediaController ? mediaController.controlsAreEffective : false
     property bool delayedControlsActive: false
     
