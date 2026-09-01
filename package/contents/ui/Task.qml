@@ -130,7 +130,7 @@ Item {
     property bool inPopup: false
 
     property bool isWindow: !!(task.model && task.model.IsWindow)
-    readonly property bool isHovered: (tasksRoot && tasksRoot.mouseHandler) ? (tasksRoot.mouseHandler.hoveredItem === task) : false
+    readonly property bool isHovered: tasksRoot.mouseHandler.hoveredItem === task
     
     // Modern taskState property for internal and Indicators.qml usage
     readonly property string taskState: {
@@ -250,7 +250,7 @@ Item {
         (!task.inPopup && (containsMouse || isHovered)) || (tasksRoot.currentHoveredTask === task) || 
         (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open)
 
-    property int itemIndex: index
+
 
     property bool isAudioHovered: false
     readonly property bool containsMouse: hoverHandler.hovered || isAudioHovered
@@ -521,13 +521,7 @@ Item {
         return undefined;
     }
 
-    function modelRow(): int {
-        if (tasksRoot && tasksRoot.filteredTasksModel) {
-            const proxyIdx = tasksRoot.filteredTasksModel.index(task.index, 0);
-            return tasksRoot.filteredTasksModel.mapToSource(proxyIdx).row;
-        }
-        return task.index;
-    }
+
 
     function openTooltip(): void {
         if (!task.config.enableToolTips)
@@ -911,7 +905,11 @@ Item {
         task.completed = true;
 
         if (task.model && task.model.LauncherUrlWithoutIcon) {
-            DesktopActionsManager.prefetch(task.model.LauncherUrlWithoutIcon);
+            // Same parameters ContextMenu.query() will use, so the prefetched cache entry actually hits
+            DesktopActionsManager.prefetch(task.model.LauncherUrlWithoutIcon,
+                task.model.AppPid,
+                task.model.AppPid > 0 && task.config.showBrowserHistory,
+                task.config.browserHistoryLimit);
         }
     }
     Component.onDestruction: {

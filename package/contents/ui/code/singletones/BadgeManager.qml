@@ -47,7 +47,6 @@ Item {
         iface: "io.github.daydve.fancytasksng.BadgeUpdate"
         
         function dbusUpdateSignal(appId, count, progress) {
-            console.log("FancyTasksNG BadgeBridge received:", appId, count, progress);
             root.updateData(String(appId), count, progress);
         }
     }

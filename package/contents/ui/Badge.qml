@@ -9,7 +9,6 @@
 
 import QtQuick
 import org.kde.kirigami as Kirigami
-import QtQuick.Effects
 import org.kde.plasma.plasmoid
 import "code/singletones"
 
@@ -22,7 +21,6 @@ Rectangle {
     property int number: appId !== "" ? ((BadgeManager.countVersion >= 0) ? BadgeManager.getUnreadCount(appId) : 0) : 0
     property bool isRound: true
     property real fontPointSize: 8 // Reduced for better fit in small circles
-    property string iconSource: ""
     property bool hovered: false
     property bool isUrgent: false
     property bool showBackground: true
@@ -33,10 +31,9 @@ Rectangle {
     property string overlaySource: ""
     property bool shadowEnabled: false
     property bool mirrorText: false
-    property bool isCrossed: false
     property bool showNumber: true
 
-    readonly property string defaultNotificationIcon: "notifications-symbolic"
+
 
     // Cached theme colors to optimize lookups in child bindings
     readonly property color _highlightColor: Kirigami.Theme.highlightColor
@@ -49,9 +46,6 @@ Rectangle {
     readonly property int badgeColorMode: (Plasmoid.configuration && Plasmoid.configuration.badgeColorMode !== undefined) ? Plasmoid.configuration.badgeColorMode : 0
     readonly property color badgeCustomColor: (Plasmoid.configuration && Plasmoid.configuration.badgeCustomColor) ? Plasmoid.configuration.badgeCustomColor : "#ff3b30"
 
-    // Visual state coloring - Bound to theme palette
-    property color highlightColor: badgeRect._highlightColor
-    
     // Configurable color for the text-based icon, defaulting to theme logic
     property color textIconColor: (badgeColorMode === 1 || badgeColorMode === 2 || badgeColorMode === 3 || isUrgent) ? badgeRect._highlightedTextColor : badgeRect._textColor
 
@@ -85,33 +79,11 @@ Rectangle {
     border.width: 1 // Keep it thin and elegant
     opacity: (badgeColorMode === 1 || badgeColorMode === 2 || badgeColorMode === 3 || isUrgent) ? 1.0 : 0.85
     
-    visible: (number > 0) || (iconSource !== "") || (textSource !== "")
+    visible: (number > 0) || (textSource !== "")
 
     Behavior on color { ColorAnimation { duration: Kirigami.Units.shortDuration } }
     Behavior on width { NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic } }
 
-    // Icon Layer: Using Kirigami.Icon
-    Kirigami.Icon {
-        id: icon
-        anchors.centerIn: parent
-        // Scale up the icon if there is no background to keep it visible
-        width: Math.round(parent.height * (badgeRect.showBackground ? 0.65 : 0.85))
-        height: width
-        
-        source: badgeRect.iconSource
-        visible: (badgeRect.iconSource !== "") && (badgeRect.number <= 0) && (badgeRect.textSource === "")
-        opacity: badgeRect.shadowEnabled ? 0 : 1 // Keep visible for MultiEffect source, but hide from view
-        
-        smooth: true // Enable smooth for best quality
-        roundToIconSize: false
-
-        // Adaptive icon color: contrast text color on colored backgrounds, theme-aware otherwise
-        color: (badgeRect.badgeColorMode === 1 || badgeRect.badgeColorMode === 2 || badgeRect.badgeColorMode === 3 || badgeRect.isUrgent) ? badgeRect._highlightedTextColor : badgeRect._textColor
-        
-        // Visual feedback for interaction and mirroring support
-        scale: (badgeRect.mirrorText ? -1 : 1) * (badgeRect.hovered ? 1.2 : 1.0)
-        Behavior on scale { NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic } }
-    }
 
     // Shadow Layer for the textIcon (reliable "double-text" shadow)
     Text {
@@ -203,44 +175,6 @@ Rectangle {
         
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-    }
-
-    // Diagonal cross line for "muted" or "disabled" states
-    Rectangle {
-        id: crossLine
-        // Anchor to textIcon to stay synchronized with the font-based symbol
-        anchors.centerIn: textIcon
-        width: Math.round(parent.height * 1.05)
-        height: Math.max(2, Math.round(parent.height * 0.15)) // Even thicker
-        color: badgeRect._negativeTextColor
-        rotation: 45 
-        visible: badgeRect.isCrossed
-        antialiasing: true
-        z: 10 // Ensure it's above the text
-        
-        // Stronger shadow/border for the line to make it pop
-        layer.enabled: badgeRect.shadowEnabled
-        layer.effect: MultiEffect {
-            shadowEnabled: true
-            shadowBlur: 1.0
-            shadowColor: "black"
-            shadowVerticalOffset: 1
-            shadowHorizontalOffset: 0
-        }
-    }
-
-    // Shadow effect for the icon when requested (e.g. for visibility on light backgrounds)
-    MultiEffect {
-        anchors.fill: icon
-        source: icon
-        visible: (badgeRect.iconSource !== "") && (badgeRect.number <= 0) && (badgeRect.textSource === "") && badgeRect.shadowEnabled
-        shadowEnabled: true
-        shadowBlur: 1.0
-        shadowHorizontalOffset: 1
-        shadowVerticalOffset: 1.5 
-        shadowColor: "black" // Solid black for maximum contrast
-        
-        scale: icon.scale
     }
 
     // Text Layer

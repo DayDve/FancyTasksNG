@@ -123,9 +123,6 @@ Item {
             }
         }
 
-        if (name && toolTipDelegate.smartLauncherCountVisible && toolTipDelegate.smartLauncherCount > 0) {
-             return name + " (" + toolTipDelegate.smartLauncherCount + ")";
-        }
         return name;
     }
 
@@ -199,26 +196,7 @@ Item {
     readonly property var playerData: mediaController ? mediaController.playerData : null
     readonly property bool titleIncludesTrack: mediaController ? mediaController.titleIncludesTrack : false
     
-    // Audio Streams (Bridged to controller with fallbacks to task model)
-    readonly property var audioStreams: mediaController ? mediaController.audioStreams : []
-    readonly property bool hasAudioStream: mediaController ? mediaController.hasAudioStream : false
-    readonly property bool muted: mediaController ? mediaController.muted : root.isMuted
-    readonly property bool playingAudio: mediaController ? mediaController.playingAudio : root.isPlayingAudio
 
-    function toggleMuted() {
-        if (mediaController) {
-            mediaController.toggleMuted();
-        }
-    }
-    
-    function adjustAppVolume(increment) {
-        if (mediaController) {
-            mediaController.adjustAppVolume(increment);
-        }
-    }
-
-    readonly property bool showPlayerControls: mediaController ? mediaController.showPlayerControls : false
-    readonly property bool showVolumeControls: mediaController ? mediaController.showVolumeControls : false
     readonly property bool controlsAreEffective: mediaController ? mediaController.controlsAreEffective : false
     property bool delayedControlsActive: false
     
@@ -487,8 +465,7 @@ Item {
                         if (pipeWireLoader.item.width <= 0 || pipeWireLoader.item.height <= 0) return;
                         pipeWireLoader.item.grabToImage(function(result) {
                             if (result && root.currentWinId) {
-                                // Store full result object to prevent garbage collection of the URL
-                                root.thumbnailCache[root.currentWinId] = result;
+                                tasks.cacheThumbnail(root.currentWinId, result);
                             }
                         }, Qt.size(pipeWireLoader.item.width, pipeWireLoader.item.height));
                     }
@@ -502,10 +479,13 @@ Item {
              anchors.fill: hoverHandler
              anchors.margins: thumbnailLoader.anchors.margins
              
-             // Access .url from the stored ItemGrabResult object
-             source: (root.currentWinId && root.thumbnailCache[root.currentWinId]) 
-                     ? root.thumbnailCache[root.currentWinId].url 
-                     : ""
+             // Access .url from the stored { result, stamp } cache entry; stale entries (>TTL) are ignored
+             source: {
+                 const entry = root.currentWinId ? root.thumbnailCache[root.currentWinId] : null;
+                 if (!entry) return "";
+                 if (Date.now() - entry.stamp > root.thumbnailCacheTtlMs) return "";
+                 return entry.result.url;
+             }
              
              readonly property bool liveThumbnailReady: pipeWireLoader.active && pipeWireLoader.item && pipeWireLoader.item.hasThumbnail
              

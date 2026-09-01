@@ -45,12 +45,15 @@ Item {
         _doQuery(String(launcherUrl), appPid, showHistory, limit, callback);
     }
 
-    function prefetch(launcherUrl) {
+    function prefetch(launcherUrl, appPid, showHistory, limit) {
         if (!launcherUrl) return;
-        const key = String(launcherUrl) + "|0|false|10";
+        appPid = parseInt(appPid || 0);
+        showHistory = !!showHistory;
+        limit = parseInt(limit || 10);
+        const key = String(launcherUrl) + "|" + appPid + "|" + showHistory + "|" + limit;
         // Only prefetch if NOT in cache to avoid spam
         if (!(key in cache)) {
-            _doQuery(String(launcherUrl), 0, false, 10, null);
+            _doQuery(String(launcherUrl), appPid, showHistory, limit, null);
         }
     }
 

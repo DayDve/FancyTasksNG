@@ -277,10 +277,9 @@ Flow {
         State {
             name: "bottom"
             when: (indicatorsFlow.config.indicatorOverride && indicatorsFlow.config.indicatorLocation === 0)
-                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.BottomEdge && !indicatorsFlow.config.indicatorReverse)
-                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.TopEdge && indicatorsFlow.config.indicatorReverse)
+                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.BottomEdge)
                 || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && indicatorsFlow.config.indicatorLocation === 0)
-                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && !indicatorsFlow.config.indicatorOverride && !indicatorsFlow.config.indicatorReverse)
+                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && !indicatorsFlow.config.indicatorOverride)
 
             AnchorChanges {
                 target: indicatorsFlow
@@ -301,8 +300,7 @@ Flow {
         State {
             name: "left"
             when: (indicatorsFlow.config.indicatorOverride && indicatorsFlow.config.indicatorLocation === 1)
-                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.LeftEdge && !indicatorsFlow.config.indicatorReverse)
-                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.RightEdge && indicatorsFlow.config.indicatorReverse)
+                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.LeftEdge)
                 || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && indicatorsFlow.config.indicatorLocation === 1 && indicatorsFlow.config.indicatorOverride)
 
             AnchorChanges {
@@ -323,8 +321,7 @@ Flow {
         State {
             name: "right"
             when: (indicatorsFlow.config.indicatorOverride && indicatorsFlow.config.indicatorLocation === 2)
-                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.RightEdge && !indicatorsFlow.config.indicatorReverse)
-                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.LeftEdge && indicatorsFlow.config.indicatorReverse)
+                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.RightEdge)
                 || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && indicatorsFlow.config.indicatorLocation === 2 && indicatorsFlow.config.indicatorOverride)
 
             AnchorChanges {
@@ -345,10 +342,8 @@ Flow {
         State {
             name: "top"
             when: (indicatorsFlow.config.indicatorOverride && indicatorsFlow.config.indicatorLocation === 3)
-                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.TopEdge && !indicatorsFlow.config.indicatorReverse)
-                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.BottomEdge && indicatorsFlow.config.indicatorReverse)
+                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.TopEdge)
                 || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && indicatorsFlow.config.indicatorLocation === 3 && indicatorsFlow.config.indicatorOverride)
-                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && indicatorsFlow.config.indicatorReverse && !indicatorsFlow.config.indicatorOverride)
 
             AnchorChanges {
                 target: indicatorsFlow

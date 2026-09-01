@@ -73,10 +73,6 @@ PlasmoidItem {
     property Item dropIndicator: dropIndicatorRect
     property int dropIndex: -1
     property Item dragSource: null
-    property alias taskRepeater: internalTaskRepeater
-    // Set to true in Task.qml when drag ends with cursor outside the panel bounds.
-    // Used in Drag.onDragFinished to trigger unpin regardless of the dropAction
-    // (some Plasma components may accept the drop and return non-IgnoreAction).
     property bool dragEndedOutsidePanel: false
 
     property bool _isApplyingConfig: false
@@ -160,8 +156,36 @@ PlasmoidItem {
         });
     }
 
-    // Key: WinId, Value: ItemGrabResult
+    // Key: WinId, Value: { result: ItemGrabResult, stamp: ms }
+    // Capped at THUMBNAIL_CACHE_MAX entries; entries older than THUMBNAIL_CACHE_TTL_MS are treated as stale.
     property var thumbnailCache: ({})
+    readonly property int thumbnailCacheMax: 48
+    readonly property int thumbnailCacheTtlMs: 120000
+
+    function cacheThumbnail(winId, result) {
+        const now = Date.now();
+        // Evict entries older than TTL first, then enforce cap by dropping oldest
+        const keys = Object.keys(thumbnailCache);
+        for (const k of keys) {
+            if (now - thumbnailCache[k].stamp > thumbnailCacheTtlMs) {
+                delete thumbnailCache[k];
+            }
+        }
+        const remaining = Object.keys(thumbnailCache);
+        if (remaining.length >= thumbnailCacheMax) {
+            // Drop the oldest entry
+            let oldest = null, oldestStamp = Infinity;
+            for (const k of remaining) {
+                if (thumbnailCache[k].stamp < oldestStamp) {
+                    oldestStamp = thumbnailCache[k].stamp;
+                    oldest = k;
+                }
+            }
+            if (oldest !== null) delete thumbnailCache[oldest];
+        }
+        thumbnailCache[winId] = { result: result, stamp: now };
+        thumbnailCacheChanged(); // notify bindings
+    }
 
     onCurrentHoveredTaskChanged: {
         if (currentHoveredTask) {
@@ -183,7 +207,6 @@ PlasmoidItem {
     readonly property Component contextMenuComponent: Qt.createComponent("ContextMenu.qml")
     readonly property Component audioStreamManagerComponent: Qt.createComponent("AudioStreamManager.qml")
 
-    property bool needLayoutRefresh: false
 
     property alias taskList: taskListView
     property alias effectWatcher: windowViewEffectWatcher
@@ -193,6 +216,8 @@ PlasmoidItem {
     property alias taskFrame: taskFrame
     property alias filteredTasksModel: internalFilteredTasksModel
     property alias busyIndicator: busyIndicator
+    property alias virtualDesktopInfo: virtualDesktopInfo
+    property alias mouseHandler: mouseHandler
     FancyTasksExplosion {
         id: explosionManager
     }
@@ -400,7 +425,6 @@ PlasmoidItem {
         }
     }
 
-    readonly property alias tasksModelAlias: internalTasksModel // keep compatibility if needed
     readonly property var effectiveTasksModel: (tasks.config.minimizedFilter === 0 && !tasks.config.reverseFilters) ? internalTasksModel : internalFilteredTasksModel
 
     Timer {
@@ -513,9 +537,6 @@ PlasmoidItem {
         }
     }
 
-    function hasLauncher(url: url): bool {
-        return tasks.tasksModel ? tasks.tasksModel.launcherPosition(url) !== -1 : false;
-    }
     function addLauncher(url: url): void {
         if (Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable && tasks.tasksModel)
             tasks.tasksModel.requestAddLauncher(url);
@@ -523,13 +544,6 @@ PlasmoidItem {
     function removeLauncher(url: url): void {
         if (Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable && tasks.tasksModel)
             tasks.tasksModel.requestRemoveLauncher(url);
-    }
-    function activateTaskAtIndex(index: var): void {
-        if (typeof index !== "number")
-            return;
-        const task = internalTaskRepeater.itemAt(index) as Task;
-        if (task)
-            TaskTools.activateTask(task.modelIndex(), task.model, null, task, Plasmoid, tasks, windowViewEffectWatcher.registered);
     }
     function adjustGlobalVolume(increment: int) {
         const audioManager = audioStreamManagerLoader.item;
@@ -796,9 +810,6 @@ PlasmoidItem {
                     delegate: Task {
                         tasksRoot: tasks
                     }
-                    onItemRemoved: {
-                        tasks.needLayoutRefresh = true;
-                    }
                 }
 
                 Connections {
@@ -947,7 +958,9 @@ PlasmoidItem {
 
                     readonly property var taskModel: parentTask ? parentTask.model : null
 
-                    rootIndex: internalTasksModel.makeModelIndex(parentTask ? parentTask.index : 0, -1)
+                    // parentTask.index is a row in the filtered proxy; map it to the source model,
+                    // otherwise lookups below read the wrong task whenever filters are active
+                    rootIndex: (parentTask && parentTask.modelIndex()) || internalTasksModel.makeModelIndex(parentTask ? parentTask.index : 0, -1)
                     appName: taskModel ? taskModel.AppName : ""
                     pidParent: taskModel ? taskModel.AppPid : 0
                     windows: taskModel ? taskModel.WinIdList : []

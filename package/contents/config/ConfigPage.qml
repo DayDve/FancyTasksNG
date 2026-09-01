@@ -15,27 +15,23 @@ Kirigami.Page {
     property bool cfg_showOnlyCurrentScreen: false
     property bool cfg_showOnlyCurrentScreenDefault: false
     property bool cfg_showOnlyCurrentDesktop: false
-    property bool cfg_showOnlyCurrentDesktopDefault: false
+    property bool cfg_showOnlyCurrentDesktopDefault: true
     property bool cfg_showOnlyCurrentActivity: false
-    property bool cfg_showOnlyCurrentActivityDefault: false
+    property bool cfg_showOnlyCurrentActivityDefault: true
     property bool cfg_reverseFilters: false
     property bool cfg_reverseFiltersDefault: false
     property int cfg_minimizedFilter: 0
     property int cfg_minimizedFilterDefault: 0
-    property var cfg_showOnlyMinimized: false
-    property var cfg_showOnlyMinimizedDefault: false
-    property var cfg_showOnlyNotMinimized: false
-    property var cfg_showOnlyNotMinimizedDefault: false
     property bool cfg_unhideOnAttention: false
-    property bool cfg_unhideOnAttentionDefault: false
+    property bool cfg_unhideOnAttentionDefault: true
     property bool cfg_animateAttentionStatus: true
     property bool cfg_animateAttentionStatusDefault: true
     property bool cfg_hideMoveToDesktopMenuWithOneDesktop: true
     property bool cfg_hideMoveToDesktopMenuWithOneDesktopDefault: true
     property int cfg_maxStripes: 0
-    property int cfg_maxStripesDefault: 0
+    property int cfg_maxStripesDefault: 1
     property int cfg_maxButtonLength: 0
-    property int cfg_maxButtonLengthDefault: 0
+    property int cfg_maxButtonLengthDefault: 200
     property bool cfg_forceStripes: false
     property bool cfg_forceStripesDefault: false
     property bool cfg_enableToolTips: true
@@ -43,17 +39,15 @@ Kirigami.Page {
     property bool cfg_showToolTips: true
     property bool cfg_showToolTipsDefault: true
     property int cfg_wheelAction: 1
-    property int cfg_wheelActionDefault: 1
+    property int cfg_wheelActionDefault: 2
     property int cfg_wheelCtrlAction: 2
-    property int cfg_wheelCtrlActionDefault: 2
+    property int cfg_wheelCtrlActionDefault: 5
     property bool cfg_wheelCtrlActionEnabled: true
     property bool cfg_wheelCtrlActionEnabledDefault: true
     property bool cfg_wheelShiftSystemVolumeEnabled: true
     property bool cfg_wheelShiftSystemVolumeEnabledDefault: true
     property bool cfg_showMediaControls: true
     property bool cfg_showMediaControlsDefault: true
-    property bool cfg_wheelSkipMinimized: false
-    property bool cfg_wheelSkipMinimizedDefault: false
     property bool cfg_highlightWindows: true
     property bool cfg_highlightWindowsDefault: true
     property bool cfg_indicateAudioStreams: true
@@ -69,7 +63,7 @@ Kirigami.Page {
     property int cfg_previewSize: 48
     property int cfg_previewSizeDefault: 48
     property bool cfg_fill: false
-    property bool cfg_fillDefault: false
+    property bool cfg_fillDefault: true
     property int cfg_fillAlignment: 0
     property int cfg_fillAlignmentDefault: 0
     property bool cfg_taskHoverEffect: true
@@ -77,13 +71,13 @@ Kirigami.Page {
     property int cfg_taskHoverEffectStyle: 0
     property int cfg_taskHoverEffectStyleDefault: 0
     property int cfg_maxTextLines: 1
-    property int cfg_maxTextLinesDefault: 1
+    property int cfg_maxTextLinesDefault: 0
     property bool cfg_minimizeActiveTaskOnClick: true
     property bool cfg_minimizeActiveTaskOnClickDefault: true
     property bool cfg_reverseMode: false
     property bool cfg_reverseModeDefault: false
     property int cfg_iconSpacing: 4
-    property int cfg_iconSpacingDefault: 4
+    property int cfg_iconSpacingDefault: 1
     property bool cfg_useBorders: true
     property bool cfg_useBordersDefault: true
     property int cfg_taskSpacingSize: 0
@@ -93,15 +87,15 @@ Kirigami.Page {
     property int cfg_plasmaButtonDirection: 0
     property int cfg_plasmaButtonDirectionDefault: 0
     property int cfg_iconZoomFactor: 0
-    property int cfg_iconZoomFactorDefault: 0
+    property int cfg_iconZoomFactorDefault: 20
     property int cfg_iconZoomDuration: 200
-    property int cfg_iconZoomDurationDefault: 200
+    property int cfg_iconZoomDurationDefault: 250
 
     // --- Appearance / Behavior ---
     property int cfg_groupingStrategy: 0
-    property int cfg_groupingStrategyDefault: 0
+    property int cfg_groupingStrategyDefault: 1
     property int cfg_iconOnly: 0
-    property int cfg_iconOnlyDefault: 0
+    property int cfg_iconOnlyDefault: 1
     property int cfg_groupedTaskVisualization: 0
     property int cfg_groupedTaskVisualizationDefault: 0
     property int cfg_sortingStrategy: 0
@@ -120,7 +114,7 @@ Kirigami.Page {
     property var cfg_launchers: []
     property var cfg_launchersDefault: []
     property int cfg_middleClickAction: 0
-    property int cfg_middleClickActionDefault: 0
+    property int cfg_middleClickActionDefault: 2
 
     // --- Task Button Appearance ---
     property bool cfg_buttonColorize: false
@@ -128,9 +122,9 @@ Kirigami.Page {
     property bool cfg_buttonColorizeInactive: false
     property bool cfg_buttonColorizeInactiveDefault: false
     property bool cfg_buttonColorizeDominant: false
-    property bool cfg_buttonColorizeDominantDefault: false
+    property bool cfg_buttonColorizeDominantDefault: true
     property string cfg_buttonColorizeCustom: ""
-    property string cfg_buttonColorizeCustomDefault: ""
+    property string cfg_buttonColorizeCustomDefault: "#FFFFFF"
     property bool cfg_disableButtonSvg: false
     property bool cfg_disableButtonSvgDefault: false
     property bool cfg_disableButtonInactiveSvg: false
@@ -151,11 +145,11 @@ Kirigami.Page {
 
     // --- Indicators ---
     property int cfg_indicatorsEnabled: 1
-    property int cfg_indicatorsEnabledDefault: 1
+    property int cfg_indicatorsEnabledDefault: 0
     property int cfg_indicatorProgressStyle: 0
-    property int cfg_indicatorProgressStyleDefault: 0
+    property int cfg_indicatorProgressStyleDefault: 1
     property string cfg_indicatorProgressColor: ""
-    property string cfg_indicatorProgressColorDefault: ""
+    property string cfg_indicatorProgressColorDefault: "#00FF00"
     property int cfg_indicatorProgressThickness: 2
     property int cfg_indicatorProgressThicknessDefault: 2
     property int cfg_indicatorProgressOpacity: 100
@@ -163,28 +157,26 @@ Kirigami.Page {
     property bool cfg_indicatorsAnimated: true
     property bool cfg_indicatorsAnimatedDefault: true
     property int cfg_groupIconEnabled: 0
-    property int cfg_groupIconEnabledDefault: 0
+    property int cfg_groupIconEnabledDefault: 1
     property int cfg_indicatorLocation: 0
     property int cfg_indicatorLocationDefault: 0
     property int cfg_indicatorStyle: 0
     property int cfg_indicatorStyleDefault: 0
-    property int cfg_indicatorMinLimit: 0
-    property int cfg_indicatorMinLimitDefault: 0
     property int cfg_indicatorMaxLimit: 0
-    property int cfg_indicatorMaxLimitDefault: 0
+    property int cfg_indicatorMaxLimitDefault: 4
     property bool cfg_indicatorDesaturate: false
     property bool cfg_indicatorDesaturateDefault: false
 
     property int cfg_indicatorEdgeOffset: 0
     property int cfg_indicatorEdgeOffsetDefault: 0
     property int cfg_indicatorSize: 0
-    property int cfg_indicatorSizeDefault: 0
+    property int cfg_indicatorSizeDefault: 4
     property int cfg_indicatorLength: 0
-    property int cfg_indicatorLengthDefault: 0
+    property int cfg_indicatorLengthDefault: 8
     property int cfg_indicatorRadius: 0
     property int cfg_indicatorRadiusDefault: 0
     property int cfg_indicatorShrink: 0
-    property int cfg_indicatorShrinkDefault: 0
+    property int cfg_indicatorShrinkDefault: 4
 
     property int cfg_indicatorActiveLength: 12
     property int cfg_indicatorActiveLengthDefault: 12
@@ -196,10 +188,6 @@ Kirigami.Page {
     property int cfg_indicatorHoverSizeDefault: 5
     property bool cfg_indicatorResize: true
     property bool cfg_indicatorResizeDefault: true
-    property bool cfg_indicatorResizeLength: true
-    property bool cfg_indicatorResizeLengthDefault: true
-    property bool cfg_indicatorResizeThickness: true
-    property bool cfg_indicatorResizeThicknessDefault: true
     property bool cfg_indicatorHoverSeparate: false
     property bool cfg_indicatorHoverSeparateDefault: false
     property bool cfg_indicatorGroupSeparate: false
@@ -221,15 +209,13 @@ Kirigami.Page {
     property bool cfg_indicatorDominantColor: false
     property bool cfg_indicatorDominantColorDefault: false
     property bool cfg_indicatorAccentColor: false
-    property bool cfg_indicatorAccentColorDefault: false
+    property bool cfg_indicatorAccentColorDefault: true
     property string cfg_indicatorCustomColor: ""
-    property string cfg_indicatorCustomColorDefault: ""
-    property bool cfg_indicatorReverse: false
-    property bool cfg_indicatorReverseDefault: false
+    property string cfg_indicatorCustomColorDefault: "white"
     property bool cfg_indicatorOverride: false
     property bool cfg_indicatorOverrideDefault: false
     property bool cfg_iconScaleFromEdge: false
-    property bool cfg_iconScaleFromEdgeDefault: false
+    property bool cfg_iconScaleFromEdgeDefault: true
     property int cfg_iconEdgeOffset: 0
     property int cfg_iconEdgeOffsetDefault: 0
     property bool cfg_showBadges: true

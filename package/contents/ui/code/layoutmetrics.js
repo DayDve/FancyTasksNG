@@ -27,10 +27,7 @@ function bottomMargin() {
     return taskFrame.margins.bottom * (tasks.vertical ? (Kirigami.Settings.tabletMode ? 1.5 : tasks.plasmoid.configuration.iconSpacing) : 1);
 }
 
-function rawLeftMargin() { return taskFrame.margins.left; }
-function rawRightMargin() { return taskFrame.margins.right; }
-function rawTopMargin() { return taskFrame.margins.top; }
-function rawBottomMargin() { return taskFrame.margins.bottom; }
+
 
 function horizontalMargins() {
     return leftMargin() + rightMargin();
@@ -153,7 +150,4 @@ function preferredMinLauncherWidth() {
         - (adjustMargin(baseWidth, taskFrame.margins.top) + adjustMargin(baseWidth, taskFrame.margins.bottom));
 }
 
-function maximumContextMenuTextWidth() {
-    return (Kirigami.Units.iconSizes.sizeForLabels * 28);
-}
 

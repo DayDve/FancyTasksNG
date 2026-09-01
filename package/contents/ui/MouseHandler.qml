@@ -22,10 +22,7 @@ DropArea {
 
     property var target
     property var hoveredItem
-    property bool isGroupDialog: false
     readonly property var config: Plasmoid.configuration
-
-    property alias handleWheelEvents: wheelHandler.handleWheelEvents
 
     required property var tasks
     required property var tasksModel
@@ -41,11 +38,7 @@ DropArea {
 
     onPositionChanged: event => {
         let above;
-        if (isGroupDialog) {
-            above = target.itemAt(event.x, event.y);
-        } else {
-            above = target.childAt(event.x, event.y);
-        }
+        above = target.childAt(event.x, event.y);
 
         if (!above) {
             hoveredItem = null;
