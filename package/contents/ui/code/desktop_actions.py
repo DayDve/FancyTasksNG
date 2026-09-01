@@ -27,6 +27,13 @@ import subprocess
 import sys
 import tempfile
 import xml.etree.ElementTree as ET
+import ctypes
+import signal
+
+import dbus
+import dbus.service
+from dbus.mainloop.glib import DBusGMainLoop
+from gi.repository import GLib
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
@@ -159,14 +166,12 @@ def get_storage_id(desktop_path):
 
 
 def get_current_activity():
-    """Get current KDE activity ID via qdbus6."""
+    """Get current KDE activity ID via D-Bus."""
     try:
-        result = subprocess.run(
-            ["qdbus6", "org.kde.ActivityManager",
-             "/ActivityManager/Activities", "CurrentActivity"],
-            capture_output=True, text=True, timeout=2
-        )
-        return result.stdout.strip()
+        bus = dbus.SessionBus()
+        obj = bus.get_object("org.kde.ActivityManager", "/ActivityManager/Activities")
+        iface = dbus.Interface(obj, "org.kde.ActivityManager.Activities")
+        return str(iface.CurrentActivity())
     except Exception:
         return None
 
@@ -588,12 +593,17 @@ def clear_recent_documents(desktop_path):
             # Ensure changes are written and visible to others
             cur.execute("PRAGMA wal_checkpoint(FULL)")
         
-        # Notify the daemon that stats have changed
-        subprocess.run([
-            "qdbus6", "org.kde.ActivityManager", "/ActivityManager/Resources/Scoring",
-            "org.freedesktop.DBus.Properties.EmitChanged", 
-            "org.kde.ActivityManager.ResourcesScoring"
-        ], capture_output=True, timeout=1)
+        # Notify the daemon that stats have changed via D-Bus
+        try:
+            bus = dbus.SessionBus()
+            obj = bus.get_object(
+                "org.kde.ActivityManager",
+                "/ActivityManager/Resources/Scoring"
+            )
+            props = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
+            props.EmitChanged("org.kde.ActivityManager.ResourcesScoring")
+        except Exception:
+            pass  # Non-critical: daemon will detect DB changes on next query
         
         return True
     except Exception as e:
@@ -651,13 +661,6 @@ def get_kde_places():
     return places
 
 
-import dbus
-import dbus.service
-from dbus.mainloop.glib import DBusGMainLoop
-from gi.repository import GLib
-import subprocess
-import ctypes
-import signal
 
 def set_pdeathsig():
     """Ensure the process dies when its parent (plasmashell) dies."""
