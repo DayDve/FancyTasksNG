@@ -137,6 +137,64 @@ Loader {
 
     readonly property bool isVerticalPanel: tasks.vertical
     readonly property int tooltipInstanceMaximumWidth: Kirigami.Units.gridUnit * 14
+    readonly property rect tooltipScreenGeometry: Plasmoid.containment?.screenGeometry ?? Qt.rect(0, 0, 0, 0)
+    readonly property bool hasValidTooltipScreenGeometry: tooltipScreenGeometry.width > 0 && tooltipScreenGeometry.height > 0
+    property real tooltipThumbnailAspectRatio: 16 / 9
+    readonly property int tooltipThumbnailHeight: Math.round(tooltipInstanceMaximumWidth / tooltipThumbnailAspectRatio)
+
+    function updateTooltipThumbnailAspectRatio(): void {
+        const model = toolTipDelegate.tasksModel;
+        const currentRootIndex = toolTipDelegate.rootIndex;
+        if (!model || currentRootIndex === undefined || !currentRootIndex.valid) {
+            toolTipDelegate.tooltipThumbnailAspectRatio = 16 / 9;
+            return;
+        }
+
+        const ratios = [];
+        const appendGeometryRatio = modelIndex => {
+            const geometry = model.data(modelIndex, TaskManager.AbstractTasksModel.Geometry);
+            if (geometry && geometry.width > 0 && geometry.height > 0) {
+                ratios.push(geometry.width / geometry.height);
+            }
+        };
+
+        if (toolTipDelegate.isGroup) {
+            for (let index = 0; index < toolTipDelegate.windows.length; ++index) {
+                appendGeometryRatio(model.makeModelIndex(currentRootIndex.row, index));
+            }
+        } else {
+            appendGeometryRatio(currentRootIndex);
+        }
+
+        if (ratios.length === 0) {
+            toolTipDelegate.tooltipThumbnailAspectRatio = 16 / 9;
+            return;
+        }
+
+        ratios.sort((left, right) => left - right);
+        const middle = Math.floor(ratios.length / 2);
+        const medianRatio = ratios.length % 2 === 1
+            ? ratios[middle]
+            : Math.sqrt(ratios[middle - 1] * ratios[middle]);
+        toolTipDelegate.tooltipThumbnailAspectRatio = Math.max(1, Math.min(2, medianRatio));
+    }
+
+    onRootIndexChanged: updateTooltipThumbnailAspectRatio()
+    onWindowsChanged: updateTooltipThumbnailAspectRatio()
+    onIsGroupChanged: updateTooltipThumbnailAspectRatio()
+    onTasksModelChanged: updateTooltipThumbnailAspectRatio()
+
+    Connections {
+        target: toolTipDelegate.parentTask
+
+        function onToolTipOpenChanged(): void {
+            if (toolTipDelegate.parentTask.toolTipOpen) {
+                toolTipDelegate.updateTooltipThumbnailAspectRatio();
+            }
+        }
+    }
+
+    Component.onCompleted: updateTooltipThumbnailAspectRatio()
 
     property bool forceTextMode: false
 
@@ -309,6 +367,9 @@ Loader {
             readonly property var config: toolTipDelegate.config
             readonly property var parentTask: toolTipDelegate.parentTask
             readonly property int tooltipInstanceMaximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
+            readonly property int tooltipThumbnailHeight: toolTipDelegate.tooltipThumbnailHeight
+            readonly property rect tooltipScreenGeometry: toolTipDelegate.tooltipScreenGeometry
+            readonly property bool hasValidTooltipScreenGeometry: toolTipDelegate.hasValidTooltipScreenGeometry
             readonly property var windows: toolTipDelegate.windows
             readonly property bool isVerticalPanel: toolTipDelegate.isVerticalPanel
             
@@ -331,8 +392,12 @@ Loader {
                 spacing: Kirigami.Units.smallSpacing
                 
                 readonly property int safeCount: groupRoot.isWin ? groupRoot.windows.length : 1
-                readonly property int maxTooltipWidth: Screen.width - Kirigami.Units.gridUnit * 2
-                readonly property int maxTooltipHeight: Screen.height - Kirigami.Units.gridUnit * 2
+                readonly property int maxTooltipWidth: (groupRoot.hasValidTooltipScreenGeometry
+                    ? groupRoot.tooltipScreenGeometry.width
+                    : Screen.width) - Kirigami.Units.gridUnit * 2
+                readonly property int maxTooltipHeight: (groupRoot.hasValidTooltipScreenGeometry
+                    ? groupRoot.tooltipScreenGeometry.height
+                    : Screen.height) - Kirigami.Units.gridUnit * 2
                 readonly property real contentTargetWidth: {
                      // Use same logic as DelegateModel
                      const count = (!groupRoot.showThumbnails || groupRoot.isVerticalPanel) ? 1 : safeCount;
@@ -436,11 +501,9 @@ Loader {
 
                     readonly property int safeCount: groupRoot.isWin ? groupRoot.windows.length : count
 
-                    readonly property real screenRatio: Screen.width / Screen.height
-                    
                     // If thumbnails disabled -> height is 0
                     readonly property int instanceThumbHeight: groupRoot.showThumbnails ? 
-                        Math.round(groupRoot.tooltipInstanceMaximumWidth / screenRatio) : 0
+                        groupRoot.tooltipThumbnailHeight : 0
                     
                     // Reduced padding for overlay style (was * 3)
                     // Fallback to 2 grid units for Text Mode items
