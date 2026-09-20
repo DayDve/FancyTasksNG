@@ -26,8 +26,8 @@ Everything is managed via `make` from the **root directory of the project**:
 ## Status
 | Locale   | Lines   | % Done |
 |----------|---------|--------|
-| Template | 262     |        |
-| nl       | 60/262  | 22%    |
-| pt_BR    | 63/262  | 24%    |
-| ru       | 262/262 | 100%   |
-| zh_CN    | 60/262  | 22%    |
+| Template | 264     |        |
+| nl       | 60/264  | 22%    |
+| pt_BR    | 63/264  | 23%    |
+| ru       | 262/264 | 99%    |
+| zh_CN    | 60/264  | 22%    |
