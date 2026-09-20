@@ -273,13 +273,21 @@ Flow {
         }
     }
     
+    // Shared "should this edge's State be active" check for the four states below.
+    // isFloatingDefault marks the one edge (bottom) that a floating panel falls
+    // back to when the user hasn't set an override at all.
+    function edgeMatches(edgeIndex, edgeType, isFloatingDefault) {
+        const cfg = indicatorsFlow.config;
+        const effectiveLocation = indicatorsFlow.tasksRoot.effectiveLocation;
+        if (cfg.indicatorOverride && cfg.indicatorLocation === edgeIndex) return true;
+        if (!cfg.indicatorOverride && effectiveLocation === edgeType) return true;
+        return isFloatingDefault && effectiveLocation === PlasmaCore.Types.Floating && !cfg.indicatorOverride;
+    }
+
     states:[
         State {
             name: "bottom"
-            when: (indicatorsFlow.config.indicatorOverride && indicatorsFlow.config.indicatorLocation === 0)
-                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.BottomEdge)
-                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && indicatorsFlow.config.indicatorLocation === 0)
-                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && !indicatorsFlow.config.indicatorOverride)
+            when: indicatorsFlow.edgeMatches(0, PlasmaCore.Types.BottomEdge, true)
 
             AnchorChanges {
                 target: indicatorsFlow
@@ -299,9 +307,7 @@ Flow {
         },
         State {
             name: "left"
-            when: (indicatorsFlow.config.indicatorOverride && indicatorsFlow.config.indicatorLocation === 1)
-                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.LeftEdge)
-                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && indicatorsFlow.config.indicatorLocation === 1 && indicatorsFlow.config.indicatorOverride)
+            when: indicatorsFlow.edgeMatches(1, PlasmaCore.Types.LeftEdge, false)
 
             AnchorChanges {
                 target: indicatorsFlow
@@ -320,9 +326,7 @@ Flow {
         },
         State {
             name: "right"
-            when: (indicatorsFlow.config.indicatorOverride && indicatorsFlow.config.indicatorLocation === 2)
-                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.RightEdge)
-                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && indicatorsFlow.config.indicatorLocation === 2 && indicatorsFlow.config.indicatorOverride)
+            when: indicatorsFlow.edgeMatches(2, PlasmaCore.Types.RightEdge, false)
 
             AnchorChanges {
                 target: indicatorsFlow
@@ -341,9 +345,7 @@ Flow {
         },
         State {
             name: "top"
-            when: (indicatorsFlow.config.indicatorOverride && indicatorsFlow.config.indicatorLocation === 3)
-                || (!indicatorsFlow.config.indicatorOverride && indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.TopEdge)
-                || (indicatorsFlow.tasksRoot.effectiveLocation === PlasmaCore.Types.Floating && indicatorsFlow.config.indicatorLocation === 3 && indicatorsFlow.config.indicatorOverride)
+            when: indicatorsFlow.edgeMatches(3, PlasmaCore.Types.TopEdge, false)
 
             AnchorChanges {
                 target: indicatorsFlow
