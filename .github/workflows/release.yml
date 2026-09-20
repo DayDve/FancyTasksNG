@@ -1,9 +1,8 @@
 name: Create Release
 
 on:
-  push:
-    tags:
-      - "v*"
+  release:
+    types: [published]
   workflow_dispatch:
 
 jobs:
@@ -51,3 +50,29 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to KDE Store
+        id: kde_store
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          KDE_STORE_USER: ${{ secrets.KDE_STORE_USER }}
+          KDE_STORE_PASSWORD: ${{ secrets.KDE_STORE_PASSWORD }}
+        run: |
+          pip install --quiet requests
+          python3 .github/scripts/publish_kde_store.py \
+            --version "${{ steps.asset.outputs.version }}" \
+            --file "${{ steps.asset.outputs.asset_path }}" \
+            --changelog-file release_notes.txt
+
+      - name: Notify on KDE Store publish failure
+        if: failure() && steps.kde_store.outcome == 'failure'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -sS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            -d parse_mode="Markdown" \
+            -d text="⚠️ *FancyTasksNG*: KDE Store publish failed for release \`${{ github.ref_name }}\`.
+          GitHub Release itself was created fine — only the store.kde.org listing update failed.
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

@@ -7,8 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-09-21
+
 ### Added
 - **Tooltip Media Bar:** Show an inline volume slider in the media bar when playback controls (e.g. play/pause/prev/next) are not present.
+- **Task Filters:** Added an "Invert selected filters" option — hides tasks matching the active filters (current screen, virtual desktop, or activity) instead of showing them, making it easy to set up a secondary taskbar for other screens/desktops (fixes #28).
+- **Notification Badges:** Added a badge background color mode setting — Adaptive (theme color, default), Fixed red (classic), System accent color, or Custom color with a picker (fixes #36).
+- **Task Indicators:** Added a "Dim inactive indicators" option with a configurable opacity, decoupled from the active-highlight dimming logic, which is now restricted to grouped tasks to avoid unwanted dimming of single inactive window indicators (fixes #47).
+- **Context Menu:** Added a per-activity pinning submenu for launchers, matching the stock Task Manager's behavior — with a single activity, "Pin to Task Manager" behaves as before; with 2+ activities, it shows a submenu (On All Activities / On The Current Activity / one entry per activity) so a shortcut can be pinned to specific activities (fixes #50, thanks to @leferi99 for the port in PR #51).
 
 ### Refactored
 - **Property Caching & Optimization:** Extensively cached configuration, global settings, and context properties across multiple QML components to resolve performance bottlenecks, reduce CPU load, and optimize binding evaluation. Affected components:
@@ -24,6 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Bridge & JS Cleanup:** Removed 6 dead media bridge readonly properties and 2 forwarding methods from `ToolTipInstance` — child loaders bind directly to `mediaController`. Removed per-badge-update `console.log` noise from `BadgeManager`. Removed 5 dead helpers from `layoutmetrics.js` (`rawLeft/Right/Top/BottomMargin`, `maximumContextMenuTextWidth`).
 - **LivePreview Dependency Injection:** Promoted `cfg_page` from nullable `var` to `required property` in `LivePreview.qml`, removing 11 defensive null-guards — all 4 instantiation sites always supply the value.
 - **Python Bridge:** Replaced 2 `subprocess qdbus6` shell-outs in `desktop_actions.py` with native `dbus-python` calls (`get_current_activity`, `ResourcesScoring.EmitChanged`). Moved deferred `dbus`/`GLib` imports to the top of the module.
+- **Indicators Position Logic:** Deduplicated the near-identical edge-matching condition repeated across the 4 position `State`s (bottom/left/right/top) into a single `edgeMatches()` function; this also surfaced and removed one branch that was already fully redundant with the others.
+- **Context Menu & Desktop Actions Cache:** Unified cache-key construction between `query()`, `prefetch()`, and `_doQuery()` in `DesktopActionsManager` behind one shared helper, and deduplicated the "should show browser history" predicate that was independently repeated in `Task.qml` and `ContextMenu.qml`.
+- **Tooltip Root Index:** Replaced an implicit `||`-fallback for the tooltip's model index with an explicit check, removing reliance on an unenforced assumption about `modelIndex()`'s return value.
 
 ### Fixed
 - **Badge Icon Color:** Fixed `Kirigami.Icon` color binding in `Badge.qml` to respect custom badge background color modes (modes 1, 2, and 3) in addition to urgent state (fixes #36).
@@ -39,6 +48,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Plasmoid Sizing:** Fixed an issue where the plasmoid did not shrink to zero size when all visible tasks were filtered out (e.g., in "only minimized" or "only not minimized" modes), leaving an empty space on the panel (fixes #30).
 - **Icon Sizing:** Fixed icons scaling up to giant sizes on right-click (context menu) when in classic mode or when hover zoom effects are disabled (fixes #29).
 - **Tooltip Shrinkage:** Fixed an issue where the tooltip window would shrink to a small dot on show/hide and during transitions between task icons (fixes #32).
+- **Indicator Dimming:** Fixed inactive-indicator dimming not applying to single (non-grouped) windows and decoupled the setting from `indicatorResize` (fixes #39).
+- **Audio Mute Badge:** Fixed the mute badge remaining visible when "Indicate audio streams" is disabled (fixes #37).
+- **File Descriptor Leak:** Fixed a crash caused by `plasmashell` running out of open files after extended use on Wayland, by guarding the PipeWire and X11 thumbnail loaders with the "Show thumbnails" setting so they stop grabbing frames when thumbnails are off (fixes #42).
+- **Blank Tooltip Frame:** Fixed an empty tooltip frame appearing when "Show tooltips" is disabled (fixes #46).
+- **Tooltip Fallback Icon:** Fixed the fallback app icon in tooltips briefly flashing before a live PipeWire preview loads, and fixed a bug where, once the fallback's fade-in animation had run, the icon's visibility could get permanently stuck regardless of the actual thumbnail state (thanks to @77x7 for the fix in PR #48).
+- **Live Preview Thumbnail Cache:** Fixed a cached window preview sometimes failing to display or update in the tooltip fallback image, caused by a property reassignment that didn't propagate through the delegate chain.
+- **Desktop Actions Cache Miss:** Fixed jump-list/recent-documents lookups missing their prefetched cache entry (and re-querying over D-Bus unnecessarily) for pinned, non-running applications, caused by inconsistent cache-key construction.
+- **Desktop Actions Bridge Freeze:** Bounded the D-Bus call timeout when querying the current KDE Activity from the desktop-actions bridge, and reused a single D-Bus connection instead of opening a new one per call, preventing the bridge's single-threaded event loop from freezing indefinitely if the Activity Manager becomes unresponsive.
 
 ## [2.0.1] - 2026-06-08
 
