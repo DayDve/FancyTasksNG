@@ -962,7 +962,13 @@ PlasmoidItem {
 
                     // parentTask.index is a row in the filtered proxy; map it to the source model,
                     // otherwise lookups below read the wrong task whenever filters are active
-                    rootIndex: (parentTask && parentTask.modelIndex()) || internalTasksModel.makeModelIndex(parentTask ? parentTask.index : 0, -1)
+                    rootIndex: {
+                        if (parentTask) {
+                            const idx = parentTask.modelIndex();
+                            if (idx !== undefined && idx !== null) return idx;
+                        }
+                        return internalTasksModel.makeModelIndex(parentTask ? parentTask.index : 0, -1);
+                    }
                     appName: taskModel ? taskModel.AppName : ""
                     pidParent: taskModel ? taskModel.AppPid : 0
                     windows: taskModel ? taskModel.WinIdList : []
