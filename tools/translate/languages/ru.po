@@ -975,11 +975,11 @@ msgstr "&Закрепить в панели задач"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "On All Activities"
-msgstr ""
+msgstr "Во всех комнатах"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "On The Current Activity"
-msgstr ""
+msgstr "В текущей комнате"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Unpin from Task Manager"
