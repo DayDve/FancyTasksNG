@@ -908,7 +908,7 @@ Item {
             // Same parameters ContextMenu.query() will use, so the prefetched cache entry actually hits
             DesktopActionsManager.prefetch(task.model.LauncherUrlWithoutIcon,
                 task.model.AppPid,
-                task.model.AppPid > 0 && task.config.showBrowserHistory,
+                DesktopActionsManager.shouldShowHistory(task.model.AppPid, task.config.showBrowserHistory),
                 task.config.browserHistoryLimit);
         }
     }

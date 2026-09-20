@@ -299,7 +299,7 @@ PlasmaExtras.Menu {
 
     function loadDynamicLaunchActions(launcherUrl: url, onReady: var): void {
         // Query desktop file actions and recent documents
-        const showHistory = get(atm.AppPid) > 0 && config.showBrowserHistory;
+        const showHistory = DesktopActionsManager.shouldShowHistory(get(atm.AppPid), config.showBrowserHistory);
         DesktopActionsManager.query(launcherUrl, get(atm.AppPid), showHistory, config.browserHistoryLimit, result => {
             _insertDesktopActions(result, launcherUrl);
             if (onReady)

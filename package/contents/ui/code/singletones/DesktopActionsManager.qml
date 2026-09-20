@@ -29,16 +29,31 @@ Item {
         }
     }
 
-    function query(launcherUrl, appPid, showHistory, limit, callback) {
-        const key = String(launcherUrl) + "|" + appPid + "|" + showHistory + "|" + limit;
+    // Single source of truth for the cache key: query/prefetch/_doQuery must
+    // agree on it, or a prefetched entry silently misses when re-queried.
+    function _buildKey(launcherUrl, appPid, showHistory, limit) {
+        appPid = parseInt(appPid || 0);
+        showHistory = !!showHistory;
+        limit = parseInt(limit || 10);
+        return String(launcherUrl) + "|" + appPid + "|" + showHistory + "|" + limit;
+    }
 
-        // Always do a background query to keep data fresh, 
+    // Shared gate for "should browser history be requested": history only
+    // makes sense for an app with a valid running-process id.
+    function shouldShowHistory(appPid, enabled) {
+        return !!enabled && parseInt(appPid || 0) > 0;
+    }
+
+    function query(launcherUrl, appPid, showHistory, limit, callback) {
+        const key = _buildKey(launcherUrl, appPid, showHistory, limit);
+
+        // Always do a background query to keep data fresh,
         // but if we have cache, we can return it immediately for instant UI
         if (key in cache && callback) {
             callback(cache[key]);
-            // If we already have a callback, we might not want to re-trigger UI 
+            // If we already have a callback, we might not want to re-trigger UI
             // but we SHOULD update the cache in background.
-            _doQuery(String(launcherUrl), appPid, showHistory, limit, null); 
+            _doQuery(String(launcherUrl), appPid, showHistory, limit, null);
             return;
         }
 
@@ -47,10 +62,7 @@ Item {
 
     function prefetch(launcherUrl, appPid, showHistory, limit) {
         if (!launcherUrl) return;
-        appPid = parseInt(appPid || 0);
-        showHistory = !!showHistory;
-        limit = parseInt(limit || 10);
-        const key = String(launcherUrl) + "|" + appPid + "|" + showHistory + "|" + limit;
+        const key = _buildKey(launcherUrl, appPid, showHistory, limit);
         // Only prefetch if NOT in cache to avoid spam
         if (!(key in cache)) {
             _doQuery(String(launcherUrl), appPid, showHistory, limit, null);
@@ -58,7 +70,7 @@ Item {
     }
 
     function _doQuery(launcherUrl, appPid, showHistory, limit, callback) {
-        const key = String(launcherUrl) + "|" + appPid + "|" + showHistory + "|" + limit;
+        const key = _buildKey(launcherUrl, appPid, showHistory, limit);
         const pendingReply = DBus.SessionBus.asyncCall({
             "service": "io.github.daydve.fancytasksng.DesktopActions",
             "path": "/DesktopActions",
