@@ -46,8 +46,12 @@ Rectangle {
     readonly property int badgeColorMode: (Plasmoid.configuration && Plasmoid.configuration.badgeColorMode !== undefined) ? Plasmoid.configuration.badgeColorMode : 0
     readonly property color badgeCustomColor: (Plasmoid.configuration && Plasmoid.configuration.badgeCustomColor) ? Plasmoid.configuration.badgeCustomColor : "#ff3b30"
 
+    // badgeColorMode is a 0-3 Enum (0 = theme default); non-zero means a fixed/custom color is in play
+    readonly property bool _nonDefaultColorMode: badgeColorMode !== 0
+    readonly property bool _highlightMode: _nonDefaultColorMode || isUrgent
+
     // Configurable color for the text-based icon, defaulting to theme logic
-    property color textIconColor: (badgeColorMode === 1 || badgeColorMode === 2 || badgeColorMode === 3 || isUrgent) ? badgeRect._highlightedTextColor : badgeRect._textColor
+    property color textIconColor: _highlightMode ? badgeRect._highlightedTextColor : badgeRect._textColor
 
     // Height should be set from outside, width is adaptive
     width: {
@@ -73,11 +77,11 @@ Rectangle {
 
     // Bright border using highlight color, subtle when not urgent in Theme mode, transparent in Fixed modes
     border.color: {
-        if (!showBackground || badgeColorMode === 1 || badgeColorMode === 2 || badgeColorMode === 3) return "transparent";
+        if (!showBackground || _nonDefaultColorMode) return "transparent";
         return (isUrgent || !badgeRect.showNumber) ? "transparent" : badgeRect._highlightColor;
     }
     border.width: 1 // Keep it thin and elegant
-    opacity: (badgeColorMode === 1 || badgeColorMode === 2 || badgeColorMode === 3 || isUrgent) ? 1.0 : 0.85
+    opacity: _highlightMode ? 1.0 : 0.85
     
     visible: (number > 0) || (textSource !== "")
 
@@ -193,7 +197,7 @@ Rectangle {
         
         renderType: Text.QtRendering
         antialiasing: true
-        color: (badgeRect.badgeColorMode === 1 || badgeRect.badgeColorMode === 2 || badgeRect.badgeColorMode === 3 || badgeRect.isUrgent) ? badgeRect._highlightedTextColor : badgeRect._textColor
+        color: badgeRect.textIconColor
         visible: badgeRect.number > 0 && badgeRect.showNumber
         
         text: {
