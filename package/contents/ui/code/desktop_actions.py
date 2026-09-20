@@ -165,13 +165,31 @@ def get_storage_id(desktop_path):
     return basename
 
 
+_session_bus = None
+
+
+def _get_session_bus():
+    """Return a cached session bus connection shared by all D-Bus helper calls."""
+    global _session_bus
+    if _session_bus is None:
+        _session_bus = dbus.SessionBus()
+    return _session_bus
+
+
 def get_current_activity():
     """Get current KDE activity ID via D-Bus."""
     try:
-        bus = dbus.SessionBus()
-        obj = bus.get_object("org.kde.ActivityManager", "/ActivityManager/Activities")
-        iface = dbus.Interface(obj, "org.kde.ActivityManager.Activities")
-        return str(iface.CurrentActivity())
+        bus = _get_session_bus()
+        # Bounded timeout: this runs on the service's single mainloop, so a hung
+        # ActivityManager must not be able to freeze every tooltip/menu query.
+        activity = bus.call_blocking(
+            "org.kde.ActivityManager",
+            "/ActivityManager/Activities",
+            "org.kde.ActivityManager.Activities",
+            "CurrentActivity", "", [],
+            timeout=2.0,
+        )
+        return str(activity)
     except Exception:
         return None
 
@@ -595,13 +613,14 @@ def clear_recent_documents(desktop_path):
         
         # Notify the daemon that stats have changed via D-Bus
         try:
-            bus = dbus.SessionBus()
-            obj = bus.get_object(
+            bus = _get_session_bus()
+            bus.call_blocking(
                 "org.kde.ActivityManager",
-                "/ActivityManager/Resources/Scoring"
+                "/ActivityManager/Resources/Scoring",
+                "org.freedesktop.DBus.Properties",
+                "EmitChanged", "s", ["org.kde.ActivityManager.ResourcesScoring"],
+                timeout=1.0,
             )
-            props = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
-            props.EmitChanged("org.kde.ActivityManager.ResourcesScoring")
         except Exception:
             pass  # Non-critical: daemon will detect DB changes on next query
         
