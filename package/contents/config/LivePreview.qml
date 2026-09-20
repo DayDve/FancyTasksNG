@@ -24,7 +24,7 @@ Item {
     Layout.fillWidth: true
     Layout.maximumWidth: 650
     Layout.alignment: Qt.AlignLeft
-    implicitHeight: cfg_page && cfg_page.cfg_showLivePreview ? 290 : titleLayout.height
+    implicitHeight: cfg_page.cfg_showLivePreview ? 290 : titleLayout.height
     clip: false
 
     readonly property int locationBottom: PlasmaCore.Types.BottomEdge
@@ -82,7 +82,7 @@ Item {
     }
 
     // Current hover state for tooltip positioning parity
-    readonly property int effectiveGrowSize: (zoomedTaskItem && cfg_page && cfg_page.cfg_iconOnly === 1 && cfg_page.cfg_taskHoverEffect) ? cfg_page.cfg_iconZoomFactor : 0
+    readonly property int effectiveGrowSize: (zoomedTaskItem && cfg_page.cfg_iconOnly === 1 && cfg_page.cfg_taskHoverEffect) ? cfg_page.cfg_iconZoomFactor : 0
 
     readonly property int currentEdgeIdx: {
         switch (location) {
@@ -103,7 +103,7 @@ Item {
     // Multistripe simulation
     readonly property int taskCountDisplay: taskModel.count
     readonly property int simulatedStripeCount: {
-        let maxS = (cfg_page && cfg_page.cfg_maxStripes !== undefined) ? cfg_page.cfg_maxStripes : 1
+        let maxS = cfg_page.cfg_maxStripes !== undefined ? cfg_page.cfg_maxStripes : 1
         if (maxS <= 1) return 1
 
         // preferredMinHeight from LayoutMetrics.js
@@ -115,7 +115,7 @@ Item {
     readonly property int laneHeight: Math.floor(simulatedThickness / simulatedStripeCount)
 
     // Inner padding (iconSpacing) logic
-    readonly property real spacingAdjustment: (cfg_page && cfg_page.cfg_iconSpacing !== undefined) ? cfg_page.cfg_iconSpacing : 1
+    readonly property real spacingAdjustment: cfg_page.cfg_iconSpacing !== undefined ? cfg_page.cfg_iconSpacing : 1
     function horizontalMargins() {
         return (taskFrame.margins.left + taskFrame.margins.right) * (isVertical ? 1 : spacingAdjustment)
     }
@@ -170,7 +170,7 @@ Item {
             id: headerToggle
             leftPadding: 0
             checked: previewRoot.cfg_page.cfg_showLivePreview
-            onToggled: if (previewRoot.cfg_page) previewRoot.cfg_page.cfg_showLivePreview = checked
+            onToggled: previewRoot.cfg_page.cfg_showLivePreview = checked
         }
 
         Label {
@@ -189,7 +189,7 @@ Item {
         anchors.bottom: parent.bottom
         padding: Kirigami.Units.smallSpacing
         topPadding: Kirigami.Units.mediumSpacing
-        visible: previewRoot.cfg_page && previewRoot.cfg_page.cfg_showLivePreview
+        visible: previewRoot.cfg_page.cfg_showLivePreview
     }
 
     ColumnLayout {
@@ -247,8 +247,8 @@ Item {
                         id: localSizeSpinner
                         from: 24
                         to: 128
-                        value: previewRoot.cfg_page && previewRoot.cfg_page.cfg_previewSize !== undefined ? previewRoot.cfg_page.cfg_previewSize : 48
-                        onValueModified: { if (previewRoot.cfg_page) previewRoot.cfg_page.cfg_previewSize = value }
+                        value: previewRoot.cfg_page.cfg_previewSize !== undefined ? previewRoot.cfg_page.cfg_previewSize : 48
+                        onValueModified: { previewRoot.cfg_page.cfg_previewSize = value }
                         stepSize: 2
                         editable: true
 
