@@ -164,27 +164,29 @@ PlasmoidItem {
 
     function cacheThumbnail(winId, result) {
         const now = Date.now();
-        // Evict entries older than TTL first, then enforce cap by dropping oldest
-        const keys = Object.keys(thumbnailCache);
-        for (const k of keys) {
-            if (now - thumbnailCache[k].stamp > thumbnailCacheTtlMs) {
-                delete thumbnailCache[k];
+        // Build a fresh object rather than mutating in place: reassigning the
+        // property (not just its contents) is what makes the change propagate
+        // through the tasks.thumbnailCache -> toolTipDelegate.thumbnailCache
+        // binding chain, since QML skips a changed signal when the rebound
+        // value is reference-equal to the previous one.
+        const next = {};
+        let count = 0;
+        let oldestKey = null, oldestStamp = Infinity;
+        for (const k of Object.keys(thumbnailCache)) {
+            const entry = thumbnailCache[k];
+            if (now - entry.stamp > thumbnailCacheTtlMs) continue; // evict stale
+            next[k] = entry;
+            count++;
+            if (entry.stamp < oldestStamp) {
+                oldestStamp = entry.stamp;
+                oldestKey = k;
             }
         }
-        const remaining = Object.keys(thumbnailCache);
-        if (remaining.length >= thumbnailCacheMax) {
-            // Drop the oldest entry
-            let oldest = null, oldestStamp = Infinity;
-            for (const k of remaining) {
-                if (thumbnailCache[k].stamp < oldestStamp) {
-                    oldestStamp = thumbnailCache[k].stamp;
-                    oldest = k;
-                }
-            }
-            if (oldest !== null) delete thumbnailCache[oldest];
+        if (count >= thumbnailCacheMax && oldestKey !== null) {
+            delete next[oldestKey]; // enforce cap by dropping the oldest survivor
         }
-        thumbnailCache[winId] = { result: result, stamp: now };
-        thumbnailCacheChanged(); // notify bindings
+        next[winId] = { result: result, stamp: now };
+        thumbnailCache = next;
     }
 
     onCurrentHoveredTaskChanged: {
