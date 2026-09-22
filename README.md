@@ -69,6 +69,11 @@ If you prefer not to use `make`, you can download the latest `FancyTasksNG.plasm
 kpackagetool6 -t Plasma/Applet --install FancyTasksNG.plasmoid
 ```
 
+### Testing an in-development build
+Want to try a fix or feature before it's released? Every commit to `develop` that touches the widget gets built automatically and uploaded as a workflow artifact — no need to build it yourself. Grab it from the **[Nightly Build workflow runs](https://github.com/daydve/FancyTasksNG/actions/workflows/nightly.yml)**: open the latest successful run and download the `.plasmoid` from its Artifacts section (requires being signed in to GitHub), then install it the same way as above.
+
+*(These are unreleased, in-progress builds — expect rough edges. The version shown in the widget's settings tells you exactly which commit it was built from.)*
+
 ### From the KDE Store
 You can also grab it from the [KDE Store](https://store.kde.org/p/2350434) straight through the Plasma "Get New Widgets" dialog.
 *(Note: The KDE Store version might occasionally be a bit behind the GitHub releases.)*
