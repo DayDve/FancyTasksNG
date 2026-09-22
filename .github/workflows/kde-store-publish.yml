@@ -1,0 +1,77 @@
+name: Publish to KDE Store
+
+# Deliberately manual-only (workflow_dispatch) for now, decoupled from the
+# `release.yml` GitHub Release flow, so the store.kde.org publish step can be
+# debugged/re-run in isolation without touching the GitHub Release. Once a
+# real (non-dry-run) publish has been confirmed working, add back:
+#   on:
+#     release:
+#       types: [published]
+# so it fires automatically alongside release.yml again.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to build and publish (e.g. v2.1.0)"
+        required: true
+      dry_run:
+        description: "Dry run (no changes made on store.kde.org)"
+        type: boolean
+        default: true
+
+jobs:
+  publish-kde-store:
+    name: Publish to KDE Store
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext zip jq
+          pip install --quiet requests
+
+      - name: Build Plasmoid
+        run: |
+          make build
+
+      - name: Prepare Release Asset
+        id: asset
+        run: |
+          VERSION=$(jq -r '.KPlugin.Version' package/metadata.json)
+          ASSET_NAME="FancyTasksNG.plasmoid"
+          mv release/FancyTasksNG.plasmoid "$ASSET_NAME"
+          echo "asset_path=$ASSET_NAME" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          awk -v ver="[${VERSION}]" '/^## / { if (index($0, ver) > 0) { flag = 1; next } else if (flag) { flag = 0 } } flag' CHANGELOG.md > release_notes.txt
+
+      - name: Publish to KDE Store
+        id: kde_store
+        env:
+          KDE_STORE_USER: ${{ secrets.KDE_STORE_USER }}
+          KDE_STORE_PASSWORD: ${{ secrets.KDE_STORE_PASSWORD }}
+        run: |
+          python3 .github/scripts/publish_kde_store.py \
+            --version "${{ steps.asset.outputs.version }}" \
+            --file "${{ steps.asset.outputs.asset_path }}" \
+            --changelog-file release_notes.txt \
+            --verbose \
+            ${{ inputs.dry_run == true && '--dry-run' || '' }}
+
+      - name: Notify on KDE Store publish failure
+        if: failure() && steps.kde_store.outcome == 'failure'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -sS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            -d parse_mode="Markdown" \
+            -d text="⚠️ *FancyTasksNG*: KDE Store publish failed for \`${{ inputs.tag }}\`.
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
