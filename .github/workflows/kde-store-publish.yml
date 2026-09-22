@@ -1,15 +1,12 @@
 name: Publish to KDE Store
 
-# Deliberately manual-only (workflow_dispatch) for now, decoupled from the
-# `release.yml` GitHub Release flow, so the store.kde.org publish step can be
-# debugged/re-run in isolation without touching the GitHub Release. Once a
-# real (non-dry-run) publish has been confirmed working, add back:
-#   on:
-#     release:
-#       types: [published]
-# so it fires automatically alongside release.yml again.
+# Runs automatically on every published GitHub Release, and can also be
+# triggered manually (e.g. to re-run for a past tag, or with dry_run=true to
+# check without publishing).
 
 on:
+  release:
+    types: [published]
   workflow_dispatch:
     inputs:
       tag:
@@ -29,7 +26,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.tag }}
+          ref: ${{ inputs.tag || github.ref_name }}
 
       - name: Install dependencies
         run: |
@@ -73,5 +70,5 @@ jobs:
           curl -sS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             -d chat_id="${TELEGRAM_CHAT_ID}" \
             -d parse_mode="Markdown" \
-            -d text="⚠️ *FancyTasksNG*: KDE Store publish failed for \`${{ inputs.tag }}\`.
+            -d text="⚠️ *FancyTasksNG*: KDE Store publish failed for \`${{ inputs.tag || github.ref_name }}\`.
           Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
