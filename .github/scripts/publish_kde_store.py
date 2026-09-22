@@ -85,6 +85,24 @@ def extract_input_value(html, field_name):
     return ""
 
 
+def extract_selected_option(html, select_name):
+    """Extract the `value` of the <option selected> within a named <select>
+    (license_tag_id and similar fields are <select>s, not <input>s, so
+    extract_input_value()/extract_all_inputs() never see them)."""
+    select_match = re.search(rf'<select\b[^>]*name=["\']{select_name}["\'][^>]*>(.*?)</select>', html, re.IGNORECASE | re.DOTALL)
+    if not select_match:
+        return ""
+    patterns = [
+        r'<option\s+[^>]*selected[^>]*value=["\']([^"\']*)["\']',
+        r'<option\s+[^>]*value=["\']([^"\']*)["\'][^>]*selected',
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, select_match.group(1), re.IGNORECASE)
+        if match:
+            return match.group(1)
+    return ""
+
+
 def extract_all_inputs(html):
     """Extract all input name-value pairs from an HTML string."""
     inputs = {}
@@ -357,7 +375,7 @@ def get_product_edit_info(session, product_id):
         'project_category_id': inputs.get('project_category_id') or extract_input_value(html, 'project_category_id') or '',
         'title': inputs.get('title') or extract_input_value(html, 'title') or '',
         'source_url': inputs.get('source_url') or extract_input_value(html, 'source_url') or '',
-        'license_tag_id': inputs.get('license_tag_id') or extract_input_value(html, 'license_tag_id') or '',
+        'license_tag_id': inputs.get('license_tag_id') or extract_input_value(html, 'license_tag_id') or extract_selected_option(html, 'license_tag_id') or '',
         'image_small': inputs.get('image_small') or extract_input_value(html, 'image_small') or '',
         'online_picture_1': inputs.get('online_picture[1]') or extract_input_value(html, 'online_picture[1]') or '',
         'upload_url': upload_url,
@@ -634,7 +652,7 @@ def update_product_metadata(session, product_id, edit_info, description, version
         'version': version,
         'source_url': edit_info['source_url'],
         'is_original_or_modification': '2',  # 2 = Modification/Fork (this is a fork of the original FancyTasks)
-        'license_tag_id': edit_info['license_tag_id'] or '368',
+        'license_tag_id': edit_info['license_tag_id'] or '349',  # 349 = GPLv3 (fallback only; normally read from the live selection)
         'cc_by_info': '',
         'tagsuser[]': PRODUCT_TAGS,
         'image_small': edit_info.get('image_small', ''),
