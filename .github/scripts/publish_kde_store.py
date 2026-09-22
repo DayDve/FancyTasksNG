@@ -633,7 +633,7 @@ def update_product_metadata(session, product_id, edit_info, description, version
         'description': description,
         'version': version,
         'source_url': edit_info['source_url'],
-        'is_original_or_modification': '1',
+        'is_original_or_modification': '2',  # 2 = Modification/Fork (this is a fork of the original FancyTasks)
         'license_tag_id': edit_info['license_tag_id'] or '368',
         'cc_by_info': '',
         'tagsuser[]': PRODUCT_TAGS,
