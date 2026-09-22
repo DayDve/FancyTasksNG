@@ -8,11 +8,25 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 source "${SCRIPT_DIR}/functions.sh"
 
 PACKAGE_DIR="$(readlink -f "${SCRIPT_DIR}/../package")"
+INSTALL_DIR="${SCRIPT_DIR}/build-install"
+
+cleanup() {
+    rm -rf "${INSTALL_DIR}"
+}
+trap cleanup EXIT
 
 log_info "Compiling translations..."
 "${SCRIPT_DIR}/compile_messages.sh"
 
+# Stage a copy so the version can be stamped without touching the committed
+# package/metadata.json (see resolve_display_version in functions.sh).
+rm -rf "${INSTALL_DIR}"
+mkdir -p "${INSTALL_DIR}"
+cp -r "${PACKAGE_DIR}"/{contents,metadata.json,icon.svg} "${INSTALL_DIR}"
+DISPLAY_VERSION="$(resolve_display_version "${INSTALL_DIR}/metadata.json")"
+set_metadata_version "${INSTALL_DIR}/metadata.json" "${DISPLAY_VERSION}"
+
 log_info "Installing plasmoid ..."
-kpackagetool6 -t Plasma/Applet --install "${PACKAGE_DIR}"
+kpackagetool6 -t Plasma/Applet --install "${INSTALL_DIR}"
 
 log_success "Install complete."

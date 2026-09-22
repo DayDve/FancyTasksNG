@@ -56,6 +56,47 @@ get_metadata() {
     echo "$val"
 }
 
+# Patch the "Version" field of a metadata.json file in place.
+# Usage: set_metadata_version <metadata_file> <new_version>
+set_metadata_version() {
+    local metadata_file="$1"
+    local new_version="$2"
+    sed -i -E 's/("Version"[[:space:]]*:[[:space:]]*")[^"]+(")/\1'"${new_version}"'\2/' "${metadata_file}"
+}
+
+# Compute the version to embed in a *built* package. The committed
+# package/metadata.json is never touched between releases (see AGENTS.md's
+# Release flow), so on any commit other than a release tag it would report a
+# stale version - this resolves what to actually stamp on the built copy:
+#   - not a git checkout at all (e.g. a source tarball)   -> committed version
+#   - HEAD is exactly a release tag                       -> committed version
+#   - otherwise                                            -> `git describe --tags`
+#     (e.g. "2.1.0-12-gabc1234": last tag, commits ahead, short SHA), so a
+#     build off any other commit traces back to exactly which one it's from.
+# Usage: resolve_display_version <metadata_file>
+resolve_display_version() {
+    local metadata_file="$1"
+    local base_version
+    base_version=$(get_metadata "Version" "${metadata_file}")
+
+    if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+        echo "${base_version}"
+        return
+    fi
+
+    if git describe --tags --exact-match &> /dev/null; then
+        echo "${base_version}"
+        return
+    fi
+
+    local described
+    if described=$(git describe --tags 2> /dev/null); then
+        echo "${described#v}"
+    else
+        echo "${base_version}"
+    fi
+}
+
 # Detect the system package manager and the install command (sudo + invocation).
 # Prints the full command to install a package, e.g. "sudo apt-get install -y pkg".
 # Falls back to an empty string if nothing known is found.

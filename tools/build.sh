@@ -36,6 +36,11 @@ mkdir -p "${BUILD_DIR}" "${RELEASE_DIR}"
 # Copy package files
 cp -r "${PACKAGE_DIR}"/{contents,metadata.json,"${ICON_NAME}.svg"} "${BUILD_DIR}"
 
+# Stamp the copy (never the committed package/metadata.json) with a version
+# traceable to the exact commit this was built from.
+DISPLAY_VERSION="$(resolve_display_version "${BUILD_DIR}/metadata.json")"
+set_metadata_version "${BUILD_DIR}/metadata.json" "${DISPLAY_VERSION}"
+
 # Create archive
 cd "${BUILD_DIR}"
 zip -q -r "${RELEASE_DIR}/${PACKAGE_NAME}.plasmoid" .
