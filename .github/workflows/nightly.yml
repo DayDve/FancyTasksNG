@@ -1,13 +1,16 @@
 name: Nightly Build
 
-# Rolling pre-release built from develop, for people who don't want to build
-# from source themselves. Only fires when a push actually touches something
-# that ends up in the built plasmoid (or the build pipeline that produces
-# it) - doc/workflow-only changes don't trigger a rebuild.
+# Uploads a build from develop as a workflow artifact (NOT a GitHub Release -
+# no public release page, no tag, no notification noise; just downloadable
+# from this workflow run's Actions page, requires a GitHub login). For
+# testers who want a develop build without building from source themselves.
+# Only fires when a push actually touches something that ends up in the
+# built plasmoid (or the build pipeline that produces it) - doc/workflow-only
+# changes don't trigger a rebuild.
 #
 # The embedded version is git-describe based (see resolve_display_version in
-# tools/functions.sh), so a bug report against a nightly build traces back
-# to the exact commit it was built from.
+# tools/functions.sh), so a build's artifact traces back to the exact commit
+# it was built from.
 
 on:
   push:
@@ -23,10 +26,8 @@ on:
 
 jobs:
   nightly:
-    name: Build and publish nightly
+    name: Build nightly artifact
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout code
@@ -45,23 +46,9 @@ jobs:
           make build
           echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT
 
-      - name: Move the nightly tag to this commit
-        run: |
-          git tag -f nightly
-          git push origin nightly --force
-
-      - name: Publish nightly release
-        uses: softprops/action-gh-release@v2
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: nightly
-          name: "Nightly build (${{ steps.build.outputs.version }})"
-          body: |
-            Automated build from the latest `develop` (${{ github.sha }}).
-
-            Not a stable release - things may break. The version shown in
-            the widget's settings (`${{ steps.build.outputs.version }}`)
-            traces back to exactly this commit.
-          prerelease: true
-          files: release/FancyTasksNG.plasmoid
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: FancyTasksNG-${{ steps.build.outputs.version }}
+          path: release/FancyTasksNG.plasmoid
+          retention-days: 14
