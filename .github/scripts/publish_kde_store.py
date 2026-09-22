@@ -12,6 +12,11 @@ edited by hand on the store page and left as-is on every publish (fetched
 read-only via the public OCS API and resubmitted unchanged, since the edit
 form requires a description value in the same POST that sets the version).
 
+Both opendesktop.org and store.kde.org sit behind an Anubis bot-check
+(https://github.com/TecharoHQ/anubis) that gates every request until a small
+proof-of-work is solved; AnubisSession below solves it transparently, so
+login is still plain scripted username/password - no browser needed.
+
 Requires environment variables:
   KDE_STORE_USER - your store.kde.org / opendesktop email/username
   KDE_STORE_PASSWORD - your store.kde.org / opendesktop password
@@ -21,6 +26,7 @@ import os
 import sys
 import re
 import json
+import time
 import hashlib
 import datetime
 import argparse
@@ -44,7 +50,7 @@ OPENDESKTOP_OAUTH_LOGIN = "https://store.kde.org/oauth/login/"
 PRODUCT_TAGS = ["kde-plasma-6", "panel", "plasma-6.5", "plasma-6.6", "taskbar", "plasma-6.7"]
 
 HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:154.0) Gecko/20100101 Firefox/154.0',
+    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:157.0) Gecko/20100101 Firefox/157.0',
     'Accept-Language': 'en-US,en;q=0.9',
     'DNT': '1',
 }
@@ -111,6 +117,53 @@ def fetch_current_description(product_id):
         print(f"Warning: OCS API returned no data for product {product_id}; description will be left blank.", file=sys.stderr)
         return ''
     return entries[0].get('description', '')
+
+
+def solve_anubis_pow(random_data, difficulty):
+    """Solve an Anubis proof-of-work challenge: find a nonce such that
+    SHA256(random_data + nonce) starts with `difficulty` zero hex nibbles.
+    Matches the reference algorithm in Anubis's worker/sha256-*.mjs."""
+    zero_bytes = difficulty // 2
+    odd = difficulty % 2 != 0
+    nonce = 0
+    while True:
+        digest = hashlib.sha256(f"{random_data}{nonce}".encode()).digest()
+        ok = all(b == 0 for b in digest[:zero_bytes])
+        if ok and odd and digest[zero_bytes] >> 4 != 0:
+            ok = False
+        if ok:
+            return digest.hex(), nonce
+        nonce += 1
+
+
+def solve_anubis_challenge(session, url, html):
+    """Solve an Anubis bot-check page (opendesktop.org and store.kde.org each
+    run their own instance) and fetch the resulting short-lived auth cookie."""
+    base_prefix = re.search(r'anubis_base_prefix"\s+type="application/json">"([^"]*)"', html).group(1)
+    challenge = json.loads(re.search(r'anubis_challenge"\s+type="application/json">(\{.*?\})\s*</script>', html, re.S).group(1))
+    rules, ch = challenge['rules'], challenge['challenge']
+    start = time.time()
+    response_hash, nonce = solve_anubis_pow(ch['randomData'], rules['difficulty'])
+    elapsed_ms = int((time.time() - start) * 1000)
+    log_debug(f"Solved Anubis challenge (difficulty={rules['difficulty']}) in {elapsed_ms}ms")
+    pass_url = urljoin(url, f"{base_prefix}/.within.website/x/cmd/anubis/api/pass-challenge")
+    session.get(pass_url, params={
+        'id': ch['id'], 'response': response_hash, 'nonce': str(nonce),
+        'redir': url, 'elapsedTime': str(elapsed_ms),
+    }, headers=HEADERS, allow_redirects=False)
+
+
+class AnubisSession(requests.Session):
+    """A requests.Session that transparently solves Anubis bot-checks so
+    every existing session.get()/session.post() call site keeps working
+    unchanged."""
+
+    def request(self, method, url, **kwargs):
+        res = super().request(method, url, **kwargs)
+        if 'id="anubis_challenge"' in res.text:
+            solve_anubis_challenge(self, res.url, res.text)
+            res = super().request(method, url, **kwargs)
+        return res
 
 
 def login(session, username, password):
@@ -680,7 +733,7 @@ def main():
         print("Dry run completed successfully. No remote changes made.")
         return
 
-    session = requests.Session()
+    session = AnubisSession()
 
     # 1. Login
     login(session, user, password)
