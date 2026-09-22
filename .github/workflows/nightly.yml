@@ -1,0 +1,67 @@
+name: Nightly Build
+
+# Rolling pre-release built from develop, for people who don't want to build
+# from source themselves. Only fires when a push actually touches something
+# that ends up in the built plasmoid (or the build pipeline that produces
+# it) - doc/workflow-only changes don't trigger a rebuild.
+#
+# The embedded version is git-describe based (see resolve_display_version in
+# tools/functions.sh), so a bug report against a nightly build traces back
+# to the exact commit it was built from.
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - 'package/**'
+      - 'tools/translate/languages/**'
+      - 'tools/build.sh'
+      - 'tools/compile_messages.sh'
+      - 'tools/extract_messages.sh'
+      - 'tools/functions.sh'
+  workflow_dispatch:
+
+jobs:
+  nightly:
+    name: Build and publish nightly
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext zip
+
+      - name: Build Plasmoid
+        id: build
+        run: |
+          make build
+          echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT
+
+      - name: Move the nightly tag to this commit
+        run: |
+          git tag -f nightly
+          git push origin nightly --force
+
+      - name: Publish nightly release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nightly
+          name: "Nightly build (${{ steps.build.outputs.version }})"
+          body: |
+            Automated build from the latest `develop` (${{ github.sha }}).
+
+            Not a stable release - things may break. The version shown in
+            the widget's settings (`${{ steps.build.outputs.version }}`)
+            traces back to exactly this commit.
+          prerelease: true
+          files: release/FancyTasksNG.plasmoid
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
