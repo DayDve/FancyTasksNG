@@ -46,13 +46,12 @@ jobs:
           mv release/FancyTasksNG.plasmoid "$ASSET_NAME"
           echo "asset_path=$ASSET_NAME" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          awk -v ver="[${VERSION}]" '/^## / { if (index($0, ver) > 0) { flag = 1; next } else if (flag) { flag = 0 } } flag' CHANGELOG.md > release_notes.txt
 
       - name: Generate user-facing changelog
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          python3 .github/scripts/generate_kde_changelog.py --file release_notes.txt > kde_changelog.txt
+          python3 .github/scripts/generate_kde_changelog.py --changelog-file CHANGELOG.md --version "${{ steps.asset.outputs.version }}" > kde_changelog.txt
           cat kde_changelog.txt
 
       - name: Publish to KDE Store
