@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Pinned Launchers Defaults:** "Reset to Defaults" for the Pinned Apps list now resets to the real default launcher set instead of an empty list.
+
+### Refactored
+- **Settings Pages:** Extracted the repeated Live Preview + scrollable form scaffold from the Appearance/Behavior/Indicators/Advanced pages into a shared component, and split the Pinned Apps page's per-item drag/reorder row into its own component. Removed dead defensive checks left over from earlier caching work. `cfg_*Default` values (used to silence KCM warnings) are now kept in sync with `main.xml` automatically on every build/install/test instead of by hand.
+
 ## [2.1.0] - 2026-09-21
 
 ### Added
