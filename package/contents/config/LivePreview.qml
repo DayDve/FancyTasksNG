@@ -456,19 +456,23 @@ Item {
                                 Loader {
                                     id: groupExpanderLoader
                                     active: (mockTask.cfgReady && mockTask.cfg.cfg_groupIconEnabled) && mockTask.isGroupParent
-                                    sourceComponent: Component {
-                                         FancyUI.GroupExpanderOverlay {
-                                            iconBox: previewIconBox
-                                            taskModel: ({ "IsGroupParent": true, "IsWindow": false })
-                                            parent: mockTask
-                                            locationOverride: mockTask.effLoc
-                                        }
+                                    sourceComponent: FancyUI.GroupExpanderOverlay {
+                                        iconBox: previewIconBox
+                                        taskModel: ({ "IsGroupParent": true, "IsWindow": false })
+                                        parent: mockTask
+                                        locationOverride: mockTask.effLoc
                                     }
                                 }
 
                                 // 4. Icon & badges
                                 Item {
                                     id: previewIconBox
+
+                                    // previewIconColorsLoader is only active for certain color modes
+                                    // (see the Loader below); this centralizes the "not ready yet" fallback.
+                                    function loaderColor(key) {
+                                        return previewIconColorsLoader.item ? previewIconColorsLoader.item[key] : "transparent";
+                                    }
 
                                     readonly property int mLeft: previewRoot.adjustMargin(true, parent.width, taskFrame.margins.left)
                                     readonly property int mRight: previewRoot.adjustMargin(true, parent.width, taskFrame.margins.right)
@@ -627,15 +631,13 @@ Item {
                                             }
                                             const mode = mockTask.cfg.cfg_clipIconBackgroundColorMode;
                                             if (mode === 1) {
-                                                let pDom = "dominant";
-                                                const domColor = previewIconColorsLoader.item ? previewIconColorsLoader.item[pDom] : "transparent";
+                                                const domColor = previewIconBox.loaderColor("dominant");
                                                 return TaskTools.harmonizeIconColor(domColor, domColor, Kirigami.Theme.backgroundColor, false);
                                             } else if (mode === 2) {
-                                                let pDom = "dominant";
+                                                const domColor = previewIconBox.loaderColor("dominant");
                                                 let pPal = "palette";
                                                 let pAvg = "average";
                                                 const avgColor = previewIconColorsLoader.item ? TaskTools.getAveragePaletteColor(previewIconColorsLoader.item[pPal], previewIconColorsLoader.item[pAvg]) : "transparent";
-                                                const domColor = previewIconColorsLoader.item ? previewIconColorsLoader.item[pDom] : "transparent";
                                                 return TaskTools.harmonizeIconColor(avgColor, domColor, Kirigami.Theme.backgroundColor, true);
                                             } else if (mode === 3) {
                                                 return Kirigami.Theme.highlightColor;
