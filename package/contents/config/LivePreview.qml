@@ -103,7 +103,7 @@ Item {
     // Multistripe simulation
     readonly property int taskCountDisplay: taskModel.count
     readonly property int simulatedStripeCount: {
-        let maxS = cfg_page.cfg_maxStripes !== undefined ? cfg_page.cfg_maxStripes : 1
+        let maxS = cfg_page.cfg_maxStripes
         if (maxS <= 1) return 1
 
         // preferredMinHeight from LayoutMetrics.js
@@ -115,7 +115,7 @@ Item {
     readonly property int laneHeight: Math.floor(simulatedThickness / simulatedStripeCount)
 
     // Inner padding (iconSpacing) logic
-    readonly property real spacingAdjustment: cfg_page.cfg_iconSpacing !== undefined ? cfg_page.cfg_iconSpacing : 1
+    readonly property real spacingAdjustment: cfg_page.cfg_iconSpacing
     function horizontalMargins() {
         return (taskFrame.margins.left + taskFrame.margins.right) * (isVertical ? 1 : spacingAdjustment)
     }
@@ -247,7 +247,7 @@ Item {
                         id: localSizeSpinner
                         from: 24
                         to: 128
-                        value: previewRoot.cfg_page.cfg_previewSize !== undefined ? previewRoot.cfg_page.cfg_previewSize : 48
+                        value: previewRoot.cfg_page.cfg_previewSize
                         onValueModified: { previewRoot.cfg_page.cfg_previewSize = value }
                         stepSize: 2
                         editable: true

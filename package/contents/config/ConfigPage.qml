@@ -258,6 +258,7 @@ Kirigami.Page {
     readonly property int gridUnit: Kirigami.Units.gridUnit
     readonly property int smallSpacing: Kirigami.Units.smallSpacing
     readonly property int largeSpacing: Kirigami.Units.largeSpacing
+    readonly property int shortDuration: Kirigami.Units.shortDuration
     readonly property int iconSizeSmall: Kirigami.Units.iconSizes.small
     readonly property int iconSizeSmallMedium: Kirigami.Units.iconSizes.smallMedium
 
