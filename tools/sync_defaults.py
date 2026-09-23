@@ -65,8 +65,9 @@ def qml_literal(etype: str, text: str):
         except ValueError:
             return None
     if etype == "StringList":
-        # Empty list is the only shape ConfigPage.qml uses today
-        return "[]" if text == "" else None
+        if text == "":
+            return "[]"
+        return json.dumps(text.split(","))  # KConfigXT StringList defaults are comma-separated
     if etype in STRINGY_TYPES:
         return json.dumps(text)  # double-quoted, escaped
     return None

@@ -12,6 +12,9 @@ TEMP_SHARE="/tmp/fancytasks-preview-$(whoami)/share"
 log_info "1. Compiling translations..."
 "${SCRIPT_DIR}/compile_messages.sh"
 
+log_info "1b. Syncing cfg_*Default values with main.xml..."
+python3 "${SCRIPT_DIR}/sync_defaults.py"
+
 log_info "2. Setting up temporary locale prefix..."
 # Create a fake XDG data structure to allow gettext/KI18n to find catalogs
 # without installing the package into the system.

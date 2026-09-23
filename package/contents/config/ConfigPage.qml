@@ -12,6 +12,18 @@ Kirigami.Page {
     // --- Properties to silence KCM errors ---
     // Defaults for existing aliases
     // --- General ---
+
+    // Not from main.xml - the containment layout manager writes these into
+    // the same KConfig group when the widget is resized in the panel (see
+    // panelspacer's main.xml for the matching type/name), so they show up in
+    // Plasmoid.configuration.keys() and get pushed as initial properties
+    // just like any other setting. Kept manually since sync_defaults.py only
+    // knows about this plasmoid's own main.xml.
+    property bool cfg_expanding: false
+    property bool cfg_expandingDefault: false
+    property int cfg_length: 0
+    property int cfg_lengthDefault: 0
+
     property bool cfg_showOnlyCurrentScreen: false
     property bool cfg_showOnlyCurrentScreenDefault: false
     property bool cfg_showOnlyCurrentDesktop: false
@@ -112,7 +124,7 @@ Kirigami.Page {
     property var cfg_groupingLauncherUrlBlacklist: []
     property var cfg_groupingLauncherUrlBlacklistDefault: []
     property var cfg_launchers: []
-    property var cfg_launchersDefault: []
+    property var cfg_launchersDefault: ["applications:systemsettings.desktop", "applications:org.kde.discover.desktop", "preferred://filemanager", "preferred://browser"]
     property int cfg_middleClickAction: 0
     property int cfg_middleClickActionDefault: 2
 

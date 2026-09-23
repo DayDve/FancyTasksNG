@@ -18,6 +18,9 @@ trap cleanup EXIT
 log_info "Compiling translations..."
 "${SCRIPT_DIR}/compile_messages.sh"
 
+# Keep ConfigPage.qml's cfg_*Default values in sync with main.xml
+python3 "${SCRIPT_DIR}/sync_defaults.py"
+
 # Stage a copy so the version can be stamped without touching the committed
 # package/metadata.json (see resolve_display_version in functions.sh).
 rm -rf "${INSTALL_DIR}"

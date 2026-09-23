@@ -29,6 +29,9 @@ trap cleanup EXIT
     "${SCRIPT_DIR}/compile_messages.sh"
 )
 
+# Keep ConfigPage.qml's cfg_*Default values in sync with main.xml
+python3 "${SCRIPT_DIR}/sync_defaults.py"
+
 # Prepare directories
 rm -rf "${RELEASE_DIR}"
 mkdir -p "${BUILD_DIR}" "${RELEASE_DIR}"
