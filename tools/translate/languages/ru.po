@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-08-30 21:59+0200\n"
+"POT-Creation-Date: 2026-09-24 10:05+0300\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -44,8 +44,8 @@ msgid "As on right panel"
 msgstr "Как панель справа"
 
 #: package/contents/config/ConfigAdvanced.qml
-msgid "Panel Settings:"
-msgstr "Настройки панели:"
+msgid "When a window wants attention:"
+msgstr "Если окно требует внимания:"
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Unhide panel when a window wants attention"
@@ -53,7 +53,11 @@ msgstr "Показывать панель, если окно требует вн
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Animate task icon when a window wants attention"
-msgstr "Анимация кнопки окна требующего внимания"
+msgstr "Анимация кнопки окна, требующего внимания"
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Colorize the task button when a window wants attention"
+msgstr "Использовать свой цвет для кнопки окна, требующего внимания"
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Layout settings:"
@@ -780,10 +784,6 @@ msgid "Add applications to pin to the taskbar. Drag items to reorder them."
 msgstr "Добавьте приложения для закрепления. Перетаскивайте элементы для изменения порядка."
 
 #: package/contents/config/ConfigPinnedApps.qml
-msgid "Remove"
-msgstr "Удалить"
-
-#: package/contents/config/ConfigPinnedApps.qml
 msgid "Unpin app by dragging its icon off the panel"
 msgstr "Удалять значки перетаскиванием с панели"
 
@@ -855,6 +855,10 @@ msgstr "Заголовок окна"
 #: package/contents/config/LivePreview.qml
 msgid "%1 — %2"
 msgstr "%1 — %2"
+
+#: package/contents/config/PinnedAppCard.qml
+msgid "Remove"
+msgstr "Удалить"
 
 #: package/contents/ui/Badge.qml
 msgctxt "Invalid"
@@ -1098,6 +1102,15 @@ msgstr "Также доступно в %1"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Доступно в %1"
+
+#~ msgid "Panel Settings:"
+#~ msgstr "Настройки панели:"
+
+#~ msgid "Use custom color when a window wants attention"
+#~ msgstr "Использовать свой цвет, если окно требует внимания"
+
+#~ msgid "Use custom color for attention highlight"
+#~ msgstr "Свой цвет подсветки при запросе внимания"
 
 #~ msgid "Theme background"
 #~ msgstr "По теме оформления"

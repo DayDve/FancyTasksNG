@@ -38,6 +38,10 @@ Kirigami.Page {
     property bool cfg_unhideOnAttentionDefault: true
     property bool cfg_animateAttentionStatus: true
     property bool cfg_animateAttentionStatusDefault: true
+    property bool cfg_attentionCustomColorEnabled: false
+    property bool cfg_attentionCustomColorEnabledDefault: false
+    property string cfg_attentionCustomColor: ""
+    property string cfg_attentionCustomColorDefault: "#ff9800"
     property bool cfg_hideMoveToDesktopMenuWithOneDesktop: true
     property bool cfg_hideMoveToDesktopMenuWithOneDesktopDefault: true
     property int cfg_maxStripes: 0

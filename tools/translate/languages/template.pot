@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-08-30 21:59+0200\n"
+"POT-Creation-Date: 2026-09-24 10:05+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,7 +47,7 @@ msgid "As on right panel"
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
-msgid "Panel Settings:"
+msgid "When a window wants attention:"
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
@@ -56,6 +56,10 @@ msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Animate task icon when a window wants attention"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Colorize the task button when a window wants attention"
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
@@ -781,10 +785,6 @@ msgid "Add applications to pin to the taskbar. Drag items to reorder them."
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
-msgid "Remove"
-msgstr ""
-
-#: package/contents/config/ConfigPinnedApps.qml
 msgid "Unpin app by dragging its icon off the panel"
 msgstr ""
 
@@ -854,6 +854,10 @@ msgstr ""
 
 #: package/contents/config/LivePreview.qml
 msgid "%1 — %2"
+msgstr ""
+
+#: package/contents/config/PinnedAppCard.qml
+msgid "Remove"
 msgstr ""
 
 #: package/contents/ui/Badge.qml

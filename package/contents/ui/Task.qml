@@ -714,7 +714,9 @@ Item {
         visible: (!task.model || task.model.IsLauncher || task.model.IsDemandingAttention || task.model.IsActive || backgroundFrame.isHovered) ?
             true : !task.config.disableButtonInactiveSvg
 
-        layer.enabled: (!task.model || task.model.IsLauncher || !task.config.buttonColorize) ? false :
+        layer.enabled: (!task.model || task.model.IsLauncher) ? false :
+                       (task.model.IsDemandingAttention && task.config.attentionCustomColorEnabled) ? true :
+                       (!task.config.buttonColorize) ? false :
                        (task.model.IsDemandingAttention && !backgroundFrame.isHovered) ? false :
                        (task.model.IsActive || backgroundFrame.isHovered) ? true :
                        (!task.config.disableButtonInactiveSvg && task.config.buttonColorizeInactive)
@@ -722,8 +724,9 @@ Item {
         layer.effect: MultiEffect {
             brightness: 1.0
             colorization: 1.0
-            colorizationColor: task.config.buttonColorizeDominant ?
-                backgroundFrame.indicatorColor : task.config.buttonColorizeCustom
+            colorizationColor: (task.model.IsDemandingAttention && task.config.attentionCustomColorEnabled) ?
+                task.config.attentionCustomColor :
+                (task.config.buttonColorizeDominant ? backgroundFrame.indicatorColor : task.config.buttonColorizeCustom)
         }
 
         // Avoid repositioning delegate item after dragFinished

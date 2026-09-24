@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Attention Highlight:** Added a "Colorize the task button when a window wants attention" option with a custom color picker, using the same colorization effect as the existing button-color settings.
+
 ### Fixed
 - **Pinned Launchers Defaults:** "Reset to Defaults" for the Pinned Apps list now resets to the real default launcher set instead of an empty list.
 

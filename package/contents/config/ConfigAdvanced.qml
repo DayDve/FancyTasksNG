@@ -9,6 +9,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
+import org.kde.kquickcontrols as KQuickAddons
 
 import "../ui/code/singletones"
 
@@ -55,12 +56,9 @@ ConfigPage {
         Item { height: advancedPage.largeSpacing }
     
         Label {
-            text: Wrappers.i18n("Panel Settings:")
-            opacity: panelSettingsEnabled ? 1.0 : 0.6
-    
-            readonly property bool panelSettingsEnabled: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating
+            text: Wrappers.i18n("When a window wants attention:")
         }
-    
+
         CheckBox {
             id: cfg_unhideOnAttention
             text: Wrappers.i18n("Unhide panel when a window wants attention")
@@ -68,16 +66,39 @@ ConfigPage {
             checked: advancedPage.cfg_unhideOnAttention
             onToggled: advancedPage.cfg_unhideOnAttention = checked
         }
-    
+
         CheckBox {
             id: cfg_animateAttentionStatus
             text: Wrappers.i18n("Animate task icon when a window wants attention")
-            enabled: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating
             checked: advancedPage.cfg_animateAttentionStatus
             onToggled: advancedPage.cfg_animateAttentionStatus = checked
             visible: advancedPage.cfg_iconOnly === 1
         }
-    
+
+        RowLayout {
+            spacing: advancedPage.smallSpacing
+
+            CheckBox {
+                id: cfg_attentionCustomColorEnabled
+                text: Wrappers.i18n("Colorize the task button when a window wants attention")
+                checked: advancedPage.cfg_attentionCustomColorEnabled
+                onToggled: advancedPage.cfg_attentionCustomColorEnabled = checked
+            }
+
+            KQuickAddons.ColorButton {
+                id: attentionCustomColorBtn
+                visible: advancedPage.cfg_attentionCustomColorEnabled
+                showAlphaChannel: true
+                Layout.maximumHeight: cfg_attentionCustomColorEnabled.height
+                color: advancedPage.cfg_attentionCustomColor
+                onColorChanged: {
+                    if (!Qt.colorEqual(color, advancedPage.cfg_attentionCustomColor)) {
+                        advancedPage.cfg_attentionCustomColor = color
+                    }
+                }
+            }
+        }
+
         Item { height: advancedPage.largeSpacing }
     
         Label {

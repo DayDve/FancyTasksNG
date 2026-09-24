@@ -39,6 +39,14 @@
       <label>Animate jumping icon when requesting attention</label>
       <default>true</default>
     </entry>
+    <entry name="attentionCustomColorEnabled" type="Bool">
+      <label>Whether to use a custom color for the "needs attention" highlight instead of the Plasma theme's own color.</label>
+      <default>false</default>
+    </entry>
+    <entry name="attentionCustomColor" type="Color">
+      <label>Custom color for the "needs attention" highlight.</label>
+      <default>#ff9800</default>
+    </entry>
     <entry name="groupingStrategy" type="Enum">
       <label
             >How tasks are grouped: 0 = Do Not Group, 1 = By Program Name</label>
