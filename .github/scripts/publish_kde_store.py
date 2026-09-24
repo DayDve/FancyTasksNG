@@ -8,9 +8,14 @@ content editing), so this scrapes the product edit page's HTML forms the
 same way a browser session would.
 
 The product description is intentionally NOT touched by this script: it's
-edited by hand on the store page and left as-is on every publish (fetched
-read-only via the public OCS API and resubmitted unchanged, since the edit
-form requires a description value in the same POST that sets the version).
+edited by hand on the store page and left as-is on every publish (read back
+verbatim from the edit form's own textarea and resubmitted unchanged, since
+the edit form requires a description value in the same POST that sets the
+version). The full form is also resubmitted starting from every field the
+live edit page actually has, not a hand-picked subset - a hand-picked
+subset is the prime suspect for how the description once lost its
+paragraph breaks (an unnoticed required field silently falling back to
+some other default), though the exact mechanism was never confirmed.
 
 Both opendesktop.org and store.kde.org sit behind an Anubis bot-check
 (https://github.com/TecharoHQ/anubis) that gates every request until a small
@@ -30,6 +35,7 @@ import time
 import hashlib
 import datetime
 import argparse
+from html import unescape as html_unescape
 from urllib.parse import urljoin, parse_qs, urlparse
 import requests
 
@@ -104,27 +110,63 @@ def extract_selected_option(html, select_name):
 
 
 def extract_all_inputs(html):
-    """Extract all input name-value pairs from an HTML string."""
+    """Extract input name-value pairs from an HTML string, approximating what
+    an actual browser form submission would include:
+    - file/submit/button/image/reset inputs are skipped (a browser never
+      sends a file input as a plain value, and only the one submit button
+      actually clicked is sent, never all of them at once)
+    - checkbox/radio inputs are only included if `checked` is present
+    """
     inputs = {}
-    pattern = r'<input\s+([^>]+)>'
+    pattern = r'<input\s+([^>]+?)/?>'
+    skip_types = {'file', 'submit', 'button', 'image', 'reset'}
     for match in re.finditer(pattern, html, re.IGNORECASE):
         attrs = match.group(1)
         name_match = re.search(r'name=["\']([^"\']+)["\']', attrs, re.IGNORECASE)
+        if not name_match:
+            continue
+        type_match = re.search(r'type=["\']([^"\']+)["\']', attrs, re.IGNORECASE)
+        field_type = type_match.group(1).lower() if type_match else 'text'
+        if field_type in skip_types:
+            continue
+        if field_type in ('checkbox', 'radio') and not re.search(r'\bchecked\b', attrs, re.IGNORECASE):
+            continue
         value_match = re.search(r'value=["\']([^"\']*)["\']', attrs, re.IGNORECASE)
-        if name_match:
-            name = name_match.group(1)
-            val = value_match.group(1) if value_match else ""
-            inputs[name] = val
+        inputs[name_match.group(1)] = value_match.group(1) if value_match else ""
     return inputs
 
 
-def fetch_current_description(product_id):
-    """Read the product's current description via the public, read-only OCS API.
+def extract_all_selects(html):
+    """Extract every named <select>'s currently selected value (or its first
+    <option> if none is marked selected, matching what a browser would submit).
 
-    Returned verbatim and resubmitted unchanged in update_product_metadata() -
-    this script never edits the description, only reads it back so the
-    version-bump POST doesn't have to touch it.
-    """
+    <select>s (e.g. a text-format picker next to the description textarea)
+    are invisible to extract_all_inputs() since they aren't <input> elements;
+    silently dropping one from the submitted form can make the backend fall
+    back to a different default for that field than what's actually shown to
+    a human editing the listing."""
+    selects = {}
+    for name, body in re.findall(r'<select\b[^>]*name=["\']([^"\']+)["\'][^>]*>(.*?)</select>', html, re.IGNORECASE | re.DOTALL):
+        options = re.findall(r'<option\s+([^>]*)>', body, re.IGNORECASE)
+        chosen = ""
+        for attrs in options:
+            if re.search(r'\bselected\b', attrs, re.IGNORECASE):
+                value_match = re.search(r'value=["\']([^"\']*)["\']', attrs, re.IGNORECASE)
+                chosen = value_match.group(1) if value_match else ""
+                break
+        else:
+            if options:
+                value_match = re.search(r'value=["\']([^"\']*)["\']', options[0], re.IGNORECASE)
+                chosen = value_match.group(1) if value_match else ""
+        selects[name] = chosen
+    return selects
+
+
+def fetch_current_description(product_id):
+    """Fallback source for the current description via the public, read-only
+    OCS API, used only if the edit page's own textarea (get_product_edit_info's
+    'description_html', the preferred source) wasn't found. Not guaranteed to
+    round-trip byte-for-byte into the edit form's own submission format."""
     url = f"{OCS_READ_API}/{product_id}?format=json"
     log_debug(f"GET {url}")
     res = requests.get(url, headers=HEADERS, timeout=15)
@@ -272,6 +314,12 @@ def get_product_edit_info(session, product_id):
     inputs = extract_all_inputs(html)
     log_debug(f"Extracted input names from edit page: {list(inputs.keys())}")
 
+    # The description textarea's raw current value, straight from the same
+    # edit page we're about to resubmit - the single most faithful source
+    # for round-tripping it unchanged (see update_product_metadata()).
+    description_match = re.search(r'<textarea\b[^>]*name=["\']description["\'][^>]*>(.*?)</textarea>', html, re.IGNORECASE | re.DOTALL)
+    description_html = html_unescape(description_match.group(1)) if description_match else None
+
     all_upload_urls = re.findall(r'https://files\d*\.pling\.com/api/files/upload\?[^"\']+', html)
     log_debug(f"Found {len(all_upload_urls)} upload URLs in edit page HTML.")
 
@@ -383,6 +431,8 @@ def get_product_edit_info(session, product_id):
         'signature': signature,
         'expires': expires,
         'all_inputs': inputs,
+        'all_selects': extract_all_selects(html),
+        'description_html': description_html,
     }
 
     log_debug(f"Parsed edit info: collection_id={info['collection_id']}, owner_id={info['owner_id']}, "
@@ -644,7 +694,14 @@ def update_product_metadata(session, product_id, edit_info, description, version
     headers['Origin'] = KDE_STORE_BASE
     headers['Referer'] = f"{KDE_STORE_BASE}/p/{product_id}/edit"
 
+    # Start from every field the live edit page actually has (including ones
+    # we don't know the purpose of, e.g. CSRF/form-state tokens) and only
+    # override what we intentionally change. Submitting a hand-picked subset
+    # instead silently drops unknown-but-required fields - suspected (not
+    # confirmed) cause of the description once losing its paragraph breaks.
     form_data = {
+        **edit_info.get('all_inputs', {}),
+        **edit_info.get('all_selects', {}),
         'project_id': product_id,
         'title': edit_info['title'] or 'Fancy Tasks NG',
         'project_category_id': edit_info['project_category_id'] or '102',
@@ -784,8 +841,13 @@ def main():
     # 4. Publish Changelog
     publish_changelog(session, args.product_id, changelog_title, changelog_text)
 
-    # 5. Bump the listed version (description is read back and resubmitted untouched)
-    current_description = fetch_current_description(args.product_id)
+    # 5. Bump the listed version (description is read back and resubmitted untouched).
+    # Prefer the edit form's own textarea (exact round-trip source); fall back
+    # to the read-only OCS API only if that markup wasn't found.
+    current_description = edit_info.get('description_html')
+    if current_description is None:
+        print("Warning: description textarea not found on edit page, falling back to OCS API.", file=sys.stderr)
+        current_description = fetch_current_description(args.product_id)
     update_product_metadata(session, args.product_id, edit_info, current_description, version)
 
     print("\nAll done! Publication successfully completed on store.kde.org.")
