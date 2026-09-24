@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-09-24 10:05+0300\n"
+"POT-Creation-Date: 2026-09-24 15:27+0300\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -103,6 +103,50 @@ msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Number of browser history items:"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Configuration:"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Export Configuration…"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Import Configuration…"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Export FancyTasksNG Configuration"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "JSON files (*.json)"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Import FancyTasksNG Configuration"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Configuration exported successfully."
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Failed to export configuration."
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Failed to read the configuration file."
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "This file is not a valid FancyTasksNG configuration."
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Configuration imported. Click Apply to save the changes."
 msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml

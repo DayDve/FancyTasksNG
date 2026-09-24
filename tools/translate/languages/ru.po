@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-09-24 10:05+0300\n"
+"POT-Creation-Date: 2026-09-24 15:27+0300\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -104,6 +104,50 @@ msgstr "Отображать историю браузеров в контекс
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Number of browser history items:"
 msgstr "Количество элементов истории:"
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Configuration:"
+msgstr "Конфигурация:"
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Export Configuration…"
+msgstr "Экспортировать конфигурацию…"
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Import Configuration…"
+msgstr "Импортировать конфигурацию…"
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Export FancyTasksNG Configuration"
+msgstr "Экспорт конфигурации FancyTasksNG"
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "JSON files (*.json)"
+msgstr "Файлы JSON (*.json)"
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Import FancyTasksNG Configuration"
+msgstr "Импорт конфигурации FancyTasksNG"
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Configuration exported successfully."
+msgstr "Конфигурация успешно экспортирована."
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Failed to export configuration."
+msgstr "Не удалось экспортировать конфигурацию."
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Failed to read the configuration file."
+msgstr "Не удалось прочитать файл конфигурации."
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "This file is not a valid FancyTasksNG configuration."
+msgstr "Этот файл не является корректной конфигурацией FancyTasksNG."
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Configuration imported. Click Apply to save the changes."
+msgstr "Конфигурация импортирована. Нажмите «Применить», чтобы сохранить изменения."
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Use plasma borders"

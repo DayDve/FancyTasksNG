@@ -766,6 +766,23 @@ class DesktopActionsService(dbus.service.Object):
         except Exception as e:
             print(f"Execute error: {e}", file=sys.stderr)
 
+    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='ss', out_signature='s')
+    def ExportConfig(self, path, content):
+        try:
+            with open(path, 'w', encoding='utf-8') as f:
+                f.write(content)
+            return "OK"
+        except Exception as e:
+            return f"ERROR: {e}"
+
+    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='s', out_signature='s')
+    def ImportConfig(self, path):
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                return f.read()
+        except Exception as e:
+            return f"ERROR: {e}"
+
     @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='ss', out_signature='')
     def OpenUrl(self, url, preferred_app):
         try:

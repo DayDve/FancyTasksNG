@@ -152,6 +152,36 @@ Item {
         pendingReply.finished.connect(() => pendingReply.destroy());
     }
 
+    function exportConfig(path, content, callback) {
+        const pendingReply = DBus.SessionBus.asyncCall({
+            "service": "io.github.daydve.fancytasksng.DesktopActions",
+            "path": "/DesktopActions",
+            "iface": "io.github.daydve.fancytasksng.DesktopActions",
+            "member": "ExportConfig",
+            "arguments": [String(path || ""), String(content || "")],
+            "signature": "(ss)"
+        });
+        pendingReply.finished.connect(() => {
+            if (callback) callback(String(pendingReply.value || ""));
+            pendingReply.destroy();
+        });
+    }
+
+    function importConfig(path, callback) {
+        const pendingReply = DBus.SessionBus.asyncCall({
+            "service": "io.github.daydve.fancytasksng.DesktopActions",
+            "path": "/DesktopActions",
+            "iface": "io.github.daydve.fancytasksng.DesktopActions",
+            "member": "ImportConfig",
+            "arguments": [String(path || "")],
+            "signature": "(s)"
+        });
+        pendingReply.finished.connect(() => {
+            if (callback) callback(String(pendingReply.value || ""));
+            pendingReply.destroy();
+        });
+    }
+
     function openUrl(url, launcherUrl) {
         const pendingReply = DBus.SessionBus.asyncCall({
             "service": "io.github.daydve.fancytasksng.DesktopActions",
