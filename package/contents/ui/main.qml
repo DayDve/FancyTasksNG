@@ -452,7 +452,10 @@ PlasmoidItem {
         tasks.tasksModel.hideActivatedLaunchers = tasks.iconsOnly || tasks.tasksModel.launchInPlace;
         tasks.tasksModel.sortMode = tasks.sortModeEnumValue(tasks.config.sortingStrategy);
         tasks.tasksModel.launchInPlace = (tasks.config.sortingStrategy === 1 || tasks.config.sortingStrategy === 0);
-        tasks.tasksModel.separateLaunchers = (tasks.config.sortingStrategy !== 1);
+        // Force true during the initial startup window so already-running windows
+        // don't get merged into their launcher slot before the model has finished
+        // discovering them (fixes #53) - dropped by 88d26d0, restored here.
+        tasks.tasksModel.separateLaunchers = (tasks.config.sortingStrategy !== 1 || tasks._initialStartup);
 
         tasks.tasksModel.groupMode = tasks.groupModeEnumValue(tasks.config.groupingStrategy);
         tasks.tasksModel.groupInline = !tasks.config.groupPopups;
