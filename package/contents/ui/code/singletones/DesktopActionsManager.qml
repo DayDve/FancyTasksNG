@@ -156,7 +156,7 @@ Item {
         const pendingReply = DBus.SessionBus.asyncCall({
             "service": "io.github.daydve.fancytasksng.DesktopActions",
             "path": "/DesktopActions",
-            "iface": "io.github.daydve.fancytasksng.DesktopActions",
+            "iface": "io.github.daydve.fancytasksng.Config",
             "member": "ExportConfig",
             "arguments": [String(path || ""), String(content || "")],
             "signature": "(ss)"
@@ -171,7 +171,7 @@ Item {
         const pendingReply = DBus.SessionBus.asyncCall({
             "service": "io.github.daydve.fancytasksng.DesktopActions",
             "path": "/DesktopActions",
-            "iface": "io.github.daydve.fancytasksng.DesktopActions",
+            "iface": "io.github.daydve.fancytasksng.Config",
             "member": "ImportConfig",
             "arguments": [String(path || "")],
             "signature": "(s)"
