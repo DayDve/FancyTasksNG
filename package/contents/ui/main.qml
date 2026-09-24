@@ -547,6 +547,15 @@ PlasmoidItem {
         if (Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable && tasks.tasksModel)
             tasks.tasksModel.requestRemoveLauncher(url);
     }
+    // Called by plasmashell (C++, not QML) in response to a Meta+number shortcut -
+    // no in-repo caller, do not remove as "dead code".
+    function activateTaskAtIndex(index: var): void {
+        if (typeof index !== "number")
+            return;
+        const task = internalTaskRepeater.itemAt(index) as Task;
+        if (task)
+            TaskTools.activateTask(task.modelIndex(), task.model, null, task, Plasmoid, tasks, windowViewEffectWatcher.registered);
+    }
     function adjustGlobalVolume(increment: int) {
         const audioManager = audioStreamManagerLoader.item;
         const pSink = "preferredSink";
