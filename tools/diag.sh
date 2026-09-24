@@ -177,6 +177,48 @@ else
     emit "(plasma-org.kde.plasma.desktop-appletsrc not found)"
 fi
 
+# --- Fancy Tasks NG settings (per instance, from appletsrc) ----------------
+# Read directly from the KConfig file rather than via the plugin's own D-Bus
+# backend - if the backend itself is what's broken, this still has to work.
+section "Fancy Tasks NG settings (per instance)"
+FTN_PLUGIN_ID="io.github.daydve.fancytasksng"
+if [ -f "${APPSRC}" ]; then
+    mapfile -t FTN_INSTANCES < <(awk -v id="${FTN_PLUGIN_ID}" '
+    /^\[Containments\]\[[0-9]+\]\[Applets\]\[[0-9]+\]$/ {
+        s = $0
+        sub(/^\[Containments\]\[/, "", s); sub(/\]\[Applets\]\[.*/, "", s)
+        cont = s
+        s = $0
+        sub(/.*\[Applets\]\[/, "", s); sub(/\]$/, "", s)
+        app = s
+        next
+    }
+    /^plugin=/ {
+        if (cont != "" && app != "" && substr($0, 8) == id)
+            print cont "/" app
+    }
+    /^\[/ { cont = ""; app = "" }
+    ' "${APPSRC}")
+
+    if [ "${#FTN_INSTANCES[@]}" -eq 0 ]; then
+        emit "(no Fancy Tasks NG instance found in ${APPSRC})"
+    else
+        for inst in "${FTN_INSTANCES[@]}"; do
+            cont="${inst%/*}"
+            app="${inst#*/}"
+            emit "Instance: Containment #${cont}, Applet #${app}"
+            awk -v group="[Containments][${cont}][Applets][${app}][Configuration][General]" '
+                $0 == group { inGroup = 1; next }
+                /^\[/ { inGroup = 0 }
+                inGroup && NF { print "  " $0 }
+            ' "${APPSRC}" >> "${BUF}"
+            emit ""
+        done
+    fi
+else
+    emit "(plasma-org.kde.plasma.desktop-appletsrc not found)"
+fi
+
 # --- Recent plasmashell logs ------------------------------------------------
 section "Recent plasmashell logs (last 80 lines)"
 if journalctl --user -b -u plasma-plasmashell.service --no-pager 2>/dev/null | tail -80 >> "${BUF}"; then
