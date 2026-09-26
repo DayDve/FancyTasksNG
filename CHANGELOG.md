@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **Meta+Number Shortcuts:** Restored `activateTaskAtIndex()`, the method plasmashell calls in response to Meta+Number shortcuts — it was mistakenly removed as "dead code" in 2.1.0's refactor since it has no in-repo caller (it's invoked externally by plasmashell itself) (fixes #54).
-- **Pinned App Position After Plasmashell Restart:** Already-running windows could land in the wrong (non-pinned) slot after a `plasmashell --replace` restart with Manual task sorting, and stay stuck there until the app was closed and reopened. Caused by a startup race dropped in an unrelated fix months ago; restored the startup grace window that lets the task list settle before merging windows into their pinned launcher slots (fixes #53).
+- **Task Order Lost on Plasmashell Restart:** Already-running windows and manually-repositioned pinned buttons could land in the wrong spot after a `plasmashell --replace` restart, staying scrambled until fixed by hand. Fixed a real startup-ordering race in the task model configuration, and added a snapshot of the actual visible task order that's restored once the model settles after a restart (fixes #53).
 
 ## [2.2.0] - 2026-09-24
 
