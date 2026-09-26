@@ -23,6 +23,11 @@ MouseArea {
     clip: textItem.elide === Text.ElideNone
     hoverEnabled: true
 
+    // Only here for hover-to-scroll; declining the press lets clicks fall
+    // through to whatever's underneath (e.g. window activation) instead of
+    // silently doing nothing (#55).
+    onPressed: (mouse) => { mouse.accepted = false; }
+
     onContainsMouseChanged: {
         if (!containsMouse) {
             state = "";

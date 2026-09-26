@@ -682,6 +682,16 @@ Item {
 
         sourceComponent: ToolTipMediaBar {
             mediaController: root.mediaController
+
+            onActivateRequested: {
+                root.tasksModel.requestActivate(root.findMatchingTaskIndex());
+                if (root.parentTask) {
+                    root.parentTask.closeTooltip();
+                    if (root.parentTask.tasksRoot) {
+                        root.parentTask.tasksRoot.cancelHighlightWindows();
+                    }
+                }
+            }
         }
     }
 }

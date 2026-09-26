@@ -16,6 +16,11 @@ Item {
 
     required property var mediaController
 
+    // Emitted when the track title is clicked. This row sits below the
+    // thumbnail, outside the thumbnail's own activate-on-click area, so
+    // nothing else here can activate the window (#55).
+    signal activateRequested()
+
     width: parent.width
     height: Kirigami.Units.gridUnit * 1.4
 
@@ -127,6 +132,14 @@ Item {
                     GradientStop { position: 0.0; color: "transparent" }
                     GradientStop { position: 1.0; color: Kirigami.Theme.backgroundColor }
                 }
+            }
+
+            // songTextWrapper itself declines presses (it's only a MouseArea
+            // for hover-to-scroll), so this nested one gets first refusal on
+            // clicks landing here instead.
+            MouseArea {
+                anchors.fill: parent
+                onClicked: barRoot.activateRequested()
             }
         }
 
