@@ -346,7 +346,15 @@ Item {
         id: thumbnailSourceItem
 
         readonly property int targetWidth: Kirigami.Units.gridUnit * 14
-        readonly property int targetHeight: Math.round(targetWidth / (Screen.width / Screen.height))
+        // Deriving from Screen.width/height gives a snugger fit than a fixed
+        // ratio for most monitors, but on an extreme ultrawide (e.g. 5120x1440,
+        // ~3.56:1) it squashes this into a sliver most windows render tiny
+        // inside of once fit to it. Clamped to the range of ordinary desktop
+        // monitor shapes (4:3 up through 21:9) so normal - even slightly
+        // non-16:9 - screens keep behaving exactly as before, and only the
+        // pathological cases get capped (#55).
+        readonly property real screenRatio: Math.max(4 / 3, Math.min(21 / 9, Screen.width / Screen.height))
+        readonly property int targetHeight: Math.round(targetWidth / screenRatio)
 
         Layout.preferredWidth: root.showThumbnails ? targetWidth : 0
         Layout.preferredHeight: root.showThumbnails ? targetHeight : 0

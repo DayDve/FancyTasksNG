@@ -436,10 +436,12 @@ Loader {
 
                     readonly property int safeCount: groupRoot.isWin ? groupRoot.windows.length : count
 
-                    readonly property real screenRatio: Screen.width / Screen.height
-                    
+                    // Clamped like ToolTipInstance.qml's thumbnailSourceItem.
+                    // screenRatio - see there for why (#55).
+                    readonly property real screenRatio: Math.max(4 / 3, Math.min(21 / 9, Screen.width / Screen.height))
+
                     // If thumbnails disabled -> height is 0
-                    readonly property int instanceThumbHeight: groupRoot.showThumbnails ? 
+                    readonly property int instanceThumbHeight: groupRoot.showThumbnails ?
                         Math.round(groupRoot.tooltipInstanceMaximumWidth / screenRatio) : 0
                     
                     // Reduced padding for overlay style (was * 3)
