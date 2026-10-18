@@ -511,6 +511,10 @@
       <label>Play removal animation when unpinning by drag (icons-only mode).</label>
       <default>false</default>
     </entry>
+    <entry name="cursorGlow" type="Bool">
+      <label>Draw a glow on the panel that follows the cursor over task buttons.</label>
+      <default>false</default>
+    </entry>
     <entry name="mediaControlsLocation" type="Int">
       <label>Location of media controls on thumbnails: 0 = On thumbnails (Overlay), 1 = Under thumbnails</label>
       <default>0</default>

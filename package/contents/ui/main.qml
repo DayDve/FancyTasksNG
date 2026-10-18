@@ -22,6 +22,7 @@
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Shapes
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents3
@@ -861,6 +862,70 @@ PlasmoidItem {
                 const task = hoveredItem as Task;
                 if (tasks.tasksModel)
                     tasks.tasksModel.requestOpenUrls(task.modelIndex(), urls);
+            }
+        }
+
+        // Cursor-following glow drawn on the panel underneath the task buttons.
+        // Sized to the task list area so it never bleeds onto other applets.
+        Shape {
+            id: hoverGlow
+            anchors.fill: tmf
+            visible: tasks.config.cursorGlow
+            preferredRendererType: Shape.CurveRenderer
+
+            // Kept after the cursor leaves so the glow fades out in place
+            property real cursorX: 0
+            property real cursorY: 0
+            property color glowColor: Kirigami.Theme.highlightColor
+
+            function tint(alpha: real): color {
+                return Qt.rgba(glowColor.r, glowColor.g, glowColor.b, alpha);
+            }
+
+            opacity: rootHoverHandler.hovered && tasks.instantHoveredTask !== null ? 1 : 0
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: Kirigami.Units.longDuration
+                    easing.type: Easing.OutQuad
+                }
+            }
+            Behavior on glowColor {
+                ColorAnimation {
+                    duration: Kirigami.Units.longDuration
+                }
+            }
+
+            Connections {
+                target: rootHoverHandler
+                function onPointChanged(): void {
+                    if (!rootHoverHandler.hovered) {
+                        return;
+                    }
+                    hoverGlow.cursorX = rootHoverHandler.point.position.x - hoverGlow.x;
+                    hoverGlow.cursorY = rootHoverHandler.point.position.y - hoverGlow.y;
+                    if (tasks.instantHoveredTask) {
+                        hoverGlow.glowColor = tasks.instantHoveredTask.frame.indicatorColor;
+                    }
+                }
+            }
+
+            ShapePath {
+                strokeWidth: -1
+                fillGradient: RadialGradient {
+                    centerX: hoverGlow.cursorX
+                    centerY: hoverGlow.cursorY
+                    centerRadius: (tasks.vertical ? hoverGlow.width : hoverGlow.height) * 1.4
+                    focalX: centerX
+                    focalY: centerY
+                    GradientStop { position: 0.0; color: hoverGlow.tint(0.35) }
+                    GradientStop { position: 0.35; color: hoverGlow.tint(0.14) }
+                    GradientStop { position: 0.7; color: hoverGlow.tint(0.04) }
+                    GradientStop { position: 1.0; color: "transparent" }
+                }
+                PathRectangle {
+                    width: hoverGlow.width
+                    height: hoverGlow.height
+                }
             }
         }
 

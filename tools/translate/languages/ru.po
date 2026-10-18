@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-10-18 01:36+0300\n"
+"POT-Creation-Date: 2026-10-18 15:52+0300\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -104,6 +104,14 @@ msgstr "Отображать историю браузеров в контекс
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Number of browser history items:"
 msgstr "Количество элементов истории:"
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Effects:"
+msgstr "Эффекты:"
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Glow following the cursor over task buttons"
+msgstr "Подсветка панели под кнопками, следующая за курсором"
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Configuration:"

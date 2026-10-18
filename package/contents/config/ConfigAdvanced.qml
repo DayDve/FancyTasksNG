@@ -210,6 +210,19 @@ ConfigPage {
         Item { height: advancedPage.largeSpacing }
 
         Label {
+            text: Wrappers.i18n("Effects:")
+        }
+
+        CheckBox {
+            id: cfg_cursorGlow
+            text: Wrappers.i18n("Glow following the cursor over task buttons")
+            checked: advancedPage.cfg_cursorGlow
+            onToggled: advancedPage.cfg_cursorGlow = checked
+        }
+
+        Item { height: advancedPage.largeSpacing }
+
+        Label {
             text: Wrappers.i18n("Configuration:")
         }
 

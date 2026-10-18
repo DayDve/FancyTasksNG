@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Cursor-Following Glow:** New option under Advanced → Effects: a soft glow on the panel underneath the task buttons that follows the cursor, tinted with the dominant color of the hovered app's icon and blending smoothly between apps. Off by default.
 - **Fit Button Width to Title:** New option for the classic (icons + text) mode on horizontal panels: instead of every button being the maximum width, each button is as wide as its icon and title, kept between a configurable minimum and the existing maximum width. Titles longer than the maximum are still elided. Off by default (#52).
 - **Tooltip Thumbnail Sizing:** Added a "Thumbnail aspect ratio" option under Behavior: screen-based sizing (the default) or sizing from window geometry. In window mode every thumbnail keeps the same height as in screen mode and is as wide as its window's shape makes it, so there are no empty bands at the sides and a small window's preview is never bigger than a maximized one's; it follows windows resized while the tooltip is open. Grouped previews are also constrained to the panel's screen (thanks @77x7, #49).
 
