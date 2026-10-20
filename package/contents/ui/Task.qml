@@ -115,15 +115,19 @@ Item {
     // "fit to title" is on: then icon + title, kept within [min, max].
     readonly property real classicButtonWidth: {
         const maxWidth = LayoutMetrics.preferredMaxWidth();
-        if (!task.config.fitButtonToText)
+        // An elided title's widest line is shorter than the room it had, so
+        // fitting to it would cut the title off before the max width.
+        if (!task.config.fitButtonToText || titleMeasure.truncated)
             return maxWidth;
-        // The trailing labelMargin mirrors the icon-to-title gap: the frame's
-        // right margin scales with iconSpacing and is 0 when that's 0, which
-        // would leave a fitted title touching the button's edge.
-        const contentWidth = task.labelChromeWidth + Math.ceil(titleMeasure.contentWidth) + LayoutMetrics.labelMargin;
+        const contentWidth = task.labelChromeWidth + Math.ceil(titleMeasure.contentWidth);
         return Math.min(maxWidth, Math.max(task.config.minFitButtonLength, contentWidth));
     }
-    readonly property real labelChromeWidth: LayoutMetrics.leftMargin() + taskIconBox.height + LayoutMetrics.labelMargin + LayoutMetrics.rightMargin()
+    // Mirrors the icon-to-title gap after a fitted title: the frame's right
+    // margin scales with iconSpacing and is 0 when that's 0, which would leave
+    // the title touching the button's edge. Reserved in the label itself, not
+    // just added to the width, so it survives the clamp to the max width.
+    readonly property real trailingLabelGap: task.config.fitButtonToText ? LayoutMetrics.labelMargin : 0
+    readonly property real labelChromeWidth: LayoutMetrics.leftMargin() + taskIconBox.height + LayoutMetrics.labelMargin + LayoutMetrics.rightMargin() + task.trailingLabelGap
 
     // Lays the title out exactly like the label would at the max width
     // (same wrapping, line limit and height), so contentWidth is the widest
@@ -907,7 +911,7 @@ Item {
             fill: parent
             leftMargin: LayoutMetrics.leftMargin() + taskIconBox.width + LayoutMetrics.labelMargin
             topMargin: LayoutMetrics.topMargin()
-            rightMargin: LayoutMetrics.rightMargin()
+            rightMargin: LayoutMetrics.rightMargin() + task.trailingLabelGap
             bottomMargin: LayoutMetrics.bottomMargin()
         }
 
