@@ -413,7 +413,7 @@ Item {
             }
         }
         PauseAnimation {
-            duration: task.config.smokeExplosionOnClose ? 250 : 0
+            duration: (task.tasksRoot.iconsOnly && task.config.smokeExplosionOnClose) ? 250 : 0
         }
         ParallelAnimation {
             NumberAnimation {
