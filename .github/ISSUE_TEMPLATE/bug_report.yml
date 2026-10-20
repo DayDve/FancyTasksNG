@@ -8,6 +8,8 @@ body:
         Thanks for taking the time to file a bug report. Fill in the fields below.
         The more precise you are, the faster it can be reproduced and fixed.
 
+        Before you start, check the [FAQ](https://github.com/daydve/FancyTasksNG/blob/develop/FAQ.md).
+
   - type: textarea
     id: what-happened
     attributes:

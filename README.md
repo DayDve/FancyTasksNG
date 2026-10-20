@@ -96,6 +96,9 @@ If you ever need to remove it, make sure you first delete any Fancy Tasks NG wid
 make uninstall
 ```
 
+## Something not working?
+Check the [FAQ](FAQ.md) first.
+
 ## Contributing
 Found a bug? Have a great idea for a feature? Want to help translate the widget into your language? All contributions are welcome! 
 
