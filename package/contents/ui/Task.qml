@@ -376,6 +376,16 @@ Item {
         }
         if (oldX < 0) {
             oldX = x;
+            oldXIndex = index;
+            return;
+        }
+        // With fitted widths a button also moves whenever a title before it
+        // changes length; sliding then would make it overlap that neighbor
+        // mid-animation on every title update, so only slide on a reorder.
+        const reordered = index !== oldXIndex;
+        oldXIndex = index;
+        if (!reordered && task.config.fitButtonToText && !task.tasksRoot.iconsOnly) {
+            oldX = x;
             return;
         }
         moveAnim.x = oldX - x + translateTransform.x;
@@ -398,6 +408,7 @@ Item {
     }
 
     property real oldX: -1
+    property int oldXIndex: -1
     property real oldY: -1
     SequentialAnimation {
         id: moveAnim
