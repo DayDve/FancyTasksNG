@@ -14,16 +14,16 @@ Answers to the questions that come up again and again in the issue tracker. If y
 
 ## A pinned app jumps to the end when I open it
 
-This is a trade-off, not a bug. It comes from Plasma's task model (libtaskmanager), which this widget is built on: a pinned launcher and the windows of that app are separate entries in it. The model can either keep a window in its launcher's slot, or let you drag any task anywhere, but not both at once. Pick the mode that fits how you work in **Behavior → Sort tasks**:
+This is a trade-off, not a bug. It comes from Plasma's task model (libtaskmanager), which this widget is built on: a pinned launcher and the windows of that app are separate entries in it. The model can either keep a window in its launcher's slot, or let you drag any task anywhere, but not both at once. With **Behavior → Sort tasks** set to **Manually**, pick what fits how you work with the **Keep launchers separate** checkbox under it:
 
-| | **Manually** | **Do not sort** |
+| | **Unchecked** | **Checked** |
 |---|---|---|
 | Drag tasks to reorder them | Yes, anything anywhere | No |
 | A newly opened window of a pinned app | Goes to the end of the list | Opens in the pinned app's slot |
 | When that window closes | The launcher returns to its slot | The launcher stays in its slot |
 | How to change the order of pinned apps | Drag them | **Pinned Applications** page in the settings |
 
-Plasma's own Task Manager has exactly the same choice; there it's the "Keep launchers separate" checkbox.
+Plasma's own Task Manager has exactly the same checkbox.
 
 ## I updated the widget, but nothing changed (or it's acting weird)
 

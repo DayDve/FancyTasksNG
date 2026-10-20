@@ -75,13 +75,35 @@ ConfigPage {
         Label {
             text: Wrappers.i18n("Sort tasks:")
         }
+        // Shown like Plasma's own Task Manager: "Do not sort" (0) and "Manually"
+        // (1) are both manual ordering, told apart by "Keep launchers separate",
+        // so the combo starts at 1 and the checkbox picks between 0 and 1.
         ComboBox {
             id: cfg_sortingStrategy
             Layout.fillWidth: true
             Layout.minimumWidth: behaviorPage.gridUnit * 14
-            model: [Wrappers.i18n("Do not sort"), Wrappers.i18n("Manually"), Wrappers.i18n("Alphabetically"), Wrappers.i18n("By desktop"), Wrappers.i18n("By activity"), Wrappers.i18n("By horizontal window position")]
-            currentIndex: behaviorPage.cfg_sortingStrategy
-            onActivated: index => behaviorPage.cfg_sortingStrategy = index
+            model: [Wrappers.i18n("Manually"), Wrappers.i18n("Alphabetically"), Wrappers.i18n("By desktop"), Wrappers.i18n("By activity"), Wrappers.i18n("By horizontal window position")]
+            currentIndex: Math.max(0, behaviorPage.cfg_sortingStrategy - 1)
+            onActivated: index => behaviorPage.cfg_sortingStrategy = index === 0 ? (keepLaunchersSeparate.checked ? 0 : 1) : index + 1
+        }
+
+        CheckBox {
+            id: keepLaunchersSeparate
+            visible: behaviorPage.cfg_sortingStrategy <= 1
+            text: Wrappers.i18n("Keep launchers separate")
+            checked: behaviorPage.cfg_sortingStrategy === 0
+            onToggled: behaviorPage.cfg_sortingStrategy = checked ? 0 : 1
+        }
+
+        Label {
+            visible: keepLaunchersSeparate.visible
+            Layout.fillWidth: true
+            wrapMode: Text.WordWrap
+            font: behaviorPage.themeSmallFont
+            opacity: 0.7
+            text: keepLaunchersSeparate.checked
+                ? Wrappers.i18n("Windows of pinned apps open in their pinned slots, but tasks can't be dragged. Reorder pinned apps on the Pinned Applications page.")
+                : Wrappers.i18n("Drag any task anywhere. A newly opened window of a pinned app goes to the end of the list.")
         }
     
         Item {
