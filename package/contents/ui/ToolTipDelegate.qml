@@ -26,6 +26,7 @@ import org.kde.kirigami as Kirigami
 
 import org.kde.plasma.plasmoid
 import org.kde.taskmanager as TaskManager
+import org.kde.plasma.private.mpris as Mpris
 
 import "code/singletones"
 
@@ -357,7 +358,92 @@ Loader {
             readonly property var rootIndex: toolTipDelegate.rootIndex
             readonly property var tasksModel: toolTipDelegate.tasksModel
             readonly property var mediaRegistry: toolTipDelegate.mediaRegistry
-            
+
+            // PIDs with more than one window in this group (a browser runs all
+            // its windows in one process). Their single MPRIS player and their
+            // streams can't be pinned to one thumbnail, so they get one shared
+            // panel below the thumbnails instead of controls on every window.
+            readonly property var sharedPids: {
+                const counts = {};
+                const pids = [];
+                for (let i = 0; i < groupRoot.windows.length; ++i) {
+                    const childIndex = groupRoot.tasksModel.makeModelIndex(groupRoot.rootIndex.row, i);
+                    const pid = groupRoot.tasksModel.data(childIndex, TaskManager.AbstractTasksModel.AppPid);
+                    if (pid > 0) {
+                        counts[pid] = (counts[pid] ?? 0) + 1;
+                        if (counts[pid] === 2) {
+                            pids.push(pid);
+                        }
+                    }
+                }
+                return pids;
+            }
+            readonly property bool showGroupMedia: groupRoot.config.showMediaControls && groupRoot.config.groupMediaControls === 0
+
+            Instantiator {
+                id: groupMediaControllers
+                model: groupRoot.showGroupMedia ? groupRoot.sharedPids : []
+                delegate: ToolTipMediaController {
+                    required property int modelData
+                    toolTipDelegate: toolTipDelegate
+                    appPid: modelData
+                    appId: groupRoot.appId
+                    mediaRegistry: groupRoot.mediaRegistry
+                    index: 0
+                }
+            }
+
+            // Usually there's one shared process; if there are several, show
+            // the one that's playing.
+            readonly property var groupMediaController: {
+                let best = null;
+                let bestScore = 0;
+                for (let i = 0; i < groupMediaControllers.count; ++i) {
+                    const controller = groupMediaControllers.objectAt(i);
+                    if (!controller || !controller.controlsAreEffective) {
+                        continue;
+                    }
+                    const playing = controller.playerData && controller.playerData.playbackStatus === Mpris.PlaybackStatus.Playing;
+                    const score = 1 + (controller.playingAudio ? 2 : 0) + (playing ? 4 : 0);
+                    if (score > bestScore) {
+                        best = controller;
+                        bestScore = score;
+                    }
+                }
+                return best;
+            }
+
+            // The panel's track title activates the window showing that track,
+            // or else the process's first window.
+            function activateMediaWindow(controller): void {
+                const track = controller.playerData && controller.playerData.track ? controller.playerData.track : "";
+                let target = null;
+                for (let i = 0; i < groupRoot.windows.length; ++i) {
+                    const childIndex = groupRoot.tasksModel.makeModelIndex(groupRoot.rootIndex.row, i);
+                    if (groupRoot.tasksModel.data(childIndex, TaskManager.AbstractTasksModel.AppPid) !== controller.appPid) {
+                        continue;
+                    }
+                    if (!target) {
+                        target = childIndex;
+                    }
+                    const display = groupRoot.tasksModel.data(childIndex, Qt.DisplayRole);
+                    if (track && display && display.includes(track)) {
+                        target = childIndex;
+                        break;
+                    }
+                }
+                if (!target) {
+                    return;
+                }
+                groupRoot.tasksModel.requestActivate(target);
+                if (groupRoot.parentTask) {
+                    groupRoot.parentTask.closeTooltip();
+                    if (groupRoot.parentTask.tasksRoot) {
+                        groupRoot.parentTask.tasksRoot.cancelHighlightWindows();
+                    }
+                }
+            }
+
             HoverHandler {
                 id: groupHover
             }
@@ -466,10 +552,10 @@ Loader {
                 
                 // Match content size strictly, but cap at screen limits
                 Layout.preferredWidth: Math.min(groupLayout.contentTargetWidth, groupLayout.maxTooltipWidth)
-                Layout.preferredHeight: Math.min(Math.max(groupToolTipListView.contentHeight, groupRoot.showThumbnails ? delegateModel.estimatedHeight : 0), groupLayout.maxTooltipHeight)
+                Layout.preferredHeight: Math.min(Math.max(groupToolTipListView.contentExtent, groupRoot.showThumbnails ? delegateModel.estimatedHeight : 0), groupLayout.maxTooltipHeight)
                 Layout.fillWidth: false 
                 
-                implicitHeight: Math.min(Math.max(groupToolTipListView.contentHeight, groupRoot.showThumbnails ? delegateModel.estimatedHeight : 0), groupLayout.maxTooltipHeight)
+                implicitHeight: Math.min(Math.max(groupToolTipListView.contentExtent, groupRoot.showThumbnails ? delegateModel.estimatedHeight : 0), groupLayout.maxTooltipHeight)
                 implicitWidth: Math.min(groupToolTipListView.width, groupLayout.maxTooltipWidth)
 
                 ListView {
@@ -477,6 +563,11 @@ Loader {
 
                     // Content Width Logic
                     width: groupLayout.contentTargetWidth
+                    // A horizontal ListView leaves contentHeight at -1, so take the
+                    // tallest delegate instead - otherwise anything below a
+                    // thumbnail (the under-thumbnail media bar) gets clipped (#60).
+                    readonly property real contentExtent: orientation === ListView.Horizontal
+                        ? contentItem.childrenRect.height : contentHeight
                     // Height is managed by ScrollView (fills viewport)
      
                     model: delegateModel
@@ -551,7 +642,25 @@ Loader {
                         toolTipDelegate: toolTipDelegate
 
                         mediaRegistry: groupRoot.mediaRegistry
+                        // The shared panel (or nothing, if it's turned off) stands
+                        // in for this window's own controls.
+                        sharesProcess: groupRoot.sharedPids.indexOf(appPid) !== -1
                     }
+                }
+            }
+
+            Loader {
+                id: groupMediaBarLoader
+                readonly property var controller: groupRoot.groupMediaController
+                active: controller !== null
+                visible: active
+                Layout.alignment: Qt.AlignHCenter
+                Layout.preferredWidth: Math.min(groupRoot.tooltipInstanceMaximumWidth, scrollView.Layout.preferredWidth)
+                Layout.bottomMargin: groupRoot.showThumbnails ? 0 : Kirigami.Units.smallSpacing
+
+                sourceComponent: ToolTipMediaBar {
+                    mediaController: groupMediaBarLoader.controller
+                    onActivateRequested: groupRoot.activateMediaWindow(groupMediaBarLoader.controller)
                 }
             }
         }

@@ -309,6 +309,33 @@ ConfigPage {
                 onActivated: index => behaviorPage.cfg_mediaControlsLocation = index
             }
         }
+
+        RowLayout {
+            visible: enableToolTips.checked && showMediaControls.checked
+            Item {
+                implicitWidth: behaviorPage.gridUnit * 2
+            }
+            Label {
+                text: Wrappers.i18n("In group tooltips:")
+            }
+            ComboBox {
+                id: cfg_groupMediaControls
+                Layout.fillWidth: true
+                Layout.minimumWidth: behaviorPage.gridUnit * 12
+                model: [Wrappers.i18n("One panel below the windows"), Wrappers.i18n("Hidden")]
+                currentIndex: behaviorPage.cfg_groupMediaControls
+                onActivated: index => behaviorPage.cfg_groupMediaControls = index
+            }
+        }
+        Label {
+            visible: enableToolTips.checked && showMediaControls.checked
+            Layout.fillWidth: true
+            Layout.leftMargin: behaviorPage.gridUnit * 2
+            text: Wrappers.i18n("For apps that play from one process for all their windows, such as web browsers. Apps with a process per window keep their controls on each window.")
+            wrapMode: Text.WordWrap
+            font: behaviorPage.themeSmallFont
+            opacity: 0.7
+        }
     
         Label {
             text: Wrappers.i18n("Clicking group button:")

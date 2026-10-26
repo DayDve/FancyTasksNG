@@ -59,6 +59,9 @@ Item {
     required property var toolTipDelegate
     required property var tasksModel
     property var mediaRegistry
+    // Set in a group tooltip for a window whose process has other windows in
+    // the group too: its media controls are in the group's shared panel.
+    property bool sharesProcess: false
 
     property var explicitWinId: undefined
     readonly property var currentWinId: explicitWinId !== undefined ? explicitWinId : (toolTipDelegate.windows && root.index < toolTipDelegate.windows.length ? toolTipDelegate.windows[root.index] : undefined)
@@ -178,7 +181,7 @@ Item {
     Loader {
         id: mediaControllerLoader
         // Lazy load the backend media controller only when media controls are enabled in settings
-        active: root.config && root.config.showMediaControls
+        active: root.config && root.config.showMediaControls && !root.sharesProcess
         sourceComponent: ToolTipMediaController {
             toolTipDelegate: root.toolTipDelegate
             appPid: root.appPid
@@ -200,6 +203,10 @@ Item {
 
     readonly property bool controlsAreEffective: mediaController ? mediaController.controlsAreEffective : false
     property bool delayedControlsActive: false
+    // The group tooltip learns which windows share a process only after its
+    // delegates exist; don't let the hide delay keep this window's own
+    // controls around once they've moved to the shared panel.
+    readonly property bool showOwnControls: !root.sharesProcess && (root.controlsAreEffective || root.delayedControlsActive)
     
     onControlsAreEffectiveChanged: {
         if (controlsAreEffective) {
@@ -335,7 +342,7 @@ Item {
         Layout.maximumWidth: root.tooltipInstanceMaximumWidth
         Layout.topMargin: -Kirigami.Units.smallSpacing // Tighter spacing to header
         
-        active: !root.showThumbnails && (root.controlsAreEffective || root.delayedControlsActive)
+        active: !root.showThumbnails && root.showOwnControls
         visible: active
         
         sourceComponent: ToolTipMediaControls {
@@ -540,7 +547,7 @@ Item {
         // Overlay Media Controls (Ghost Controls)
         Loader {
             id: overlayControlsLoader
-            active: root.showThumbnails && root.config.mediaControlsLocation === 0 && (root.controlsAreEffective || root.delayedControlsActive)
+            active: root.showThumbnails && root.config.mediaControlsLocation === 0 && root.showOwnControls
             visible: active
             
             z: 2002 
@@ -676,9 +683,11 @@ Item {
         id: mediaBarLoader
         Layout.fillWidth: true
         Layout.topMargin: Kirigami.Units.smallSpacing
-        Layout.bottomMargin: -Kirigami.Units.smallSpacing // Tighter padding
+        // Tighter padding in a single-window tooltip; a group's ScrollView
+        // clips to the delegate's height, so there it would cut the bar off.
+        Layout.bottomMargin: root.isGroup ? 0 : -Kirigami.Units.smallSpacing
 
-        active: root.showThumbnails && root.config.mediaControlsLocation === 1 && (root.controlsAreEffective || root.delayedControlsActive)
+        active: root.showThumbnails && root.config.mediaControlsLocation === 1 && root.showOwnControls
         visible: active
 
         sourceComponent: ToolTipMediaBar {

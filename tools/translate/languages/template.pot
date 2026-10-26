@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-10-20 10:25+0300\n"
+"POT-Creation-Date: 2026-10-26 17:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -532,6 +532,22 @@ msgid "Under thumbnails"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
+msgid "In group tooltips:"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "One panel below the windows"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Hidden"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "For apps that play from one process for all their windows, such as web browsers. Apps with a process per window keep their controls on each window."
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
 msgid "Clicking group button:"
 msgstr ""
 
@@ -892,26 +908,6 @@ msgstr ""
 msgid "Search applications..."
 msgstr ""
 
-#: package/contents/config/config.qml
-msgid "Appearance"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgid "Behavior"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgid "Indicators"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgid "Advanced"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgid "Pinned Applications"
-msgstr ""
-
 #: package/contents/config/LivePreview.qml
 msgid "Preview"
 msgstr ""
@@ -938,6 +934,26 @@ msgstr ""
 
 #: package/contents/config/PinnedAppCard.qml
 msgid "Remove"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgid "Appearance"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgid "Behavior"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgid "Indicators"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgid "Advanced"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgid "Pinned Applications"
 msgstr ""
 
 #: package/contents/ui/Badge.qml
