@@ -27,7 +27,6 @@ import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents3
 import org.kde.ksvg as KSvg
-import org.kde.plasma.private.mpris as Mpris
 import org.kde.kirigami as Kirigami
 
 import org.kde.plasma.workspace.trianglemousefilter
@@ -299,13 +298,11 @@ PlasmoidItem {
     }
 
     readonly property Component contextMenuComponent: Qt.createComponent("ContextMenu.qml")
-    readonly property Component audioStreamManagerComponent: Qt.createComponent("AudioStreamManager.qml")
 
 
     property alias taskList: taskListView
     property alias effectWatcher: windowViewEffectWatcher
-    property alias audioStreamManager: audioStreamManagerLoader
-    property alias mpris2Source: mpris2SourceModel
+    property alias mediaRegistry: mediaRegistry
     property alias dragHelper: dragHelper
     property alias taskFrame: taskFrame
     property alias filteredTasksModel: internalFilteredTasksModel
@@ -628,8 +625,9 @@ PlasmoidItem {
         }
     }
 
-    Mpris.Mpris2Model {
-        id: mpris2SourceModel
+    MediaRegistry {
+        id: mediaRegistry
+        tasksModel: internalTasksModel
     }
 
     function handleItemRemoval(taskItem) {
@@ -666,13 +664,10 @@ PlasmoidItem {
             TaskTools.activateTask(task.modelIndex(), task.model, null, task, Plasmoid, tasks, windowViewEffectWatcher.registered);
     }
     function adjustGlobalVolume(increment: int) {
-        const audioManager = audioStreamManagerLoader.item;
-        const pSink = "preferredSink";
-        const pAdj = "adjustObjectVolume";
-        if (!audioManager || !audioManager[pSink])
+        if (!mediaRegistry.preferredSink)
             return;
 
-        const lastResult = audioManager[pAdj](audioManager[pSink], increment);
+        const lastResult = mediaRegistry.adjustVolume([mediaRegistry.preferredSink], increment);
         if (lastResult && globalVolumeOverlayLoader.item) {
             const pVol = "volume";
             const pMute = "muted";
@@ -686,7 +681,6 @@ PlasmoidItem {
         const initialArgs = Object.assign(args, {
             visualParent: rootTask,
             modelIndex,
-            mpris2Source: mpris2SourceModel,
             tasksModel: tasks.tasksModel,
             virtualDesktopInfo,
             activityInfo,
@@ -715,12 +709,6 @@ PlasmoidItem {
         TaskManager.ActivityInfo {
             id: activityInfo
             readonly property string nullUuid: "00000000-0000-0000-0000-000000000000"
-        }
-
-        Loader {
-            id: audioStreamManagerLoader
-            sourceComponent: tasks.audioStreamManagerComponent
-            active: tasks.audioStreamManagerComponent.status === Component.Ready
         }
 
         Loader {
@@ -1147,8 +1135,7 @@ PlasmoidItem {
 
                     parentTask: tasks.currentHoveredTask
                     tasksModel: tasks.tasksModel
-                    mpris2Model: mpris2Source
-                    audioStreamManager: tasks.audioStreamManager
+                    mediaRegistry: tasks.mediaRegistry
 
                     readonly property var taskModel: parentTask ? parentTask.model : null
 

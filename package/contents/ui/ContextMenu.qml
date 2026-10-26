@@ -32,7 +32,6 @@ import "code/singletones"
 PlasmaExtras.Menu {
     id: menu
 
-    required property Mpris.Mpris2Model mpris2Source
     required property /*QModelIndex*/ var modelIndex
     required property TaskManager.TasksModel tasksModel
     required property TaskManager.VirtualDesktopInfo virtualDesktopInfo
@@ -310,7 +309,7 @@ PlasmaExtras.Menu {
         });
 
         // Add Media Player control actions
-        const playerData = menu.mpris2Source.playerForLauncherUrl(launcherUrl, menu.get(menu.atm.AppPid));
+        const playerData = menu.tasksRoot.mediaRegistry.playerFor(launcherUrl, menu.get(menu.atm.AppPid));
 
         if (playerData && playerData.canControl && !(menu.get(menu.atm.WinIdList) !== undefined && menu.get(menu.atm.WinIdList).length > 1)) {
             const playing = playerData.playbackStatus === Mpris.PlaybackStatus.Playing;

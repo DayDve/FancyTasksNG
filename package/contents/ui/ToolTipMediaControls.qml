@@ -80,8 +80,8 @@ RowLayout {
             id: sliderInline
             Layout.fillWidth: true
             
-            from: controlsRoot.mediaController && controlsRoot.mediaController.audioStreamManager ? controlsRoot.mediaController.audioStreamManager.item.minimalVolume : 0
-            to: controlsRoot.mediaController && controlsRoot.mediaController.audioStreamManager ? controlsRoot.mediaController.audioStreamManager.item.normalVolume : 65536
+            from: controlsRoot.mediaController && controlsRoot.mediaController.mediaRegistry ? controlsRoot.mediaController.mediaRegistry.minimalVolume : 0
+            to: controlsRoot.mediaController && controlsRoot.mediaController.mediaRegistry ? controlsRoot.mediaController.mediaRegistry.normalVolume : 65536
             
             // Block built-in QML Slider wheel handling completely to prevent duplicate scroll bugs!
             WheelHandler {

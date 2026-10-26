@@ -12,8 +12,7 @@ Item {
     // Input Properties
     property var taskItem: null
 
-    // Audio stream manager from tasksRoot
-    readonly property var audioStreamManager: taskItem && taskItem.tasksRoot ? taskItem.tasksRoot.audioStreamManager : null
+    readonly property var mediaRegistry: taskItem && taskItem.tasksRoot ? taskItem.tasksRoot.mediaRegistry : null
     readonly property var config: Plasmoid.configuration
     readonly property bool audioIndicatorsEnabled: config ? config.indicateAudioStreams : false
 
@@ -23,61 +22,30 @@ Item {
     readonly property bool playingAudio: hasAudioStream && audioStreams.some(item => !item.corked)
     readonly property bool muted: hasAudioStream && audioStreams.every(item => item.muted)
 
-    // Query and update PulseAudio streams matching the task
+    // Streams of every window of the task (all of a group's processes)
     function updateAudioStreams(): void {
-        if (!taskItem) return;
-        
-        const tasksRoot = taskItem.tasksRoot;
-        if (!tasksRoot) return;
-
-        const pa = tasksRoot.audioStreamManager.item;
-        if (!pa || !taskItem.model) {
+        if (!taskItem || !mediaRegistry || !taskItem.model) {
             audioStreams = [];
             return;
         }
-
-        // Try matching by AppId, then AppPid, then AppName
-        let streams = pa.streamsForAppId(taskItem.model.AppId);
-        if (!streams.length) {
-            streams = pa.streamsForPid(taskItem.model.AppPid);
-
-            if (streams.length) {
-                pa.registerPidMatch(taskItem.model.AppPid);
-            } else {
-                 streams = pa.streamsForAppName(taskItem.model.AppName);
-            }
-        }
-
-        audioStreams = streams;
+        audioStreams = mediaRegistry.streamsForTask(taskItem.modelIndex());
     }
 
-    // Toggle mute state for all application streams
     function toggleMuted(): void {
-        if (muted) {
-            audioStreams.forEach(item => item.unmute());
-        } else {
-            audioStreams.forEach(item => item.mute());
+        if (mediaRegistry) {
+            mediaRegistry.toggleMuted(audioStreams);
         }
     }
 
     // Adjust application volume or system global volume
     function adjustVolume(increment, isGlobal): void {
-        if (!taskItem) return;
+        if (!taskItem || !mediaRegistry) return;
 
         const tasksRoot = taskItem.tasksRoot;
-        if (!tasksRoot) return;
-
-        const audioManager = tasksRoot.audioStreamManager.item;
-        if (!audioManager) return;
-
-        const streams = isGlobal ? (audioManager.preferredSink ? [audioManager.preferredSink] : []) : audioStreams;
+        const streams = isGlobal ? (mediaRegistry.preferredSink ? [mediaRegistry.preferredSink] : []) : audioStreams;
         if (streams.length === 0) return;
-        
-        let lastResult = null;
-        streams.forEach(stream => {
-            lastResult = audioManager.adjustObjectVolume(stream, increment);
-        });
 
+        const lastResult = mediaRegistry.adjustVolume(streams, increment);
         if (lastResult) {
             if (isGlobal) {
                 if (tasksRoot.globalVolumeOverlay && tasksRoot.globalVolumeOverlay.item) {
@@ -93,11 +61,9 @@ Item {
         }
     }
 
-    // Watch for stream changes globally
     Connections {
-        target: controller.audioStreamManager ? controller.audioStreamManager.item : null
-        ignoreUnknownSignals: true
-        function onStreamsChanged(): void {
+        target: controller.mediaRegistry
+        function onAttributionChanged(): void {
             controller.updateAudioStreams();
         }
     }
@@ -119,7 +85,8 @@ Item {
         }
     }
 
-    Component.onCompleted: {
+    // Task.qml assigns taskItem only after the Loader has created us.
+    onTaskItemChanged: {
         if (taskItem && !taskItem.inPopup && taskItem.model && taskItem.model.IsWindow) {
             updateAudioStreams();
         }

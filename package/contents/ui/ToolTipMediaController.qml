@@ -15,8 +15,7 @@ Item {
     required property int appPid
     property string appId: ""
     property string title: ""
-    property var audioStreamManager
-    property var mpris2Model
+    property var mediaRegistry
     property int index
     property var thumbnailWinId
     property bool isPlayingAudio: false
@@ -25,13 +24,7 @@ Item {
     readonly property bool audioIndicatorsEnabled: config ? config.indicateAudioStreams : false
 
     // Media Player Data
-    readonly property var playerData: {
-        if (!mpris2Model || !toolTipDelegate)
-            return null;
-        if (!mpris2Model.playerForLauncherUrl)
-            return null;
-        return mpris2Model.playerForLauncherUrl(toolTipDelegate.launcherUrl, appPid);
-    }
+    readonly property var playerData: mediaRegistry && toolTipDelegate ? mediaRegistry.playerFor(toolTipDelegate.launcherUrl, appPid) : null
     readonly property bool titleIncludesTrack: playerData && playerData.track && title.includes(playerData.track)
 
     // Audio Streams
@@ -87,25 +80,13 @@ Item {
         }
         var currentForce = (args && args.force);
 
-        if (!controller.audioStreamManager) {
-            streamClearTimer.stop();
-            audioStreams = [];
-            return;
-        }
-        var pa = controller.audioStreamManager.item;
-        if (!pa) {
+        if (!controller.mediaRegistry || !controller.mediaRegistry.audio) {
             streamClearTimer.stop();
             audioStreams = [];
             return;
         }
 
-        // Check appid first for app using portal
-        var streams = pa.streamsForAppId(appId.replace(/\.desktop/, ''));
-        if (!streams.length) {
-            streams = pa.streamsForPid(appPid);
-        }
-
-
+        var streams = controller.mediaRegistry.streamsForProcess(appId, appPid, toolTipDelegate ? toolTipDelegate.appName : "");
 
         if (streams.length > 0) {
             // Only update cachedVolume from PA when not actively changing volume.
@@ -129,21 +110,17 @@ Item {
     }
 
     function toggleMuted() {
-        if (muted) {
-            audioStreams.forEach(item => item.unmute());
-        } else {
-            audioStreams.forEach(item => item.mute());
-        }
+        if (mediaRegistry)
+            mediaRegistry.toggleMuted(audioStreams);
     }
 
     function adjustAppVolume(increment) {
-        if (!hasAudioStream || !audioStreamManager || !audioStreamManager.item)
+        if (!hasAudioStream || !mediaRegistry)
             return;
-        let pa = audioStreamManager.item;
         // Compute an absolute target and delegate to setVolume — same path as the slider.
         // appVolume returns the live PA value when idle, or cachedVolume during rapid
         // scrolling, so accumulation is always correct without any separate caching logic.
-        setVolume(Math.max(pa.minimalVolume, Math.min(pa.normalVolume, appVolume + increment)));
+        setVolume(Math.max(mediaRegistry.minimalVolume, Math.min(mediaRegistry.normalVolume, appVolume + increment)));
     }
 
     function setVolume(value) {
@@ -151,19 +128,13 @@ Item {
             return;
         cachedVolume = value;
         userVolumeChangeTimer.restart();
-        audioStreams.forEach(item => {
-            if (item && typeof item.setVolume === 'function') {
-                item.setVolume(value);
-                if (value > 0 && item.muted)
-                    item.unmute();
-            }
-        });
+        if (mediaRegistry)
+            mediaRegistry.setVolume(audioStreams, value);
     }
 
     Connections {
-        target: controller.audioStreamManager ? controller.audioStreamManager.item : null
-        ignoreUnknownSignals: true
-        function onStreamsChanged() {
+        target: controller.mediaRegistry
+        function onAttributionChanged() {
             controller.updateAudioStreams({
                 delay: true
             });
@@ -203,7 +174,7 @@ Item {
         // For individual windows inside a group, require strict stream or title matching
         return hasWindowSpecificStream(thumbnailWinId) || titleIncludesTrack || isPlayingAudio || hasAudioStream;
     }
-    readonly property bool showVolumeControls: index !== -1 && audioStreamManager && audioStreamManager.item !== null && audioIndicatorsEnabled && (hasWindowSpecificStream(thumbnailWinId) || titleIncludesTrack || hasAudioStream)
+    readonly property bool showVolumeControls: index !== -1 && mediaRegistry && mediaRegistry.audio !== null && audioIndicatorsEnabled && (hasWindowSpecificStream(thumbnailWinId) || titleIncludesTrack || hasAudioStream)
     readonly property bool controlsAreEffective: config && config.showMediaControls && (showPlayerControls || showVolumeControls)
 }
 

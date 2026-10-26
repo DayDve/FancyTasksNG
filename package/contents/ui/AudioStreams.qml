@@ -12,32 +12,22 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import org.kde.plasma.private.volume as PlasmaPa
 
+// The PlasmaPa-backed half of MediaRegistry, loaded separately so the
+// registry (and MPRIS) keeps working when plasma-pa isn't installed.
+// Which task a stream belongs to is decided in MediaRegistry, not here.
 QtObject {
-    id: audioStreamManager
+    id: audioStreams
 
     signal streamsChanged()
 
-    // PIDs of streams some task already owns through a direct PID match.
-    // The appName fallback must not hand those streams to another task:
-    // separate installs of the same app (e.g. two Firefox builds with
-    // different desktop files) report the same application.name, so the
-    // non-playing instance would otherwise show and control the other's audio.
-    property var pidMatches: new Set()
-
-    function registerPidMatch(pid: int): void {
-        if (pid > 0 && !pidMatches.has(pid)) {
-            pidMatches.add(pid);
-            // Lets a task that already grabbed this stream by name drop it.
-            // Only notify on change to avoid infinite recursion.
-            streamsChanged();
-        }
-    }
-
     readonly property QtObject globalConfig: PlasmaPa.GlobalConfig { }
-    
+
     readonly property PlasmaPa.SinkModel sinksModel: PlasmaPa.SinkModel { }
     readonly property var preferredSink: sinksModel.preferredObject || sinksModel.preferredSink || (sinksModel.count > 0 ? sinksModel.data(sinksModel.index(0, 0), 257 /*ItemRole*/) : null)
-    
+
+    readonly property int minimalVolume: PlasmaPa.PulseAudio.MinimalVolume ?? 0
+    readonly property int normalVolume: PlasmaPa.PulseAudio.NormalVolume ?? 65536
+
     // QtObject has no default property, hence adding the Instantiator to one explicitly.
     readonly property Instantiator instantiator: Instantiator {
         model: PlasmaPa.PulseObjectFilterModel {
@@ -48,20 +38,29 @@ QtObject {
         delegate: QtObject {
             id: delegate
             required property var model
-            
+
+            // PipeWire-native clients (mpv, Telegram) only carry the process
+            // properties on the client, not on the stream itself.
             readonly property int pid: model.Client?.properties["application.process.id"] ?? 0
+            readonly property string binary: model.Client?.properties["application.process.binary"] ?? ""
             readonly property string appName: model.Client?.properties["application.name"] ?? ""
             readonly property string portalAppId: model.Client?.properties["pipewire.access.portal.app_id"] ?? ""
-            
-            // Expose Window IDs for matching
+            // Per-stream name: Firefox and mpv put the page or window title
+            // here, Chromium-family browsers just "Playback".
+            readonly property string mediaName: model.Name ?? ""
+            // Notification sounds are played by plasmashell on the app's
+            // behalf; the app they belong to is only in the stream's own
+            // application.name, not the client's.
+            readonly property bool isNotificationSound: binary === "plasmashell"
+            readonly property string streamAppName: model.Properties?.["application.name"] ?? appName
+
             readonly property int x11Xid: parseInt(model.Client?.properties["window.x11.xid"] ?? "0")
             readonly property int windowId: x11Xid > 0 ? x11Xid : 0
             readonly property bool muted: model.Muted
             // whether there is actually nothing going on on that stream
             readonly property bool corked: model.Corked
             readonly property int volume: model.Volume
-            
-            // Allow setting volume/mute
+
             function mute(): void {
                 model.Muted = true;
             }
@@ -75,60 +74,35 @@ QtObject {
             onPidChanged: {
                 if (pid > 0) restoreVolume();
             }
-            
+
             function restoreVolume() {
-                var cached = audioStreamManager.getCachedVolume(pid);
-                if (cached > 0) { 
+                var cached = audioStreams.getCachedVolume(pid);
+                if (cached > 0) {
                     setVolume(cached);
                 }
             }
-            
+
             onVolumeChanged: {
                 if (pid > 0) {
-                     audioStreamManager.saveVolume(pid, volume);
+                     audioStreams.saveVolume(pid, volume);
                 }
             }
         }
 
-        onObjectAdded: (index, object) => audioStreamManager.streamsChanged()
-        onObjectRemoved: (index, object) => audioStreamManager.streamsChanged()
+        onObjectAdded: (index, object) => audioStreams.streamsChanged()
+        onObjectRemoved: (index, object) => audioStreams.streamsChanged()
     }
 
-    function streamsForAppId(appId: string): var {
-        if (!appId) return [];
-        return findStreams(stream => stream.portalAppId === appId);
-    }
-
-    function streamsForAppName(appName: string): var {
-        if (!appName) return [];
-        return findStreams(stream => stream.appName === appName && !pidMatches.has(stream.pid));
-    }
-
-    function streamsForPid(pid: int): var {
-        if (pid <= 0) return [];
-        
-        // 1. Try direct PID match
-        let streams = findStreams(stream => stream.pid === pid && !stream.portalAppId);
-        
-        
-        return streams;
-    }
-
-    function findStreams(predicate): var {
+    function allStreams(): var {
         const results = [];
         for (let i = 0, count = instantiator.count; i < count; ++i) {
             const stream = instantiator.objectAt(i);
-            if (stream && predicate(stream)) {
+            if (stream) {
                 results.push(stream);
             }
         }
-
         return results;
     }
-
-    // Expose volume constants if valid, otherwise fallback
-    readonly property int minimalVolume: PlasmaPa.PulseAudio.MinimalVolume ?? 0
-    readonly property int normalVolume: PlasmaPa.PulseAudio.NormalVolume ?? 65536
 
     // Persistent Volume Cache (Key: WinID or PID)
     property var volumeCache: ({})
@@ -148,11 +122,11 @@ QtObject {
 
     function adjustObjectVolume(obj, increment) {
         if (!obj) return;
-        
+
         const step = (normalVolume - minimalVolume) * (globalConfig["volumeStep"] || 5) / 100;
         const currentVolume = obj.Volume !== undefined ? obj.Volume : (obj.volume !== undefined ? obj.volume : 0);
         const newVolume = Math.round(Math.max(minimalVolume, Math.min(currentVolume + (step * increment), normalVolume)));
-        
+
         if (obj.setVolume !== undefined) {
             obj.setVolume(newVolume);
         } else if (obj.volume !== undefined) {
@@ -162,13 +136,13 @@ QtObject {
         }
 
         const isCurrentlyMuted = obj.Muted !== undefined ? obj.Muted : (obj.muted !== undefined ? obj.muted : false);
-        
+
         if (newVolume > minimalVolume && isCurrentlyMuted) {
-            if (obj.unmute !== undefined) obj.unmute(); 
+            if (obj.unmute !== undefined) obj.unmute();
             else if (obj.Muted !== undefined) obj.Muted = false;
             else if (obj.muted !== undefined) obj.muted = false;
         } else if (newVolume <= minimalVolume && !isCurrentlyMuted) {
-            if (obj.mute !== undefined) obj.mute(); 
+            if (obj.mute !== undefined) obj.mute();
             else if (obj.Muted !== undefined) obj.Muted = true;
             else if (obj.muted !== undefined) obj.muted = true;
         }

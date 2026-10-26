@@ -704,7 +704,7 @@ Item {
     TapHandler {
         acceptedButtons: Qt.BackButton
         onTapped: {
-            const playerData = task.tasksRoot.mpris2Source.playerForLauncherUrl(task.model.LauncherUrlWithoutIcon, task.model.AppPid);
+            const playerData = task.tasksRoot.mediaRegistry.playerFor(task.model.LauncherUrlWithoutIcon, task.model.AppPid);
             if (playerData) {
                 playerData.Previous();
             }
@@ -715,7 +715,7 @@ Item {
     TapHandler {
         acceptedButtons: Qt.ForwardButton
         onTapped: {
-            const playerData = task.tasksRoot.mpris2Source.playerForLauncherUrl(task.model.LauncherUrlWithoutIcon, task.model.AppPid);
+            const playerData = task.tasksRoot.mediaRegistry.playerFor(task.model.LauncherUrlWithoutIcon, task.model.AppPid);
             if (playerData) {
                 playerData.Next();
             }

@@ -35,8 +35,7 @@ Loader {
     required property Task parentTask
     required property var rootIndex
     property var tasksModel
-    property var mpris2Model
-    property var audioStreamManager: null
+    property var mediaRegistry: null
     
     // Pass Cache from Root (tasks) down to Instances
     property var thumbnailCache: tasks.thumbnailCache
@@ -226,8 +225,7 @@ Loader {
             readonly property var activities: toolTipDelegate.activities
             readonly property bool isActive: toolTipDelegate.isActive
             readonly property var tasksModel: toolTipDelegate.tasksModel
-            readonly property var mpris2Model: toolTipDelegate.mpris2Model
-            readonly property var audioStreamManager: toolTipDelegate.audioStreamManager
+            readonly property var mediaRegistry: toolTipDelegate.mediaRegistry
             readonly property bool isPlayingAudio: toolTipDelegate.isPlayingAudio
             readonly property bool isMuted: toolTipDelegate.isMuted
 
@@ -322,8 +320,7 @@ Loader {
                     tasksModel: singleRoot.tasksModel
                     toolTipDelegate: toolTipDelegate
 
-                    mpris2Model: singleRoot.mpris2Model
-                    audioStreamManager: singleRoot.audioStreamManager
+                    mediaRegistry: singleRoot.mediaRegistry
                     
                     isPlayingAudio: singleRoot.isPlayingAudio
                     isMuted: singleRoot.isMuted
@@ -359,8 +356,7 @@ Loader {
             
             readonly property var rootIndex: toolTipDelegate.rootIndex
             readonly property var tasksModel: toolTipDelegate.tasksModel
-            readonly property var mpris2Model: toolTipDelegate.mpris2Model
-            readonly property var audioStreamManager: toolTipDelegate.audioStreamManager
+            readonly property var mediaRegistry: toolTipDelegate.mediaRegistry
             
             HoverHandler {
                 id: groupHover
@@ -554,8 +550,7 @@ Loader {
                         tasksModel: groupRoot.tasksModel
                         toolTipDelegate: toolTipDelegate
 
-                        mpris2Model: groupRoot.mpris2Model
-                        audioStreamManager: groupRoot.audioStreamManager
+                        mediaRegistry: groupRoot.mediaRegistry
                     }
                 }
             }

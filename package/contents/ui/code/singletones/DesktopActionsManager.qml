@@ -182,6 +182,32 @@ Item {
         });
     }
 
+    // callback receives an object mapping each PID (as a string) to its parent
+    // PID; empty while the helper is still starting up.
+    function parentPids(pids, callback) {
+        const pendingReply = DBus.SessionBus.asyncCall({
+            "service": "io.github.daydve.fancytasksng.DesktopActions",
+            "path": "/DesktopActions",
+            "iface": "io.github.daydve.fancytasksng.DesktopActions",
+            "member": "ParentPids",
+            "arguments": [pids.join(",")],
+            "signature": "(s)"
+        });
+        pendingReply.finished.connect(() => {
+            let result = {};
+            const reply = String(pendingReply.value || "");
+            if (reply.startsWith("{")) {
+                try {
+                    result = JSON.parse(reply);
+                } catch (e) {
+                    console.warn("DesktopActionsManager ParentPids parse error:", e, reply);
+                }
+            }
+            if (callback) callback(result);
+            pendingReply.destroy();
+        });
+    }
+
     function openUrl(url, launcherUrl) {
         const pendingReply = DBus.SessionBus.asyncCall({
             "service": "io.github.daydve.fancytasksng.DesktopActions",

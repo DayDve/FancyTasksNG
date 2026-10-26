@@ -58,13 +58,11 @@ Item {
 
     required property var toolTipDelegate
     required property var tasksModel
-    property var mpris2Model
+    property var mediaRegistry
 
     property var explicitWinId: undefined
     readonly property var currentWinId: explicitWinId !== undefined ? explicitWinId : (toolTipDelegate.windows && root.index < toolTipDelegate.windows.length ? toolTipDelegate.windows[root.index] : undefined)
-    
-    property var audioStreamManager
-    
+
 
     readonly property bool useOverlayStyle: root.showThumbnails
 
@@ -186,8 +184,7 @@ Item {
             appPid: root.appPid
             appId: root.appId
             title: root.title
-            audioStreamManager: root.audioStreamManager
-            mpris2Model: root.mpris2Model
+            mediaRegistry: root.mediaRegistry
             index: root.index
             thumbnailWinId: root.currentWinId
             isPlayingAudio: root.isPlayingAudio

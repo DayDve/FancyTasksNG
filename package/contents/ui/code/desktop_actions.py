@@ -766,6 +766,29 @@ class DesktopActionsService(dbus.service.Object):
         except Exception as e:
             print(f"Execute error: {e}", file=sys.stderr)
 
+    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='s', out_signature='s')
+    def ParentPids(self, pids_csv):
+        """Map comma-separated PIDs to their parent PIDs (JSON object).
+
+        QML can't read /proc itself. Chromium-family browsers play audio
+        from a utility child process, so its stream PID only matches a
+        window through its parent. PIDs that no longer exist are omitted.
+        """
+        result = {}
+        for token in pids_csv.split(","):
+            token = token.strip()
+            if not token.isdigit():
+                continue
+            try:
+                with open(f"/proc/{token}/status", encoding="utf-8") as f:
+                    for line in f:
+                        if line.startswith("PPid:"):
+                            result[token] = int(line.split()[1])
+                            break
+            except (OSError, ValueError, IndexError):
+                pass
+        return json.dumps(result)
+
     @dbus.service.method('io.github.daydve.fancytasksng.Config', in_signature='ss', out_signature='s')
     def ExportConfig(self, path, content):
         try:

@@ -106,8 +106,8 @@ Item {
                 id: slider
                 Layout.fillWidth: true
                 
-                from: overlayRoot.mediaController && overlayRoot.mediaController.audioStreamManager ? overlayRoot.mediaController.audioStreamManager.item.minimalVolume : 0
-                to: overlayRoot.mediaController && overlayRoot.mediaController.audioStreamManager ? overlayRoot.mediaController.audioStreamManager.item.normalVolume : 65536
+                from: overlayRoot.mediaController && overlayRoot.mediaController.mediaRegistry ? overlayRoot.mediaController.mediaRegistry.minimalVolume : 0
+                to: overlayRoot.mediaController && overlayRoot.mediaController.mediaRegistry ? overlayRoot.mediaController.mediaRegistry.normalVolume : 65536
                 
                 // Block built-in QML Slider wheel handling completely to prevent duplicate scroll bugs!
                 WheelHandler {

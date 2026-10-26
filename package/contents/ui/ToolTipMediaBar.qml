@@ -31,7 +31,7 @@ Item {
 
     // Local cached properties for optimized property bindings and less verbosity
     readonly property var player: mediaController ? mediaController.playerData : null
-    readonly property var streamMgr: mediaController ? mediaController.audioStreamManager : null
+    readonly property var mediaRegistry: mediaController ? mediaController.mediaRegistry : null
     readonly property real appVolume: mediaController ? mediaController.appVolume : 0
     readonly property bool muted: mediaController ? mediaController.muted : false
 
@@ -270,8 +270,8 @@ Item {
                         topPadding: 6
                         bottomPadding: 6
 
-                        from: barRoot.streamMgr ? barRoot.streamMgr.item.minimalVolume : 0
-                        to: barRoot.streamMgr ? barRoot.streamMgr.item.normalVolume : 65536
+                        from: barRoot.mediaRegistry ? barRoot.mediaRegistry.minimalVolume : 0
+                        to: barRoot.mediaRegistry ? barRoot.mediaRegistry.normalVolume : 65536
                         // Block built-in QML Slider wheel handling completely to prevent duplicate scroll bugs!
                         WheelHandler {
                             acceptedButtons: Qt.NoButton
@@ -386,8 +386,8 @@ Item {
                 topPadding: 4
                 bottomPadding: 4
 
-                from: barRoot.streamMgr ? barRoot.streamMgr.item.minimalVolume : 0
-                to: barRoot.streamMgr ? barRoot.streamMgr.item.normalVolume : 65536
+                from: barRoot.mediaRegistry ? barRoot.mediaRegistry.minimalVolume : 0
+                to: barRoot.mediaRegistry ? barRoot.mediaRegistry.normalVolume : 65536
 
                 WheelHandler {
                     acceptedButtons: Qt.NoButton
