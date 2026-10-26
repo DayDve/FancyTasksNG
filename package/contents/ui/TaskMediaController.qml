@@ -40,8 +40,10 @@ Item {
         let streams = pa.streamsForAppId(taskItem.model.AppId);
         if (!streams.length) {
             streams = pa.streamsForPid(taskItem.model.AppPid);
-            
-            if (!streams.length) {
+
+            if (streams.length) {
+                pa.registerPidMatch(taskItem.model.AppPid);
+            } else {
                  streams = pa.streamsForAppName(taskItem.model.AppName);
             }
         }

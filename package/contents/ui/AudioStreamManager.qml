@@ -16,7 +16,23 @@ QtObject {
     id: audioStreamManager
 
     signal streamsChanged()
-    
+
+    // PIDs of streams some task already owns through a direct PID match.
+    // The appName fallback must not hand those streams to another task:
+    // separate installs of the same app (e.g. two Firefox builds with
+    // different desktop files) report the same application.name, so the
+    // non-playing instance would otherwise show and control the other's audio.
+    property var pidMatches: new Set()
+
+    function registerPidMatch(pid: int): void {
+        if (pid > 0 && !pidMatches.has(pid)) {
+            pidMatches.add(pid);
+            // Lets a task that already grabbed this stream by name drop it.
+            // Only notify on change to avoid infinite recursion.
+            streamsChanged();
+        }
+    }
+
     readonly property QtObject globalConfig: PlasmaPa.GlobalConfig { }
     
     readonly property PlasmaPa.SinkModel sinksModel: PlasmaPa.SinkModel { }
@@ -85,7 +101,7 @@ QtObject {
 
     function streamsForAppName(appName: string): var {
         if (!appName) return [];
-        return findStreams(stream => stream.appName === appName);
+        return findStreams(stream => stream.appName === appName && !pidMatches.has(stream.pid));
     }
 
     function streamsForPid(pid: int): var {
