@@ -208,6 +208,23 @@ Item {
         });
     }
 
+    // callback receives true if a tab with that title was found and the
+    // browser switched to it (needs the Plasma Browser Integration extension).
+    function activateBrowserTab(browserPid, title, callback) {
+        const pendingReply = DBus.SessionBus.asyncCall({
+            "service": "io.github.daydve.fancytasksng.DesktopActions",
+            "path": "/DesktopActions",
+            "iface": "io.github.daydve.fancytasksng.DesktopActions",
+            "member": "ActivateBrowserTab",
+            "arguments": [parseInt(browserPid || 0), String(title || "")],
+            "signature": "(is)"
+        });
+        pendingReply.finished.connect(() => {
+            if (callback) callback(pendingReply.value === true);
+            pendingReply.destroy();
+        });
+    }
+
     function openUrl(url, launcherUrl) {
         const pendingReply = DBus.SessionBus.asyncCall({
             "service": "io.github.daydve.fancytasksng.DesktopActions",

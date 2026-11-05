@@ -48,6 +48,8 @@ QtObject {
             // Per-stream name: Firefox and mpv put the page or window title
             // here, Chromium-family browsers just "Playback".
             readonly property string mediaName: model.Name ?? ""
+            // For PlasmaPa's VolumeMonitor (the stream's level meter).
+            readonly property QtObject pulseObject: model.PulseObject ?? null
             // Notification sounds are played by plasmashell on the app's
             // behalf; the app they belong to is only in the stream's own
             // application.name, not the client's.

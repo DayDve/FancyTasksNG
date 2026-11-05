@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-10-26 17:32+0200\n"
+"POT-Creation-Date: 2026-11-05 17:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1019,11 +1019,11 @@ msgctxt "Open or bring to the front window of media player app"
 msgid "Restore"
 msgstr "恢复"
 
-#: package/contents/ui/ContextMenu.qml
+#: package/contents/ui/ContextMenu.qml package/contents/ui/ToolTipInstance.qml
 msgid "Unmute"
 msgstr ""
 
-#: package/contents/ui/ContextMenu.qml package/contents/ui/ToolTipMediaBar.qml package/contents/ui/ToolTipMediaControls.qml
+#: package/contents/ui/ContextMenu.qml package/contents/ui/ToolTipInstance.qml package/contents/ui/ToolTipMediaBar.qml package/contents/ui/ToolTipMediaControls.qml package/contents/ui/ToolTipStreamList.qml
 msgid "Mute"
 msgstr "静音"
 
@@ -1195,6 +1195,19 @@ msgstr "也在 %1 上可用"
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "在 %1 上可用"
+
+#: package/contents/ui/ToolTipStreamList.qml
+msgid "Show where this is playing"
+msgstr ""
+
+#: package/contents/ui/ToolTipStreamList.qml
+msgid "Audio stream"
+msgstr ""
+
+#: package/contents/ui/ToolTipStreamList.qml
+msgctxt "Stream name and its number among streams with the same name"
+msgid "%1 %2"
+msgstr ""
 
 #~ msgid "Custom Color:"
 #~ msgstr "自定义颜色："

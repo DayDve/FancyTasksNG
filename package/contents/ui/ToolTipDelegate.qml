@@ -663,6 +663,24 @@ Loader {
                     onActivateRequested: groupRoot.activateMediaWindow(groupMediaBarLoader.controller)
                 }
             }
+
+            ToolTipStreamListLoader {
+                Layout.alignment: Qt.AlignHCenter
+                Layout.preferredWidth: groupMediaBarLoader.Layout.preferredWidth
+                Layout.bottomMargin: Kirigami.Units.smallSpacing
+                mediaRegistry: groupRoot.mediaRegistry
+                streams: groupRoot.groupMediaController ? groupRoot.groupMediaController.audioStreams : []
+                playerPlaying: groupRoot.groupMediaController !== null && !!groupRoot.groupMediaController.playerData
+                    && groupRoot.groupMediaController.playerData.playbackStatus === Mpris.PlaybackStatus.Playing
+                onStreamActivated: {
+                    if (groupRoot.parentTask) {
+                        groupRoot.parentTask.closeTooltip();
+                        if (groupRoot.parentTask.tasksRoot) {
+                            groupRoot.parentTask.tasksRoot.cancelHighlightWindows();
+                        }
+                    }
+                }
+            }
         }
     }
 }

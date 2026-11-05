@@ -789,6 +789,47 @@ class DesktopActionsService(dbus.service.Object):
                 pass
         return json.dumps(result)
 
+    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='is', out_signature='b')
+    def ActivateBrowserTab(self, browser_pid, title):
+        """Switch a browser to the tab with the given title; True on success.
+
+        Goes through the Plasma Browser Integration extension: each browser
+        it runs in starts its own native host, a child of the browser, and
+        every host offers KRunner's tab search on /TabsRunner. A browser
+        names a tab's audio stream after the page, so this finds the tab a
+        stream plays in - the one way to get to a tab that isn't the one
+        the browser's single MPRIS player follows.
+        """
+        if browser_pid <= 0 or not title:
+            return False
+        try:
+            bus = dbus.SessionBus()
+            bus_daemon = bus.get_object('org.freedesktop.DBus', '/org/freedesktop/DBus')
+            names = bus_daemon.ListNames(dbus_interface='org.freedesktop.DBus')
+            for name in names:
+                if not str(name).startswith('org.kde.plasma.browser_integration'):
+                    continue
+                try:
+                    host_pid = int(bus_daemon.GetConnectionUnixProcessID(name, dbus_interface='org.freedesktop.DBus'))
+                    with open(f"/proc/{host_pid}/status", encoding="utf-8") as f:
+                        parent = next((int(line.split()[1]) for line in f if line.startswith("PPid:")), 0)
+                    if parent != browser_pid:
+                        continue
+                    runner = dbus.Interface(bus.get_object(name, '/TabsRunner'), 'org.kde.krunner1')
+                    matches = runner.Match(title, timeout=2)
+                    # (id, text, icon name, type, relevance, properties)
+                    exact = [m for m in matches if str(m[1]) == title]
+                    chosen = exact[0] if exact else (matches[0] if len(matches) == 1 else None)
+                    if chosen is None:
+                        return False
+                    runner.Run(chosen[0], '', timeout=2)
+                    return True
+                except (dbus.exceptions.DBusException, OSError, ValueError, StopIteration):
+                    continue
+        except dbus.exceptions.DBusException as e:
+            print(f"ActivateBrowserTab error: {e}", file=sys.stderr)
+        return False
+
     @dbus.service.method('io.github.daydve.fancytasksng.Config', in_signature='ss', out_signature='s')
     def ExportConfig(self, path, content):
         try:

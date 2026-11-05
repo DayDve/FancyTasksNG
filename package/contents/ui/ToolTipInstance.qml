@@ -28,6 +28,7 @@ import org.kde.plasma.components as PlasmaComponents3
 import org.kde.plasma.extras as PlasmaExtras
 import org.kde.kirigami as Kirigami
 import org.kde.taskmanager as TaskManager
+import org.kde.plasma.private.mpris as Mpris
 
 import "code/singletones"
 
@@ -207,6 +208,19 @@ Item {
     // delegates exist; don't let the hide delay keep this window's own
     // controls around once they've moved to the shared panel.
     readonly property bool showOwnControls: !root.sharesProcess && (root.controlsAreEffective || root.delayedControlsActive)
+
+    // In a group whose windows share a process the controls are in the
+    // shared panel; this window only gets a speaker badge, and only when a
+    // stream can actually be pinned to it (see MediaRegistry.streamsForWindow).
+    readonly property var windowStreams: {
+        if (!root.sharesProcess || !root.showThumbnails || !root.mediaRegistry || !root.config.showMediaControls || !root.config.indicateAudioStreams) {
+            return [];
+        }
+        void root.mediaRegistry.revision;
+        return root.mediaRegistry.streamsForWindow(root.appId, root.appPid, root.toolTipDelegate.appName, root.currentWinId, root.display);
+    }
+    readonly property bool windowPlaying: windowStreams.some(stream => !stream.corked)
+    readonly property bool windowMuted: windowStreams.length > 0 && windowStreams.every(stream => stream.muted)
     
     onControlsAreEffectiveChanged: {
         if (controlsAreEffective) {
@@ -567,7 +581,7 @@ Item {
         Item {
             id: titleOverlayContainer
             z: 9999
-            visible: root.useOverlayStyle && root.isWin && titleOverlayLabel.text.length > 0
+            visible: root.useOverlayStyle && root.isWin && (titleOverlayLabel.text.length > 0 || speakerBadge.visible)
             
             anchors.left: parent.left
             anchors.top: parent.top
@@ -580,9 +594,12 @@ Item {
             readonly property int hPadding: Kirigami.Units.largeSpacing
             readonly property int vPadding: Kirigami.Units.smallSpacing
             
+            readonly property bool hasText: titleOverlayLabel.text.length > 0
+            readonly property int badgeExtent: speakerBadge.visible ? speakerBadge.width + (hasText ? Kirigami.Units.smallSpacing : 0) : 0
+
             // Calculate width based on text content + padding, capped at max
-            width: Math.min(titleOverlayLabel.implicitWidth + hPadding * 2, maxOverlayWidth)
-            height: titleOverlayLabel.implicitHeight + vPadding * 2
+            width: Math.min(badgeExtent + (hasText ? titleOverlayLabel.implicitWidth : 0) + hPadding * 2, maxOverlayWidth)
+            height: Math.max(titleOverlayLabel.implicitHeight, speakerBadge.visible ? speakerBadge.height : 0) + vPadding * 2
             
             // Background Layer (Blurred Edges)
             Rectangle {
@@ -598,12 +615,50 @@ Item {
                 }
             }
             
+            // Speaker badge: this window is the one playing. Click mutes its
+            // streams, the wheel changes their volume.
+            Kirigami.Icon {
+                id: speakerBadge
+                visible: root.windowPlaying || root.windowMuted
+                anchors.left: parent.left
+                anchors.leftMargin: parent.hPadding
+                anchors.verticalCenter: parent.verticalCenter
+                width: Kirigami.Units.iconSizes.small
+                height: width
+                source: root.windowMuted ? "audio-volume-muted" : "audio-volume-high"
+                color: "white"
+                isMask: true
+                opacity: badgeMouse.containsMouse ? 1 : 0.85
+
+                MouseArea {
+                    id: badgeMouse
+                    anchors.fill: parent
+                    anchors.margins: -Kirigami.Units.smallSpacing
+                    hoverEnabled: true
+                    onClicked: root.mediaRegistry.toggleMuted(root.windowStreams)
+                    onWheel: wheel => {
+                        const steps = Math.round(wheel.angleDelta.y / 120);
+                        if (steps !== 0) {
+                            root.mediaRegistry.adjustVolume(root.windowStreams, steps);
+                        }
+                        wheel.accepted = true;
+                    }
+                }
+
+                PlasmaComponents3.ToolTip.text: root.windowMuted ? Wrappers.i18n("Unmute") : Wrappers.i18n("Mute")
+                PlasmaComponents3.ToolTip.visible: badgeMouse.containsMouse
+                PlasmaComponents3.ToolTip.delay: Kirigami.Units.toolTipDelay
+            }
+
             // Text Layer
             PlasmaComponents3.Label {
                 id: titleOverlayLabel
-                anchors.centerIn: parent
+                anchors.left: parent.left
+                anchors.leftMargin: parent.hPadding + parent.badgeExtent
+                anchors.verticalCenter: parent.verticalCenter
                 // Ensure text wraps/elides within the container minus padding
-                width: parent.width - parent.hPadding * 2
+                width: parent.width - parent.hPadding * 2 - parent.badgeExtent
+                visible: parent.hasText
                 
                 text: {
                     if (root.titleIncludesTrack) return ""; 
@@ -700,6 +755,25 @@ Item {
                     if (root.parentTask.tasksRoot) {
                         root.parentTask.tasksRoot.cancelHighlightWindows();
                     }
+                }
+            }
+        }
+    }
+
+    // More than one stream playing from this window's process: list them.
+    ToolTipStreamListLoader {
+        Layout.fillWidth: true
+        Layout.preferredWidth: 0
+        Layout.leftMargin: Kirigami.Units.smallSpacing
+        Layout.rightMargin: Kirigami.Units.smallSpacing
+        mediaRegistry: root.mediaRegistry
+        streams: root.showOwnControls && root.mediaController ? root.mediaController.audioStreams : []
+        playerPlaying: !!root.playerData && root.playerData.playbackStatus === Mpris.PlaybackStatus.Playing
+        onStreamActivated: {
+            if (root.parentTask) {
+                root.parentTask.closeTooltip();
+                if (root.parentTask.tasksRoot) {
+                    root.parentTask.tasksRoot.cancelHighlightWindows();
                 }
             }
         }

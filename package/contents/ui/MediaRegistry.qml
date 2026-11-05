@@ -26,6 +26,8 @@ QtObject {
     // Mute/volume/corked changes don't emit it; those are bindable properties
     // on the stream objects themselves.
     signal attributionChanged()
+    // Bumped along with attributionChanged, for bindings to depend on.
+    property int revision: 0
 
     readonly property Mpris.Mpris2Model mpris2Model: Mpris.Mpris2Model { }
 
@@ -140,6 +142,7 @@ QtObject {
             registry.requestParentPids(unknown);
         }
 
+        registry.revision++;
         registry.attributionChanged();
     }
 
@@ -235,6 +238,76 @@ QtObject {
     // Streams of one window's process.
     function streamsForProcess(appId: string, pid: int, appName: string): var {
         return registry.streamsFor(appId, pid > 0 ? [pid] : [], appName);
+    }
+
+    // Streams of one window, as far as they can be told apart: an X11 window
+    // id the stream carries, or the window title starting with the stream's
+    // name (Firefox and mpv name a stream after the page or the file). A
+    // browser's background tabs and Chromium's nameless "Playback" streams
+    // match no window; better no answer than a wrong one.
+    function streamsForWindow(appId: string, pid: int, appName: string, winId, title: string): var {
+        return registry.streamsForProcess(appId, pid, appName).filter(stream => {
+            if (winId && stream.windowId === winId) {
+                return true;
+            }
+            const name = stream.mediaName;
+            return name.length > 2 && title.startsWith(name);
+        });
+    }
+
+    // Whether activateStream() has anything to go by: Chromium-family
+    // browsers name every stream "Playback", which no tab or window has.
+    function canActivateStream(stream): bool {
+        return stream.mediaName.length > 2 && registry.ownerPid(stream) > 0;
+    }
+
+    // Brings up the tab or window a stream plays in. A browser's tab goes
+    // through the browser integration extension, found by the stream's
+    // name, which is the page title; without the extension only a window
+    // whose title starts with it (its active tab) can be found.
+    function activateStream(stream): void {
+        const pid = registry.ownerPid(stream);
+        const name = stream.mediaName;
+        if (pid <= 0 || name.length <= 2) {
+            return;
+        }
+        DesktopActionsManager.activateBrowserTab(pid, name, activated => {
+            if (!activated) {
+                registry.activateWindowTitled(pid, name);
+                return;
+            }
+            // The extension switches the tab, but KWin won't let the browser
+            // focus its own window; raise it from here once its title has
+            // followed the tab.
+            registry.tabWindowSearch = { pid: pid, name: name, attempts: 0 };
+            registry.tabWindowTimer.restart();
+        });
+    }
+
+    property var tabWindowSearch: null
+    readonly property Timer tabWindowTimer: Timer {
+        interval: 100
+        repeat: true
+        onTriggered: {
+            const search = registry.tabWindowSearch;
+            if (!search || registry.activateWindowTitled(search.pid, search.name) || ++search.attempts >= 20) {
+                registry.tabWindowSearch = null;
+                stop();
+            }
+        }
+    }
+
+    function activateWindowTitled(pid: int, name: string): bool {
+        const windows = registry.allWindows;
+        for (let row = 0, rows = windows.rowCount(); row < rows; ++row) {
+            const index = windows.makeModelIndex(row);
+            if (windows.data(index, TaskManager.AbstractTasksModel.AppPid) === pid
+                    && String(windows.data(index, Qt.DisplayRole) ?? "").startsWith(name)) {
+                windows.requestActivate(index);
+                return true;
+            }
+        }
+        return false;
     }
 
     function playerFor(launcherUrl, pid: int): var {
