@@ -1162,9 +1162,6 @@ PlasmoidItem {
                     isOnAllVirtualDesktops: taskModel ? taskModel.IsOnAllVirtualDesktops : false
                     activities: taskModel ? taskModel.Activities : []
 
-                    isPlayingAudio: taskModel ? (taskModel.IsPlayingAudio === true) : false
-                    isMuted: taskModel ? (taskModel.IsMuted === true) : false
-
                     forceTextMode: tasks.toolTipOpenedByClick !== null && tasks.config.groupedTaskVisualization !== 1
                 }
             }

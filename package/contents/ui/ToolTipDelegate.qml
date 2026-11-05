@@ -109,8 +109,6 @@ Loader {
     property bool isOnAllVirtualDesktops
     property list<string> activities: []
     property string appId: (tasksModel && rootIndex.valid) ? tasksModel.data(rootIndex, TaskManager.AbstractTasksModel.AppId) : ""
-    property bool isPlayingAudio
-    property bool isMuted
 
     readonly property string calculatedAppName: {
         let name = "";
@@ -227,8 +225,6 @@ Loader {
             readonly property bool isActive: toolTipDelegate.isActive
             readonly property var tasksModel: toolTipDelegate.tasksModel
             readonly property var mediaRegistry: toolTipDelegate.mediaRegistry
-            readonly property bool isPlayingAudio: toolTipDelegate.isPlayingAudio
-            readonly property bool isMuted: toolTipDelegate.isMuted
 
             HoverHandler {
                 id: singleHover
@@ -322,9 +318,6 @@ Loader {
                     toolTipDelegate: toolTipDelegate
 
                     mediaRegistry: singleRoot.mediaRegistry
-                    
-                    isPlayingAudio: singleRoot.isPlayingAudio
-                    isMuted: singleRoot.isMuted
                 }
             }
         }
@@ -632,9 +625,6 @@ Loader {
                         isOnAllVirtualDesktops: model.IsOnAllVirtualDesktops !== undefined ? model.IsOnAllVirtualDesktops : false
                         virtualDesktops: model.VirtualDesktops !== undefined ? model.VirtualDesktops : []
                         activities: model.Activities !== undefined ? model.Activities : []
-                        
-                        isPlayingAudio: model.IsPlayingAudio !== undefined ? model.IsPlayingAudio : false
-                        isMuted: model.IsMuted !== undefined ? model.IsMuted : false
                         isWindowActive: model.IsActive !== undefined ? model.IsActive : false
 
                         submodelIndex: groupRoot.tasksModel.makeModelIndex(groupRoot.rootIndex.row, index)

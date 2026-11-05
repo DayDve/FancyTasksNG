@@ -175,8 +175,6 @@ Item {
 
         return text + counter;
     }
-    required property bool isPlayingAudio
-    required property bool isMuted
 
     // Media Controller Loader
     Loader {
@@ -190,8 +188,9 @@ Item {
             title: root.title
             mediaRegistry: root.mediaRegistry
             index: root.index
-            thumbnailWinId: root.currentWinId
-            isPlayingAudio: root.isPlayingAudio
+            // Another window of the group may be what the player really
+            // belongs to (see ToolTipMediaController.showPlayerControls).
+            strictPlayer: root.toolTipDelegate.isGroup
         }
     }
 

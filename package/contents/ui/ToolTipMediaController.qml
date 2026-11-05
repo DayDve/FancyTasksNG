@@ -17,8 +17,11 @@ Item {
     property string title: ""
     property var mediaRegistry
     property int index
-    property var thumbnailWinId
-    property bool isPlayingAudio: false
+    // Plasma hands out an app's player to any of its processes when none
+    // matches by PID (a flatpak's player reports the D-Bus proxy's PID). In a
+    // group that would put it on every window of the app, so there it has to
+    // be this process's own player or come with a sign it plays here.
+    property bool strictPlayer: false
 
     readonly property var config: Plasmoid.configuration
     readonly property bool audioIndicatorsEnabled: config ? config.indicateAudioStreams : false
@@ -29,7 +32,6 @@ Item {
 
     // Audio Streams
     property var audioStreams: []
-    property bool delayAudioStreamIndicator: false
     readonly property bool hasAudioStream: audioStreams.length > 0
     readonly property bool muted: hasAudioStream && audioStreams.every(item => item.muted)
     readonly property bool playingAudio: hasAudioStream && audioStreams.some(item => !item.corked)
@@ -45,12 +47,6 @@ Item {
             }
         }
         return cachedVolume;
-    }
-
-    function hasWindowSpecificStream(winId) {
-        if (!winId || !hasAudioStream)
-            return false;
-        return audioStreams.some(stream => stream.windowId === winId);
     }
 
     Timer {
@@ -74,12 +70,7 @@ Item {
         }
     }
 
-    function updateAudioStreams(args) {
-        if (args && args.delay) {
-            delayAudioStreamIndicator = true;
-        }
-        var currentForce = (args && args.force);
-
+    function updateAudioStreams() {
         if (!controller.mediaRegistry || !controller.mediaRegistry.audio) {
             streamClearTimer.stop();
             audioStreams = [];
@@ -135,26 +126,13 @@ Item {
     Connections {
         target: controller.mediaRegistry
         function onAttributionChanged() {
-            controller.updateAudioStreams({
-                delay: true
-            });
+            controller.updateAudioStreams();
         }
     }
 
-    onAppPidChanged: updateAudioStreams({
-        delay: false,
-        force: true
-    })
-    onAppIdChanged: updateAudioStreams({
-        delay: false,
-        force: true
-    })
-    Component.onCompleted: {
-        updateAudioStreams({
-            delay: false,
-            force: true
-        });
-    }
+    onAppPidChanged: updateAudioStreams()
+    onAppIdChanged: updateAudioStreams()
+    Component.onCompleted: updateAudioStreams()
 
     // Effective control state calculation
     readonly property bool showPlayerControls: {
@@ -167,14 +145,9 @@ Item {
         if (!hasStatus)
             return false;
 
-        // If it's a single window tooltip or global group controller, always allow controls
-        if (!toolTipDelegate || !toolTipDelegate.isGroup || !thumbnailWinId)
-            return true;
-
-        // For individual windows inside a group, require strict stream or title matching
-        return hasWindowSpecificStream(thumbnailWinId) || titleIncludesTrack || isPlayingAudio || hasAudioStream;
+        return !strictPlayer || mediaRegistry.ownsPlayer(playerData, appPid) || hasAudioStream || titleIncludesTrack;
     }
-    readonly property bool showVolumeControls: index !== -1 && mediaRegistry && mediaRegistry.audio !== null && audioIndicatorsEnabled && (hasWindowSpecificStream(thumbnailWinId) || titleIncludesTrack || hasAudioStream)
+    readonly property bool showVolumeControls: index !== -1 && mediaRegistry && mediaRegistry.audio !== null && audioIndicatorsEnabled && hasAudioStream
     readonly property bool controlsAreEffective: config && config.showMediaControls && (showPlayerControls || showVolumeControls)
 }
 

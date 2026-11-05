@@ -317,6 +317,12 @@ QtObject {
         return registry.mpris2Model.playerForLauncherUrl(launcherUrl, pid);
     }
 
+    // Whether a player comes from the process itself, not the app-wide
+    // fallback playerFor() may return.
+    function ownsPlayer(player, pid: int): bool {
+        return !!player && pid > 0 && (player.instancePid === pid || player.kdePid === pid);
+    }
+
     function setMuted(streams, muted: bool): void {
         streams.forEach(stream => muted ? stream.mute() : stream.unmute());
     }
