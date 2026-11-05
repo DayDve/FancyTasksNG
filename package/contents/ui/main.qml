@@ -86,7 +86,7 @@ PlasmoidItem {
         repeat: false
         onTriggered: {
             tasks.applyModelConfiguration();
-            if (tasks.config.sortingStrategy === 1)
+            if (tasks.config.sortingStrategy <= 1)
                 tasks.restoreTaskOrder();
             // Deferred: restoreTaskOrder()'s move() calls pass through several
             // chained proxy models, so their rowsMoved signals aren't
@@ -570,8 +570,8 @@ PlasmoidItem {
         // re-appends a launcher at its end when the launcher is shown again
         // after its window closes - the pinned app then jumped to the end of
         // the pinned group. SortManual orders launchers by their stable row in
-        // the launcher list instead. Reordering by hand stays gated on
-        // sortingStrategy === 1 (drag-and-drop, keyboard, order restore).
+        // the launcher list instead. Both allow reordering by hand;
+        // TasksModel::move() itself keeps launchers apart in 0.
         case 0:
         case 1:
             return TaskManager.TasksModel.SortManual;

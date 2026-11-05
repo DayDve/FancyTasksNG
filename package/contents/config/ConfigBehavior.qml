@@ -98,11 +98,14 @@ ConfigPage {
         Label {
             visible: keepLaunchersSeparate.visible
             Layout.fillWidth: true
+            // A wrapping label still reports its unwrapped text width as
+            // implicit width, which would stretch the whole form column.
+            Layout.preferredWidth: behaviorPage.gridUnit * 14
             wrapMode: Text.WordWrap
             font: behaviorPage.themeSmallFont
             opacity: 0.7
             text: keepLaunchersSeparate.checked
-                ? Wrappers.i18n("Windows of pinned apps open in their pinned slots, but tasks can't be dragged. Reorder pinned apps on the Pinned Applications page.")
+                ? Wrappers.i18n("Pinned apps always come first and stay in place when launched. Pinned apps can be dragged among themselves, other tasks among themselves.")
                 : Wrappers.i18n("Drag any task anywhere. A newly opened window of a pinned app goes to the end of the list.")
         }
     
@@ -330,6 +333,7 @@ ConfigPage {
         Label {
             visible: enableToolTips.checked && showMediaControls.checked
             Layout.fillWidth: true
+            Layout.preferredWidth: behaviorPage.gridUnit * 14
             Layout.leftMargin: behaviorPage.gridUnit * 2
             text: Wrappers.i18n("For apps that play from one process for all their windows, such as web browsers. Apps with a process per window keep their controls on each window.")
             wrapMode: Text.WordWrap

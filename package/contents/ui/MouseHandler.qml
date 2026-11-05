@@ -13,6 +13,7 @@
 import QtQuick
 
 import org.kde.plasma.plasmoid
+import org.kde.taskmanager as TaskManager
 
 import "code/tools.js" as TaskTools
 
@@ -47,7 +48,7 @@ DropArea {
             return;
         }
 
-        if (above.model && config.sortingStrategy === 1) {
+        if (above.model && config.sortingStrategy <= 1) {
             const dragSource = dropArea.tasks.dragSource;
             if (dragSource && dragSource.model) {
                 const tasks = dropArea.tasks;
@@ -82,8 +83,9 @@ DropArea {
                     }
                 }
                 
-                tasks.dropIndex = dropIndex;
-                dropIndicator.visible = true;
+                const allowed = dropArea.canMoveTo(dragSource.index, dropIndex);
+                tasks.dropIndex = allowed ? dropIndex : -1;
+                dropIndicator.visible = allowed;
                 return; // Don't process normal hover when dragging
             }
         }
@@ -97,6 +99,24 @@ DropArea {
             hoveredItem = above;
             activationTimer.restart();
         }
+    }
+
+    // With launchers kept separate, TasksModel::move() keeps pinned apps
+    // (and their windows) in front of everything else and refuses moves
+    // across that boundary; only show the drop indicator where it will accept
+    // the drop.
+    function isPinnedAt(row: int): bool {
+        const url = dropArea.proxyModel.data(dropArea.proxyModel.index(row, 0), TaskManager.AbstractTasksModel.LauncherUrlWithoutIcon);
+        return !!url && dropArea.tasksModel.launcherPosition(url) !== -1;
+    }
+
+    function canMoveTo(from: int, dropIndex: int): bool {
+        if (config.sortingStrategy !== 0) {
+            return true;
+        }
+        // Same adjustment as onDropped: the moved item leaves a gap.
+        const to = Math.max(0, Math.min(dropIndex > from ? dropIndex - 1 : dropIndex, dropArea.proxyModel.count - 1));
+        return dropArea.isPinnedAt(from) === dropArea.isPinnedAt(to);
     }
 
     onExited: {

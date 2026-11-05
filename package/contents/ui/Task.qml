@@ -541,15 +541,14 @@ Item {
     Keys.onUpPressed: event => Keys.leftPressed(event)
     Keys.onDownPressed: event => Keys.rightPressed(event)
     Keys.onLeftPressed: event => {
-        if (!task.inPopup && task.config.sortingStrategy === 1 && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
-            tasksRoot.tasksModel.move(task.index, task.index 
-                - 1);
+        if (!task.inPopup && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
+            tasksRoot.tasksModel.move(task.index, task.index - 1);
         } else {
             event.accepted = false;
         }
     }
     Keys.onRightPressed: event => {
-        if (!task.inPopup && task.config.sortingStrategy === 1 && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
+        if (!task.inPopup && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
             tasksRoot.tasksModel.move(task.index, task.index + 1);
         } else {
             event.accepted = false;
