@@ -22,6 +22,8 @@ import org.kde.plasma.extras as PlasmaExtras
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.private.mpris as Mpris
 
+import "code/singletones"
+
 RowLayout {
     id: playerControllerRoot
     required property var playerData
@@ -101,11 +103,11 @@ RowLayout {
         icon.width: playerControllerRoot.showText ? playerControllerRoot.iconSmallMedium : playerControllerRoot.iconSmall
         icon.height: playerControllerRoot.showText ? playerControllerRoot.iconSmallMedium : playerControllerRoot.iconSmall
 
-        enabled: playerControllerRoot.isPlaying ? playerControllerRoot.playerData.canPause : playerControllerRoot.playerData.canPlay
+        enabled: playerControllerRoot.isPlaying ? playerControllerRoot.playerData.canPause : DesktopActionsManager.canPlay(playerControllerRoot.playerData)
         icon.name: playerControllerRoot.isPlaying ? "media-playback-pause" : "media-playback-start"
         onClicked: {
             if (!playerControllerRoot.isPlaying) {
-                playerControllerRoot.playerData.Play();
+                DesktopActionsManager.play(playerControllerRoot.playerData);
             } else {
                 playerControllerRoot.playerData.Pause();
             }

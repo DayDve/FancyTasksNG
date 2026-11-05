@@ -335,13 +335,13 @@ PlasmaExtras.Menu {
                 return playing && playerData.canPause ? "media-playback-pause" : "media-playback-start";
             });
             menuItem.enabled = Qt.binding(() => {
-                return playing ? playerData.canPause : playerData.canPlay;
+                return playing ? playerData.canPause : DesktopActionsManager.canPlay(playerData);
             });
             menuItem.clicked.connect(() => {
                 if (playing) {
                     playerData.Pause();
                 } else {
-                    playerData.Play();
+                    DesktopActionsManager.play(playerData);
                 }
             });
             menu.addMenuItem(menuItem, startNewInstanceItem);

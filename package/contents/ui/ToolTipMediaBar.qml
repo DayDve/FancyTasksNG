@@ -68,12 +68,12 @@ Item {
                 icon.height: Kirigami.Units.iconSizes.small
 
                 readonly property bool isPlaying: barRoot.player ? barRoot.player.playbackStatus === Mpris.PlaybackStatus.Playing : false
-                enabled: barRoot.player ? (isPlaying ? barRoot.player.canPause : barRoot.player.canPlay) : false
+                enabled: barRoot.player ? (isPlaying ? barRoot.player.canPause : DesktopActionsManager.canPlay(barRoot.player)) : false
                 icon.name: isPlaying ? "media-playback-pause" : "media-playback-start"
                 onClicked: {
                     if (barRoot.player) {
                         if (!isPlaying) {
-                            barRoot.player.Play();
+                            DesktopActionsManager.play(barRoot.player);
                         } else {
                             barRoot.player.Pause();
                         }
