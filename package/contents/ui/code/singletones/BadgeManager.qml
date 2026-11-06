@@ -19,6 +19,9 @@ Item {
     // Reactive store for unread counts and progress
     property var unityCounts: ({})
     property var unityProgress: ({})
+    // The same, keyed by the PID of the process that sent the update.
+    property var pidCounts: ({})
+    property var pidProgress: ({})
     property int countVersion: 0
 
     Component.onCompleted: bridgeStarter.start()
@@ -46,16 +49,18 @@ Item {
         path: "/Bridge"
         iface: "io.github.daydve.fancytasksng.BadgeUpdate"
         
-        function dbusUpdateSignal(appId, count, progress) {
-            root.updateData(String(appId), count, progress);
+        function dbusUpdateSignal(appId, count, progress, pid) {
+            root.updateData(String(appId), count, progress, pid);
         }
     }
 
     /**
-     * Returns the unread count for a given AppId.
-     * Tries multiple name variations for maximum compatibility.
+     * Returns the unread count for a task: by its process first, since an
+     * app may report an id other than the task's; then by AppId, which also
+     * covers launchers and sandboxed apps whose sender PID is a D-Bus proxy.
      */
-    function getUnreadCount(appId) {
+    function getUnreadCount(appId, pid) {
+        if (pid > 0 && pidCounts[pid] !== undefined) return pidCounts[pid];
         if (!appId) return 0;
         
         let strId = String(appId);
@@ -68,9 +73,10 @@ Item {
     }
 
     /**
-     * Returns the progress (-1.0 if not visible) for a given AppId.
+     * Returns the progress (-1.0 if not visible), matched like getUnreadCount().
      */
-    function getProgress(appId) {
+    function getProgress(appId, pid) {
+        if (pid > 0 && pidProgress[pid] !== undefined) return pidProgress[pid];
         if (!appId) return -1.0;
         
         let strId = String(appId);
@@ -88,7 +94,7 @@ Item {
     /**
      * Updates the count and progress for an application and triggers UI refresh.
      */
-    function updateData(appId, count, progress) {
+    function updateData(appId, count, progress, pid) {
         let strId = String(appId);
         let cleanId = strId;
         if (cleanId.startsWith("application://")) cleanId = cleanId.slice(14);
@@ -124,6 +130,15 @@ Item {
 
         root.unityCounts = newCounts;
         root.unityProgress = newProgress;
+
+        if (pid > 0) {
+            let newPidCounts = Object.assign({}, root.pidCounts);
+            let newPidProgress = Object.assign({}, root.pidProgress);
+            newPidCounts[pid] = count;
+            newPidProgress[pid] = progress;
+            root.pidCounts = newPidCounts;
+            root.pidProgress = newPidProgress;
+        }
         root.countVersion++;
     }
 }

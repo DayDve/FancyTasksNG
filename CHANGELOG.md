@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Notification Badges for Apps Reporting Another Id:** Badge counts and progress are now matched to a task by the process that sends them, then by app id as before. An app that reports an id other than the one of the desktop file it was started from, such as Telegram forks like 64Gram after recent updates, gets its badge again.
+
 ## [2.3.0] - 2026-11-05
 
 ### Added

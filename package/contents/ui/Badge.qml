@@ -17,8 +17,7 @@ Rectangle {
 
     property alias text: label.text
     property alias textColor: label.color
-    property string appId: ""
-    property int number: appId !== "" ? ((BadgeManager.countVersion >= 0) ? BadgeManager.getUnreadCount(appId) : 0) : 0
+    property int number: 0
     property bool isRound: true
     property real fontPointSize: 8 // Reduced for better fit in small circles
     property bool hovered: false

@@ -40,12 +40,28 @@ class BridgeEmitter(dbus.service.Object):
             print(f"Bridge error: {e}")
             sys.exit(1)
 
-    @dbus.service.signal('io.github.daydve.fancytasksng.BadgeUpdate', signature='sid')
-    def UpdateSignal(self, appId, count, progress):
+    @dbus.service.signal('io.github.daydve.fancytasksng.BadgeUpdate', signature='sidu')
+    def UpdateSignal(self, appId, count, progress, pid):
         # This signal will be sent to the bus
         pass
 
-def handle_unity_update(appId, properties, **kwargs):
+# Unique bus names are never reused, so a sender's PID can be cached for good.
+sender_pids = {}
+
+def sender_pid(sender):
+    """PID of the process behind a bus connection, 0 if unknown."""
+    if not sender:
+        return 0
+    if sender not in sender_pids:
+        try:
+            sender_pids[sender] = int(bus.call_blocking(
+                'org.freedesktop.DBus', '/org/freedesktop/DBus', 'org.freedesktop.DBus',
+                'GetConnectionUnixProcessID', 's', (sender,)))
+        except Exception:
+            sender_pids[sender] = 0
+    return sender_pids[sender]
+
+def handle_unity_update(appId, properties, sender=None, **kwargs):
     count = properties.get("count", 0)
     visible = properties.get("count-visible", True)
     final_count = int(count) if visible else 0
@@ -54,8 +70,10 @@ def handle_unity_update(appId, properties, **kwargs):
     prog_visible = properties.get("progress-visible", False)
     final_progress = float(progress) if prog_visible else -1.0
     
-    # Re-emit on our private channel
-    emitter.UpdateSignal(str(appId), final_count, final_progress)
+    # The app id an app reports can differ from the one of the task it runs as
+    # (Telegram forks report their own id while started from Telegram's desktop
+    # file), so the sender's PID goes along to match the task by process.
+    emitter.UpdateSignal(str(appId), final_count, final_progress, sender_pid(sender))
 
 if __name__ == '__main__':
     DBusGMainLoop(set_as_default=True)
@@ -84,7 +102,8 @@ if __name__ == '__main__':
     bus.add_signal_receiver(
         handle_unity_update,
         signal_name="Update",
-        dbus_interface="com.canonical.Unity.LauncherEntry"
+        dbus_interface="com.canonical.Unity.LauncherEntry",
+        sender_keyword="sender"
     )
     
     loop = GLib.MainLoop()

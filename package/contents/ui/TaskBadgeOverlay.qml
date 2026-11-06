@@ -171,7 +171,7 @@ Item {
             : Math.round(Kirigami.Units.gridUnit * 0.85)
 
         visible: !!root.parentTask?.badgeVisible
-        appId: root.parentTask?.model?.AppId || ""
+        number: root.parentTask?.badgeCount ?? 0
 
         isUrgent: (root.config.badgeHighlightNew && !!root.parentTask?.hasUnseenNotifications)
                   || !!root.parentTask?.model?.DemandsAttention

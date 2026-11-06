@@ -219,12 +219,12 @@ Item {
     
     readonly property int badgeCount: {
         if (!task.model) return 0;
-        return (BadgeManager.countVersion >= 0) ? BadgeManager.getUnreadCount(task.model.AppId) : 0;
+        return (BadgeManager.countVersion >= 0) ? BadgeManager.getUnreadCount(task.model.AppId, task.model.AppPid) : 0;
     }
     
     readonly property real taskProgress: {
         if (!task.model) return -1.0;
-        return (BadgeManager.countVersion >= 0) ? BadgeManager.getProgress(task.model.AppId) : -1.0;
+        return (BadgeManager.countVersion >= 0) ? BadgeManager.getProgress(task.model.AppId, task.model.AppPid) : -1.0;
     }
     readonly property bool badgeVisible: {
         if (badgeCount <= 0) return false;
