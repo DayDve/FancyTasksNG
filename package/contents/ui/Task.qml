@@ -289,8 +289,8 @@ Item {
 
 
 
-    property bool isAudioHovered: false
-    readonly property bool containsMouse: hoverHandler.hovered || isAudioHovered
+    readonly property bool isBadgeHovered: badgeLoader.item ? (badgeLoader.item as TaskBadgeOverlay).hovered : false
+    readonly property bool containsMouse: hoverHandler.hovered || isBadgeHovered
 
     HoverHandler {
         id: hoverHandler
@@ -900,16 +900,26 @@ Item {
 
     Loader {
         id: badgeLoader
-        parent: task.tasksRoot.iconsOnly ? taskIconBox : task
-        width: parent ? parent.width : 0
-        height: parent ? parent.height : 0
+        anchors.fill: parent
         asynchronous: true
         active: (task.config.showBadges && task.badgeVisible) || (task.audioIndicatorsEnabled && (task.playingAudio || task.muted))
-        source: "TaskBadgeOverlay.qml"
-        onLoaded: {
-            item.parentTask = task;
-        }
         z: 999
+        sourceComponent: TaskBadgeOverlay {
+            button: taskIconBox.boxRect
+            zoom: taskIconBox.zoom
+            maxZoom: taskIconBox.maxZoom
+            vertical: task.tasksRoot.vertical
+            location: task.tasksRoot.effectiveLocation
+            highlighted: task.highlighted
+            dotMode: task.config.badgeDotMode
+            dotThreshold: task.config.badgeDotThreshold
+            audioVisible: task.audioIndicatorsEnabled && (task.playingAudio || task.muted)
+            muted: task.muted
+            countVisible: task.config.showBadges && task.badgeVisible
+            count: task.badgeCount
+            urgent: (task.config.badgeHighlightNew && task.hasUnseenNotifications) || !!task.model?.IsDemandingAttention
+            onMuteToggled: task.toggleMuted()
+        }
     }
 
     PlasmaComponents3.Label {

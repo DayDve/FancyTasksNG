@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Badges as Dots:** New "Show badges as dots" option under Indicators: never, always, or only when the badges would be smaller than a set size (the default, 10 px). A dot grows into the full badge while its task is hovered.
+
+### Changed
+- **Badge Layout:** In icons-only mode the audio and notification badges are now sized and placed from the task button rather than from the icon, so changing the icon's size or offset no longer drags them along or leaves the button's corners empty. They sit in the button's corners away from the panel edge: audio on the left and the count on the right on horizontal panels, audio on top and the count below on vertical ones. On hover they grow with the icon in place, from their corner facing the button's center, without shaking as the zoom animates, and a longer count widens away from the icon. Pointing at a badge keeps its task hovered, so the audio badge can be clicked while the icon is zoomed.
+- **Audio Badge Icon:** The speaker is now drawn as a vector shape instead of a font glyph, so it looks the same whatever fonts are installed and stays sharp at any size; muted, it's crossed by a red "no" sign. Digits in the notification count are centered by their actual shape, no longer sitting high.
+
 ### Fixed
+- **Badge Count Rounding:** Shortened counts were rounded up, so 9 999 read "10k" and 1 960 read "2k"; they now round down ("9.9k", "1.9k").
+- **Urgent Badge for Windows Demanding Attention:** The notification count was meant to turn urgent when its window demands attention, but checked a property that doesn't exist.
+- **Count Badge Shown With Badges Turned Off:** With "Show badges" off, an app that played audio also showed its notification count.
 - **Notification Badges for Apps Reporting Another Id:** Badge counts and progress are now matched to a task by the process that sends them, then by app id as before. An app that reports an id other than the one of the desktop file it was started from, such as Telegram forks like 64Gram after recent updates, gets its badge again.
 
 ## [2.3.0] - 2026-11-05

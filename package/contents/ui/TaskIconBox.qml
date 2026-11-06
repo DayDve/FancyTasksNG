@@ -100,6 +100,13 @@ Item {
         }
     }
 
+    // This box (the button's content area, unzoomed) in the task's
+    // coordinates, and the icon's hover zoom; badges are placed from these.
+    readonly property rect boxRect: Qt.rect(iconBox.x, iconBox.y, iconBox.width, iconBox.height)
+    readonly property real zoom: zoomScale.xScale
+    readonly property real maxZoom: iconBox._iconsOnly && iconBox.config.taskHoverEffect
+                                    ? 1 + iconBox.config.iconZoomFactor / Math.max(1, iconBox.height) : 1
+
     transform: [
         Translate {
             id: attentionTranslate

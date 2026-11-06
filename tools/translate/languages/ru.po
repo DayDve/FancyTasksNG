@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-05 18:35+0200\n"
+"POT-Creation-Date: 2026-11-06 12:24+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -812,6 +812,25 @@ msgid "Mark applications playing audio"
 msgstr "Отмечать приложения со звуком"
 
 #: package/contents/config/ConfigIndicators.qml
+msgid "Show badges as dots:"
+msgstr "Показывать бейджи точками:"
+
+#: package/contents/config/ConfigIndicators.qml
+msgctxt "Show badges as dots"
+msgid "Never"
+msgstr "Никогда"
+
+#: package/contents/config/ConfigIndicators.qml
+msgctxt "Show badges as dots"
+msgid "Always"
+msgstr "Всегда"
+
+#: package/contents/config/ConfigIndicators.qml
+msgctxt "Show badges as dots"
+msgid "When smaller than"
+msgstr "Если меньше"
+
+#: package/contents/config/ConfigIndicators.qml
 msgid "Progress:"
 msgstr "Прогресс:"
 
@@ -955,11 +974,6 @@ msgstr "Прочее"
 #: package/contents/config/config.qml
 msgid "Pinned Applications"
 msgstr "Закрепленные приложения"
-
-#: package/contents/ui/Badge.qml
-msgctxt "Invalid"
-msgid "—"
-msgstr "—"
 
 # --- ContextMenu.qml ---
 #: package/contents/ui/ContextMenu.qml
@@ -1211,6 +1225,10 @@ msgstr "Аудиопоток"
 msgctxt "Stream name and its number among streams with the same name"
 msgid "%1 %2"
 msgstr "%1 %2"
+
+#~ msgctxt "Invalid"
+#~ msgid "—"
+#~ msgstr "—"
 
 #~ msgid "Windows of pinned apps open in their pinned slots, but tasks can't be dragged. Reorder pinned apps on the Pinned Applications page."
 #~ msgstr "Окна закреплённых приложений открываются на их местах, но задачи нельзя перетаскивать. Порядок закреплённых приложений меняется на странице «Закрепленные приложения»."

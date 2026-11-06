@@ -485,6 +485,14 @@
       <label>Show notification badges on pinned application icons.</label>
       <default>true</default>
     </entry>
+    <entry name="badgeDotMode" type="Int">
+      <label>Show badges as dots until the task is hovered: 0 = Never, 1 = Always, 2 = When smaller than badgeDotThreshold</label>
+      <default>2</default>
+    </entry>
+    <entry name="badgeDotThreshold" type="Int">
+      <label>Badge size in pixels below which badges are shown as dots (badgeDotMode 2).</label>
+      <default>10</default>
+    </entry>
     <entry name="badgeColorMode" type="Enum">
       <label>Notification badge background color mode: 0 = Theme background, 1 = Fixed red, 2 = System accent color, 3 = Custom color</label>
       <default>0</default>

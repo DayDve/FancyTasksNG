@@ -8,176 +8,180 @@
 */
 
 import QtQuick
+import QtQuick.Effects
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.plasmoid
 
+// Audio and notification badges of a task, in the corners of the button on
+// the side away from the panel edge, so they use the button's free space
+// whatever the icon size. On hover they grow with the icon in place: the
+// corner facing the button's center and the panel edge stays put.
+//
+//   Panel    Audio         Count
+//   Bottom   top left      top right
+//   Top      bottom left   bottom right
+//   Left     top right     bottom right
+//   Right    top left      bottom left
 Item {
     id: root
-    property var parentTask: null
-    anchors.fill: parent
 
-    // ── Core geometry ──────────────────────────────────────────────
-    readonly property bool iconsOnly: parentTask && parentTask.tasksRoot.iconsOnly
-    readonly property var icon: parentTask ? parentTask.taskIcon : null
+    // Inputs, so the settings preview can drive it with mock data.
+    property rect button      // the button's content area, in this item's coordinates
+    property real zoom: 1     // the icon's current hover zoom
+    property real maxZoom: 1  // and its zoom when fully hovered
+    property bool vertical: false
+    property int location: PlasmaCore.Types.BottomEdge
+    property bool highlighted: false
+    property int dotMode: 2
+    property int dotThreshold: 10
 
-    // R is based on the iconBox (parent) size — the "square minus margins"
-    // This equals the icon at 100% scale, and shrinks with icon scale.
-    readonly property real boxW: parent ? parent.width : 0
-    readonly property real boxH: parent ? parent.height : 0
-    readonly property real iconCX: icon ? (icon.x + icon.width / 2) : (boxW / 2)
-    readonly property real iconCY: icon ? (icon.y + icon.height / 2) : (boxH / 2)
+    property bool audioVisible: false
+    property bool muted: false
+    property bool countVisible: false
+    property int count: 0
+    property bool urgent: false
 
-    readonly property real iconR: Math.min(boxW, boxH) / 2
-    readonly property real badgeR: iconR / 3
-    readonly property real badgeDiam: badgeR * 2
+    // Badges stick out of the task over its neighbours; pointing at them must
+    // keep their own task hovered, or the icon unzooms under the cursor.
+    readonly property bool hovered: audioHover.hovered || countHover.hovered
+    signal muteToggled()
 
-    // Dot mode only for tiny panels (< 30px effective icon area)
-    readonly property bool dotMode: badgeDiam < 10
-    readonly property real effectiveBadgeDiam: Math.max(6, badgeDiam)
-
-    // Audio badge is symbol-only (no background), needs larger area
-    readonly property real audioBadgeDiam: effectiveBadgeDiam * 1.4
-
-    // ── Panel location ─────────────────────────────────────────────
-    readonly property int location: Plasmoid.location
-    readonly property var config: Plasmoid.configuration
-    readonly property bool isVertPanel: location === PlasmaCore.Types.LeftEdge
-                                        || location === PlasmaCore.Types.RightEdge
-
-    readonly property real innerSign: {
-        if (location === PlasmaCore.Types.TopEdge) return 1;
-        if (location === PlasmaCore.Types.LeftEdge) return 1;
-        if (location === PlasmaCore.Types.RightEdge) return -1;
-        return -1; // BottomEdge / Floating
+    // Edge of the button away from the panel edge; badges hug it.
+    readonly property int farEdge: {
+        if (location === PlasmaCore.Types.TopEdge) return Qt.BottomEdge;
+        if (location === PlasmaCore.Types.LeftEdge) return Qt.RightEdge;
+        if (location === PlasmaCore.Types.RightEdge) return Qt.LeftEdge;
+        if (location === PlasmaCore.Types.BottomEdge) return Qt.TopEdge;
+        return vertical ? Qt.RightEdge : Qt.TopEdge; // Floating
     }
 
-    // ── Proportional Layout (Resolution Independent) ─────────────
-    // Calculated based on a standard 44px panel ratio
-    // Audio badge: x = -2px, y = 2px
-    readonly property real audioBaseX: isVertPanel ? (boxW * 0.045) : (-boxW * 0.045)
-    readonly property real audioBaseY: isVertPanel ? (boxH * 0.1) : (boxH * 0.045)
-
-    // Notification badge: center X = 36px (85%), y = 3px
-    readonly property real notifBaseCX: isVertPanel ? (boxW * 0.5) : (boxW * 0.85)
-    readonly property real notifBaseCY: isVertPanel ? (boxH * 0.85) : (boxH * 0.068)
-
-    // ── Dive offset when zoomed ────────────────────────────────────
-    // qmllint disable missing-property
-    readonly property real parentGrow: (iconsOnly && parent && parent.growSize !== undefined) ? parent.growSize : 0
-    // qmllint enable missing-property
-
-    readonly property real _diveTarget: {
-        if (!iconsOnly || !parentTask || !parentTask.highlighted) return 0;
-        if (parentGrow <= 0) return 0;
-        return parentGrow * 0.35;
+    // ── Size ───────────────────────────────────────────────────────
+    readonly property real restDiameter: Math.round(Math.min(button.width, button.height) / 3)
+    // When a dot grows into a badge on hover, the badge must be big enough to read.
+    readonly property real readableDiameter: Math.round(Kirigami.Units.gridUnit * 0.7)
+    // 0 = never dots, 1 = dots at rest, 2 = dots when the badge is smaller than the threshold
+    readonly property bool dotsAtRest: dotMode === 1 || (dotMode === 2 && restDiameter < dotThreshold)
+    // Badges grow a bit less than the icon, or they cover too much of it.
+    function grown(z: real): real {
+        return Math.max(restDiameter * (1 + (z - 1) * 0.8), dotsAtRest ? readableDiameter : 0);
     }
-    property real diveOffset: _diveTarget
+    readonly property real dotDiameter: Math.max(4, Math.round(restDiameter * 0.5))
 
-    Behavior on diveOffset {
+    // 0..1: how far a dot has grown into a badge.
+    property real expansion: dotsAtRest && highlighted ? 1 : 0
+    Behavior on expansion {
         NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
     }
+    readonly property real diameter: dotsAtRest ? dotDiameter + (grown(zoom) - dotDiameter) * expansion : grown(zoom)
+    readonly property bool showContent: !dotsAtRest || expansion > 0.6
 
-    on_DiveTargetChanged: {
-        diveOffset = _diveTarget;
+    // Badges are laid out once at their biggest size and scaled down from
+    // there: resizing them as the zoom animates re-rounds the text and the
+    // pill width every frame, and they wobble.
+    readonly property real layoutDiameter: grown(maxZoom)
+    readonly property real badgeScale: diameter / layoutDiameter
+
+    // ── Position ───────────────────────────────────────────────────
+    // Each badge grows from its corner facing the button's center and the
+    // panel edge. Along the panel that corner sits a bit inside the button's
+    // corner; across it, so that a badge at rest pokes a little past the
+    // button's far edge.
+    readonly property real nearOffset: (vertical ? button.height : button.width) / 2 - restDiameter * 1.35
+    readonly property real restLift: restDiameter * 0.1
+
+    function growsLeft(isCount: bool): bool {
+        return vertical ? farEdge === Qt.LeftEdge : !isCount;
+    }
+    function growsUp(isCount: bool): bool {
+        return vertical ? !isCount : farEdge === Qt.TopEdge;
+    }
+    function anchorX(isCount: bool): real {
+        if (!vertical) return button.x + button.width / 2 + (isCount ? nearOffset : -nearOffset);
+        return farEdge === Qt.LeftEdge ? button.x - restLift + restDiameter
+                                       : button.x + button.width + restLift - restDiameter;
+    }
+    function anchorY(isCount: bool): real {
+        if (vertical) return button.y + button.height / 2 + (isCount ? nearOffset : -nearOffset);
+        return farEdge === Qt.TopEdge ? button.y - restLift + restDiameter
+                                      : button.y + button.height + restLift - restDiameter;
+    }
+    function origin(isCount: bool): int {
+        const left = growsLeft(isCount), up = growsUp(isCount);
+        return up ? (left ? Item.BottomRight : Item.BottomLeft)
+                  : (left ? Item.TopRight : Item.TopLeft);
     }
 
-    readonly property real diveDx: isVertPanel ? (-innerSign * diveOffset) : 0
-    readonly property real diveDy: isVertPanel ? (diveOffset * 0.5) : diveOffset
-
-    // Helper: clamp value to [min, max]
-    function clamp(val, lo, hi) { return Math.max(lo, Math.min(hi, val)); }
-
-    // ── Audio Badge ────────────────────────────────────────────────
-    Badge {
+    // ── Audio ──────────────────────────────────────────────────────
+    Item {
         id: audioBadge
-        readonly property real idealX: root.audioBaseX + root.diveDx
-        readonly property real idealY: root.audioBaseY + root.diveDy
+        width: root.layoutDiameter
+        height: width
+        x: root.anchorX(false) - (root.growsLeft(false) ? width : 0)
+        y: root.anchorY(false) - (root.growsUp(false) ? height : 0)
+        transformOrigin: root.origin(false)
+        scale: root.badgeScale
+        visible: root.audioVisible
 
-        x: root.iconsOnly ? idealX : 0
-        y: root.iconsOnly ? idealY : 0
-
-        Behavior on x {
-            enabled: root.iconsOnly
-            NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
+        Rectangle {
+            anchors.fill: parent
+            radius: width / 2
+            color: root.muted ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.textColor
+            opacity: root.showContent ? 0 : 1
+            Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
         }
-        Behavior on y {
-            enabled: root.iconsOnly
-            NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
+
+        SpeakerGlyph {
+            anchors.fill: parent
+            muted: root.muted
+            opacity: root.showContent ? 1 : 0
+            Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
+            // A soft halo keeps the glyph readable on any icon.
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                shadowEnabled: true
+                shadowBlur: 0.4
+                shadowColor: Qt.rgba(0, 0, 0, 0.75)
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 0
+            }
         }
-
-        height: root.iconsOnly ? root.audioBadgeDiam : Math.round(Kirigami.Units.gridUnit * 0.85)
-        visible: root.parentTask ? (root.config.indicateAudioStreams && (root.parentTask.playingAudio || root.parentTask.muted)) : false
-
-        textSource: "🕪"
-        mirrorText: true
-        overlaySource: root.parentTask?.muted ? "⦸" : ""
-        opacity: root.parentTask?.muted ? 0.7 : 1.0
-        hovered: !!audioMouseArea.containsMouse
-
-        textIconColor: Kirigami.Theme.textColor
-        showBackground: false
-        shadowEnabled: true
-        isRound: true
-        fontFactor: 0.85
-        isBold: false
 
         MouseArea {
             id: audioMouseArea
+            // Small badges get a bigger target than they look.
             anchors.fill: parent
-            hoverEnabled: true
+            anchors.margins: -Math.max(0, (Kirigami.Units.iconSizes.small - root.diameter) / 2) / Math.max(0.01, root.badgeScale)
             acceptedButtons: Qt.LeftButton | Qt.MiddleButton
+            onClicked: root.muteToggled()
 
-            onContainsMouseChanged: {
-                if (root.parentTask) {
-                    root.parentTask.isAudioHovered = audioMouseArea.containsMouse;
-                }
-            }
-            onExited: {
-                if (root.parentTask) root.parentTask.isAudioHovered = false;
-            }
-            onClicked: (mouse) => {
-                mouse.accepted = true;
-                if (root.parentTask) root.parentTask.toggleMuted();
+            HoverHandler {
+                id: audioHover
+                enabled: root.audioVisible
+                blocking: true
             }
         }
     }
 
-    // ── Notification Badge ─────────────────────────────────────────
+    // ── Notification count ─────────────────────────────────────────
+    // The circle widens into a pill away from its fixed corner.
     Badge {
         id: notificationBadge
+        height: root.layoutDiameter
+        x: root.anchorX(true) - (root.growsLeft(true) ? width : 0)
+        y: root.anchorY(true) - (root.growsUp(true) ? height : 0)
+        transformOrigin: root.origin(true)
+        scale: root.badgeScale
+        // A ring scaled with the badge goes blurry; keep it one pixel thick.
+        border.width: 1 / Math.max(0.01, root.badgeScale)
+        visible: root.countVisible
+        number: root.count
+        showNumber: root.showContent
+        isUrgent: root.urgent
 
-        readonly property real idealCenterX: root.notifBaseCX + root.diveDx
-        readonly property real idealY: root.notifBaseCY + root.diveDy
-
-        x: root.iconsOnly
-            ? (idealCenterX - width / 2)
-            : (root.boxW - width)
-        y: root.iconsOnly
-            ? idealY
-            : 0
-
-        Behavior on x {
-            enabled: root.iconsOnly
-            NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
+        HoverHandler {
+            id: countHover
+            enabled: root.countVisible
+            blocking: true
         }
-        Behavior on y {
-            enabled: root.iconsOnly
-            NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.OutCubic }
-        }
-
-        height: root.iconsOnly
-            ? (root.dotMode ? Math.round(root.effectiveBadgeDiam * 0.5) : root.effectiveBadgeDiam)
-            : Math.round(Kirigami.Units.gridUnit * 0.85)
-
-        visible: !!root.parentTask?.badgeVisible
-        number: root.parentTask?.badgeCount ?? 0
-
-        isUrgent: (root.config.badgeHighlightNew && !!root.parentTask?.hasUnseenNotifications)
-                  || !!root.parentTask?.model?.DemandsAttention
-        isRound: true
-        isBold: false
-        fontFactor: 0.7
-        showNumber: !root.dotMode
     }
 }

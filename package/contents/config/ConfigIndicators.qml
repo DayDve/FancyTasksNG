@@ -563,7 +563,36 @@ ConfigPage {
             onToggled: indicatorsPage.cfg_indicateAudioStreams = checked
             visible: indicatorsPage.plasmaPaAvailable
         }
-    
+
+        RowLayout {
+            visible: cfg_showBadges.checked || cfg_indicateAudioStreams.checked
+            spacing: indicatorsPage.smallSpacing
+            Label {
+                text: Wrappers.i18n("Show badges as dots:")
+            }
+            ComboBox {
+                id: badgeDotMode
+                model: [
+                    Wrappers.i18nc("Show badges as dots", "Never"),
+                    Wrappers.i18nc("Show badges as dots", "Always"),
+                    Wrappers.i18nc("Show badges as dots", "When smaller than")
+                ]
+                currentIndex: indicatorsPage.cfg_badgeDotMode
+                onActivated: index => indicatorsPage.cfg_badgeDotMode = index
+            }
+            SpinBox {
+                visible: badgeDotMode.currentIndex === 2
+                from: 4
+                to: 64
+                value: indicatorsPage.cfg_badgeDotThreshold
+                onValueModified: indicatorsPage.cfg_badgeDotThreshold = value
+            }
+            Label {
+                visible: badgeDotMode.currentIndex === 2
+                text: "px"
+            }
+        }
+
         Item { height: indicatorsPage.largeSpacing }
     
         Label {

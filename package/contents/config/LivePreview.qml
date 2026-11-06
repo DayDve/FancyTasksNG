@@ -62,7 +62,7 @@ Item {
             // Strategy 0: Disabled (5 tasks)
             taskModel.append({ iconName: "plasmadiscover",   taskName: "Discover",   isMinimized: true,  isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: true  });
             taskModel.append({ iconName: "org.kde.dolphin",  taskName: "Dolphin",    isMinimized: false, isActive: true,  isHovered: true,  playingAudio: false, isMuted: false, showBadge: true,  badgeCount: 3, isGroup: false, groupCount: 1, showProgress: false });
-            taskModel.append({ iconName: "utilities-terminal",   taskName: "Konsole",isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
+            taskModel.append({ iconName: "utilities-terminal",   taskName: "Konsole",isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: true,  badgeCount: 12, isGroup: false, groupCount: 1, showProgress: false });
             taskModel.append({ iconName: "internet-web-browser", taskName: "Browser",isMinimized: false, isActive: false, isHovered: false, playingAudio: true,  isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
             taskModel.append({ iconName: "org.kde.dolphin",  taskName: "Dolphin",    isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
         } else if (groupMode === 1 && groupPopups === false) {
@@ -70,13 +70,13 @@ Item {
             taskModel.append({ iconName: "plasmadiscover",   taskName: "Discover",   isMinimized: true,  isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: true  });
             taskModel.append({ iconName: "org.kde.dolphin",  taskName: "Dolphin",    isMinimized: false, isActive: true,  isHovered: true,  playingAudio: false, isMuted: false, showBadge: true,  badgeCount: 3, isGroup: false, groupCount: 1, showProgress: false });
             taskModel.append({ iconName: "org.kde.dolphin",  taskName: "Dolphin",    isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
-            taskModel.append({ iconName: "utilities-terminal",   taskName: "Konsole",isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
+            taskModel.append({ iconName: "utilities-terminal",   taskName: "Konsole",isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: true,  badgeCount: 12, isGroup: false, groupCount: 1, showProgress: false });
             taskModel.append({ iconName: "internet-web-browser", taskName: "Browser",isMinimized: false, isActive: false, isHovered: false, playingAudio: true,  isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
         } else {
             // Strategy 1, Popups true: Collapsed (4 tasks, Dolphin is a group)
             taskModel.append({ iconName: "plasmadiscover",   taskName: "Discover",   isMinimized: true,  isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: true  });
             taskModel.append({ iconName: "org.kde.dolphin",  taskName: "Dolphin",    isMinimized: false, isActive: true,  isHovered: true,  playingAudio: false, isMuted: false, showBadge: true,  badgeCount: 3, isGroup: true,  groupCount: 2, showProgress: false });
-            taskModel.append({ iconName: "utilities-terminal",   taskName: "Konsole",isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
+            taskModel.append({ iconName: "utilities-terminal",   taskName: "Konsole",isMinimized: false, isActive: false, isHovered: false, playingAudio: false, isMuted: false, showBadge: true,  badgeCount: 12, isGroup: false, groupCount: 1, showProgress: false });
             taskModel.append({ iconName: "internet-web-browser", taskName: "Browser",isMinimized: false, isActive: false, isHovered: false, playingAudio: true,  isMuted: false, showBadge: false, badgeCount: 0, isGroup: false, groupCount: 1, showProgress: false });
         }
     }
@@ -656,57 +656,27 @@ Item {
                                         z: -1
                                     }
 
-                                    // Notification badge (proportional to taskIcon, scales with zoom)
-                                    FancyUI.Badge {
-                                        visible: mockTask.showBadge && mockTask.cfgReady && mockTask.cfg.cfg_showBadges
-                                        z: 10
-
-                                        readonly property real iconR: Math.min(taskIcon.width, taskIcon.height) / 2
-                                        readonly property real badgeDiam: Math.max(8, iconR * 0.7)
-                                        height: badgeDiam
-
-                                        readonly property real notifCX: previewRoot.isVertical ? (taskIcon.width * 0.5) : (taskIcon.width * 0.88)
-                                        readonly property real notifCY: previewRoot.isVertical ? (taskIcon.height * 0.88) : (taskIcon.height * 0.05)
-                                        x: taskIcon.x + notifCX - width / 2
-                                        y: taskIcon.y + notifCY
-
-                                        number: mockTask.badgeCount
-                                        isRound: true
-                                        hovered: mockTask.isHovered
-                                    }
-
                                 }
                                 
-                                // Audio indicator (Matching TaskBadgeOverlay.qml exactly)
-                                FancyUI.Badge {
-                                    id: audioBadge
-                                    visible: (mockTask.playingAudio || mockTask.isMuted) && mockTask.cfgReady && mockTask.cfg.cfg_indicateAudioStreams
+                                // Badges: the panel's own overlay, fed from the mock icon.
+                                FancyUI.TaskBadgeOverlay {
+                                    readonly property real restSize: taskIcon.width - taskIcon.growSize
+
+                                    anchors.fill: parent
                                     z: 50
-
-                                    readonly property real iconR: Math.min(taskIcon.width, taskIcon.height) / 2
-                                    readonly property real badgeDiam: Math.max(8, iconR * 0.7)
-                                    readonly property real audioBadgeDiam: badgeDiam * 1.4
-                                    
-                                    height: audioBadgeDiam
-                                    width: height
-
-                                    // Match proportions from TaskBadgeOverlay.qml
-                                    readonly property real audioBaseX: previewRoot.isVertical ? (taskIcon.width * 0.045) : (-taskIcon.width * 0.045)
-                                    readonly property real audioBaseY: previewRoot.isVertical ? (taskIcon.height * 0.1) : (taskIcon.height * 0.045)
-
-                                    x: taskIcon.x + audioBaseX
-                                    y: taskIcon.y + audioBaseY
-
-                                    textSource: "🕪"
-                                    mirrorText: true
-                                    overlaySource: mockTask.isMuted ? "⦸" : ""
-                                    opacity: mockTask.isMuted ? 0.7 : 1.0
-                                    
-                                    showBackground: false
-                                    shadowEnabled: true
-                                    fontFactor: 0.85
-                                    isBold: false
-                                    isRound: true
+                                    button: Qt.rect(previewIconBox.x, previewIconBox.y, previewIconBox.width, previewIconBox.height)
+                                    zoom: taskIcon.width / Math.max(1, restSize)
+                                    maxZoom: mockTask.cfgReady && mockTask.cfg.cfg_iconOnly === 1 && mockTask.cfg.cfg_taskHoverEffect
+                                             ? 1 + mockTask.cfg.cfg_iconZoomFactor / Math.max(1, restSize) : 1
+                                    vertical: previewRoot.isVertical
+                                    location: previewRoot.simulatedLocation
+                                    highlighted: previewRoot.zoomedTaskItem === mockTask
+                                    dotMode: mockTask.cfgReady ? mockTask.cfg.cfg_badgeDotMode : 2
+                                    dotThreshold: mockTask.cfgReady ? mockTask.cfg.cfg_badgeDotThreshold : 10
+                                    audioVisible: mockTask.hasAudio && mockTask.cfgReady && mockTask.cfg.cfg_indicateAudioStreams
+                                    muted: mockTask.isMuted
+                                    countVisible: mockTask.showBadge && mockTask.cfgReady && mockTask.cfg.cfg_showBadges
+                                    count: mockTask.badgeCount
                                 }
 
                                 // 5. Text label

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-05 18:35+0200\n"
+"POT-Creation-Date: 2026-11-06 12:24+0200\n"
 "PO-Revision-Date: 2023-09-21 16:18-0300\n"
 "Last-Translator:  Douglas Guimarães <<dg2003gh@gmail.com>>\n"
 "Language-Team: \n"
@@ -812,6 +812,25 @@ msgid "Mark applications playing audio"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
+msgid "Show badges as dots:"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgctxt "Show badges as dots"
+msgid "Never"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgctxt "Show badges as dots"
+msgid "Always"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
+msgctxt "Show badges as dots"
+msgid "When smaller than"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
 msgid "Progress:"
 msgstr ""
 
@@ -953,11 +972,6 @@ msgstr ""
 
 #: package/contents/config/config.qml
 msgid "Pinned Applications"
-msgstr ""
-
-#: package/contents/ui/Badge.qml
-msgctxt "Invalid"
-msgid "—"
 msgstr ""
 
 #: package/contents/ui/ContextMenu.qml

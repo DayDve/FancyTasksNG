@@ -259,8 +259,6 @@ Loader {
                         number: singleRoot.parentTask ? singleRoot.parentTask.badgeCount : 0
                         isUrgent: (singleRoot.config.badgeHighlightNew && singleRoot.parentTask) ? singleRoot.parentTask.hasUnseenNotifications : false
                         height: Math.round(Kirigami.Units.gridUnit * 0.85)
-                        isRound: false
-                        fontPointSize: 8
                         maxNumber: 0
                     }
                 }
@@ -498,8 +496,6 @@ Loader {
                         number: groupRoot.parentTask ? groupRoot.parentTask.badgeCount : 0
                         isUrgent: (groupRoot.config.badgeHighlightNew && groupRoot.parentTask) ? groupRoot.parentTask.hasUnseenNotifications : false
                         height: Math.round(Kirigami.Units.gridUnit * 0.85)
-                        isRound: false
-                        fontPointSize: 8
                         maxNumber: 0
                     }
                 }
