@@ -656,6 +656,7 @@ Loader {
                 Layout.bottomMargin: Kirigami.Units.smallSpacing
                 mediaRegistry: groupRoot.mediaRegistry
                 streams: groupRoot.groupMediaController ? groupRoot.groupMediaController.audioStreams : []
+                hasPlayer: groupRoot.groupMediaController !== null && !!groupRoot.groupMediaController.playerData
                 playerPlaying: groupRoot.groupMediaController !== null && !!groupRoot.groupMediaController.playerData
                     && groupRoot.groupMediaController.playerData.playbackStatus === Mpris.PlaybackStatus.Playing
                 onStreamActivated: {

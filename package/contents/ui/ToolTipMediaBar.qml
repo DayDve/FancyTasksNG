@@ -380,21 +380,12 @@ Item {
                 }
             }
 
-            PlasmaComponents3.Slider {
+            ToolTipVolumeSlider {
                 id: inlineVolumeSlider
                 Layout.fillWidth: true
-                topPadding: 4
-                bottomPadding: 4
 
                 from: barRoot.mediaRegistry ? barRoot.mediaRegistry.minimalVolume : 0
                 to: barRoot.mediaRegistry ? barRoot.mediaRegistry.normalVolume : 65536
-
-                WheelHandler {
-                    acceptedButtons: Qt.NoButton
-                    onWheel: (event) => {
-                        event.accepted = true;
-                    }
-                }
 
                 Binding {
                     target: inlineVolumeSlider
@@ -406,41 +397,6 @@ Item {
                 onMoved: {
                     if (barRoot.mediaController)
                         barRoot.mediaController.setVolume(value);
-                }
-
-                handle: Rectangle {
-                    x: inlineVolumeSlider.leftPadding + inlineVolumeSlider.visualPosition * (inlineVolumeSlider.availableWidth - width)
-                    y: inlineVolumeSlider.topPadding + (inlineVolumeSlider.availableHeight - height) / 2
-
-                    width: inlineHandleHover.hovered || inlineVolumeSlider.pressed ? 10 : 6
-                    height: width
-                    radius: width / 2
-
-                    color: inlineVolumeSlider.pressed ? Kirigami.Theme.highlightColor : Kirigami.Theme.textColor
-                    border.color: Kirigami.Theme.backgroundColor
-                    border.width: 1
-
-                    HoverHandler { id: inlineHandleHover }
-
-                    Behavior on width {
-                        NumberAnimation { duration: 120; easing.type: Easing.OutCubic }
-                    }
-                }
-
-                background: Rectangle {
-                    x: inlineVolumeSlider.leftPadding
-                    y: inlineVolumeSlider.topPadding + (inlineVolumeSlider.availableHeight - height) / 2
-                    width: inlineVolumeSlider.availableWidth
-                    height: 2
-                    radius: 1
-                    color: Qt.rgba(255, 255, 255, 0.15)
-
-                    Rectangle {
-                        width: inlineVolumeSlider.visualPosition * parent.width
-                        height: parent.height
-                        color: Kirigami.Theme.highlightColor
-                        radius: 1
-                    }
                 }
             }
 

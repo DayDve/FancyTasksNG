@@ -17,6 +17,9 @@ Loader {
     // follows only its most recently started media, so with that one paused
     // whatever else is still playing has no other indication.
     property bool playerPlaying: false
+    // Without a player the media bar's volume slider already stands for a
+    // lone stream; listing it too just doubles the slider and mute button.
+    property bool hasPlayer: false
 
     signal streamActivated()
 
@@ -25,7 +28,7 @@ Loader {
     // Paused streams stay around (Firefox keeps them corked), so with two
     // or more the list stays up while any of them plays.
     active: mediaRegistry !== null && mediaRegistry.audio !== null && anyPlaying
-        && (streams.length > 1 || !playerPlaying)
+        && (streams.length > 1 || (hasPlayer && !playerPlaying))
     visible: active && status === Loader.Ready
     source: "ToolTipStreamList.qml"
 

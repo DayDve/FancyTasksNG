@@ -127,7 +127,7 @@ ColumnLayout {
                 }
             }
 
-            PlasmaComponents3.Slider {
+            ToolTipVolumeSlider {
                 id: slider
                 Layout.preferredWidth: Kirigami.Units.gridUnit * 5
                 from: listRoot.mediaRegistry ? listRoot.mediaRegistry.minimalVolume : 0

@@ -767,6 +767,7 @@ Item {
         Layout.rightMargin: Kirigami.Units.smallSpacing
         mediaRegistry: root.mediaRegistry
         streams: root.showOwnControls && root.mediaController ? root.mediaController.audioStreams : []
+        hasPlayer: !!root.playerData
         playerPlaying: !!root.playerData && root.playerData.playbackStatus === Mpris.PlaybackStatus.Playing
         onStreamActivated: {
             if (root.parentTask) {
