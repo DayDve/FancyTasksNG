@@ -74,7 +74,9 @@ PlasmoidItem {
     property Item dropIndicator: dropIndicatorRect
     property int dropIndex: -1
     property Item dragSource: null
-    property bool dragEndedOutsidePanel: false
+    // Whether a drag is over this widget, tracked by MouseHandler's DropArea:
+    // a launcher dropped anywhere else is unpinned when unpinByDrag is on.
+    property bool dragOverApplet: false
 
     property bool _isApplyingConfig: false
     property bool _initialStartup: true
@@ -804,16 +806,13 @@ PlasmoidItem {
             }
 
             Drag.onDragFinished: dropAction => {
-                // If a pure launcher (no running windows) is dragged outside the panel,
-                // treat it as an "unpin" gesture.
-                // We check both Qt.IgnoreAction (nothing accepted the drop) AND
-                // dragEndedOutsidePanel (set by position check in Task.qml's DragHandler),
-                // because Plasma desktop or other shell components may accept the drag
-                // and return a non-IgnoreAction even when the user clearly dropped outside.
+                // A pure launcher (no running windows) dropped anywhere but this
+                // widget is unpinned. The drop action can't tell: other targets
+                // may accept or ignore the drag either way.
                 const source = tasks.dragSource;
                 let pModel = "model";
                 let pWinIdList = "winIdList";
-                if (tasks.config.unpinByDrag && (dropAction === Qt.IgnoreAction || tasks.dragEndedOutsidePanel) && source && source[pModel] && source[pModel].IsLauncher && source[pWinIdList].length === 0) {
+                if (tasks.config.unpinByDrag && !tasks.dragOverApplet && source && source[pModel] && source[pModel].IsLauncher && source[pWinIdList].length === 0) {
                     if (tasks.config.unpinByDragExplosion && tasks.config.iconOnly === 1) {
                         explosionManager.spawn(tasks, source, true);
                         // Delay removal so the explosion animation plays before the item disappears.
@@ -823,7 +822,7 @@ PlasmoidItem {
                         tasks.removeLauncher(source[pModel].LauncherUrlWithoutIcon);
                     }
                 }
-                tasks.dragEndedOutsidePanel = false;
+                tasks.dragOverApplet = false;
                 tasks.dragSource = null;
                 tasks.dropIndicator.visible = false;
             }

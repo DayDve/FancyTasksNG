@@ -31,6 +31,7 @@ DropArea {
 
     //ignore anything that is neither internal to TaskManager or a URL list
     onEntered: event => {
+        dropArea.tasks.dragOverApplet = true;
         if (event.formats.indexOf("text/x-plasmoidservicename") >= 0) {
             event.accepted = false;
         }
@@ -120,6 +121,7 @@ DropArea {
     }
 
     onExited: {
+        dropArea.tasks.dragOverApplet = false;
         dropArea.tasks.dropIndicator.visible = false;
         if (hoveredItem && hoveredItem.toolTipOpen) {
             hideTooltipTimer.itemToHide = hoveredItem;

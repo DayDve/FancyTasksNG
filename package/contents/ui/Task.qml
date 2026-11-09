@@ -829,7 +829,10 @@ Item {
                                 "text/x-orgkdeplasmataskmanager_taskurl": (task.model.LauncherUrlWithoutIcon || "").toString(),
                                 "application/x-orgkdeplasmataskmanager_taskbuttonitem": task.model.MimeData || "true",
                             };
-                            if (task.model.MimeType && task.model.MimeData) {
+                            // Without the file URL a launcher being dragged off to be
+                            // unpinned can't be dropped as a .desktop file elsewhere.
+                            const unpinnable = task.config.unpinByDrag && task.model.IsLauncher && task.winIdList.length === 0;
+                            if (!unpinnable && task.model.MimeType && task.model.MimeData) {
                                 mime[task.model.MimeType] = task.model.MimeData;
                             }
                             task.tasksRoot.dragHelper.Drag.mimeData = mime;
@@ -837,16 +840,6 @@ Item {
                             task.tasksRoot.dragHelper.Drag.active = dragHandler.active;
                         }, Qt.size(grabWidth, grabHeight));
                 } else {
-                    // Before clearing drag state, check if the cursor ended outside the panel.
-                    // This is used in main.qml's Drag.onDragFinished as a reliable unpin signal,
-                    // because some Plasma components may accept the drag (returning non-IgnoreAction)
-                    // even when the user clearly dropped outside the panel area.
-                    const isPureLauncher = task.model.IsLauncher && task.winIdList.length === 0;
-                    if (task.config.unpinByDrag && isPureLauncher) {
-                        const localPos = task.tasksRoot.taskList.mapFromItem(null, dragHandler.centroid.scenePosition);
-                        task.tasksRoot.dragEndedOutsidePanel = localPos.x < 0 || localPos.y < 0 || localPos.x > task.tasksRoot.taskList.width || localPos.y > task.tasksRoot.taskList.height;
-                    }
-
                     setRequestedInhibitDnd(false);
                     task.tasksRoot.dragHelper.Drag.active = false;
                     task.tasksRoot.dragHelper.Drag.imageSource = "";
