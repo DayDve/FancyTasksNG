@@ -218,10 +218,39 @@ PlasmoidItem {
 
         function onLaunchersChanged(): void {
             if (tasks.tasksModel && !tasks._isInternalLauncherUpdate) {
-                tasks.tasksModel.launcherList = tasks.config.launchers;
+                tasks.applyLauncherList(tasks.config.launchers);
                 tasks.tasksModel.syncLaunchers();
             }
         }
+    }
+
+    // Applies a launcher list changed outside the model (the Pinned
+    // Applications page, an imported config). Handing it straight to
+    // launcherList makes LauncherTasksModel remove and re-insert every
+    // launcher whenever the set of URLs changes, and in manual sorting the
+    // re-inserted launchers land after every launcher-backed window, which
+    // piles the running apps up at the start. Adding and removing only what
+    // changed goes through the incremental path that pinning from the context
+    // menu uses; the final assignment then only reorders and sets activities.
+    function applyLauncherList(launchers: var): void {
+        const urlOf = launcher => {
+            const s = String(launcher);
+            const nl = s.indexOf("\n");
+            return (s.startsWith("[") && nl !== -1) ? s.substring(nl + 1) : s;
+        };
+        const current = tasks.tasksModel.launcherList.map(urlOf);
+        const wanted = Array.from(launchers).map(urlOf);
+
+        tasks._isApplyingConfig = true;
+        try {
+            current.filter(url => !wanted.includes(url))
+                   .forEach(url => tasks.tasksModel.requestRemoveLauncher(url));
+            wanted.filter(url => !current.includes(url))
+                  .forEach(url => tasks.tasksModel.requestAddLauncher(url));
+        } finally {
+            tasks._isApplyingConfig = false;
+        }
+        tasks.tasksModel.launcherList = launchers;
     }
 
     property Task toolTipOpenedByClick
