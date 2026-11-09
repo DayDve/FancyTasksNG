@@ -676,6 +676,16 @@ PlasmoidItem {
         if (Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable && tasks.tasksModel)
             tasks.tasksModel.requestRemoveLauncher(url);
     }
+    // Through the filter proxy a move arrives as a layout change that recreates
+    // the delegates, so keyboard focus has to be put back on the moved task.
+    function focusTaskAt(row: int): void {
+        Qt.callLater(() => {
+            const task = internalTaskRepeater.itemAt(row) as Task;
+            if (task)
+                task.forceActiveFocus(Qt.TabFocusReason);
+        });
+    }
+
     // Called by plasmashell (C++, not QML) in response to a Meta+number shortcut -
     // no in-repo caller, do not remove as "dead code".
     function activateTaskAtIndex(index: var): void {

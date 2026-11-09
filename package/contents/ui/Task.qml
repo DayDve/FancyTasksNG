@@ -542,16 +542,29 @@ Item {
     Keys.onDownPressed: event => Keys.rightPressed(event)
     Keys.onLeftPressed: event => {
         if (!task.inPopup && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
-            tasksRoot.tasksModel.move(task.index, task.index - 1);
+            task.moveBy(-1);
         } else {
             event.accepted = false;
         }
     }
     Keys.onRightPressed: event => {
         if (!task.inPopup && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
-            tasksRoot.tasksModel.move(task.index, task.index + 1);
+            task.moveBy(1);
         } else {
             event.accepted = false;
+        }
+    }
+
+    // Delegate rows are rows of the shown, possibly filtered, model, while
+    // TasksModel.move() takes rows of the unfiltered one.
+    function moveBy(delta: int): void {
+        const proxy = tasksRoot.filteredTasksModel;
+        const from = proxy.mapToSource(proxy.index(task.index, 0));
+        const target = task.index + delta;
+        const to = proxy.mapToSource(proxy.index(target, 0));
+        if (from.valid && to.valid) {
+            tasksRoot.tasksModel.move(from.row, to.row);
+            tasksRoot.focusTaskAt(target);
         }
     }
 
