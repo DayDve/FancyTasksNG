@@ -9,6 +9,8 @@ import org.kde.kirigami as Kirigami
 import org.kde.plasma.plasmoid
 
 Kirigami.Page {
+    id: configPage
+
     // --- Properties to silence KCM errors ---
     // Defaults for existing aliases
     // --- General ---
@@ -295,4 +297,53 @@ Kirigami.Page {
     readonly property int plasmoidLocation: Plasmoid.location
     readonly property int plasmoidFormFactor: Plasmoid.formFactor
     readonly property var plasmoidConfiguration: Plasmoid.configuration
+
+    // Plasma hands every page a snapshot of all settings when it opens, and on
+    // Apply writes back every cfg_ property the page has - here, all of them.
+    // Settings changed outside the dialog in the meantime (pinning from the
+    // panel, the "don't group" menu entries, resizing the widget) would be
+    // reverted, so the ones not edited on this page follow the live value.
+    property var _openedValues: ({})
+
+    function _comparable(value): string {
+        if (value !== null && typeof value === "object" && value.length !== undefined)
+            return JSON.stringify(Array.from(value));
+        return String(value);
+    }
+
+    function _followLiveValue(key: string): void {
+        const cfgKey = "cfg_" + key;
+        if (!(cfgKey in configPage))
+            return;
+        const live = Plasmoid.configuration[key];
+        if (configPage._comparable(configPage[cfgKey]) === configPage._openedValues[key])
+            configPage[cfgKey] = live;
+        configPage._openedValues[key] = configPage._comparable(live);
+    }
+
+    function _snapshotOpenedValues(): void {
+        const config = configPage.plasmoidConfiguration;
+        for (const key of config.keys())
+            configPage._openedValues[key] = configPage._comparable(config[key]);
+    }
+
+    Component.onCompleted: configPage._snapshotOpenedValues()
+
+    // Changes written from QML (the widget itself) arrive here right away.
+    Connections {
+        target: Plasmoid.configuration
+        function onValueChanged(key: string, value: var): void {
+            configPage._followLiveValue(key);
+        }
+    }
+
+    // Called by the config dialog right before it writes the cfg_ properties
+    // back. Also covers changes that bypass onValueChanged (the containment
+    // writes length/expanding from C++).
+    function saveConfig(): void {
+        for (const key of configPage.plasmoidConfiguration.keys())
+            configPage._followLiveValue(key);
+        // What's on the page has just become the saved state.
+        Qt.callLater(configPage._snapshotOpenedValues);
+    }
 }
