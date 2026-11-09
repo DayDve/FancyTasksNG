@@ -179,7 +179,9 @@ Item {
                 if (targetIndex < 0) targetIndex = 0;
                 if (targetIndex >= pinnedAppDelegate.pinnedModel.count) targetIndex = pinnedAppDelegate.pinnedModel.count - 1;
 
-                if (dragIdx !== -1 && targetIndex !== dragIdx) {
+                // dropIdx stays -1 on a plain click (no drop position was
+                // ever computed), which must not count as a move to the top.
+                if (dragIdx !== -1 && dropIdx !== -1 && targetIndex !== dragIdx) {
                     pinnedAppDelegate.pageRoot.moveItem(dragIdx, targetIndex);
                 } else {
                     pinnedAppDelegate.pageRoot.refreshPinnedAppsModel();
