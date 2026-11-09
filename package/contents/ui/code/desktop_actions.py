@@ -331,7 +331,8 @@ def find_active_db_from_proc(db_name, app_pid=0):
                 for fd in fd_dir.iterdir():
                     try:
                         target = os.readlink(fd)
-                        if db_name in target and os.path.isfile(target):
+                        # Exact name: the -wal/-journal files are open too.
+                        if os.path.basename(target) == db_name and os.path.isfile(target):
                             return Path(target)
                     except (OSError, PermissionError):
                         continue
@@ -340,6 +341,24 @@ def find_active_db_from_proc(db_name, app_pid=0):
     except Exception as e:
         print(f"desktop_actions: proc scan error: {e}", file=sys.stderr)
     return None
+
+
+def copy_sqlite(src, dest):
+    """Copy a live browser database for reading. Recent changes sit in the
+    write-ahead log until the browser checkpoints, so it goes along; SQLite
+    replays it when the copy is opened."""
+    shutil.copy2(src, dest)
+    wal = Path(f"{src}-wal")
+    if wal.exists():
+        shutil.copy2(wal, f"{dest}-wal")
+
+
+def remove_sqlite_copy(path):
+    for suffix in ("", "-wal", "-shm"):
+        try:
+            Path(f"{path}{suffix}").unlink(missing_ok=True)
+        except OSError:
+            pass
 
 
 def extract_favicons(history_items, favicons_db_path, browser_type):
@@ -375,7 +394,7 @@ def extract_favicons(history_items, favicons_db_path, browser_type):
     temp_db = Path(temp_path)
 
     try:
-        shutil.copy2(favicons_db_path, temp_db)
+        copy_sqlite(favicons_db_path, temp_db)
         conn = sqlite3.connect(temp_db)
         cursor = conn.cursor()
 
@@ -423,11 +442,7 @@ def extract_favicons(history_items, favicons_db_path, browser_type):
     except Exception as e:
         print(f"desktop_actions: extract_favicons error: {e}", file=sys.stderr)
     finally:
-        if temp_db.exists():
-            try:
-                temp_db.unlink()
-            except OSError:
-                pass
+        remove_sqlite_copy(temp_db)
 
     return history_items
 
@@ -543,6 +558,23 @@ def get_chromium_recent(browser_name, limit=10, app_pid=0):
     return extract_favicons(history, db_path.parent / "Favicons", "chromium")
 
 
+# Name parts of a browser's .desktop file -> browser. Matched as whole parts:
+# a substring test took "hedgewars" for Edge.
+BROWSER_NAME_PARTS = {
+    "firefox": "firefox", "mozilla": "firefox", "ffpwa": "firefox",
+    "chrome": "chrome", "brave": "brave", "vivaldi": "vivaldi",
+    "chromium": "chromium", "edge": "edge", "opera": "opera",
+}
+
+
+def detect_browser(desktop_path):
+    parts = re.split(r"[^a-z0-9]+", os.path.basename(desktop_path).lower())
+    for part in parts:
+        if part in BROWSER_NAME_PARTS:
+            return BROWSER_NAME_PARTS[part]
+    return None
+
+
 def fetch_sqlite_history(db_path, query, temp_name, limit=10):
     """Generic helper to fetch history from a SQLite DB using a temporary copy."""
     docs = []
@@ -552,7 +584,7 @@ def fetch_sqlite_history(db_path, query, temp_name, limit=10):
     temp_db = Path(temp_path)
     
     try:
-        shutil.copy2(db_path, temp_db)
+        copy_sqlite(db_path, temp_db)
         conn = sqlite3.connect(temp_db)
         cursor = conn.cursor()
         cursor.execute(query, (limit * 3,))
@@ -571,70 +603,31 @@ def fetch_sqlite_history(db_path, query, temp_name, limit=10):
     except Exception as e:
         print(f"desktop_actions: fetch_history error ({db_path}): {e}", file=sys.stderr)
     finally:
-        if temp_db.exists():
-            try:
-                temp_db.unlink()
-            except OSError:
-                pass
+        remove_sqlite_copy(temp_db)
     return docs
 
 
 def clear_recent_documents(desktop_path):
-    """Clear recent documents for this application from both score cache and event history."""
-    if not KACTIVITIES_DB.is_file():
-        return False
+    """Forget this app's recent documents in the current activity.
 
+    Goes through kactivitymanagerd, which owns the database: writing to it
+    behind the daemon's back can race with its own writes and leaves its
+    caches stale."""
     storage_id = get_storage_id(desktop_path)
-    if not storage_id:
-        return False
-
     activity = get_current_activity()
-    if not activity:
+    if not storage_id or not activity:
         return False
-
     try:
-        # Use a context manager to ensure the connection is closed properly.
-        # We need to delete from BOTH tables to keep the daemon happy.
-        with sqlite3.connect(str(KACTIVITIES_DB), timeout=5) as conn:
-            cur = conn.cursor()
-            # 1. Clear the score cache
-            cur.execute("""
-                DELETE FROM ResourceScoreCache 
-                WHERE initiatingAgent = ? AND usedActivity = ?
-            """, (storage_id, activity))
-            
-            # 2. Clear the event history
-            cur.execute("""
-                DELETE FROM ResourceEvent 
-                WHERE initiatingAgent = ? AND usedActivity = ?
-            """, (storage_id, activity))
-            
-            # 3. Clear the resource links (this is likely what was missing for full reset)
-            cur.execute("""
-                DELETE FROM ResourceLink 
-                WHERE initiatingAgent = ? AND usedActivity = ?
-            """, (storage_id, activity))
-            
-            conn.commit()
-            # Ensure changes are written and visible to others
-            cur.execute("PRAGMA wal_checkpoint(FULL)")
-        
-        # Notify the daemon that stats have changed via D-Bus
-        try:
-            bus = _get_session_bus()
-            bus.call_blocking(
-                "org.kde.ActivityManager",
-                "/ActivityManager/Resources/Scoring",
-                "org.freedesktop.DBus.Properties",
-                "EmitChanged", "s", ["org.kde.ActivityManager.ResourcesScoring"],
-                timeout=1.0,
-            )
-        except Exception:
-            pass  # Non-critical: daemon will detect DB changes on next query
-        
+        _get_session_bus().call_blocking(
+            "org.kde.ActivityManager",
+            "/ActivityManager/Resources/Scoring",
+            "org.kde.ActivityManager.ResourcesScoring",
+            "DeleteStatsForResource", "sss", [activity, storage_id, "*"],
+            timeout=2.0,
+        )
         return True
-    except Exception as e:
-        print(f"desktop_actions: DB clear error: {e}", file=sys.stderr)
+    except dbus.exceptions.DBusException as e:
+        print(f"desktop_actions: clear recent error: {e}", file=sys.stderr)
         return False
 
 
@@ -757,22 +750,12 @@ class DesktopActionsService(dbus.service.Object):
         
         browser_history = []
         if desktop_path and show_history:
-            d_lower = desktop_path.lower()
-            if "firefox" in d_lower or "mozilla" in d_lower or "ffpwa" in d_lower:
+            browser = detect_browser(desktop_path)
+            if browser == "firefox":
                 browser_history = get_firefox_recent(limit, app_pid)
-            elif "chrome" in d_lower:
-                browser_history = get_chromium_recent("chrome", limit, app_pid)
-            elif "brave" in d_lower:
-                browser_history = get_chromium_recent("brave", limit, app_pid)
-            elif "vivaldi" in d_lower:
-                browser_history = get_chromium_recent("vivaldi", limit, app_pid)
-            elif "chromium" in d_lower:
-                browser_history = get_chromium_recent("chromium", limit, app_pid)
-            elif "edge" in d_lower:
-                browser_history = get_chromium_recent("edge", limit, app_pid)
-            elif "opera" in d_lower:
-                browser_history = get_chromium_recent("opera", limit, app_pid)
-        
+            elif browser:
+                browser_history = get_chromium_recent(browser, limit, app_pid)
+
         raw_recent = get_recent_documents(desktop_path) if desktop_path else []
         
         # Filter/Split recent items
