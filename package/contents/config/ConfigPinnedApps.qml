@@ -41,22 +41,20 @@ ConfigPage {
 
     // ---------------------------------------
 
+    // Launchers bound to activities are stored as "[activity ids]\nurl" (see
+    // libtaskmanager's deserializeLauncher). The page shows and compares the
+    // bare URL but must write the stored strings back unchanged.
     function cleanUrl(url) {
-        // Handle [activity-id] prefix often found in Plasma config
-        // e.g. "[uuid] applications:foo.desktop"
         if (url.startsWith("[")) {
-            const closingBracket = url.indexOf("]");
-            if (closingBracket !== -1) {
-                // Return the part after "] " (usually 2 chars, checking simply for applications:)
-                // But it might have spaces.
-                // Let's rely on finding "applications:"
-                const appIndex = url.indexOf("applications:");
-                if (appIndex !== -1) {
-                    return url.substring(appIndex);
-                }
-            }
+            const blockEnd = url.indexOf("]\n");
+            if (blockEnd !== -1)
+                return url.substring(blockEnd + 2);
         }
         return url;
+    }
+
+    function isPinned(url) {
+        return pinnedLaunchers.some(launcher => cleanUrl(launcher) === url);
     }
     // Initial app loading timer
     Timer {
@@ -235,7 +233,7 @@ ConfigPage {
         try {
             // Keys based on user logs: name, iconName, genericName, display, keywords
             
-            const isPinned = pinnedLaunchers.indexOf("applications:" + source) !== -1;
+            const isPinned = cfg_page.isPinned("applications:" + source);
             
             // Filter out hidden items unless they are already pinned
             if (data["display"] === false && !isPinned) {
@@ -276,7 +274,7 @@ ConfigPage {
 
             // Update filtered model if needed (initial populate or search match)
             if (cfg_page.currentSearchText.length === 0 && filteredAppsModel.count < 50) {
-                 if (cfg_page.pinnedLaunchers.indexOf(appUrl) === -1) {
+                 if (!cfg_page.isPinned(appUrl)) {
                      filteredAppsModel.append(appItem);
                  }
             } else if (cfg_page.currentSearchText.length > 0) {
@@ -287,7 +285,7 @@ ConfigPage {
                      (appItem.keywords && appItem.keywords.toLowerCase().includes(searchText)) ||
                      (appItem.genericName && appItem.genericName.toLowerCase().includes(searchText)) ||
                      (appItem.comment && appItem.comment.toLowerCase().includes(searchText))) {
-                     if (cfg_page.pinnedLaunchers.indexOf(appUrl) === -1) {
+                     if (!cfg_page.isPinned(appUrl)) {
                          filteredAppsModel.append(appItem);
                      }
                  }
@@ -316,7 +314,7 @@ ConfigPage {
             const app = installedAppsModel.get(i);
             
             // Skip if already pinned
-            if (cfg_page.pinnedLaunchers.indexOf(app.url) !== -1) {
+            if (cfg_page.isPinned(app.url)) {
                 continue;
             }
 
@@ -351,7 +349,7 @@ ConfigPage {
             for (let i = startIndex; i < endIndex; i++) {
                 const app = installedAppsModel.get(i);
                 // Skip if already pinned
-                if (cfg_page.pinnedLaunchers.indexOf(app.url) !== -1) {
+                if (cfg_page.isPinned(app.url)) {
                     continue;
                 }
                 filteredAppsModel.append(app);
@@ -381,7 +379,8 @@ ConfigPage {
                 "genericName": getGenericNameForUrl(url),
                 "comment": getCommentForUrl(url),
                 "icon": getIconForUrl(url),
-                "url": url
+                "url": url,
+                "launcher": launcher
             });
         }
     }
@@ -814,7 +813,7 @@ ConfigPage {
         let currentLaunchers = Array.from(pinnedLaunchers);
         
         // Don't add if already in the list
-        if (currentLaunchers.indexOf(url) !== -1) {
+        if (isPinned(url)) {
             return;
         }
 
@@ -834,7 +833,7 @@ ConfigPage {
         // Rebuild list from model to update config
         let list = [];
         for (let i = 0; i < pinnedAppsModel.count; i++) {
-            list.push(pinnedAppsModel.get(i).url);
+            list.push(pinnedAppsModel.get(i).launcher);
         }
         
         cfg_page.cfg_launchers = list;
