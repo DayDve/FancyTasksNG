@@ -3,15 +3,25 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 """
-Desktop Actions Helper — reads .desktop jump list actions and
-KActivities recent documents for contextual menu population.
+Desktop Actions Helper: a session D-Bus service that gives the context menu
+jump list actions, recent documents, browser history and places, plus a few
+system helpers QML can't do itself.
 
-Protocol (line-based JSON over stdin/stdout):
-  Request:  {"launcherUrl": "file:///usr/share/applications/org.kde.dolphin.desktop"}
-  Response: {"jumpList": [...], "recentDocs": [...]}
+Bus name io.github.daydve.fancytasksng.DesktopActions, object /DesktopActions.
 
-Each jumpList item: {"name": str, "icon": str, "exec": str}
-Each recentDocs item: {"name": str, "url": str, "icon": str}
+Interface io.github.daydve.fancytasksng.DesktopActions:
+  Query(launcherUrl, showHistory, limit, appPid) -> JSON string
+      {"jumpList", "recentDocs", "recentFolders", "browserHistory",
+       "places", "desktopPath"}
+  ClearRecent(launcherUrl)
+  Execute(command)
+  OpenUrl(url, preferredApp)
+  ParentPids(pidsCsv) -> JSON object {pid: parentPid}
+  ActivateBrowserTab(browserPid, title) -> bool
+
+Interface io.github.daydve.fancytasksng.Config:
+  ExportConfig(path, content) -> "OK" or "ERROR: ..."
+  ImportConfig(path) -> file content or "ERROR: ..."
 """
 
 import configparser
