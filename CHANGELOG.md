@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Doubled Volume Controls in Tooltips:** An app playing a single audio stream with no media player (Telegram, for one) got the stream listed under its volume slider as well, with a second mute button and a second slider. The list now shows up only when there's more than one stream, or audio playing while the app's player is paused, and its sliders are the same thin ones as the app's instead of the theme's oversized slider.
 - **Count Badge Shown With Badges Turned Off:** With "Show badges" off, an app that played audio also showed its notification count.
 - **Notification Badges for Apps Reporting Another Id:** Badge counts and progress are now matched to a task by the process that sends them, then by app id as before. An app that reports an id other than the one of the desktop file it was started from, such as Telegram forks like 64Gram after recent updates, gets its badge again.
+- **Launch Feedback on Every Panel:** With a widget on each screen's panel set to show only that screen's tasks, launching a pinned app showed the launch feedback on every panel. It now shows only on the panel it was launched from; a panel that pins the same app keeps its pin, without the busy indicator. Launches from elsewhere (the app menu, KRunner) still show everywhere, since there's no telling which screen they're for.
 
 ## [2.3.0] - 2026-11-05
 

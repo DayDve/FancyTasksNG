@@ -28,6 +28,7 @@ import org.kde.plasma.private.mpris as Mpris
 // import org.kde.plasma.private.taskmanager as TaskManagerApplet
 
 import "code/singletones"
+import "code/tools.js" as TaskTools
 
 PlasmaExtras.Menu {
     id: menu
@@ -435,6 +436,7 @@ PlasmaExtras.Menu {
         icon: menu.get(menu.atm.IsLauncher) ? "system-run" : "window-new"
 
         onClicked: {
+            TaskTools.claimLaunch(menu.tasksModel, menu.modelIndex, Plasmoid.id);
             menu.tasksModel.requestNewInstance(menu.modelIndex);
         }
     }

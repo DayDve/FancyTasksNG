@@ -684,6 +684,7 @@ Item {
                     tModel.requestClose(mIndex);
                     break;
                 case 2: // NewInstance
+                    TaskTools.claimLaunch(tModel, mIndex, Plasmoid.id);
                     tModel.requestNewInstance(mIndex);
                     break;
                 case 3: // ToggleMinimized

@@ -19,6 +19,54 @@
 // Can't be `let`, or else QML counterpart won't be able to assign to it.
 var taskManagerInstanceCount = 0;
 
+// Which instance launched an app, so the per-screen instances can tell whose
+// startup feedback it is: startup tasks carry no screen, so the screen filter
+// lets them through on every panel. This library is shared by all instances
+// in the shell, which is what makes the registry visible to each of them.
+var launchClaims = {};
+const LAUNCH_CLAIM_TTL_MS = 60000;
+
+function launchClaimKeys(url, appId) {
+    const keys = [];
+    const urlStr = url ? String(url) : "";
+    const normalizeId = id => String(id).toLowerCase().replace(/\.desktop$/, "");
+    if (urlStr) {
+        keys.push("u:" + urlStr);
+        const fileName = urlStr.replace(/^applications:/, "").split("/").pop();
+        if (fileName.endsWith(".desktop")) {
+            keys.push("a:" + normalizeId(fileName));
+        }
+    }
+    if (appId) {
+        keys.push("a:" + normalizeId(appId));
+    }
+    return keys;
+}
+
+function claimLaunch(tasksModel, index, instanceId) {
+    if (!tasksModel || !index) {
+        return;
+    }
+    const url = tasksModel.data(index, TaskManager.AbstractTasksModel.LauncherUrlWithoutIcon);
+    const appId = tasksModel.data(index, TaskManager.AbstractTasksModel.AppId);
+    const entry = { owner: instanceId, time: Date.now() };
+    for (const key of launchClaimKeys(url, appId)) {
+        launchClaims[key] = entry;
+    }
+}
+
+// Returns the id of the instance that launched the app recently, or null.
+function launchClaimOwner(url, appId) {
+    const now = Date.now();
+    for (const key of launchClaimKeys(url, appId)) {
+        const entry = launchClaims[key];
+        if (entry && now - entry.time < LAUNCH_CLAIM_TTL_MS) {
+            return entry.owner;
+        }
+    }
+    return null;
+}
+
 function activateNextPrevTask(anchor, next, wheelSkipMinimized, tasks, groupOnly) {
     let taskIndexList = [];
     const activeTaskIndex = tasks.tasksModel.activeTask;
@@ -79,8 +127,12 @@ function activateNextPrevTask(anchor, next, wheelSkipMinimized, tasks, groupOnly
 
 function activateTask(index, model, modifiers, task, plasmoid, tasks, windowViewAvailable) {
     if (modifiers & Qt.ShiftModifier) {
+        claimLaunch(tasks.tasksModel, index, plasmoid.id);
         tasks.tasksModel.requestNewInstance(index);
         return;
+    }
+    if (model.IsLauncher) {
+        claimLaunch(tasks.tasksModel, index, plasmoid.id);
     }
     // Publish delegate geometry again if there are more than one task manager instance
     if (taskManagerInstanceCount >= 2) {

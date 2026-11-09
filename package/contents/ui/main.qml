@@ -476,6 +476,16 @@ PlasmoidItem {
                     return false;
             }
 
+            // A launch from another instance's pin, unless this instance pins the
+            // same app: the model swaps that pin out for the startup, so hiding
+            // the startup would make the pin vanish too.
+            if (tasks.isForeignStartup(internalTasksModel.data(idx, TaskManager.AbstractTasksModel.IsStartup) === true,
+                                       internalTasksModel.data(idx, TaskManager.AbstractTasksModel.LauncherUrlWithoutIcon),
+                                       internalTasksModel.data(idx, TaskManager.AbstractTasksModel.AppId) || "")
+                && internalTasksModel.launcherPosition(internalTasksModel.data(idx, TaskManager.AbstractTasksModel.LauncherUrlWithoutIcon)) === -1) {
+                return false;
+            }
+
             // Reverse Filters (hide instead of show)
             if (tasks.config.reverseFilters) {
                 // Screen Filter: hide tasks on the current screen
@@ -520,7 +530,19 @@ PlasmoidItem {
         }
     }
 
-    readonly property var effectiveTasksModel: (tasks.config.minimizedFilter === 0 && !tasks.config.reverseFilters) ? internalTasksModel : internalFilteredTasksModel
+    // The screen filter also goes through the proxy, which hides startup
+    // feedback for launches made from another instance's panel.
+    readonly property var effectiveTasksModel: (tasks.config.minimizedFilter === 0 && !tasks.config.reverseFilters && !tasks.config.showOnlyCurrentScreen) ? internalTasksModel : internalFilteredTasksModel
+
+    // Startup tasks carry no screen, so with "show only tasks from the current
+    // screen" every instance would show the busy feedback of a launch made from
+    // another instance's panel. True for a startup some other instance launched.
+    function isForeignStartup(isStartup: bool, launcherUrl: var, appId: string): bool {
+        if (!isStartup || !tasks.config.showOnlyCurrentScreen || tasks.config.reverseFilters)
+            return false;
+        const owner = TaskTools.launchClaimOwner(launcherUrl, appId);
+        return owner !== null && owner !== Plasmoid.id;
+    }
 
     Timer {
         id: modelUpdateTimer
@@ -848,8 +870,11 @@ PlasmoidItem {
                 if (!hoveredItem)
                     return;
                 const task = hoveredItem as Task;
-                if (tasks.tasksModel)
+                if (tasks.tasksModel) {
+                    if (task.model && task.model.IsLauncher)
+                        TaskTools.claimLaunch(tasks.tasksModel, task.modelIndex(), Plasmoid.id);
                     tasks.tasksModel.requestOpenUrls(task.modelIndex(), urls);
+                }
             }
         }
 

@@ -299,7 +299,9 @@ Item {
         anchors.centerIn: parent
         width: Math.min(parent.width, parent.height)
         height: width
-        active: !!(iconBox._taskHasModel && iconBox.taskItem.model.IsStartup)
+        // A startup from another instance's launch stays visible where this
+        // instance pins the same app (see the task filter), but without feedback.
+        active: !!(iconBox._taskHasModel && iconBox.taskItem.model.IsStartup) && !(iconBox.tasksRoot && iconBox.tasksRoot.isForeignStartup(true, iconBox.taskItem.model.LauncherUrlWithoutIcon, iconBox.taskItem.model.AppId || ""))
         sourceComponent: iconBox.tasksRoot ? iconBox.tasksRoot.busyIndicator : null
     }
 
