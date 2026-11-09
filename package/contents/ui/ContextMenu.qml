@@ -150,10 +150,7 @@ PlasmaExtras.Menu {
                 let menuItem = menu.newMenuItem(menu);
                 menuItem.text = action.name;
                 setIcon(menuItem, action.icon);
-                menuItem.clicked.connect(() => {
-                    let cleanExec = action.exec.replace(/%[uUfF]/g, "").trim();
-                    DesktopActionsManager.executeCommand(cleanExec);
-                });
+                menuItem.clicked.connect(() => DesktopActionsManager.launchAction(launcherUrl, action.actionId));
                 menu.addMenuItem(menuItem, insertItem);
                 _dynamicDesktopItems.push(menuItem);
             });

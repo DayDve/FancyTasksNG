@@ -8,13 +8,14 @@ jump list actions, recent documents, browser history and places, plus a few
 system helpers QML can't do itself.
 
 Bus name io.github.daydve.fancytasksng.DesktopActions, object /DesktopActions.
+Only the shell that started the helper may call it.
 
 Interface io.github.daydve.fancytasksng.DesktopActions:
   Query(launcherUrl, showHistory, limit, appPid) -> JSON string
       {"jumpList", "recentDocs", "recentFolders", "browserHistory",
        "places", "desktopPath"}
   ClearRecent(launcherUrl)
-  Execute(command)
+  LaunchAction(launcherUrl, actionId)
   OpenUrl(url, preferredApp)
   ParentPids(pidsCsv) -> JSON object {pid: parentPid}
   ActivateBrowserTab(browserPid, title) -> bool
@@ -33,7 +34,6 @@ import re
 import shlex
 import shutil
 import sqlite3
-import subprocess
 import sys
 import tempfile
 import xml.etree.ElementTree as ET
@@ -43,7 +43,7 @@ import signal
 import dbus
 import dbus.service
 from dbus.mainloop.glib import DBusGMainLoop
-from gi.repository import GLib
+from gi.repository import Gio, GLib
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
@@ -154,12 +154,10 @@ def get_jump_list_actions(desktop_path):
             name = cp.get(section, "Name", fallback="")
             
         icon = cp.get(section, "Icon", fallback="")
-        exec_cmd = cp.get(section, "Exec", fallback="")
-
         if not name:
             continue
 
-        actions.append({"name": name, "icon": icon, "exec": exec_cmd, "actionId": aid})
+        actions.append({"name": name, "icon": icon, "actionId": aid})
 
     return actions
 
@@ -699,19 +697,61 @@ def set_pdeathsig():
     except Exception:
         pass
 
+def _ancestor_pids():
+    """PIDs of this process's ancestors: plasmashell (or plasmawindowed when
+    run with `make test`), possibly through a shell started by the executable
+    data engine."""
+    pids = set()
+    pid = os.getppid()
+    while pid > 1 and pid not in pids:
+        pids.add(pid)
+        try:
+            with open(f"/proc/{pid}/status", encoding="utf-8") as f:
+                pid = next((int(line.split()[1]) for line in f if line.startswith("PPid:")), 0)
+        except (OSError, ValueError, IndexError):
+            break
+    return pids
+
+
+class NotAllowed(dbus.exceptions.DBusException):
+    _dbus_error_name = "io.github.daydve.fancytasksng.Error.NotAllowed"
+
+
 class DesktopActionsService(dbus.service.Object):
+    """Only the widget's own shell may call this service: it launches
+    programs, reads and writes files and returns browsing history, so any
+    other client of the session bus (a Flatpak app with bus access, say)
+    must not be able to use it."""
+
     def __init__(self):
+        self.allowed_pids = _ancestor_pids()
+        self.sender_allowed = {}
         try:
             self.bus = dbus.SessionBus()
-            self.bus_name = dbus.service.BusName('io.github.daydve.fancytasksng.DesktopActions', bus=self.bus)
+            self.bus_name = dbus.service.BusName('io.github.daydve.fancytasksng.DesktopActions', bus=self.bus,
+                                                 do_not_queue=True)
             dbus.service.Object.__init__(self, self.bus_name, '/DesktopActions')
             print("DesktopActionsService ready", flush=True)
         except Exception as e:
             print(f"DesktopActionsService error: {e}", file=sys.stderr)
             sys.exit(1)
 
-    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='sbii', out_signature='s')
-    def Query(self, launcher_url, show_history, limit, app_pid):
+    def _check_caller(self, sender):
+        # Unique bus names are never reused, so the verdict can be cached.
+        if sender not in self.sender_allowed:
+            try:
+                pid = int(self.bus.call_blocking(
+                    'org.freedesktop.DBus', '/org/freedesktop/DBus', 'org.freedesktop.DBus',
+                    'GetConnectionUnixProcessID', 's', (sender,), timeout=2.0))
+            except dbus.exceptions.DBusException:
+                pid = 0
+            self.sender_allowed[sender] = pid in self.allowed_pids
+        if not self.sender_allowed[sender]:
+            raise NotAllowed(f"{sender} is not the shell running this widget")
+
+    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='sbii', out_signature='s', sender_keyword='sender')
+    def Query(self, launcher_url, show_history, limit, app_pid, sender=None):
+        self._check_caller(sender)
         desktop_path = resolve_launcher_url(launcher_url)
         jump_list = get_jump_list_actions(desktop_path) if desktop_path else []
         
@@ -763,27 +803,36 @@ class DesktopActionsService(dbus.service.Object):
         }
         return json.dumps(data)
 
-    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='s', out_signature='')
-    def ClearRecent(self, launcher_url):
+    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='s', out_signature='', sender_keyword='sender')
+    def ClearRecent(self, launcher_url, sender=None):
+        self._check_caller(sender)
         desktop_path = resolve_launcher_url(launcher_url)
         if desktop_path:
             clear_recent_documents(desktop_path)
 
-    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='s', out_signature='')
-    def Execute(self, exec_cmd):
+    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='ss', out_signature='', sender_keyword='sender')
+    def LaunchAction(self, launcher_url, action_id, sender=None):
+        """Run one of the [Desktop Action ...] entries of an app's .desktop file."""
+        self._check_caller(sender)
+        desktop_path = resolve_launcher_url(launcher_url)
+        if not desktop_path:
+            return
         try:
-            subprocess.Popen(exec_cmd, shell=True, start_new_session=True)
-        except Exception as e:
-            print(f"Execute error: {e}", file=sys.stderr)
+            app = Gio.DesktopAppInfo.new_from_filename(desktop_path)
+            if app and action_id in app.list_actions():
+                app.launch_action(action_id, None)
+        except GLib.Error as e:
+            print(f"LaunchAction error: {e}", file=sys.stderr)
 
-    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='s', out_signature='s')
-    def ParentPids(self, pids_csv):
+    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='s', out_signature='s', sender_keyword='sender')
+    def ParentPids(self, pids_csv, sender=None):
         """Map comma-separated PIDs to their parent PIDs (JSON object).
 
         QML can't read /proc itself. Chromium-family browsers play audio
         from a utility child process, so its stream PID only matches a
         window through its parent. PIDs that no longer exist are omitted.
         """
+        self._check_caller(sender)
         result = {}
         for token in pids_csv.split(","):
             token = token.strip()
@@ -799,8 +848,8 @@ class DesktopActionsService(dbus.service.Object):
                 pass
         return json.dumps(result)
 
-    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='is', out_signature='b')
-    def ActivateBrowserTab(self, browser_pid, title):
+    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='is', out_signature='b', sender_keyword='sender')
+    def ActivateBrowserTab(self, browser_pid, title, sender=None):
         """Switch a browser to the tab with the given title; True on success.
 
         Goes through the Plasma Browser Integration extension: each browser
@@ -810,6 +859,7 @@ class DesktopActionsService(dbus.service.Object):
         stream plays in - the one way to get to a tab that isn't the one
         the browser's single MPRIS player follows.
         """
+        self._check_caller(sender)
         if browser_pid <= 0 or not title:
             return False
         try:
@@ -840,8 +890,9 @@ class DesktopActionsService(dbus.service.Object):
             print(f"ActivateBrowserTab error: {e}", file=sys.stderr)
         return False
 
-    @dbus.service.method('io.github.daydve.fancytasksng.Config', in_signature='ss', out_signature='s')
-    def ExportConfig(self, path, content):
+    @dbus.service.method('io.github.daydve.fancytasksng.Config', in_signature='ss', out_signature='s', sender_keyword='sender')
+    def ExportConfig(self, path, content, sender=None):
+        self._check_caller(sender)
         try:
             with open(path, 'w', encoding='utf-8') as f:
                 f.write(content)
@@ -849,47 +900,57 @@ class DesktopActionsService(dbus.service.Object):
         except Exception as e:
             return f"ERROR: {e}"
 
-    @dbus.service.method('io.github.daydve.fancytasksng.Config', in_signature='s', out_signature='s')
-    def ImportConfig(self, path):
+    @dbus.service.method('io.github.daydve.fancytasksng.Config', in_signature='s', out_signature='s', sender_keyword='sender')
+    def ImportConfig(self, path, sender=None):
+        self._check_caller(sender)
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 return f.read()
         except Exception as e:
             return f"ERROR: {e}"
 
-    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='ss', out_signature='')
-    def OpenUrl(self, url, preferred_app):
+    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='ss', out_signature='', sender_keyword='sender')
+    def OpenUrl(self, url, preferred_app, sender=None):
+        self._check_caller(sender)
         try:
             desktop_path = resolve_launcher_url(preferred_app)
-            if desktop_path:
-                exec_cmd = get_desktop_exec(desktop_path)
-                if exec_cmd:
-                    # If the command expects a custom protocol but we are opening a standard HTTP/HTTPS web URL,
-                    # dynamically switch --protocol to --url to ensure correct document loading.
-                    if url.lower().startswith("http") and "--protocol" in exec_cmd:
-                        exec_cmd = exec_cmd.replace("--protocol", "--url")
-                    
-                    # Replace %u, %U, %f, %F with the actual URL
-                    clean_exec = re.sub(r'%[uUfF]', url, exec_cmd)
-                    if url not in clean_exec:
-                        clean_exec += f" {url}"
-                    subprocess.Popen(shlex.split(clean_exec))
-                    return
-            
-            # Fallback to default browser
-            subprocess.Popen(['xdg-open', url])
-        except Exception: pass
+            app = Gio.DesktopAppInfo.new_from_filename(desktop_path) if desktop_path else None
+            if app:
+                commandline = app.get_commandline() or ""
+                # Firefox PWAs (FFPWA) take links through --protocol, which
+                # treats a web URL as a protocol handler call; --url opens it.
+                if url.lower().startswith("http") and "--protocol" in commandline:
+                    argv = expand_exec(commandline.replace("--protocol", "--url"), url)
+                    Gio.Subprocess.new(argv, Gio.SubprocessFlags.NONE)
+                else:
+                    app.launch_uris([url], None)
+                return
+            Gio.AppInfo.launch_default_for_uri(url, None)
+        except (GLib.Error, ValueError) as e:
+            print(f"OpenUrl error: {e}", file=sys.stderr)
 
 
-def get_desktop_exec(desktop_path):
-    """Helper to get the Exec line from a desktop file."""
-    try:
-        config = configparser.ConfigParser(interpolation=None)
-        config.read(desktop_path)
-        if 'Desktop Entry' in config:
-            return config['Desktop Entry'].get('Exec')
-    except Exception: pass
-    return None
+def expand_exec(commandline, url):
+    """Split a .desktop Exec line into argv with the file/URL field codes
+    replaced by url, as the desktop entry spec describes."""
+    argv = []
+    used = False
+    for arg in shlex.split(commandline):
+        if arg in ("%f", "%F", "%u", "%U"):
+            argv.append(url)
+            used = True
+        elif arg in ("%i", "%c", "%k"):
+            continue
+        else:
+            for code in ("%f", "%F", "%u", "%U"):
+                if code in arg:
+                    arg = arg.replace(code, url)
+                    used = True
+            argv.append(arg.replace("%%", "%"))
+    if not used:
+        argv.append(url)
+    return argv
+
 
 def main():
     set_pdeathsig()

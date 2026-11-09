@@ -141,14 +141,14 @@ Item {
         });
     }
 
-    function executeCommand(execCmd) {
+    function launchAction(launcherUrl, actionId) {
         const pendingReply = DBus.SessionBus.asyncCall({
             "service": "io.github.daydve.fancytasksng.DesktopActions",
             "path": "/DesktopActions",
             "iface": "io.github.daydve.fancytasksng.DesktopActions",
-            "member": "Execute",
-            "arguments": [String(execCmd || "")],
-            "signature": "(s)"
+            "member": "LaunchAction",
+            "arguments": [String(launcherUrl || ""), String(actionId || "")],
+            "signature": "(ss)"
         });
         pendingReply.finished.connect(() => pendingReply.destroy());
     }
