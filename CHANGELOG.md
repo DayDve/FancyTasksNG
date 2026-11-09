@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Opening Recent Files and Places With Spaces:** Recent documents, folders and places whose path contains spaces (or a backslash) opened the wrong thing or nothing at all.
 - **Forgetting Recent Documents:** Clearing an app's recent documents now goes through the activity manager instead of editing its database behind its back.
 - **Browser History in the Context Menu:** Recent pages were often missing (visits the browser hadn't flushed to its database yet), the list could come up empty, and some apps whose names merely contain a browser's name (Hedgewars for Edge) got browser history lookups.
+- **Badge Count Reset by Progress Updates:** An app reporting only its progress (or only its count) reset the other value, so a download in progress could clear the unread count.
+- **Exporting and Importing Settings:** Failed for files whose path contains spaces or non-Latin characters.
 - **Moving Tasks With Ctrl+Shift+Arrows:** With a filter that hides some tasks (only the current screen, only minimized windows and so on), the keyboard shortcut moved a different task than the focused one, or moved it to the wrong place.
 
 ## [2.3.0] - 2026-11-05

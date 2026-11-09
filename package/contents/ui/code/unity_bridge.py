@@ -18,10 +18,6 @@ def set_pdeathsig():
     except Exception:
         pass
 
-class NullDevice:
-    def write(self, s): pass
-    def flush(self): pass
-
 """
 Unity Bridge Sniffer - DBus Re-emitter
 Listens for Unity signals and re-emits them on a private interface
@@ -33,7 +29,7 @@ class BridgeEmitter(dbus.service.Object):
         # We use a unique name for our bridge to avoid conflicts
         try:
             self.bus = dbus.SessionBus()
-            self.bus_name = dbus.service.BusName('io.github.daydve.fancytasksng.Bridge', bus=self.bus)
+            self.bus_name = dbus.service.BusName('io.github.daydve.fancytasksng.Bridge', bus=self.bus, do_not_queue=True)
             dbus.service.Object.__init__(self, self.bus_name, '/Bridge')
             print("Bridge: Re-emitter is ready on io.github.daydve.fancytasksng.Bridge")
         except Exception as e:
@@ -61,13 +57,21 @@ def sender_pid(sender):
             sender_pids[sender] = 0
     return sender_pids[sender]
 
+# Last known LauncherEntry properties per app and sender. An Update carries
+# only the properties that changed (a download sends just its progress), so
+# the rest has to come from earlier ones.
+entry_state = {}
+
 def handle_unity_update(appId, properties, sender=None, **kwargs):
-    count = properties.get("count", 0)
-    visible = properties.get("count-visible", True)
+    state = entry_state.setdefault((str(appId), sender), {})
+    state.update(properties)
+
+    count = state.get("count", 0)
+    visible = state.get("count-visible", True)
     final_count = int(count) if visible else 0
 
-    progress = properties.get("progress", 0.0)
-    prog_visible = properties.get("progress-visible", False)
+    progress = state.get("progress", 0.0)
+    prog_visible = state.get("progress-visible", False)
     final_progress = float(progress) if prog_visible else -1.0
     
     # The app id an app reports can differ from the one of the task it runs as
@@ -76,6 +80,7 @@ def handle_unity_update(appId, properties, sender=None, **kwargs):
     emitter.UpdateSignal(str(appId), final_count, final_progress, sender_pid(sender))
 
 if __name__ == '__main__':
+    set_pdeathsig()
     DBusGMainLoop(set_as_default=True)
     
     emitter = BridgeEmitter()

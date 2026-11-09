@@ -274,7 +274,8 @@ ConfigPage {
     readonly property string configAppId: "io.github.daydve.fancytasksng"
 
     function toLocalPath(fileUrl) {
-        return fileUrl.toString().replace(/^file:\/\//, "");
+        // File dialogs return percent-encoded URLs ("My%20Files", Cyrillic).
+        return decodeURIComponent(fileUrl.toString().replace(/^file:\/\//, ""));
     }
 
     function showConfigIoStatus(text, isError) {
