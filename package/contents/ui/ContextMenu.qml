@@ -310,7 +310,9 @@ PlasmaExtras.Menu {
         const playerData = menu.tasksRoot.mediaRegistry.playerFor(launcherUrl, menu.get(menu.atm.AppPid));
 
         if (playerData && playerData.canControl && !(menu.get(menu.atm.WinIdList) !== undefined && menu.get(menu.atm.WinIdList).length > 1)) {
-            const playing = playerData.playbackStatus === Mpris.PlaybackStatus.Playing;
+            // A function, not a constant: the bindings and the click handler
+            // below must see the playback state as it is now.
+            const playing = () => playerData.playbackStatus === Mpris.PlaybackStatus.Playing;
             let menuItem = menu.newMenuItem(menu);
             menu.firstMediaItem = menuItem;
             menuItem.text = Wrappers.i18nc("Play previous track", "Previous Track");
@@ -327,16 +329,16 @@ PlasmaExtras.Menu {
             // PlasmaCore Menu doesn't actually handle icons or labels changing at runtime...
             menuItem.text = Qt.binding(() => {
                 // if CanPause, toggle the menu entry between Play & Pause, otherwise always use Play
-                return playing && playerData.canPause ? Wrappers.i18nc("Pause playback", "Pause") : Wrappers.i18nc("Start playback", "Play");
+                return playing() && playerData.canPause ? Wrappers.i18nc("Pause playback", "Pause") : Wrappers.i18nc("Start playback", "Play");
             });
             menuItem.icon = Qt.binding(() => {
-                return playing && playerData.canPause ? "media-playback-pause" : "media-playback-start";
+                return playing() && playerData.canPause ? "media-playback-pause" : "media-playback-start";
             });
             menuItem.enabled = Qt.binding(() => {
-                return playing ? playerData.canPause : DesktopActionsManager.canPlay(playerData);
+                return playing() ? playerData.canPause : DesktopActionsManager.canPlay(playerData);
             });
             menuItem.clicked.connect(() => {
-                if (playing) {
+                if (playing()) {
                     playerData.Pause();
                 } else {
                     DesktopActionsManager.play(playerData);
