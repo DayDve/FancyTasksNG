@@ -72,23 +72,6 @@ QtObject {
             function setVolume(vol): void {
                 model.Volume = vol;
             }
-
-            onPidChanged: {
-                if (pid > 0) restoreVolume();
-            }
-
-            function restoreVolume() {
-                var cached = audioStreams.getCachedVolume(pid);
-                if (cached > 0) {
-                    setVolume(cached);
-                }
-            }
-
-            onVolumeChanged: {
-                if (pid > 0) {
-                     audioStreams.saveVolume(pid, volume);
-                }
-            }
         }
 
         onObjectAdded: (index, object) => audioStreams.streamsChanged()
@@ -104,22 +87,6 @@ QtObject {
             }
         }
         return results;
-    }
-
-    // Persistent Volume Cache (Key: WinID or PID)
-    property var volumeCache: ({})
-
-    function saveVolume(key, vol: int) {
-        if (key) {
-            volumeCache[key] = vol;
-        }
-    }
-
-    function getCachedVolume(key): int {
-        if (key && volumeCache[key] !== undefined) {
-            return volumeCache[key];
-        }
-        return -1;
     }
 
     function adjustObjectVolume(obj, increment) {

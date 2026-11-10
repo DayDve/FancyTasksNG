@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Badge Count Reset by Progress Updates:** An app reporting only its progress (or only its count) reset the other value, so a download in progress could clear the unread count.
 - **Exporting and Importing Settings:** Failed for files whose path contains spaces or non-Latin characters.
 - **Moving Tasks With Ctrl+Shift+Arrows:** With a filter that hides some tasks (only the current screen, only minimized windows and so on), the keyboard shortcut moved a different task than the focused one, or moved it to the wrong place.
+- **Volume of New Audio Streams:** A new audio stream from an app got the volume it had last been set to in this session for that process id, overriding the volume the sound server restores for it, and could hand that volume to an unrelated app that later got the same process id.
 
 ## [2.3.0] - 2026-11-05
 
