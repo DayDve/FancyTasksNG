@@ -36,32 +36,11 @@ Item {
     readonly property bool muted: hasAudioStream && audioStreams.every(item => item.muted)
     readonly property bool playingAudio: hasAudioStream && audioStreams.some(item => !item.corked)
 
-    // While userVolumeChangeTimer is running, expose cachedVolume instead of live PA
-    // to prevent the slider from showing intermediate PA values during rapid scrolling.
-    property int cachedVolume: 0
-    readonly property int appVolume: {
-        if (hasAudioStream && audioStreams.length > 0 && !userVolumeChangeTimer.running) {
-            let validStreams = audioStreams.filter(s => typeof s.volume !== 'undefined');
-            if (validStreams.length > 0) {
-                return validStreams.reduce((max, s) => Math.max(max, s.volume), 0);
-            }
-        }
-        return cachedVolume;
-    }
+    readonly property int appVolume: audioStreams.reduce((max, s) => Math.max(max, s.volume ?? 0), 0)
 
-    Timer {
-        id: userVolumeChangeTimer
-        // Cooldown after a user volume change. During this window appVolume returns
-        // cachedVolume instead of reading live PA streams, which may still carry
-        // intermediate values from earlier commands in a rapid scroll sequence.
-        interval: 500
-        repeat: false
-        onTriggered: {
-            var validStreams = controller.audioStreams.filter(s => typeof s.volume !== 'undefined');
-            if (validStreams.length > 0)
-                controller.cachedVolume = validStreams.reduce((max, s) => Math.max(max, s.volume), 0);
-        }
-    }
+    // Wheel deltas carried over between events, so a touchpad's small ones
+    // add up to whole steps instead of getting lost.
+    property real wheelDelta: 0
 
     function updateAudioStreams() {
         if (!controller.mediaRegistry || !controller.mediaRegistry.audio) {
@@ -71,16 +50,6 @@ Item {
 
         var streams = controller.mediaRegistry.streamsForProcess(appId, appPid, toolTipDelegate ? toolTipDelegate.appName : "");
 
-        if (streams.length > 0) {
-            // Only update cachedVolume from PA when not actively changing volume.
-            // While userVolumeChangeTimer is running we keep cachedVolume as-is so
-            // the slider stays at the intended position until PA fully converges.
-            if (!userVolumeChangeTimer.running) {
-                let validStreams = streams.filter(s => typeof s.volume !== 'undefined');
-                if (validStreams.length > 0)
-                    cachedVolume = validStreams.reduce((max, s) => Math.max(max, s.volume), 0);
-            }
-        }
         // Dropped streams go right away: holding on to them kept objects
         // PulseAudio had already removed. The tooltip's own hide delay
         // (ToolTipInstance.controlsHideTimer) keeps the controls from flickering.
@@ -92,21 +61,20 @@ Item {
             mediaRegistry.toggleMuted(audioStreams);
     }
 
-    function adjustAppVolume(increment) {
-        if (!hasAudioStream || !mediaRegistry)
+    // Steps the volume by the configured step per wheel notch, the same way
+    // as the wheel over a task or its speaker badge.
+    function wheelVolume(angleDelta: real): void {
+        wheelDelta += angleDelta;
+        const steps = Math.trunc(wheelDelta / 120);
+        if (steps === 0)
             return;
-        // Compute an absolute target and delegate to setVolume — same path as the slider.
-        // appVolume returns the live PA value when idle, or cachedVolume during rapid
-        // scrolling, so accumulation is always correct without any separate caching logic.
-        setVolume(Math.max(mediaRegistry.minimalVolume, Math.min(mediaRegistry.normalVolume, appVolume + increment)));
+        wheelDelta -= steps * 120;
+        if (hasAudioStream && mediaRegistry)
+            mediaRegistry.adjustVolume(audioStreams, steps);
     }
 
     function setVolume(value) {
-        if (!hasAudioStream)
-            return;
-        cachedVolume = value;
-        userVolumeChangeTimer.restart();
-        if (mediaRegistry)
+        if (hasAudioStream && mediaRegistry)
             mediaRegistry.setVolume(audioStreams, value);
     }
 

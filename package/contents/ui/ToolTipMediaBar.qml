@@ -189,11 +189,7 @@ Item {
                 acceptedButtons: Qt.NoButton
                 onWheel: (wheel) => {
                     if (barRoot.mediaController) {
-                        // Scale by actual scroll delta so touchpad kinetic micro-events
-                        // don't cause full 5% jumps. Standard wheel notch = 120 units = 5%.
-                        let step = Math.round(65536 * 0.05 * wheel.angleDelta.y / 120);
-                        if (step !== 0)
-                            barRoot.mediaController.adjustAppVolume(step);
+                        barRoot.mediaController.wheelVolume(wheel.angleDelta.y);
                         wheel.accepted = true;
                     }
                 }
@@ -227,9 +223,7 @@ Item {
                     acceptedButtons: Qt.NoButton
                     onWheel: (wheel) => {
                         if (barRoot.mediaController) {
-                            let step = Math.round(65536 * 0.05 * wheel.angleDelta.y / 120);
-                            if (step !== 0)
-                                barRoot.mediaController.adjustAppVolume(step);
+                            barRoot.mediaController.wheelVolume(wheel.angleDelta.y);
                             wheel.accepted = true;
                         }
                     }
@@ -415,9 +409,7 @@ Item {
                 acceptedButtons: Qt.NoButton
                 onWheel: (wheel) => {
                     if (barRoot.mediaController) {
-                        let step = Math.round(65536 * 0.05 * wheel.angleDelta.y / 120);
-                        if (step !== 0)
-                            barRoot.mediaController.adjustAppVolume(step);
+                        barRoot.mediaController.wheelVolume(wheel.angleDelta.y);
                         wheel.accepted = true;
                     }
                 }

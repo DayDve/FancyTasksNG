@@ -146,10 +146,7 @@ Item {
         acceptedButtons: Qt.NoButton
         onWheel: (wheel) => {
             if (overlayRoot.mediaController && overlayRoot.mediaController.showVolumeControls) {
-                let step = Math.round(65536 * 0.05 * wheel.angleDelta.y / 120);
-                if (step !== 0) {
-                    overlayRoot.mediaController.adjustAppVolume(step);
-                }
+                overlayRoot.mediaController.wheelVolume(wheel.angleDelta.y);
                 wheel.accepted = true;
             }
         }
