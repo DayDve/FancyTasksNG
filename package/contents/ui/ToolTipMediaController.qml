@@ -41,19 +41,12 @@ Item {
     property int cachedVolume: 0
     readonly property int appVolume: {
         if (hasAudioStream && audioStreams.length > 0 && !userVolumeChangeTimer.running) {
-            let validStreams = audioStreams.filter(s => s && typeof s.volume !== 'undefined');
+            let validStreams = audioStreams.filter(s => typeof s.volume !== 'undefined');
             if (validStreams.length > 0) {
                 return validStreams.reduce((max, s) => Math.max(max, s.volume), 0);
             }
         }
         return cachedVolume;
-    }
-
-    Timer {
-        id: streamClearTimer
-        interval: 1000
-        repeat: false
-        onTriggered: controller.audioStreams = []
     }
 
     Timer {
@@ -64,7 +57,7 @@ Item {
         interval: 500
         repeat: false
         onTriggered: {
-            var validStreams = controller.audioStreams.filter(s => s && typeof s.volume !== 'undefined');
+            var validStreams = controller.audioStreams.filter(s => typeof s.volume !== 'undefined');
             if (validStreams.length > 0)
                 controller.cachedVolume = validStreams.reduce((max, s) => Math.max(max, s.volume), 0);
         }
@@ -72,7 +65,6 @@ Item {
 
     function updateAudioStreams() {
         if (!controller.mediaRegistry || !controller.mediaRegistry.audio) {
-            streamClearTimer.stop();
             audioStreams = [];
             return;
         }
@@ -84,20 +76,15 @@ Item {
             // While userVolumeChangeTimer is running we keep cachedVolume as-is so
             // the slider stays at the intended position until PA fully converges.
             if (!userVolumeChangeTimer.running) {
-                let validStreams = streams.filter(s => s && typeof s.volume !== 'undefined');
+                let validStreams = streams.filter(s => typeof s.volume !== 'undefined');
                 if (validStreams.length > 0)
                     cachedVolume = validStreams.reduce((max, s) => Math.max(max, s.volume), 0);
             }
-            streamClearTimer.stop();
-            audioStreams = streams;
-        } else {
-            if (audioStreams.length > 0) {
-                streamClearTimer.restart();
-            } else {
-                streamClearTimer.stop();
-                audioStreams = [];
-            }
         }
+        // Dropped streams go right away: holding on to them kept objects
+        // PulseAudio had already removed. The tooltip's own hide delay
+        // (ToolTipInstance.controlsHideTimer) keeps the controls from flickering.
+        audioStreams = streams;
     }
 
     function toggleMuted() {
