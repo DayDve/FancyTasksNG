@@ -6,7 +6,6 @@
 import QtQuick
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.components as PlasmaComponents3
 
 Item {
     id: overlayRoot
@@ -16,8 +15,6 @@ Item {
 
     readonly property int smallSpacing: Kirigami.Units.smallSpacing
     readonly property int longDuration: Kirigami.Units.longDuration
-    readonly property int gridUnit: Kirigami.Units.gridUnit
-    readonly property int iconSmall: Kirigami.Units.iconSizes.small
 
     width: parent.width
     height: controlsColumn.implicitHeight + (overlayRoot.smallSpacing * 2)
@@ -72,71 +69,10 @@ Item {
             isWin: overlayRoot.mediaController && overlayRoot.mediaController.toolTipDelegate ? overlayRoot.mediaController.toolTipDelegate.isWin : false
         }
 
-        // Volume Controls
-        RowLayout {
+        MediaVolumeRow {
             visible: overlayRoot.mediaController ? overlayRoot.mediaController.showVolumeControls : false
             Layout.fillWidth: true
-            spacing: overlayRoot.smallSpacing
-
-            PlasmaComponents3.ToolButton {
-                icon.width: overlayRoot.iconSmall
-                icon.height: overlayRoot.iconSmall
-              
-                icon.name: if (checked) {
-                    "audio-volume-muted";
-                } else if (Math.round(slider.value / slider.to * 100) <= 25) {
-                    "audio-volume-low";
-                } else if (Math.round(slider.value / slider.to * 100) <= 75) {
-                    "audio-volume-medium";
-                } else {
-                    "audio-volume-high";
-                }
-                
-                display: PlasmaComponents3.AbstractButton.IconOnly
-                checkable: true
-                checked: overlayRoot.mediaController ? overlayRoot.mediaController.muted : false
-                onClicked: {
-                    if (overlayRoot.mediaController) {
-                        overlayRoot.mediaController.toggleMuted();
-                    }
-                }
-            }
-
-            PlasmaComponents3.Slider {
-                id: slider
-                Layout.fillWidth: true
-                
-                from: overlayRoot.mediaController && overlayRoot.mediaController.mediaRegistry ? overlayRoot.mediaController.mediaRegistry.minimalVolume : 0
-                to: overlayRoot.mediaController && overlayRoot.mediaController.mediaRegistry ? overlayRoot.mediaController.mediaRegistry.normalVolume : 65536
-                
-                // Block built-in QML Slider wheel handling completely to prevent duplicate scroll bugs!
-                WheelHandler {
-                    acceptedButtons: Qt.NoButton
-                    onWheel: (event) => {
-                        event.accepted = true;
-                    }
-                }
-
-                Binding {
-                    target: slider
-                    property: "value"
-                    value: overlayRoot.mediaController ? overlayRoot.mediaController.appVolume : 0
-                    when: !slider.pressed
-                }
-                
-                onMoved: {
-                    if (overlayRoot.mediaController) {
-                        overlayRoot.mediaController.setVolume(value);
-                    }
-                }
-            }
-            
-            PlasmaComponents3.Label {
-                text: Math.round(slider.value / slider.to * 100) + "%"
-                Layout.minimumWidth: overlayRoot.gridUnit * 1.5
-                font.pixelSize: 10
-                horizontalAlignment: Text.AlignHCenter
-            }
+            mediaController: overlayRoot.mediaController
         }
     }
 

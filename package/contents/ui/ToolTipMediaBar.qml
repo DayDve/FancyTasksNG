@@ -7,7 +7,6 @@ import QtQuick
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.components as PlasmaComponents3
-import org.kde.plasma.private.mpris as Mpris
 
 import "code/singletones"
 
@@ -41,57 +40,22 @@ Item {
         anchors.rightMargin: Kirigami.Units.smallSpacing
         spacing: Kirigami.Units.smallSpacing
 
-        // [prev][play/pause][next] Buttons
-        RowLayout {
-            id: playerButtons
+        PlayerController {
             visible: barRoot.hasPlayer
-            spacing: 2
             Layout.alignment: Qt.AlignVCenter
-
-            PlasmaComponents3.ToolButton {
-                implicitWidth: Kirigami.Units.gridUnit * 1.2
-                implicitHeight: Kirigami.Units.gridUnit * 1.2
-                padding: 0
-                icon.width: Kirigami.Units.iconSizes.small
-                icon.height: Kirigami.Units.iconSizes.small
-
-                enabled: barRoot.player ? barRoot.player.canGoPrevious : false
-                icon.name: mirrored ? "media-skip-forward" : "media-skip-backward"
-                onClicked: if (barRoot.player) barRoot.player.Previous()
-            }
-
-            PlasmaComponents3.ToolButton {
-                implicitWidth: Kirigami.Units.gridUnit * 1.2
-                implicitHeight: Kirigami.Units.gridUnit * 1.2
-                padding: 0
-                icon.width: Kirigami.Units.iconSizes.small
-                icon.height: Kirigami.Units.iconSizes.small
-
-                readonly property bool isPlaying: barRoot.player ? barRoot.player.playbackStatus === Mpris.PlaybackStatus.Playing : false
-                enabled: barRoot.player ? (isPlaying ? barRoot.player.canPause : DesktopActionsManager.canPlay(barRoot.player)) : false
-                icon.name: isPlaying ? "media-playback-pause" : "media-playback-start"
-                onClicked: {
-                    if (barRoot.player) {
-                        if (!isPlaying) {
-                            DesktopActionsManager.play(barRoot.player);
-                        } else {
-                            barRoot.player.Pause();
-                        }
-                    }
-                }
-            }
-
-            PlasmaComponents3.ToolButton {
-                implicitWidth: Kirigami.Units.gridUnit * 1.2
-                implicitHeight: Kirigami.Units.gridUnit * 1.2
-                padding: 0
-                icon.width: Kirigami.Units.iconSizes.small
-                icon.height: Kirigami.Units.iconSizes.small
-
-                enabled: barRoot.player ? barRoot.player.canGoNext : false
-                icon.name: mirrored ? "media-skip-backward" : "media-skip-forward"
-                onClicked: if (barRoot.player) barRoot.player.Next()
-            }
+            spacing: 2
+            showText: false
+            playerData: barRoot.player ?? ({
+                canControl: false,
+                playbackStatus: 0,
+                track: "",
+                artist: "",
+                canGoPrevious: false,
+                canPlay: false,
+                canPause: false,
+                canGoNext: false
+            })
+            isWin: barRoot.mediaController && barRoot.mediaController.toolTipDelegate ? barRoot.mediaController.toolTipDelegate.isWin : false
         }
 
         // Scrollable track/artist title with fade hint when text overflows
@@ -338,82 +302,11 @@ Item {
         }
 
         // Inline horizontal volume slider for volume-only mode (no player controls)
-        Item {
+        MediaVolumeRow {
             visible: barRoot.volumeOnlyMode
             Layout.fillWidth: true
-            Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
-
-            RowLayout {
-                id: inlineVolumeLayout
-                anchors.fill: parent
-                spacing: Kirigami.Units.smallSpacing
-
-            PlasmaComponents3.ToolButton {
-                implicitWidth: Kirigami.Units.gridUnit * 1.2
-                implicitHeight: Kirigami.Units.gridUnit * 1.2
-                padding: 0
-                icon.width: Kirigami.Units.iconSizes.small
-                icon.height: Kirigami.Units.iconSizes.small
-
-                icon.name: {
-                    if (checked) return "audio-volume-muted";
-                    let pct = Math.round(inlineVolumeSlider.value / inlineVolumeSlider.to * 100);
-                    if (pct <= 25) return "audio-volume-low";
-                    if (pct <= 75) return "audio-volume-medium";
-                    return "audio-volume-high";
-                }
-
-                text: Wrappers.i18n("Mute")
-                display: PlasmaComponents3.AbstractButton.IconOnly
-                checkable: true
-                checked: barRoot.muted
-                onClicked: {
-                    if (barRoot.mediaController)
-                        barRoot.mediaController.toggleMuted();
-                }
-            }
-
-            ToolTipVolumeSlider {
-                id: inlineVolumeSlider
-                Layout.fillWidth: true
-
-                from: barRoot.mediaRegistry ? barRoot.mediaRegistry.minimalVolume : 0
-                to: barRoot.mediaRegistry ? barRoot.mediaRegistry.normalVolume : 65536
-
-                Binding {
-                    target: inlineVolumeSlider
-                    property: "value"
-                    value: barRoot.appVolume
-                    when: !inlineVolumeSlider.pressed
-                }
-
-                onMoved: {
-                    if (barRoot.mediaController)
-                        barRoot.mediaController.setVolume(value);
-                }
-            }
-
-            PlasmaComponents3.Label {
-                text: Math.round(inlineVolumeSlider.value / inlineVolumeSlider.to * 100) + "%"
-                Layout.minimumWidth: Kirigami.Units.gridUnit * 1.5
-                font.pixelSize: 10
-                horizontalAlignment: Text.AlignHCenter
-            }
-
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                z: 1
-                acceptedButtons: Qt.NoButton
-                onWheel: (wheel) => {
-                    if (barRoot.mediaController) {
-                        barRoot.mediaController.wheelVolume(wheel.angleDelta.y);
-                        wheel.accepted = true;
-                    }
-                }
-            }
+            mediaController: barRoot.mediaController
         }
     }
 

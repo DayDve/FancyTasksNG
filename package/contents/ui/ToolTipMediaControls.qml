@@ -6,9 +6,6 @@
 import QtQuick
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.components as PlasmaComponents3
-
-import "code/singletones"
 
 RowLayout {
     id: controlsRoot
@@ -17,7 +14,6 @@ RowLayout {
 
     readonly property int smallSpacing: Kirigami.Units.smallSpacing
     readonly property int gridUnit: Kirigami.Units.gridUnit
-    readonly property int iconSmall: Kirigami.Units.iconSizes.small
 
     spacing: controlsRoot.smallSpacing
     
@@ -42,74 +38,9 @@ RowLayout {
         isWin: controlsRoot.mediaController && controlsRoot.mediaController.toolTipDelegate ? controlsRoot.mediaController.toolTipDelegate.isWin : false
     }
 
-    // Volume Controls (Inline inside the same row)
-    RowLayout {
+    MediaVolumeRow {
         visible: controlsRoot.mediaController ? controlsRoot.mediaController.showVolumeControls : false
         Layout.fillWidth: true
-        spacing: controlsRoot.smallSpacing
-
-        PlasmaComponents3.ToolButton {
-            implicitWidth: controlsRoot.gridUnit * 1.2
-            implicitHeight: controlsRoot.gridUnit * 1.2
-            padding: 0
-            icon.width: controlsRoot.iconSmall
-            icon.height: controlsRoot.iconSmall
-          
-            icon.name: if (checked) {
-                "audio-volume-muted";
-            } else if (Math.round(sliderInline.value / sliderInline.to * 100) <= 25) {
-                "audio-volume-low";
-            } else if (Math.round(sliderInline.value / sliderInline.to * 100) <= 75) {
-                "audio-volume-medium";
-            } else {
-                "audio-volume-high";
-            }
-            
-            text: Wrappers.i18n("Mute")
-            display: PlasmaComponents3.AbstractButton.IconOnly
-            checkable: true
-            checked: controlsRoot.mediaController ? controlsRoot.mediaController.muted : false
-            onClicked: {
-                if (controlsRoot.mediaController) {
-                    controlsRoot.mediaController.toggleMuted();
-                }
-            }
-        }
-
-        PlasmaComponents3.Slider {
-            id: sliderInline
-            Layout.fillWidth: true
-            
-            from: controlsRoot.mediaController && controlsRoot.mediaController.mediaRegistry ? controlsRoot.mediaController.mediaRegistry.minimalVolume : 0
-            to: controlsRoot.mediaController && controlsRoot.mediaController.mediaRegistry ? controlsRoot.mediaController.mediaRegistry.normalVolume : 65536
-            
-            // Block built-in QML Slider wheel handling completely to prevent duplicate scroll bugs!
-            WheelHandler {
-                acceptedButtons: Qt.NoButton
-                onWheel: (event) => {
-                    event.accepted = true;
-                }
-            }
-
-            Binding {
-                target: sliderInline
-                property: "value"
-                value: controlsRoot.mediaController ? controlsRoot.mediaController.appVolume : 0
-                when: !sliderInline.pressed
-            }
-            
-            onMoved: {
-                if (controlsRoot.mediaController) {
-                    controlsRoot.mediaController.setVolume(value);
-                }
-            }
-        }
-        
-        PlasmaComponents3.Label {
-            text: Math.round(sliderInline.value / sliderInline.to * 100) + "%"
-            Layout.minimumWidth: controlsRoot.gridUnit * 1.5
-            font.pixelSize: 10
-            horizontalAlignment: Text.AlignHCenter
-        }
+        mediaController: controlsRoot.mediaController
     }
 }
