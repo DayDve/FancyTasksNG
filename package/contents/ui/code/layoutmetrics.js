@@ -73,9 +73,20 @@ function preferredMinWidth() {
         width +=
             (Kirigami.Units.smallSpacing * 2) +
             (Kirigami.Units.gridUnit * 8);
+        // A classic button is never narrower than its configured width, which
+        // can be well below the default minimum; going by the default would
+        // keep the applet wider than a button and start new rows too late.
+        width = Math.min(width, classicMinButtonWidth());
     }
 
     return width;
+}
+
+function classicMinButtonWidth() {
+    const config = tasks.plasmoid.configuration;
+    return config.fitButtonToText
+        ? Math.min(config.minFitButtonLength, config.maxButtonLength)
+        : config.maxButtonLength;
 }
 
 function preferredMaxWidth() {
