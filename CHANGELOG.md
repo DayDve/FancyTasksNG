@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Preview Toggle Asking to Apply:** Showing or hiding the preview at the top of the settings pages, or changing its panel thickness, made the settings dialog ask to Apply. These are now remembered on their own.
 - **Wheel Volume in Tooltips:** Scrolling over a tooltip's volume controls always changed the volume by 5%; it now uses the same step as the wheel over a task (the volume step set in the Audio Volume widget).
 - **Media Controls Lingering in Tooltips:** After playback ended or its audio stream went away, a tooltip kept showing the media controls for up to two seconds. They now go away right away.
+- **Stream List Flashing on Pause:** Pausing a player such as mpv or VLC from its tooltip briefly showed the list of audio streams.
 
 ## [2.3.0] - 2026-11-05
 
