@@ -85,9 +85,12 @@ Item {
         }
     }
 
-    // Task.qml assigns taskItem only after the Loader has created us.
+    // Task.qml assigns taskItem only after the Loader has created us. Pinned
+    // launchers need this too: their app's streams are found by app id, and
+    // Shift+wheel over one would otherwise have nothing to adjust until the
+    // next attribution change.
     onTaskItemChanged: {
-        if (taskItem && !taskItem.inPopup && taskItem.model && taskItem.model.IsWindow) {
+        if (taskItem && taskItem.model) {
             updateAudioStreams();
         }
     }
