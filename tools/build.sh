@@ -23,11 +23,10 @@ trap cleanup EXIT
 
 # ---------------------------------------------------------
 
-# Run translation scripts in a subshell
-(
-    "${SCRIPT_DIR}/extract_messages.sh"
-    "${SCRIPT_DIR}/compile_messages.sh"
-)
+# Compile the committed .po files only. Extracting strings rewrites the
+# .pot/.po files and the translation status table, which is `make translate`'s
+# job; doing it here left every build with a dirty tree.
+"${SCRIPT_DIR}/compile_messages.sh"
 
 # Keep ConfigPage.qml's cfg_*Default values in sync with main.xml
 python3 "${SCRIPT_DIR}/sync_defaults.py"
