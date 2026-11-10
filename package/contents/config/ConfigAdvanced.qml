@@ -106,7 +106,7 @@ ConfigPage {
             text: Wrappers.i18n("Layout settings:")
             opacity: fillEnabled ? 1.0 : 0.6
     
-            readonly property bool fillEnabled: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating && advancedPage.cfg_iconOnly
+            readonly property bool fillEnabled: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating
         }
     
         Kirigami.InlineMessage {
@@ -116,23 +116,16 @@ ConfigPage {
             text: Wrappers.i18n("These options are only available when the widget is on a panel.")
         }
     
-        Kirigami.InlineMessage {
-            Layout.fillWidth: true
-            visible: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating && !advancedPage.cfg_iconOnly
-            type: Kirigami.MessageType.Information
-            text: Wrappers.i18n("These options are only available in icon-only mode.")
-        }
-    
         CheckBox {
             id: fill
             text: Wrappers.i18n("Fill free space on panel")
-            enabled: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating && advancedPage.cfg_iconOnly
+            enabled: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating
             checked: advancedPage.cfg_fill
             onToggled: advancedPage.cfg_fill = checked
         }
     
         RowLayout {
-            visible: fill.checked && fill.enabled
+            visible: fill.checked && fill.enabled && advancedPage.cfg_iconOnly
             Item { implicitWidth: advancedPage.gridUnit }
     
             Label {
