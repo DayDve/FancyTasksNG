@@ -1072,7 +1072,7 @@ PlasmoidItem {
         type: PlasmaCore.Dialog.Tooltip
 
         backgroundHints: PlasmaCore.Types.NoBackground
-        flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WA_TranslucentBackground | Qt.BypassWindowManagerHint
+        flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.BypassWindowManagerHint
         hideOnWindowDeactivate: false
 
         readonly property bool shouldShow: tasks.config.enableToolTips && tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup
