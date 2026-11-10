@@ -86,8 +86,6 @@ Kirigami.Page {
     property bool cfg_iconSizeOverrideDefault: false
 
     // --- Preview Config ---
-    property int cfg_previewSize: 48
-    property int cfg_previewSizeDefault: 48
     property bool cfg_fill: false
     property bool cfg_fillDefault: true
     property int cfg_fillAlignment: 0
@@ -250,8 +248,6 @@ Kirigami.Page {
     property bool cfg_showBadgesDefault: true
     property bool cfg_badgeHighlightNew: true
     property bool cfg_badgeHighlightNewDefault: true
-    property bool cfg_showLivePreview: true
-    property bool cfg_showLivePreviewDefault: true
     property bool cfg_smokeExplosionOnClose: false
     property bool cfg_smokeExplosionOnCloseDefault: false
     property bool cfg_cursorGlow: false

@@ -46,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Volume of New Audio Streams:** A new audio stream from an app got the volume it had last been set to in this session for that process id, overriding the volume the sound server restores for it, and could hand that volume to an unrelated app that later got the same process id.
 - **Fill in Classic Mode:** "Fill free space on panel" was greyed out in the classic (icons + text) mode, yet always on there, so the widget took the whole panel with its buttons at one end. It can now be turned off in classic mode too, leaving the widget as wide as its buttons.
 - **Rows With Narrow Classic Buttons:** In the classic mode with a small maximum button width, the widget kept a minimum width larger than a button and started a new row of tasks too late.
+- **Preview Toggle Asking to Apply:** Showing or hiding the preview at the top of the settings pages, or changing its panel thickness, made the settings dialog ask to Apply. These are now remembered on their own.
 
 ## [2.3.0] - 2026-11-05
 

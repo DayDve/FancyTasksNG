@@ -6,6 +6,7 @@
 
 pragma ComponentBehavior: Bound
 
+import QtCore as QtCore
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Controls
@@ -24,7 +25,7 @@ Item {
     Layout.fillWidth: true
     Layout.maximumWidth: 650
     Layout.alignment: Qt.AlignLeft
-    implicitHeight: cfg_page.cfg_showLivePreview ? 290 : titleLayout.height
+    implicitHeight: previewSettings.showLivePreview ? 290 : titleLayout.height
     clip: false
 
     readonly property int locationBottom: PlasmaCore.Types.BottomEdge
@@ -35,6 +36,15 @@ Item {
 
     required property var cfg_page
     property int location: PlasmaCore.Types.BottomEdge
+
+    // How the preview itself is shown, not a widget setting: kept out of
+    // main.xml so toggling it doesn't ask to Apply.
+    QtCore.Settings {
+        id: previewSettings
+        category: "FancyTasksNGLivePreview"
+        property bool showLivePreview: true
+        property int previewSize: 48
+    }
 
     readonly property bool cfg_showToolTips: cfg_page.cfg_showToolTips
 
@@ -98,7 +108,7 @@ Item {
     property int simulatedLocation: currentEdgeIdx === 0 ? locationBottom :
                                     currentEdgeIdx === 1 ? locationTop :
                                     currentEdgeIdx === 2 ? locationLeft : locationRight
-    property int simulatedThickness: cfg_page.cfg_previewSize
+    property int simulatedThickness: previewSettings.previewSize
 
     // Multistripe simulation
     readonly property int taskCountDisplay: taskModel.count
@@ -169,8 +179,8 @@ Item {
         CheckBox {
             id: headerToggle
             leftPadding: 0
-            checked: previewRoot.cfg_page.cfg_showLivePreview
-            onToggled: previewRoot.cfg_page.cfg_showLivePreview = checked
+            checked: previewSettings.showLivePreview
+            onToggled: previewSettings.showLivePreview = checked
         }
 
         Label {
@@ -189,7 +199,7 @@ Item {
         anchors.bottom: parent.bottom
         padding: Kirigami.Units.smallSpacing
         topPadding: Kirigami.Units.mediumSpacing
-        visible: previewRoot.cfg_page.cfg_showLivePreview
+        visible: previewSettings.showLivePreview
     }
 
     ColumnLayout {
@@ -247,8 +257,8 @@ Item {
                         id: localSizeSpinner
                         from: 24
                         to: 128
-                        value: previewRoot.cfg_page.cfg_previewSize
-                        onValueModified: { previewRoot.cfg_page.cfg_previewSize = value }
+                        value: previewSettings.previewSize
+                        onValueModified: { previewSettings.previewSize = value }
                         stepSize: 2
                         editable: true
 

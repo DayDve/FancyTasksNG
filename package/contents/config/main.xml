@@ -57,14 +57,6 @@
             >How tasks are display: 0 = Classic Panel, 1 = Show Icons Only</label>
       <default>1</default>
     </entry>
-    <entry name="previewSize" type="Int">
-      <default>48</default>
-      <label>Size of the mock panel in the preview.</label>
-    </entry>
-    <entry name="showLivePreview" type="Bool">
-      <default>true</default>
-      <label>Whether to show the interactive preview at the top of configuration pages.</label>
-    </entry>
     <entry name="groupedTaskVisualization" type="Enum">
       <label
             >What happens when clicking on a grouped task: 0 = cycle through grouped tasks, 1 = try to show tooltips, 2 = try to show present Windows effect, 3 = show textual list (AKA group dialog)</label>
