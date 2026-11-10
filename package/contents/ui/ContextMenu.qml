@@ -306,14 +306,6 @@ PlasmaExtras.Menu {
     }
 
     function loadDynamicLaunchActions(launcherUrl: url, onReady: var): void {
-        // Query desktop file actions and recent documents
-        const showHistory = DesktopActionsManager.shouldShowHistory(get(atm.AppPid), config.showBrowserHistory);
-        DesktopActionsManager.query(launcherUrl, get(atm.AppPid), showHistory, config.browserHistoryLimit, result => {
-            _insertDesktopActions(result, launcherUrl);
-            if (onReady)
-                onReady();
-        });
-
         const registry = menu.tasksRoot.mediaRegistry;
         if (menu.forGroupMember) {
             menu.muteStreams = registry.streamsForProcess(get(atm.AppId) ?? "", get(atm.AppPid) ?? 0, get(atm.AppName) ?? "");
@@ -445,6 +437,17 @@ PlasmaExtras.Menu {
 
             menu.addMenuItem(newSeparator(menu), startNewInstanceItem);
         }
+
+        // Desktop file actions and recent documents come last: a cached
+        // result calls back right away, and the media items above must
+        // already be in place for them to go before, and for the menu to
+        // open complete, the same as when the answer arrives later.
+        const showHistory = DesktopActionsManager.shouldShowHistory(get(atm.AppPid), config.showBrowserHistory);
+        DesktopActionsManager.query(launcherUrl, get(atm.AppPid), showHistory, config.browserHistoryLimit, result => {
+            _insertDesktopActions(result, launcherUrl);
+            if (onReady)
+                onReady();
+        });
     }
 
     PlasmaExtras.MenuItem {
