@@ -52,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Media Controls Lingering in Tooltips:** After playback ended or its audio stream went away, a tooltip kept showing the media controls for up to two seconds. They now go away right away.
 - **Stream List Flashing on Pause:** Pausing a player such as mpv or VLC from its tooltip briefly showed the list of audio streams.
 - **No Audio Indicator on a Player's First Launch:** The first time a player such as mpv or VLC was started, its button showed no audio indicator and its tooltip no volume controls; starting it again worked.
+- **Button Direction on the Desktop:** With the widget on the desktop and its button direction overridden, the button background, the side zoomed icons grow from, the volume overlay and the way into the tooltip still followed the widget's real placement instead of the chosen direction.
 
 ## [2.3.0] - 2026-11-05
 

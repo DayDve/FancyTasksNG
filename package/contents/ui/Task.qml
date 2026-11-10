@@ -42,7 +42,8 @@ Item {
 
     // Cached properties for optimization
     readonly property var config: Plasmoid.configuration
-    readonly property int location: Plasmoid.location
+    // The edge buttons face, which a floating widget can override.
+    readonly property int location: task.tasksRoot ? task.tasksRoot.effectiveLocation : Plasmoid.location
     readonly property int smallSpacing: Kirigami.Units.smallSpacing
     readonly property int shortDuration: Kirigami.Units.shortDuration
     readonly property int longDuration: Kirigami.Units.longDuration

@@ -9,8 +9,10 @@ import QtQuick
 import QtQuick.Effects
 import org.kde.ksvg as KSvg
 import org.kde.kirigami as Kirigami
+import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
 import "code/tools.js" as TaskTools
+import "code/FloatingLogic.js" as FloatingLogic
 
 Item {
     id: control
@@ -18,7 +20,7 @@ Item {
 
     property double volume: 0
     property bool muted: false
-    readonly property int location: Plasmoid.location
+    readonly property int location: FloatingLogic.getEffectiveLocation(Plasmoid.location, Plasmoid.configuration, PlasmaCore.Types)
 
     function show() {
         opacity = 1;

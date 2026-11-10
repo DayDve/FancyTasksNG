@@ -995,7 +995,7 @@ PlasmoidItem {
             active: tasks.currentHoveredTask !== null
             blockFirstEnter: false
             edge: {
-                switch (tasks.location) {
+                switch (tasks.effectiveLocation) {
                 case PlasmaCore.Types.BottomEdge:
                     return Qt.TopEdge;
                 case PlasmaCore.Types.TopEdge:

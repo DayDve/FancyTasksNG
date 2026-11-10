@@ -29,7 +29,7 @@ Item {
     // Local cached properties for optimization
     readonly property var config: Plasmoid.configuration
     readonly property var tasksRoot: iconBox.tasksRootContext
-    readonly property int location: Plasmoid.location
+    readonly property int location: iconBox.tasksRoot ? iconBox.tasksRoot.effectiveLocation : Plasmoid.location
 
     readonly property bool _iconsOnly: iconBox.tasksRoot ? iconBox.tasksRoot.iconsOnly : true
     readonly property real _trHeight: iconBox.tasksRoot ? iconBox.tasksRoot.height : 0
