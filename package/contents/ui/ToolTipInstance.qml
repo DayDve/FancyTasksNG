@@ -504,7 +504,7 @@ Item {
              source: {
                  const entry = root.currentWinId ? root.thumbnailCache[root.currentWinId] : null;
                  if (!entry) return "";
-                 if (Date.now() - entry.stamp > root.thumbnailCacheTtlMs) return "";
+                 if (Date.now() - entry.stamp > root.toolTipDelegate.thumbnailCacheTtlMs) return "";
                  return entry.result.url;
              }
              

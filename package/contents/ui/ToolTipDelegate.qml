@@ -40,6 +40,7 @@ Loader {
     
     // Pass Cache from Root (tasks) down to Instances
     property var thumbnailCache: tasks.thumbnailCache
+    readonly property int thumbnailCacheTtlMs: tasks.thumbnailCacheTtlMs
 
     readonly property var config: Plasmoid.configuration
 
