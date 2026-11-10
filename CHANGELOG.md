@@ -51,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Wheel Volume in Tooltips:** Scrolling over a tooltip's volume controls always changed the volume by 5%; it now uses the same step as the wheel over a task (the volume step set in the Audio Volume widget).
 - **Media Controls Lingering in Tooltips:** After playback ended or its audio stream went away, a tooltip kept showing the media controls for up to two seconds. They now go away right away.
 - **Stream List Flashing on Pause:** Pausing a player such as mpv or VLC from its tooltip briefly showed the list of audio streams.
+- **No Audio Indicator on a Player's First Launch:** The first time a player such as mpv or VLC was started, its button showed no audio indicator and its tooltip no volume controls; starting it again worked.
 
 ## [2.3.0] - 2026-11-05
 

@@ -72,6 +72,12 @@ QtObject {
             function setVolume(vol): void {
                 model.Volume = vol;
             }
+
+            // A new stream's client (and so its process) can come in after
+            // the stream itself; streams are matched to tasks by these.
+            onPidChanged: audioStreams.streamsChanged()
+            onAppNameChanged: audioStreams.streamsChanged()
+            onPortalAppIdChanged: audioStreams.streamsChanged()
         }
 
         onObjectAdded: (index, object) => audioStreams.streamsChanged()
