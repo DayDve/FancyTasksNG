@@ -154,9 +154,13 @@ ConfigPage {
             model: [Wrappers.i18n("Does nothing"), Wrappers.i18n("Cycles through all tasks"), Wrappers.i18n("Cycles through all tasks (skip minimized)"), Wrappers.i18n("Cycles through tasks of the current group"), Wrappers.i18n("Cycles through tasks of the current group (skip minimized)"), Wrappers.i18n("Adjusts volume of the window")]
             currentIndex: behaviorPage.cfg_wheelAction
             onActivated: index => {
+                // The Ctrl list leaves out the plain wheel's action; picking
+                // the Ctrl action here swaps the two instead of letting both
+                // hold the same one while the Ctrl box shows something else.
+                const previous = behaviorPage.cfg_wheelAction;
                 behaviorPage.cfg_wheelAction = index;
-                if (index === 5 && behaviorPage.cfg_wheelCtrlAction === 5) {
-                    behaviorPage.cfg_wheelCtrlAction = 0;
+                if (index === behaviorPage.cfg_wheelCtrlAction && index !== previous) {
+                    behaviorPage.cfg_wheelCtrlAction = previous;
                 }
             }
         }
