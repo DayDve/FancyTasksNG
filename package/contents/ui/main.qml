@@ -261,6 +261,12 @@ PlasmoidItem {
     property int instantHoveredIndex: instantHoveredTask ? instantHoveredTask.index : -1
     property real instantHoveredFraction: 0.5
     property bool isTooltipHovered: false
+    // An open context menu of a tooltip thumbnail and the task whose tooltip
+    // it came from. The tooltip stays up while it's open; hovering another
+    // task moves the tooltip away from it, so the menu closes too.
+    property var thumbnailMenu: null
+    property Task thumbnailMenuTask: null
+    readonly property bool thumbnailMenuOpen: thumbnailMenu !== null
 
     // PERSIST PARENT FOR FADE-OUT ANIMATION
     property Item lastTooltipParent: null
@@ -315,14 +321,17 @@ PlasmoidItem {
         if (currentHoveredTask) {
             lastTooltipParent = currentHoveredTask.tooltipAnchor;
         }
+        if (thumbnailMenu && currentHoveredTask !== thumbnailMenuTask) {
+            thumbnailMenu.close();
+        }
     }
 
     Timer {
         id: tooltipCloseTimer
         interval: 500
-        running: !tasks.isTooltipHovered && tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.containsMouse && tasks.currentHoveredTask !== mouseHandler.hoveredItem
+        running: !tasks.isTooltipHovered && !tasks.thumbnailMenuOpen && tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.containsMouse && tasks.currentHoveredTask !== mouseHandler.hoveredItem
         onTriggered: {
-            if (!tasks.isTooltipHovered && (tasks.currentHoveredTask && !tasks.currentHoveredTask.containsMouse && tasks.currentHoveredTask !== mouseHandler.hoveredItem)) {
+            if (!tasks.isTooltipHovered && !tasks.thumbnailMenuOpen && (tasks.currentHoveredTask && !tasks.currentHoveredTask.containsMouse && tasks.currentHoveredTask !== mouseHandler.hoveredItem)) {
                 tasks.currentHoveredTask = null;
             }
         }

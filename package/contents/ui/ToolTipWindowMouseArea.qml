@@ -12,6 +12,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import org.kde.plasma.extras as PlasmaExtras
 import org.kde.taskmanager as TaskManager
 
 MouseArea {
@@ -52,7 +53,20 @@ MouseArea {
             break;
         case Qt.RightButton:
             if (rootTask.tasksRoot) {
-                rootTask.tasksRoot.createContextMenu(rootTask, targetIndex).show();
+                const tasksRoot = rootTask.tasksRoot;
+                const menu = tasksRoot.createContextMenu(rootTask, targetIndex);
+                // The cursor leaves the tooltip for the menu; the tooltip has
+                // to know the menu is open to stay up (see main.qml).
+                menu.statusChanged.connect(() => {
+                    if (menu.status === PlasmaExtras.Menu.Open) {
+                        tasksRoot.thumbnailMenu = menu;
+                        tasksRoot.thumbnailMenuTask = rootTask;
+                    } else if (tasksRoot.thumbnailMenu === menu) {
+                        tasksRoot.thumbnailMenu = null;
+                        tasksRoot.thumbnailMenuTask = null;
+                    }
+                });
+                menu.show();
             }
             break;
         }
