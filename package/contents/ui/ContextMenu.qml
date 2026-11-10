@@ -866,7 +866,7 @@ PlasmaExtras.Menu {
             }
 
             PlasmaExtras.MenuItem {
-                enabled: menu.visualParent && menu.get(atm.CanSetNoBoder)
+                enabled: menu.visualParent && menu.get(atm.CanSetNoBorder)
 
                 checkable: true
                 checked: menu.visualParent && menu.get(atm.HasNoBorder)
