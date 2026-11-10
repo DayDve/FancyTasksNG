@@ -27,7 +27,6 @@ import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PlasmaComponents3
 import org.kde.plasma.extras as PlasmaExtras
 import org.kde.kirigami as Kirigami
-import org.kde.taskmanager as TaskManager
 import org.kde.plasma.private.mpris as Mpris
 
 import "code/singletones"
@@ -342,8 +341,7 @@ Item {
                 if (root.parentTask && root.parentTask.tasksRoot) {
                     root.parentTask.tasksRoot.cancelHighlightWindows();
                 }
-                const targetIndex = root.findMatchingTaskIndex();
-                tasksModel.requestClose(targetIndex);
+                tasksModel.requestClose(root.submodelIndex);
             }
         }
     }
@@ -726,8 +724,7 @@ Item {
                 if (root.parentTask && root.parentTask.tasksRoot) {
                     root.parentTask.tasksRoot.cancelHighlightWindows();
                 }
-                const targetIndex = root.findMatchingTaskIndex();
-                tasksModel.requestClose(targetIndex);
+                tasksModel.requestClose(root.submodelIndex);
             }
         }
     }
@@ -748,7 +745,7 @@ Item {
             mediaController: root.mediaController
 
             onActivateRequested: {
-                root.tasksModel.requestActivate(root.findMatchingTaskIndex());
+                root.tasksModel.requestActivate(root.submodelIndex);
                 if (root.parentTask) {
                     root.parentTask.closeTooltip();
                     if (root.parentTask.tasksRoot) {
@@ -809,32 +806,5 @@ Item {
         }
 
         return subTextEntries.join("\n");
-    }
-
-    function findMatchingTaskIndex() {
-        // Function to find the child task index that owns this winId
-        // Used to fix the close button closing the wrong window in a group
-        if (!tasksModel || !root.parentTask || root.parentTask.childCount === 0) return submodelIndex;
-        
-        const winId = root.currentWinId;
-        if (winId === undefined) return submodelIndex;
-
-        // Iterate through children of the parent task
-        const parentRow = root.parentTask.index;
-        const childCount = root.parentTask.childCount;
-        
-        for (let i = 0; i < childCount; ++i) {
-            // Create index for child i
-            const idx = tasksModel.makeModelIndex(parentRow, i);
-            
-            // Get WinIdList for this child
-            const winIds = tasksModel.data(idx, TaskManager.AbstractTasksModel.WinIdList);
-            
-            if (winIds && winIds.includes(winId)) {
-                return idx;
-            }
-        }
-        
-        return submodelIndex;
     }
 }

@@ -13,7 +13,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import org.kde.plasma.extras as PlasmaExtras
-import org.kde.taskmanager as TaskManager
 
 MouseArea {
     id: rootMouseArea
@@ -29,13 +28,7 @@ MouseArea {
     enabled: winId !== undefined
 
     onClicked: (mouse) => {
-        // Fix: Find the correct index for the specific window ID
-        // The original modelIndex passed might be incorrect for grouped tasks in some context
-        let targetIndex = modelIndex;
-        
-        if (rootTask.childCount > 0 && winId !== undefined) {
-             targetIndex = findMatchingTaskIndex();
-        }
+        const targetIndex = modelIndex;
 
         switch (mouse.button) {
         case Qt.LeftButton:
@@ -72,30 +65,6 @@ MouseArea {
         }
     }
 
-    function findMatchingTaskIndex() {
-        // Function to find the child task index that owns this winId
-        if (!tasksModel || rootTask.childCount === 0) return modelIndex;
-
-        // Iterate through children
-        // We assume rootTask.index is the row of the group parent
-        const parentRow = rootTask.index;
-        
-        for (let i = 0; i < rootTask.childCount; ++i) {
-            // Create index for child i
-            // Assuming makeModelIndex(parentRow, childRow) convention used in ToolTipDelegate
-            const idx = tasksModel.makeModelIndex(parentRow, i);
-            
-            // Get WinIdList for this child
-            const winIds = tasksModel.data(idx, TaskManager.AbstractTasksModel.WinIdList);
-            
-            if (winIds && winIds.includes(winId)) {
-                return idx;
-            }
-        }
-        
-        return modelIndex;
-    }
-
     property var toolTipDelegate
 
     function updateHoverState() {
@@ -120,11 +89,7 @@ MouseArea {
         interval: 750
         repeat: false
         onTriggered: {
-            let targetIndex = rootMouseArea.modelIndex;
-            if (rootMouseArea.rootTask.childCount > 0 && rootMouseArea.winId !== undefined) {
-                 targetIndex = rootMouseArea.findMatchingTaskIndex();
-            }
-            rootMouseArea.tasksModel.requestActivate(targetIndex);
+            rootMouseArea.tasksModel.requestActivate(rootMouseArea.modelIndex);
         }
     }
 
@@ -150,11 +115,7 @@ MouseArea {
         }
         onDropped: (drop) => {
             if (drop.hasUrls) {
-                let targetIndex = rootMouseArea.modelIndex;
-                if (rootMouseArea.rootTask.childCount > 0 && rootMouseArea.winId !== undefined) {
-                    targetIndex = rootMouseArea.findMatchingTaskIndex();
-                }
-                rootMouseArea.tasksModel.requestOpenUrls(targetIndex, drop.urls);
+                rootMouseArea.tasksModel.requestOpenUrls(rootMouseArea.modelIndex, drop.urls);
                 drop.accept();
                 
                 if (rootMouseArea.rootTask && typeof rootMouseArea.rootTask.closeTooltip === "function") {
