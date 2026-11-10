@@ -980,8 +980,10 @@ Item {
         }
     }
     Component.onDestruction: {
-        if (moveAnim.running) {
-            (task.parent as TaskList).animationsRunning -= 1;
+        // Same counter moveAnim incremented; task.parent may already be
+        // gone while the delegate is being destroyed.
+        if (moveAnim.running && task.tasksRoot && task.tasksRoot.taskList) {
+            task.tasksRoot.taskList.animationsRunning -= 1;
         }
     }
 }
