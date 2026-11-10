@@ -45,6 +45,14 @@ PlasmaExtras.Menu {
     property bool showAllPlaces: false
     property var firstMediaItem: null
 
+    // Opened from a window's thumbnail in a group tooltip: modelIndex is that
+    // window, while visualParent is still the group's button. Audio and media
+    // items then have to act on the window's process, not the whole group.
+    readonly property bool forGroupMember: !!modelIndex && !!modelIndex.parent && modelIndex.parent.valid
+
+    // Streams the mute item acts on, taken once when the menu is built.
+    property var muteStreams: []
+
     placement: {
         if (tasksRoot.effectiveLocation === PlasmaCore.Types.LeftEdge) {
             return PlasmaExtras.Menu.RightPosedTopAlignedPopup;
@@ -306,10 +314,21 @@ PlasmaExtras.Menu {
                 onReady();
         });
 
+        const registry = menu.tasksRoot.mediaRegistry;
+        if (menu.forGroupMember) {
+            menu.muteStreams = registry.streamsForProcess(get(atm.AppId) ?? "", get(atm.AppPid) ?? 0, get(atm.AppName) ?? "");
+        } else {
+            menu.muteStreams = (menu.visualParent as Task)?.audioStreams ?? [];
+        }
+
         // Add Media Player control actions
         const playerData = menu.tasksRoot.mediaRegistry.playerFor(launcherUrl, menu.get(menu.atm.AppPid));
 
-        if (playerData && playerData.canControl && !(menu.get(menu.atm.WinIdList) !== undefined && menu.get(menu.atm.WinIdList).length > 1)) {
+        // A group member's menu only gets a player the window's own process
+        // runs, the same rule its tooltip follows, not the app-wide fallback.
+        const ownPlayer = !menu.forGroupMember || menu.tasksRoot.mediaRegistry.ownsPlayer(playerData, menu.get(menu.atm.AppPid));
+
+        if (playerData && ownPlayer && playerData.canControl && !(menu.get(menu.atm.WinIdList) !== undefined && menu.get(menu.atm.WinIdList).length > 1)) {
             // A function, not a constant: the bindings and the click handler
             // below must see the playback state as it is now.
             const playing = () => playerData.playbackStatus === Mpris.PlaybackStatus.Playing;
@@ -370,7 +389,7 @@ PlasmaExtras.Menu {
 
             // Technically media controls and audio streams are separate but for the user they're
             // semantically related, don't add a separator inbetween.
-            if (!(menu.visualParent as Task).hasAudioStream) {
+            if (menu.muteStreams.length === 0) {
                 menu.addMenuItem(newSeparator(menu), startNewInstanceItem);
             }
 
@@ -409,18 +428,18 @@ PlasmaExtras.Menu {
         // is actually playing sound.
         // This way you can unmute, e.g. a telephony app, even after the conversation has ended,
         // so you still have it ringing later on.
-        if ((menu.visualParent as Task).hasAudioStream) {
+        if (menu.muteStreams.length > 0) {
+            const streams = menu.muteStreams;
+            const isMuted = () => streams.every(stream => stream.muted);
             const muteItem = menu.newMenuItem(menu);
             muteItem.text = Qt.binding(() => {
-                const isMuted = menu.visualParent && (menu.visualParent as Task).muted;
-                return isMuted ? Wrappers.i18n("Unmute") : Wrappers.i18n("Mute");
+                return isMuted() ? Wrappers.i18n("Unmute") : Wrappers.i18n("Mute");
             });
             muteItem.icon = Qt.binding(() => {
-                const isMuted = menu.visualParent && (menu.visualParent as Task).muted;
-                return isMuted ? "audio-volume-muted" : "audio-volume-high";
+                return isMuted() ? "audio-volume-muted" : "audio-volume-high";
             });
             muteItem.clicked.connect(() => {
-                (menu.visualParent as Task).toggleMuted();
+                menu.tasksRoot.mediaRegistry.toggleMuted(streams);
             });
             menu.addMenuItem(muteItem, startNewInstanceItem);
 
