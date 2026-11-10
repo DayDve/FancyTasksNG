@@ -48,12 +48,7 @@ Item {
             return;
         }
 
-        var streams = controller.mediaRegistry.streamsForProcess(appId, appPid, toolTipDelegate ? toolTipDelegate.appName : "");
-
-        // Dropped streams go right away: holding on to them kept objects
-        // PulseAudio had already removed. The tooltip's own hide delay
-        // (ToolTipInstance.controlsHideTimer) keeps the controls from flickering.
-        audioStreams = streams;
+        audioStreams = controller.mediaRegistry.streamsForProcess(appId, appPid, toolTipDelegate ? toolTipDelegate.appName : "");
     }
 
     function toggleMuted() {

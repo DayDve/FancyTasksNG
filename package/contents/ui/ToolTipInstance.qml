@@ -201,11 +201,7 @@ Item {
     
 
     readonly property bool controlsAreEffective: mediaController ? mediaController.controlsAreEffective : false
-    property bool delayedControlsActive: false
-    // The group tooltip learns which windows share a process only after its
-    // delegates exist; don't let the hide delay keep this window's own
-    // controls around once they've moved to the shared panel.
-    readonly property bool showOwnControls: !root.sharesProcess && (root.controlsAreEffective || root.delayedControlsActive)
+    readonly property bool showOwnControls: !root.sharesProcess && root.controlsAreEffective
 
     // In a group whose windows share a process the controls are in the
     // shared panel; this window only gets a speaker badge, and only when a
@@ -219,23 +215,6 @@ Item {
     }
     readonly property bool windowPlaying: windowStreams.some(stream => !stream.corked)
     readonly property bool windowMuted: windowStreams.length > 0 && windowStreams.every(stream => stream.muted)
-    
-    onControlsAreEffectiveChanged: {
-        if (controlsAreEffective) {
-            controlsHideTimer.stop();
-            delayedControlsActive = true;
-        } else {
-            controlsHideTimer.restart();
-        }
-    }
-    
-    Timer {
-        id: controlsHideTimer
-        interval: 1000
-        repeat: false
-        onTriggered: delayedControlsActive = false
-    }
-
 
     PlasmaExtras.Highlight {
         anchors.fill: parent
