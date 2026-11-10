@@ -433,6 +433,9 @@ PlasmaExtras.Menu {
             muteItem.clicked.connect(() => {
                 menu.tasksRoot.mediaRegistry.toggleMuted(streams);
             });
+            // Desktop actions go above the audio items, with or without a player.
+            if (!menu.firstMediaItem)
+                menu.firstMediaItem = muteItem;
             menu.addMenuItem(muteItem, startNewInstanceItem);
 
             menu.addMenuItem(newSeparator(menu), startNewInstanceItem);
