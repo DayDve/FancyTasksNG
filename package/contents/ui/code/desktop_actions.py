@@ -361,7 +361,7 @@ def remove_sqlite_copy(path):
             pass
 
 
-def extract_favicons(history_items, favicons_db_path, browser_type):
+def extract_favicons(history_items, favicons_db_path, engine):
     """Extract favicons for history items and save them to local cache."""
     if not history_items or not favicons_db_path or not os.path.exists(favicons_db_path):
         return history_items
@@ -399,28 +399,9 @@ def extract_favicons(history_items, favicons_db_path, browser_type):
         cursor = conn.cursor()
 
         for url, item, cached_png, cached_failed in urls_to_query:
-            blob = None
-            if browser_type == "firefox":
-                cursor.execute("""
-                    SELECT i.data FROM moz_icons i
-                    JOIN moz_icons_to_pages itp ON itp.icon_id = i.id
-                    JOIN moz_pages_w_icons p ON p.id = itp.page_id
-                    WHERE p.page_url = ? AND i.data IS NOT NULL
-                    ORDER BY i.width DESC LIMIT 1
-                """, (url,))
-                row = cursor.fetchone()
-                if row:
-                    blob = row[0]
-            else:
-                cursor.execute("""
-                    SELECT b.image_data FROM favicon_bitmaps b
-                    JOIN icon_mapping m ON m.icon_id = b.icon_id
-                    WHERE m.page_url = ? AND b.image_data IS NOT NULL
-                    ORDER BY b.width DESC LIMIT 1
-                """, (url,))
-                row = cursor.fetchone()
-                if row:
-                    blob = row[0]
+            cursor.execute(FAVICON_QUERIES[engine], (url,))
+            row = cursor.fetchone()
+            blob = row[0] if row else None
 
             if blob:
                 try:
@@ -447,115 +428,125 @@ def extract_favicons(history_items, favicons_db_path, browser_type):
     return history_items
 
 
-def get_firefox_recent(limit=10, app_pid=0):
-    """Fetch recent Firefox history with active profile detection via process info and fallback."""
-    # 1. Try to find active profile via /proc using app_pid
-    active_db = find_active_db_from_proc("places.sqlite", app_pid=app_pid)
-    if active_db:
-        history = fetch_sqlite_history(active_db, """
-            SELECT DISTINCT url, title FROM moz_places 
-            WHERE last_visit_date IS NOT NULL AND title IS NOT NULL AND url LIKE 'http%'
-            ORDER BY last_visit_date DESC LIMIT ?
-        """, "places_ff_active.sqlite", limit)
-        return extract_favicons(history, active_db.parent / "favicons.sqlite", "firefox")
-
-    # 2. Fallback to searching directories
-    search_dirs = [
-        Path.home() / ".mozilla" / "firefox",
-        Path.home() / ".config" / "mozilla" / "firefox",
-        Path.home() / ".var" / "app" / "org.mozilla.firefox" / ".mozilla" / "firefox",
-        Path.home() / ".var" / "app" / "org.mozilla.firefox-trunk" / ".mozilla" / "firefox",
-        Path.home() / "snap" / "firefox" / "common" / ".mozilla" / "firefox"
-    ]
-    
-    candidates = []
-    for d in search_dirs:
-        if d.exists() and (d / "profiles.ini").exists():
-            try:
-                config = configparser.ConfigParser()
-                config.read(d / "profiles.ini")
-                for section in config.sections():
-                    p_dir = config[section].get("Path") if section.startswith("Profile") else config[section].get("Default") if section.startswith("Install") else None
-                    if p_dir:
-                        full_path = d / p_dir if config[section].get("IsRelative", "1") == "1" else Path(p_dir)
-                        if (full_path / "places.sqlite").exists():
-                            candidates.append(full_path / "places.sqlite")
-            except Exception: continue
-
-    if not candidates: return []
-    
-    # Pick most recent
-    db_path = max(candidates, key=lambda p: p.stat().st_mtime)
-    
-    query = """
-        SELECT DISTINCT url, title FROM moz_places 
+HISTORY_QUERIES = {
+    "firefox": """
+        SELECT DISTINCT url, title FROM moz_places
         WHERE last_visit_date IS NOT NULL AND title IS NOT NULL AND url LIKE 'http%'
         ORDER BY last_visit_date DESC LIMIT ?
-    """
-    history = fetch_sqlite_history(db_path, query, "places_ff_recent.sqlite", limit)
-    return extract_favicons(history, db_path.parent / "favicons.sqlite", "firefox")
-
-
-def get_chromium_recent(browser_name, limit=10, app_pid=0):
-    """Fetch recent history for Chromium-based browsers with active profile detection."""
-    # 1. Try to find active profile via /proc using app_pid
-    active_db = find_active_db_from_proc("History", app_pid=app_pid)
-    if active_db:
-        history = fetch_sqlite_history(active_db, """
-            SELECT DISTINCT url, title FROM urls 
-            WHERE last_visit_time IS NOT NULL AND title IS NOT NULL AND url LIKE 'http%'
-            ORDER BY last_visit_time DESC LIMIT ?
-        """, f"history_{browser_name}_active.sqlite", limit)
-        return extract_favicons(history, active_db.parent / "Favicons", "chromium")
-
-    # 2. Fallback to searching directories
-    configs = {
-        "chrome": [
-            Path.home() / ".config" / "google-chrome",
-            Path.home() / ".var" / "app" / "com.google.Chrome" / "config" / "google-chrome"
-        ],
-        "chromium": [
-            Path.home() / ".config" / "chromium",
-            Path.home() / ".var" / "app" / "org.chromium.Chromium" / "config" / "chromium"
-        ],
-        "brave": [
-            Path.home() / ".config" / "BraveSoftware" / "Brave-Browser",
-            Path.home() / ".var" / "app" / "com.brave.Browser" / "config" / "BraveSoftware" / "Brave-Browser"
-        ],
-        "vivaldi": [
-            Path.home() / ".config" / "vivaldi",
-            Path.home() / ".var" / "app" / "com.vivaldi.Vivaldi" / "config" / "vivaldi"
-        ],
-        "edge": [
-            Path.home() / ".config" / "microsoft-edge",
-            Path.home() / ".var" / "app" / "com.microsoft.Edge" / "config" / "microsoft-edge"
-        ],
-        "opera": [
-            Path.home() / ".config" / "opera",
-            Path.home() / ".var" / "app" / "com.opera.Opera" / "config" / "opera"
-        ],
-    }
-    
-    base_dirs = configs.get(browser_name, [])
-    candidates = []
-    for base in base_dirs:
-        if not base.exists(): continue
-        # Common profile names
-        for profile in ["Default", "Profile 1", "Profile 2", "."]:
-            history_db = base / profile / "History"
-            if history_db.exists():
-                candidates.append(history_db)
-
-    if not candidates: return []
-    
-    db_path = max(candidates, key=lambda p: p.stat().st_mtime)
-    query = """
-        SELECT DISTINCT url, title FROM urls 
+    """,
+    "chromium": """
+        SELECT DISTINCT url, title FROM urls
         WHERE last_visit_time IS NOT NULL AND title IS NOT NULL AND url LIKE 'http%'
         ORDER BY last_visit_time DESC LIMIT ?
-    """
-    history = fetch_sqlite_history(db_path, query, f"history_{browser_name}_recent.sqlite", limit)
-    return extract_favicons(history, db_path.parent / "Favicons", "chromium")
+    """,
+}
+
+FAVICON_QUERIES = {
+    "firefox": """
+        SELECT i.data FROM moz_icons i
+        JOIN moz_icons_to_pages itp ON itp.icon_id = i.id
+        JOIN moz_pages_w_icons p ON p.id = itp.page_id
+        WHERE p.page_url = ? AND i.data IS NOT NULL
+        ORDER BY i.width DESC LIMIT 1
+    """,
+    "chromium": """
+        SELECT b.image_data FROM favicon_bitmaps b
+        JOIN icon_mapping m ON m.icon_id = b.icon_id
+        WHERE m.page_url = ? AND b.image_data IS NOT NULL
+        ORDER BY b.width DESC LIMIT 1
+    """,
+}
+
+# Per engine: the history and favicon database file names.
+ENGINE_FILES = {
+    "firefox": ("places.sqlite", "favicons.sqlite"),
+    "chromium": ("History", "Favicons"),
+}
+
+_HOME = Path.home()
+
+# Browser -> (engine, profile base directories: native, Flatpak, Snap).
+BROWSERS = {
+    "firefox": ("firefox", [
+        _HOME / ".mozilla" / "firefox",
+        _HOME / ".config" / "mozilla" / "firefox",
+        _HOME / ".var" / "app" / "org.mozilla.firefox" / ".mozilla" / "firefox",
+        _HOME / ".var" / "app" / "org.mozilla.firefox-trunk" / ".mozilla" / "firefox",
+        _HOME / "snap" / "firefox" / "common" / ".mozilla" / "firefox",
+    ]),
+    "chrome": ("chromium", [
+        _HOME / ".config" / "google-chrome",
+        _HOME / ".var" / "app" / "com.google.Chrome" / "config" / "google-chrome",
+    ]),
+    "chromium": ("chromium", [
+        _HOME / ".config" / "chromium",
+        _HOME / ".var" / "app" / "org.chromium.Chromium" / "config" / "chromium",
+    ]),
+    "brave": ("chromium", [
+        _HOME / ".config" / "BraveSoftware" / "Brave-Browser",
+        _HOME / ".var" / "app" / "com.brave.Browser" / "config" / "BraveSoftware" / "Brave-Browser",
+    ]),
+    "vivaldi": ("chromium", [
+        _HOME / ".config" / "vivaldi",
+        _HOME / ".var" / "app" / "com.vivaldi.Vivaldi" / "config" / "vivaldi",
+    ]),
+    "edge": ("chromium", [
+        _HOME / ".config" / "microsoft-edge",
+        _HOME / ".var" / "app" / "com.microsoft.Edge" / "config" / "microsoft-edge",
+    ]),
+    "opera": ("chromium", [
+        _HOME / ".config" / "opera",
+        _HOME / ".var" / "app" / "com.opera.Opera" / "config" / "opera",
+    ]),
+}
+
+
+def _firefox_profile_dbs(base, db_name):
+    """History databases of the profiles listed in a Firefox profiles.ini."""
+    dbs = []
+    if not (base / "profiles.ini").exists():
+        return dbs
+    try:
+        config = configparser.ConfigParser()
+        config.read(base / "profiles.ini")
+        for section in config.sections():
+            if section.startswith("Profile"):
+                p_dir = config[section].get("Path")
+            elif section.startswith("Install"):
+                p_dir = config[section].get("Default")
+            else:
+                p_dir = None
+            if p_dir:
+                full_path = base / p_dir if config[section].get("IsRelative", "1") == "1" else Path(p_dir)
+                if (full_path / db_name).exists():
+                    dbs.append(full_path / db_name)
+    except Exception:
+        pass
+    return dbs
+
+
+def _chromium_profile_dbs(base, db_name):
+    """History databases of a Chromium-family browser's common profiles."""
+    return [base / profile / db_name for profile in ("Default", "Profile 1", "Profile 2", ".")
+            if (base / profile / db_name).exists()]
+
+
+def get_browser_recent(browser, limit=10, app_pid=0):
+    """Recent pages from a browser's history: the profile the running browser
+    has open, or else the most recently written one found on disk."""
+    engine, base_dirs = BROWSERS[browser]
+    history_name, favicons_name = ENGINE_FILES[engine]
+
+    db_path = find_active_db_from_proc(history_name, app_pid=app_pid)
+    if not db_path:
+        find_profiles = _firefox_profile_dbs if engine == "firefox" else _chromium_profile_dbs
+        candidates = [db for base in base_dirs if base.exists() for db in find_profiles(base, history_name)]
+        if not candidates:
+            return []
+        db_path = max(candidates, key=lambda p: p.stat().st_mtime)
+
+    history = fetch_sqlite_history(db_path, HISTORY_QUERIES[engine], f"history_{browser}.sqlite", limit)
+    return extract_favicons(history, db_path.parent / favicons_name, engine)
 
 
 # Name parts of a browser's .desktop file -> browser. Matched as whole parts:
@@ -720,7 +711,7 @@ class DesktopActionsService(dbus.service.Object):
         self.allowed_pids = _ancestor_pids()
         self.sender_allowed = {}
         try:
-            self.bus = dbus.SessionBus()
+            self.bus = _get_session_bus()
             self.bus_name = dbus.service.BusName('io.github.daydve.fancytasksng.DesktopActions', bus=self.bus,
                                                  do_not_queue=True)
             dbus.service.Object.__init__(self, self.bus_name, '/DesktopActions')
@@ -751,10 +742,8 @@ class DesktopActionsService(dbus.service.Object):
         browser_history = []
         if desktop_path and show_history:
             browser = detect_browser(desktop_path)
-            if browser == "firefox":
-                browser_history = get_firefox_recent(limit, app_pid)
-            elif browser:
-                browser_history = get_chromium_recent(browser, limit, app_pid)
+            if browser:
+                browser_history = get_browser_recent(browser, limit, app_pid)
 
         raw_recent = get_recent_documents(desktop_path) if desktop_path else []
         
@@ -846,7 +835,7 @@ class DesktopActionsService(dbus.service.Object):
         if browser_pid <= 0 or not title:
             return False
         try:
-            bus = dbus.SessionBus()
+            bus = _get_session_bus()
             bus_daemon = bus.get_object('org.freedesktop.DBus', '/org/freedesktop/DBus')
             names = bus_daemon.ListNames(dbus_interface='org.freedesktop.DBus')
             for name in names:
