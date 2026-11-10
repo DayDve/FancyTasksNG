@@ -586,6 +586,8 @@ Item {
     function openTooltip(): void {
         if (!task.config.enableToolTips)
             return;
+        if (task.config.hideLauncherToolTips && task.model?.IsLauncher)
+            return;
         task.tasksRoot.currentHoveredTask = task;
         task.toolTipOpen = true;
         task.tasksRoot.toolTipAreaItem = task;

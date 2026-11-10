@@ -245,6 +245,18 @@ ConfigPage {
                 implicitWidth: behaviorPage.gridUnit
             }
             CheckBox {
+                text: Wrappers.i18n("Not for pinned apps that aren't running")
+                checked: behaviorPage.cfg_hideLauncherToolTips
+                onToggled: behaviorPage.cfg_hideLauncherToolTips = checked
+            }
+        }
+
+        RowLayout {
+            visible: enableToolTips.checked
+            Item {
+                implicitWidth: behaviorPage.gridUnit
+            }
+            CheckBox {
                 id: showToolTips
                 text: Wrappers.i18n("Show window thumbnails in tooltips")
                 checked: behaviorPage.cfg_showToolTips

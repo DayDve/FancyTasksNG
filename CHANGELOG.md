@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Badges as Dots:** New "Show badges as dots" option under Indicators: never, always, or only when the badges would be smaller than a set size (the default, 10 px). A dot grows into the full badge while its task is hovered.
+- **No Tooltips for Pinned Apps That Aren't Running:** New option under Behavior, below "Show tooltips": keep tooltips for running apps but don't show them for pinned apps that aren't running, whose tooltip only repeats the app's name and description. Off by default.
 
 ### Changed
 - **Badge Layout:** In icons-only mode the audio and notification badges are now sized and placed from the task button rather than from the icon, so changing the icon's size or offset no longer drags them along or leaves the button's corners empty. They sit in the button's corners away from the panel edge: audio on the left and the count on the right on horizontal panels, audio on top and the count below on vertical ones. On hover they grow with the icon in place, from their corner facing the button's center, without shaking as the zoom animates, and a longer count widens away from the icon. Pointing at a badge keeps its task hovered, so the audio badge can be clicked while the icon is zoomed.

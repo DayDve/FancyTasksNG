@@ -58,6 +58,8 @@ Kirigami.Page {
     property bool cfg_forceStripesDefault: false
     property bool cfg_enableToolTips: true
     property bool cfg_enableToolTipsDefault: true
+    property bool cfg_hideLauncherToolTips: false
+    property bool cfg_hideLauncherToolTipsDefault: false
     property bool cfg_showToolTips: true
     property bool cfg_showToolTipsDefault: true
     property bool cfg_tooltipMatchWindowAspectRatio: false

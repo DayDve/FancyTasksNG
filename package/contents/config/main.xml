@@ -122,6 +122,10 @@
       <label>Show tooltips when hovering over task buttons</label>
       <default>true</default>
     </entry>
+    <entry name="hideLauncherToolTips" type="Bool">
+      <label>Don't show tooltips for pinned apps that aren't running</label>
+      <default>false</default>
+    </entry>
     <entry name="showToolTips" type="Bool">
       <label>Show window thumbnails in tooltips</label>
       <default>true</default>
