@@ -26,13 +26,14 @@ import "code/singletones"
 
 RowLayout {
     id: playerControllerRoot
+    // Null while there is no player, or once it has gone away.
     required property var playerData
     required property bool isWin
     property bool showText: true
 
-    enabled: playerData.canControl
+    enabled: playerData?.canControl ?? false
 
-    readonly property bool isPlaying: playerData.playbackStatus === Mpris.PlaybackStatus.Playing
+    readonly property bool isPlaying: playerData?.playbackStatus === Mpris.PlaybackStatus.Playing
 
     readonly property int smallSpacing: Kirigami.Units.smallSpacing
     readonly property int gridUnit: Kirigami.Units.gridUnit
@@ -60,7 +61,7 @@ RowLayout {
                 maximumLineCount: artistText.visible ? 1 : 2
                 wrapMode: Text.NoWrap
                 elide: parent.state ? Text.ElideNone : Text.ElideRight
-                text: playerControllerRoot.playerData.track
+                text: playerControllerRoot.playerData?.track ?? ""
                 textFormat: Text.PlainText
             }
         }
@@ -77,7 +78,7 @@ RowLayout {
                 id: artistText
                 wrapMode: Text.NoWrap
                 elide: parent.state ? Text.ElideNone : Text.ElideRight
-                text: playerControllerRoot.playerData.artist
+                text: playerControllerRoot.playerData?.artist ?? ""
                 font: playerControllerRoot.smallFont
                 textFormat: Text.PlainText
             }
@@ -91,9 +92,9 @@ RowLayout {
         icon.width: playerControllerRoot.showText ? playerControllerRoot.iconSmallMedium : playerControllerRoot.iconSmall
         icon.height: playerControllerRoot.showText ? playerControllerRoot.iconSmallMedium : playerControllerRoot.iconSmall
 
-        enabled: playerControllerRoot.playerData.canGoPrevious
+        enabled: playerControllerRoot.playerData?.canGoPrevious ?? false
         icon.name: mirrored ? "media-skip-forward" : "media-skip-backward"
-        onClicked: playerControllerRoot.playerData.Previous()
+        onClicked: playerControllerRoot.playerData?.Previous()
     }
 
     PlasmaComponents3.ToolButton {
@@ -103,13 +104,13 @@ RowLayout {
         icon.width: playerControllerRoot.showText ? playerControllerRoot.iconSmallMedium : playerControllerRoot.iconSmall
         icon.height: playerControllerRoot.showText ? playerControllerRoot.iconSmallMedium : playerControllerRoot.iconSmall
 
-        enabled: playerControllerRoot.isPlaying ? playerControllerRoot.playerData.canPause : DesktopActionsManager.canPlay(playerControllerRoot.playerData)
+        enabled: playerControllerRoot.isPlaying ? (playerControllerRoot.playerData?.canPause ?? false) : DesktopActionsManager.canPlay(playerControllerRoot.playerData)
         icon.name: playerControllerRoot.isPlaying ? "media-playback-pause" : "media-playback-start"
         onClicked: {
             if (!playerControllerRoot.isPlaying) {
                 DesktopActionsManager.play(playerControllerRoot.playerData);
             } else {
-                playerControllerRoot.playerData.Pause();
+                playerControllerRoot.playerData?.Pause();
             }
         }
     }
@@ -121,8 +122,8 @@ RowLayout {
         icon.width: playerControllerRoot.showText ? playerControllerRoot.iconSmallMedium : playerControllerRoot.iconSmall
         icon.height: playerControllerRoot.showText ? playerControllerRoot.iconSmallMedium : playerControllerRoot.iconSmall
 
-        enabled: playerControllerRoot.playerData.canGoNext
+        enabled: playerControllerRoot.playerData?.canGoNext ?? false
         icon.name: mirrored ? "media-skip-backward" : "media-skip-forward"
-        onClicked: playerControllerRoot.playerData.Next()
+        onClicked: playerControllerRoot.playerData?.Next()
     }
 }

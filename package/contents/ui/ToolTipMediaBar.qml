@@ -45,16 +45,7 @@ Item {
             Layout.alignment: Qt.AlignVCenter
             spacing: 2
             showText: false
-            playerData: barRoot.player ?? ({
-                canControl: false,
-                playbackStatus: 0,
-                track: "",
-                artist: "",
-                canGoPrevious: false,
-                canPlay: false,
-                canPause: false,
-                canGoNext: false
-            })
+            playerData: barRoot.player
             isWin: barRoot.mediaController && barRoot.mediaController.toolTipDelegate ? barRoot.mediaController.toolTipDelegate.isWin : false
         }
 

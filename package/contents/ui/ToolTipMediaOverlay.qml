@@ -56,16 +56,7 @@ Item {
             visible: overlayRoot.mediaController ? overlayRoot.mediaController.showPlayerControls : false
             Layout.fillWidth: true
             showText: true // Show track details in the visual overlay as it fits nicely on thumbnails
-            playerData: overlayRoot.mediaController && overlayRoot.mediaController.playerData ? overlayRoot.mediaController.playerData : ({
-                canControl: false,
-                playbackStatus: 0,
-                track: "",
-                artist: "",
-                canGoPrevious: false,
-                canPlay: false,
-                canPause: false,
-                canGoNext: false
-            })
+            playerData: overlayRoot.mediaController ? overlayRoot.mediaController.playerData : null
             isWin: overlayRoot.mediaController && overlayRoot.mediaController.toolTipDelegate ? overlayRoot.mediaController.toolTipDelegate.isWin : false
         }
 

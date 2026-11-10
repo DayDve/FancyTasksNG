@@ -25,16 +25,7 @@ RowLayout {
     PlayerController {
         visible: controlsRoot.mediaController ? controlsRoot.mediaController.showPlayerControls : false
         showText: false // Keep text mode ultra-compact by hiding duplicate/long track details
-        playerData: controlsRoot.mediaController && controlsRoot.mediaController.playerData ? controlsRoot.mediaController.playerData : ({
-            canControl: false,
-            playbackStatus: 0,
-            track: "",
-            artist: "",
-            canGoPrevious: false,
-            canPlay: false,
-            canPause: false,
-            canGoNext: false
-        })
+        playerData: controlsRoot.mediaController ? controlsRoot.mediaController.playerData : null
         isWin: controlsRoot.mediaController && controlsRoot.mediaController.toolTipDelegate ? controlsRoot.mediaController.toolTipDelegate.isWin : false
     }
 
