@@ -18,7 +18,7 @@ GridLayout {
     required property var tasks
     required property var tasksModel
 
-    readonly property var config: tasks.plasmoid.configuration
+    readonly property var config: tasks.config
 
     property bool animating: false
 
@@ -30,7 +30,7 @@ GridLayout {
         animating = animationsRunning > 0;
     }
 
-    readonly property real minimumWidth: tasks.iconsOnly ? LayoutMetrics.preferredMaxWidth() : children
+    readonly property real minimumWidth: tasks.iconsOnly ? LayoutMetrics.preferredMaxWidth(tasks) : children
         .filter(item => item.visible && item.width > 0)
         .reduce((minimumWidth, item) => Math.min(minimumWidth, item.width), Infinity)
 
@@ -52,8 +52,8 @@ GridLayout {
         const effectiveHeight = Math.max(1, tasks.height);
 
         const stripeSizeLimit = tasks.vertical
-            ? Math.floor(effectiveWidth / LayoutMetrics.preferredMinWidth())
-            : Math.floor(effectiveHeight / LayoutMetrics.preferredMinHeight())
+            ? Math.floor(effectiveWidth / LayoutMetrics.preferredMinWidth(tasks))
+            : Math.floor(effectiveHeight / LayoutMetrics.preferredMinHeight(tasks))
         const maxStripes = Math.min(configMaxStripes, Math.max(1, stripeSizeLimit))
 
         if (config && config.forceStripes) {
@@ -62,8 +62,8 @@ GridLayout {
 
         // The number of tasks that will fill a "stripe" before starting the next one
         const maxTasksPerStripe = Math.max(1, tasks.vertical
-            ? Math.ceil(effectiveHeight / LayoutMetrics.preferredMinHeight())
-            : Math.ceil(effectiveWidth / LayoutMetrics.preferredMinWidth()))
+            ? Math.ceil(effectiveHeight / LayoutMetrics.preferredMinHeight(tasks))
+            : Math.ceil(effectiveWidth / LayoutMetrics.preferredMinWidth(tasks)))
 
         const taskCount = tasksModel ? tasksModel.count : 0;
         return Math.max(1, Math.min(Math.ceil(taskCount / maxTasksPerStripe), maxStripes))

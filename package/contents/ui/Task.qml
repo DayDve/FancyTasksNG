@@ -41,7 +41,7 @@ Item {
     z: highlighted ? 10 : (badgeVisible || playingAudio || muted) ? 1 : 0
 
     // Cached properties for optimization
-    readonly property var config: Plasmoid.configuration
+    readonly property var config: task.tasksRoot.config
     // The edge buttons face, which a floating widget can override.
     readonly property int location: task.tasksRoot ? task.tasksRoot.effectiveLocation : Plasmoid.location
     readonly property int smallSpacing: Kirigami.Units.smallSpacing
@@ -77,36 +77,36 @@ Item {
         180 : 0
 
     implicitHeight: {
-        if (!tasksRoot) return LayoutMetrics.preferredMinHeight();
-        if (task.inPopup) return LayoutMetrics.preferredHeightInPopup();
+        if (!tasksRoot) return 0;
+        if (task.inPopup) return LayoutMetrics.preferredHeightInPopup(task.tasksRoot);
         if (tasksRoot.vertical) {
             if (task.isIcon) {
                 let cols = (tasksRoot.taskList && tasksRoot.taskList.columns > 0) ? tasksRoot.taskList.columns : (task.config.maxStripes || 1);
-                return (tasksRoot.width / cols) + LayoutMetrics.verticalMargins();
+                return (tasksRoot.width / cols) + LayoutMetrics.verticalMargins(task.tasksRoot);
             }
-            return LayoutMetrics.preferredMaxHeight();
+            return LayoutMetrics.preferredMaxHeight(task.tasksRoot);
         } else {
             let stripes = task.config.maxStripes || 1;
             if (task.isIcon) {
                 let rws = (tasksRoot.taskList && tasksRoot.taskList.rows > 0) ? tasksRoot.taskList.rows : stripes;
-                return (tasksRoot.height / rws) + LayoutMetrics.verticalMargins();
+                return (tasksRoot.height / rws) + LayoutMetrics.verticalMargins(task.tasksRoot);
             }
-            return Math.max(tasksRoot.height / stripes, LayoutMetrics.preferredMinHeight());
+            return Math.max(tasksRoot.height / stripes, LayoutMetrics.preferredMinHeight(task.tasksRoot));
         }
     }
     implicitWidth: {
-        if (!tasksRoot) return LayoutMetrics.preferredMinWidth();
+        if (!tasksRoot) return 0;
         if (tasksRoot.vertical) {
             let stripes = task.config.maxStripes || 1;
             if (task.isIcon) {
                 let cols = (tasksRoot.taskList && tasksRoot.taskList.columns > 0) ? tasksRoot.taskList.columns : stripes;
-                return (tasksRoot.width / cols) + LayoutMetrics.horizontalMargins();
+                return (tasksRoot.width / cols) + LayoutMetrics.horizontalMargins(task.tasksRoot);
             }
-            return Math.max(LayoutMetrics.preferredMinWidth(), Math.min(LayoutMetrics.preferredMaxWidth(), tasksRoot.width / stripes));
+            return Math.max(LayoutMetrics.preferredMinWidth(task.tasksRoot), Math.min(LayoutMetrics.preferredMaxWidth(task.tasksRoot), tasksRoot.width / stripes));
         } else {
             if (task.isIcon) {
                 let rws = (tasksRoot.taskList && tasksRoot.taskList.rows > 0) ? tasksRoot.taskList.rows : (task.config.maxStripes || 1);
-                return (tasksRoot.height / rws) + LayoutMetrics.horizontalMargins();
+                return (tasksRoot.height / rws) + LayoutMetrics.horizontalMargins(task.tasksRoot);
             }
             return task.classicButtonWidth;
         }
@@ -115,7 +115,7 @@ Item {
     // Every button gets the full max width, like the classic taskbar, unless
     // "fit to title" is on: then icon + title, kept within [min, max].
     readonly property real classicButtonWidth: {
-        const maxWidth = LayoutMetrics.preferredMaxWidth();
+        const maxWidth = LayoutMetrics.preferredMaxWidth(task.tasksRoot);
         // An elided title's widest line is shorter than the room it had, so
         // fitting to it would cut the title off before the max width.
         if (!task.config.fitButtonToText || titleMeasure.truncated)
@@ -128,7 +128,7 @@ Item {
     // the title touching the button's edge. Reserved in the label itself, not
     // just added to the width, so it survives the clamp to the max width.
     readonly property real trailingLabelGap: task.config.fitButtonToText ? LayoutMetrics.labelMargin : 0
-    readonly property real labelChromeWidth: LayoutMetrics.leftMargin() + taskIconBox.height + LayoutMetrics.labelMargin + LayoutMetrics.rightMargin() + task.trailingLabelGap
+    readonly property real labelChromeWidth: LayoutMetrics.leftMargin(task.tasksRoot) + taskIconBox.height + LayoutMetrics.labelMargin + LayoutMetrics.rightMargin(task.tasksRoot) + task.trailingLabelGap
 
     // Lays the title out exactly like the label would at the max width
     // (same wrapping, line limit and height), so contentWidth is the widest
@@ -139,7 +139,7 @@ Item {
     Text {
         id: titleMeasure
         visible: false
-        width: Math.max(0, LayoutMetrics.preferredMaxWidth() - task.labelChromeWidth)
+        width: Math.max(0, LayoutMetrics.preferredMaxWidth(task.tasksRoot) - task.labelChromeWidth)
         height: label.height
         font: label.font
         text: task.config.fitButtonToText && task.model ? (task.model.display || "") : ""
@@ -152,9 +152,9 @@ Item {
     Layout.fillWidth: true
     Layout.fillHeight: !task.inPopup
     Layout.maximumWidth: (!tasksRoot || tasksRoot.vertical) ?
-        -1 : ((task.model?.IsLauncher && !tasksRoot.iconsOnly) ? (tasksRoot.height / tasksRoot.taskList.rows) + LayoutMetrics.horizontalMargins() : (tasksRoot.iconsOnly ? LayoutMetrics.preferredMaxWidth() : task.classicButtonWidth))
+        -1 : ((task.model?.IsLauncher && !tasksRoot.iconsOnly) ? (tasksRoot.height / tasksRoot.taskList.rows) + LayoutMetrics.horizontalMargins(task.tasksRoot) : (tasksRoot.iconsOnly ? LayoutMetrics.preferredMaxWidth(task.tasksRoot) : task.classicButtonWidth))
     Layout.maximumHeight: (!tasksRoot || !tasksRoot.vertical) ?
-        -1 : ((task.model?.IsLauncher && !tasksRoot.iconsOnly) ? (tasksRoot.width / tasksRoot.taskList.columns) + LayoutMetrics.verticalMargins() : LayoutMetrics.preferredMaxHeight())
+        -1 : ((task.model?.IsLauncher && !tasksRoot.iconsOnly) ? (tasksRoot.width / tasksRoot.taskList.columns) + LayoutMetrics.verticalMargins(task.tasksRoot) : LayoutMetrics.preferredMaxHeight(task.tasksRoot))
 
     required property var model
     required property int index
@@ -904,14 +904,14 @@ Item {
     PlasmaComponents3.Label {
         id: label
 
-        visible: (task.inPopup || !task.tasksRoot.iconsOnly && !task.model.IsLauncher && (parent.width - taskIconBox.height - task.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText())
+        visible: (task.inPopup || !task.tasksRoot.iconsOnly && !task.model.IsLauncher && (parent.width - taskIconBox.height - task.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText(task.tasksRoot))
 
         anchors {
             fill: parent
-            leftMargin: LayoutMetrics.leftMargin() + taskIconBox.width + LayoutMetrics.labelMargin
-            topMargin: LayoutMetrics.topMargin()
-            rightMargin: LayoutMetrics.rightMargin() + task.trailingLabelGap
-            bottomMargin: LayoutMetrics.bottomMargin()
+            leftMargin: LayoutMetrics.leftMargin(task.tasksRoot) + taskIconBox.width + LayoutMetrics.labelMargin
+            topMargin: LayoutMetrics.topMargin(task.tasksRoot)
+            rightMargin: LayoutMetrics.rightMargin(task.tasksRoot) + task.trailingLabelGap
+            bottomMargin: LayoutMetrics.bottomMargin(task.tasksRoot)
         }
 
         wrapMode: (maximumLineCount === 1) ?

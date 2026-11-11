@@ -27,7 +27,7 @@ Item {
     property bool active: innerIcon.active
 
     // Local cached properties for optimization
-    readonly property var config: Plasmoid.configuration
+    readonly property var config: iconBox.tasksRootContext.config
     readonly property var tasksRoot: iconBox.tasksRootContext
     readonly property int location: iconBox.tasksRoot ? iconBox.tasksRoot.effectiveLocation : Plasmoid.location
 
@@ -48,12 +48,12 @@ Item {
     anchors.bottom: iconBox._iconsOnly ? undefined : parent.bottom
     anchors.left: iconBox._iconsOnly ? undefined : parent.left
     
-    anchors.topMargin: iconBox._iconsOnly ? 0 : adjustMargin(false, parent.height, LayoutMetrics.topMargin())
-    anchors.bottomMargin: iconBox._iconsOnly ? 0 : adjustMargin(false, parent.height, LayoutMetrics.bottomMargin())
-    anchors.leftMargin: iconBox._iconsOnly ? 0 : adjustMargin(true, parent.height, LayoutMetrics.leftMargin())
+    anchors.topMargin: iconBox._iconsOnly ? 0 : adjustMargin(false, parent.height, LayoutMetrics.topMargin(iconBox.tasksRoot))
+    anchors.bottomMargin: iconBox._iconsOnly ? 0 : adjustMargin(false, parent.height, LayoutMetrics.bottomMargin(iconBox.tasksRoot))
+    anchors.leftMargin: iconBox._iconsOnly ? 0 : adjustMargin(true, parent.height, LayoutMetrics.leftMargin(iconBox.tasksRoot))
 
-    width: iconBox._iconsOnly ? (parent.width - 2 * Math.max(LayoutMetrics.leftMargin(), LayoutMetrics.rightMargin())) : height
-    height: iconBox._iconsOnly ? (parent.height - 2 * Math.max(LayoutMetrics.topMargin(), LayoutMetrics.bottomMargin())) : undefined
+    width: iconBox._iconsOnly ? (parent.width - 2 * Math.max(LayoutMetrics.leftMargin(iconBox.tasksRoot), LayoutMetrics.rightMargin(iconBox.tasksRoot))) : height
+    height: iconBox._iconsOnly ? (parent.height - 2 * Math.max(LayoutMetrics.topMargin(iconBox.tasksRoot), LayoutMetrics.bottomMargin(iconBox.tasksRoot))) : undefined
 
     readonly property int hoveredIndex: iconBox.tasksRoot ? iconBox.tasksRoot.instantHoveredIndex : -1
     readonly property int myIndex: iconBox.taskItem ? iconBox.taskItem.index : -1
@@ -165,7 +165,7 @@ Item {
             return margin;
         }
 
-        var margins = isVertical ? LayoutMetrics.horizontalMargins() : LayoutMetrics.verticalMargins();
+        var margins = isVertical ? LayoutMetrics.horizontalMargins(iconBox.tasksRoot) : LayoutMetrics.verticalMargins(iconBox.tasksRoot);
         if ((size - margins) < Kirigami.Units.iconSizes.small) {
             return Math.ceil((margin * (Kirigami.Units.iconSizes.small / size)) / 2);
         }

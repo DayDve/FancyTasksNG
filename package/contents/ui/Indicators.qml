@@ -22,7 +22,7 @@ Flow {
     required property var frameSvgItem
     required property var tasksRoot
 
-    readonly property var config: Plasmoid.configuration
+    readonly property var config: indicatorsFlow.tasksRoot.config
 
     // Max possible cross-axis thickness across all indicator states
     readonly property int maxIndicatorThickness: Math.max(

@@ -375,12 +375,12 @@ PlasmoidItem {
     Layout.minimumWidth: {
         if (shouldShrinkToZero)
             return Kirigami.Units.gridUnit;
-        return vertical ? 0 : LayoutMetrics.preferredMinWidth();
+        return vertical ? 0 : LayoutMetrics.preferredMinWidth(tasks);
     }
     Layout.minimumHeight: {
         if (shouldShrinkToZero)
             return Kirigami.Units.gridUnit;
-        return !vertical ? 0 : LayoutMetrics.preferredMinHeight();
+        return !vertical ? 0 : LayoutMetrics.preferredMinHeight(tasks);
     }
     Layout.preferredWidth: {
         if (shouldShrinkToZero)
@@ -1044,7 +1044,7 @@ PlasmoidItem {
                     if (widthOccupation <= 0)
                         return 0;
                     if (tasks.iconsOnly) {
-                        return Math.round((internalTaskRepeater.count * LayoutMetrics.preferredMaxWidth()) / widthOccupation);
+                        return Math.round((internalTaskRepeater.count * LayoutMetrics.preferredMaxWidth(tasks)) / widthOccupation);
                     }
                     return Math.round(children.reduce((acc, child) => (child && child.visible && isFinite(child.Layout.maximumWidth)) ? acc + child.Layout.maximumWidth : acc, 0) / widthOccupation);
                 }
@@ -1052,7 +1052,7 @@ PlasmoidItem {
                     if (heightOccupation <= 0)
                         return 0;
                     if (tasks.iconsOnly) {
-                        return Math.round((internalTaskRepeater.count * LayoutMetrics.preferredMaxHeight()) / heightOccupation);
+                        return Math.round((internalTaskRepeater.count * LayoutMetrics.preferredMaxHeight(tasks)) / heightOccupation);
                     }
                     return Math.round(children.reduce((acc, child) => (child && child.visible && isFinite(child.Layout.maximumHeight)) ? acc + child.Layout.maximumHeight : acc, 0) / heightOccupation);
                 }
