@@ -49,7 +49,10 @@ Item {
     readonly property int longDuration: Kirigami.Units.longDuration
     readonly property color themeBgColor: Kirigami.Theme.backgroundColor
 
-    activeFocusOnTab: true
+    // False for a task that is only shown, as in the settings preview: it
+    // then takes no input and no keyboard focus.
+    property bool interactive: true
+    activeFocusOnTab: interactive
     opacity: tasksRoot.dragSource === task ? (task.inPopup ? 1.0 : 0.5) : 1.0
     Behavior on opacity {
         NumberAnimation { duration: task.shortDuration }
@@ -218,12 +221,14 @@ Item {
         }
     }
     
-    readonly property int badgeCount: {
+    // Settable, like the media state below, so the settings preview can show
+    // a task without a real app behind it.
+    property int badgeCount: {
         if (!task.model) return 0;
         return (BadgeManager.countVersion >= 0) ? BadgeManager.getUnreadCount(task.model.AppId, task.model.AppPid) : 0;
     }
     
-    readonly property real taskProgress: {
+    property real taskProgress: {
         if (!task.model) return -1.0;
         return (BadgeManager.countVersion >= 0) ? BadgeManager.getProgress(task.model.AppId, task.model.AppPid) : -1.0;
     }
@@ -264,7 +269,7 @@ Item {
 
     property bool completed: false
     readonly property bool audioIndicatorsEnabled: task.config.indicateAudioStreams
-    readonly property var winIdList: {
+    property var winIdList: {
         if (!task.model || !task.model.WinIdList) return [];
         // Deep copy without slice() just in case
         let list = [];
@@ -278,9 +283,9 @@ Item {
 
     // Media Controller Proxy Properties
     readonly property var mediaController: mediaControllerLoader.item
-    readonly property bool playingAudio: mediaController ? mediaController.playingAudio : false
-    readonly property bool muted: mediaController ? mediaController.muted : false
-    readonly property bool hasAudioStream: mediaController ? mediaController.hasAudioStream : false
+    property bool playingAudio: mediaController ? mediaController.playingAudio : false
+    property bool muted: mediaController ? mediaController.muted : false
+    property bool hasAudioStream: mediaController ? mediaController.hasAudioStream : false
     readonly property var audioStreams: mediaController ? mediaController.audioStreams : []
     readonly property var volumeOverlay: taskVolumeOverlayLoader.item
 
@@ -291,9 +296,10 @@ Item {
 
 
     readonly property bool isBadgeHovered: badgeLoader.item ? (badgeLoader.item as TaskBadgeOverlay).hovered : false
-    readonly property bool containsMouse: hoverHandler.hovered || isBadgeHovered
+    readonly property bool containsMouse: task.interactive && (hoverHandler.hovered || isBadgeHovered)
 
     HoverHandler {
+        enabled: task.interactive
         id: hoverHandler
         onPointChanged: {
             if (hovered && task.tasksRoot.instantHoveredTask === task) {
@@ -613,6 +619,7 @@ Item {
     }
 
     TapHandler {
+        enabled: task.interactive
         id: menuTapHandler
         acceptedButtons: Qt.LeftButton
         acceptedDevices: PointerDevice.TouchScreen |
@@ -632,6 +639,7 @@ Item {
     }
 
     TapHandler {
+        enabled: task.interactive
         acceptedButtons: Qt.RightButton
         acceptedDevices: PointerDevice.Mouse |
             PointerDevice.TouchPad | PointerDevice.Stylus
@@ -647,6 +655,7 @@ Item {
     }
 
     TapHandler {
+        enabled: task.interactive
         id: leftTapHandler
         acceptedButtons: Qt.LeftButton
         onTapped: leftClick()
@@ -658,6 +667,7 @@ Item {
     }
 
     TapHandler {
+        enabled: task.interactive
         acceptedButtons: Qt.MiddleButton
         onTapped: {
             const tModel = task.tasksRoot.tasksModel;
@@ -687,6 +697,7 @@ Item {
     }
 
     TapHandler {
+        enabled: task.interactive
         acceptedButtons: Qt.BackButton
         onTapped: {
             const playerData = task.tasksRoot.mediaRegistry.playerFor(task.model.LauncherUrlWithoutIcon, task.model.AppPid);
@@ -698,6 +709,7 @@ Item {
     }
 
     TapHandler {
+        enabled: task.interactive
         acceptedButtons: Qt.ForwardButton
         onTapped: {
             const playerData = task.tasksRoot.mediaRegistry.playerFor(task.model.LauncherUrlWithoutIcon, task.model.AppPid);
@@ -764,6 +776,7 @@ Item {
 
         // Avoid repositioning delegate item after dragFinished
         DragHandler {
+            enabled: task.interactive
             id: dragHandler
             grabPermissions: PointerHandler.CanTakeOverFromHandlersOfDifferentType
 
@@ -870,7 +883,7 @@ Item {
     Loader {
         id: mediaControllerLoader
         asynchronous: true
-        active: !!task.model && task.model.IsWindow
+        active: !!task.model && task.model.IsWindow && !!task.tasksRoot.mediaRegistry
         source: "TaskMediaController.qml"
         onLoaded: {
             item.taskItem = task;
