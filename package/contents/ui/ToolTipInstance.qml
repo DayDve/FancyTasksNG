@@ -727,9 +727,6 @@ Item {
                 root.tasksModel.requestActivate(root.submodelIndex);
                 if (root.parentTask) {
                     root.parentTask.closeTooltip();
-                    if (root.parentTask.tasksRoot) {
-                        root.parentTask.tasksRoot.cancelHighlightWindows();
-                    }
                 }
             }
         }
@@ -748,9 +745,6 @@ Item {
         onStreamActivated: {
             if (root.parentTask) {
                 root.parentTask.closeTooltip();
-                if (root.parentTask.tasksRoot) {
-                    root.parentTask.tasksRoot.cancelHighlightWindows();
-                }
             }
         }
     }

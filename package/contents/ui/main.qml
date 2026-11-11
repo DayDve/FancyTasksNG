@@ -253,10 +253,10 @@ PlasmoidItem {
         tasks.tasksModel.launcherList = launchers;
     }
 
-    property Task toolTipOpenedByClick
-    property Task toolTipAreaItem
-
+    // The task whose tooltip is shown, and whether a click opened it (it
+    // then stays until clicked again or dismissed, in text mode for groups).
     property Task currentHoveredTask: null
+    property Task toolTipOpenedByClick: null
     property Task instantHoveredTask: null
     property int instantHoveredIndex: instantHoveredTask ? instantHoveredTask.index : -1
     property real instantHoveredFraction: 0.5
@@ -273,10 +273,18 @@ PlasmoidItem {
 
     property bool tooltipAnimationEnabled: true
 
-    function hideTooltipImmediately() {
+    function showTooltip(task: Task, byClick: bool): void {
+        tasks.currentHoveredTask = task;
+        tasks.toolTipOpenedByClick = byClick ? task : null;
+    }
+
+    // Hides the tooltip at once, without the fade (which would keep it
+    // around, and taking input, after something in it was acted on), and
+    // drops the window highlight it may have started.
+    function dismissTooltip(): void {
         tasks.tooltipAnimationEnabled = false;
         tasks.currentHoveredTask = null;
-        tasks.toolTipOpenedByClick = null;
+        tasks.cancelHighlightWindows();
         Qt.callLater(() => {
             if (tasks) {
                 tasks.tooltipAnimationEnabled = true;
@@ -318,6 +326,9 @@ PlasmoidItem {
     }
 
     onCurrentHoveredTaskChanged: {
+        if (toolTipOpenedByClick && toolTipOpenedByClick !== currentHoveredTask) {
+            toolTipOpenedByClick = null;
+        }
         if (currentHoveredTask) {
             lastTooltipParent = currentHoveredTask.tooltipAnchor;
         }
@@ -326,9 +337,12 @@ PlasmoidItem {
         }
     }
 
+    // The one place a hovered tooltip closes: once neither its task nor the
+    // tooltip (nor a thumbnail's menu) has the cursor. The interval is the
+    // time to cross the gap between them.
     Timer {
         id: tooltipCloseTimer
-        interval: 500
+        interval: 250
         running: !tasks.isTooltipHovered && !tasks.thumbnailMenuOpen && tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.containsMouse && tasks.currentHoveredTask !== mouseHandler.hoveredItem
         onTriggered: {
             if (!tasks.isTooltipHovered && !tasks.thumbnailMenuOpen && (tasks.currentHoveredTask && !tasks.currentHoveredTask.containsMouse && tasks.currentHoveredTask !== mouseHandler.hoveredItem)) {

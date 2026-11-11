@@ -430,9 +430,6 @@ Loader {
                 groupRoot.tasksModel.requestActivate(target);
                 if (groupRoot.parentTask) {
                     groupRoot.parentTask.closeTooltip();
-                    if (groupRoot.parentTask.tasksRoot) {
-                        groupRoot.parentTask.tasksRoot.cancelHighlightWindows();
-                    }
                 }
             }
 
@@ -663,9 +660,6 @@ Loader {
                 onStreamActivated: {
                     if (groupRoot.parentTask) {
                         groupRoot.parentTask.closeTooltip();
-                        if (groupRoot.parentTask.tasksRoot) {
-                            groupRoot.parentTask.tasksRoot.cancelHighlightWindows();
-                        }
                     }
                 }
             }

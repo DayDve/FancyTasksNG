@@ -193,10 +193,7 @@ function activateTask(index, model, modifiers, task, plasmoid, tasks, windowView
             if (tasks.toolTipOpenedByClick) {
                 tasks.toolTipOpenedByClick.closeTooltip();
             } else {
-                tasks.toolTipOpenedByClick = task;
-                tasks.currentHoveredTask = task;
-                task.toolTipOpen = true;
-                tasks.toolTipAreaItem = task;
+                task.openTooltip(true);
             }
         }
 
@@ -217,10 +214,7 @@ function activateTask(index, model, modifiers, task, plasmoid, tasks, windowView
             if (tasks.toolTipOpenedByClick) {
                 tasks.toolTipOpenedByClick.closeTooltip();
             } else {
-                tasks.toolTipOpenedByClick = task;
-                tasks.currentHoveredTask = task;
-                task.toolTipOpen = true;
-                tasks.toolTipAreaItem = task;
+                task.openTooltip(true);
             }
         }
     } else {

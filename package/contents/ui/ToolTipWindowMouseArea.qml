@@ -34,9 +34,6 @@ MouseArea {
         case Qt.LeftButton:
             tasksModel.requestActivate(targetIndex);
             rootTask.closeTooltip();
-            if (rootTask.tasksRoot) {
-                rootTask.tasksRoot.cancelHighlightWindows();
-            }
             break;
         case Qt.MiddleButton:
             if (rootTask.tasksRoot) {
@@ -118,9 +115,7 @@ MouseArea {
                 rootMouseArea.tasksModel.requestOpenUrls(rootMouseArea.modelIndex, drop.urls);
                 drop.accept();
                 
-                if (rootMouseArea.rootTask && typeof rootMouseArea.rootTask.closeTooltip === "function") {
-                    rootMouseArea.rootTask.closeTooltip();
-                }
+                rootMouseArea.rootTask.closeTooltip();
             } else {
                 drop.accepted = false;
             }
