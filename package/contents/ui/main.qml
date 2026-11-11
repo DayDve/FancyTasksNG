@@ -40,6 +40,7 @@ import org.kde.kitemmodels as KItemModels
 import "code/layoutmetrics.js" as LayoutMetrics
 import "code/tools.js" as TaskTools
 import "code/FloatingLogic.js" as FloatingLogic
+import "code/singletones"
 
 PlasmoidItem {
     id: tasks
@@ -588,6 +589,18 @@ PlasmoidItem {
     // feedback for launches made from another instance's panel.
     readonly property var effectiveTasksModel: (tasks.config.minimizedFilter === 0 && !tasks.config.reverseFilters && !tasks.config.showOnlyCurrentScreen) ? internalTasksModel : internalFilteredTasksModel
 
+    // Read by TaskEntryShortcuts to choose the instance a Meta+number press
+    // goes to: like the stock task manager, it prefers the one showing the
+    // active window, and one that shows every screen over one that shows only
+    // its own.
+    readonly property bool hasActiveTask: {
+        const activeTask = tasks.tasksModel.activeTask;
+        if (tasks.effectiveTasksModel.count === 0 || !activeTask.valid)
+            return false;
+        return tasks.effectiveTasksModel === internalTasksModel || internalFilteredTasksModel.mapFromSource(activeTask).valid;
+    }
+    readonly property bool showsOnlyCurrentScreen: tasks.config.showOnlyCurrentScreen && !tasks.config.reverseFilters
+
     // Startup tasks carry no screen, so with "show only tasks from the current
     // screen" every instance would show the busy feedback of a launch made from
     // another instance's panel. True for a startup some other instance launched.
@@ -740,8 +753,9 @@ PlasmoidItem {
         });
     }
 
-    // Called by plasmashell (C++, not QML) in response to a Meta+number shortcut -
-    // no in-repo caller, do not remove as "dead code".
+    // Activates the task for a Meta+number shortcut. Plasmashell up to 6.7 calls
+    // it by name from C++, as activateTaskAtIndex(QVariant), so keep the name
+    // and the untyped argument; on 6.8 and later TaskEntryShortcuts calls it.
     function activateTaskAtIndex(index: var): void {
         if (typeof index !== "number")
             return;
@@ -1085,8 +1099,12 @@ PlasmoidItem {
     Component.onCompleted: {
         TaskTools.taskManagerInstanceCount += 1;
         requestLayout.connect(iconGeometryTimer.restart);
+        TaskEntryShortcuts.addTarget(tasks);
     }
-    Component.onDestruction: TaskTools.taskManagerInstanceCount -= 1
+    Component.onDestruction: {
+        TaskTools.taskManagerInstanceCount -= 1;
+        TaskEntryShortcuts.removeTarget(tasks);
+    }
 
     PlasmaCore.Dialog {
         id: windowTooltipDialog
