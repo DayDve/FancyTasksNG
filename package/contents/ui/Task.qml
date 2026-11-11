@@ -905,6 +905,8 @@ Item {
             highlighted: task.highlighted
             dotMode: task.config.badgeDotMode
             dotThreshold: task.config.badgeDotThreshold
+            colorMode: task.config.badgeColorMode
+            customColor: task.config.badgeCustomColor
             audioVisible: task.audioIndicatorsEnabled && (task.playingAudio || task.muted)
             muted: task.muted
             countVisible: task.config.showBadges && task.badgeVisible

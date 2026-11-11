@@ -9,7 +9,6 @@
 
 import QtQuick
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.plasmoid
 
 // Notification count: a circle that widens into a pill for longer numbers,
 // or a plain dot when showNumber is off. Height is set from outside.
@@ -23,7 +22,8 @@ Rectangle {
     property int maxNumber: 999
 
     // 0 = Theme background, 1 = Fixed red, 2 = System accent, 3 = Custom color
-    readonly property int colorMode: Plasmoid.configuration.badgeColorMode
+    property int colorMode: 0
+    property color customColor: "transparent"
     readonly property bool highlightMode: colorMode !== 0 || isUrgent
 
     width: showNumber ? Math.max(height, Math.round(label.contentWidth + height * 0.5)) : height
@@ -34,7 +34,7 @@ Rectangle {
     color: {
         if (isUrgent || colorMode === 1) return Kirigami.Theme.negativeTextColor;
         if (colorMode === 2) return Kirigami.Theme.highlightColor;
-        if (colorMode === 3) return Plasmoid.configuration.badgeCustomColor;
+        if (colorMode === 3) return badgeRect.customColor;
         return showNumber ? Kirigami.Theme.backgroundColor : Kirigami.Theme.highlightColor;
     }
     // A thin highlight ring only on the theme-colored badge, to set it off the icon.

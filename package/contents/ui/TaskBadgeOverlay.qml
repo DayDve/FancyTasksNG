@@ -34,6 +34,8 @@ Item {
     property bool highlighted: false
     property int dotMode: 2
     property int dotThreshold: 10
+    property int colorMode: 0       // Badge.colorMode
+    property color customColor: "transparent"
 
     property bool audioVisible: false
     property bool muted: false
@@ -166,6 +168,8 @@ Item {
     // The circle widens into a pill away from its fixed corner.
     Badge {
         id: notificationBadge
+        colorMode: root.colorMode
+        customColor: root.customColor
         height: root.layoutDiameter
         x: root.anchorX(true) - (root.growsLeft(true) ? width : 0)
         y: root.anchorY(true) - (root.growsUp(true) ? height : 0)
