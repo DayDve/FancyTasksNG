@@ -608,7 +608,7 @@ msgstr "В остальных местах"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "+ wheel: the system volume instead of the window's"
-msgstr "+ колесо — громкость системы вместо громкости окна"
+msgstr "+ колесо ‒ громкость системы вместо громкости окна"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Wherever the wheel adjusts the volume of a window or a group, it adjusts the system volume while Shift is held."

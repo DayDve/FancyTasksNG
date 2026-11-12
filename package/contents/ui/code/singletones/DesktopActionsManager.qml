@@ -11,7 +11,7 @@ import org.kde.plasma.plasma5support as Plasma5Support
 import org.kde.plasma.private.mpris as Mpris
 
 /**
- * DesktopActionsManager — provides desktop file jump list actions
+ * DesktopActionsManager ‒ provides desktop file jump list actions
  * and recent documents via a Python helper over DBus.
  */
 Item {

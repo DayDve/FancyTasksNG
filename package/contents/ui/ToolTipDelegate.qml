@@ -189,7 +189,7 @@ Loader {
     LayoutMirroring.enabled: getAppLayoutDirection(Qt.application) === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
 
-    // Do not load the tooltip at all when tooltips are disabled — prevents PipeWireThumbnail from
+    // Do not load the tooltip at all when tooltips are disabled ‒ prevents PipeWireThumbnail from
     // attempting to grab invisible window images and emitting "grabToImage: item's window is not visible".
     active: rootIndex !== undefined && toolTipDelegate.config.enableToolTips
     asynchronous: false

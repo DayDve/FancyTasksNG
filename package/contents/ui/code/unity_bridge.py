@@ -90,7 +90,7 @@ if __name__ == '__main__':
     # Register as Unity service so KDE apps (KMail, Kontact) know we're listening.
     # These apps check for "com.canonical.Unity" before sending badge updates.
     # DBUS_NAME_FLAG_DO_NOT_QUEUE: if the name is already taken (e.g. by the
-    # standard Plasma Task Manager), just skip — signals will still be received
+    # standard Plasma Task Manager), just skip ‒ signals will still be received
     # via the wildcard signal_receiver below.
     try:
         reply = bus.request_name(

@@ -169,7 +169,7 @@ Item {
         }
 
         if (text === "") {
-            text = "—";
+            text = "‒";
         }
 
         return text + counter;
