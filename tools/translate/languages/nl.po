@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-12 12:53+0200\n"
+"POT-Creation-Date: 2026-11-12 13:17+0200\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -16,22 +16,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.3.2\n"
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "When a window wants attention:"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Unhide panel when a window wants attention"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Animate task icon when a window wants attention"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Colorize the task button when a window wants attention"
-msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Context menu:"
@@ -93,13 +77,180 @@ msgstr ""
 msgid "Configuration imported. Click Apply to save the changes."
 msgstr ""
 
-#: package/contents/config/ConfigBehavior.qml
-msgid "Grouping of tasks:"
+#: package/contents/config/ConfigAppSignals.qml
+msgid "App Signals"
 msgstr ""
 
-#: package/contents/config/ConfigBehavior.qml package/contents/config/ConfigIndicators.qml
+#: package/contents/config/ConfigAppSignals.qml
+msgid "App signals are turned off."
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Turn on \"%1\" first."
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Show app signals"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "The audio mark, the notification count and progress on task buttons. Turning this off keeps their own settings."
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Mark applications playing audio"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Show signal badges as dots:"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgctxt "Show badges as dots"
+msgid "Never"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgctxt "Show badges as dots"
+msgid "Always"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgctxt "Show badges as dots"
+msgid "When smaller than"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "The audio and notification count badges on task icons. A dot grows into the full badge while its task is under the cursor; \"When smaller than\" keeps the full badges on big icons."
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Turn on the audio mark or the notification count first."
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Counter"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Show badges"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Highlight new notifications"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Show badges on pinned application icons"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Show counters even when the application has no windows in the current view (e.g., minimized to tray or on another screen/desktop/activity)."
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Count background color:"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Adaptive (theme color)"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Fixed red (Classic)"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "System accent color"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Custom color"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Progress"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Style:"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigBehavior.qml
 msgctxt "State"
 msgid "Disabled"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Fill (Left-Right)"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Fill (Bottom-Top)"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Strip (Top)"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Strip (Bottom)"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Strip (Left)"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Strip (Right)"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Choose a progress style first."
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Progress color:"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Thickness:"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Only for the strip styles."
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Opacity:"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Attention request"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Unhide panel when a window wants attention"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml
+msgid "Only when the widget is on a panel."
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Animate task icon when a window wants attention"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml
+msgid "Only in the icons-only mode."
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Colorize the task button when a window wants attention"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
+msgid "Grouping of tasks:"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
@@ -247,6 +398,10 @@ msgid "Show media controls"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
+msgid "Show volume controls"
+msgstr ""
+
+#: package/contents/config/ConfigBehavior.qml
 msgid "Media controls location:"
 msgstr ""
 
@@ -330,117 +485,6 @@ msgstr ""
 msgid "Only not minimized"
 msgstr ""
 
-#: package/contents/config/ConfigIndicators.qml
-msgid "App Signals"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Feedback:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Show badges"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Highlight new notifications"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Show badges on pinned application icons"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Show counters even when the application has no windows in the current view (e.g., minimized to tray or on another screen/desktop/activity)."
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Badge background color:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Adaptive (theme color)"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Fixed red (Classic)"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "System accent color"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigWindowIndicators.qml
-msgid "Custom color"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Custom badge color:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Mark applications playing audio"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Show badges as dots:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgctxt "Show badges as dots"
-msgid "Never"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgctxt "Show badges as dots"
-msgid "Always"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgctxt "Show badges as dots"
-msgid "When smaller than"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Progress:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Fill (Left-Right)"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Fill (Bottom-Top)"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Strip (Top)"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Strip (Bottom)"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Strip (Left)"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Strip (Right)"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Progress color:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml package/contents/config/ConfigWindowIndicators.qml
-msgid "Thickness:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Opacity:"
-msgstr ""
-
 #: package/contents/config/ConfigLayout.qml
 msgid "Task Layout"
 msgstr ""
@@ -479,10 +523,6 @@ msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
 msgid "Minimum button width (px):"
-msgstr ""
-
-#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigWindowIndicators.qml
-msgid "Turn on \"%1\" first."
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
@@ -586,10 +626,6 @@ msgid "Fill free space on panel"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Only when the widget is on a panel."
-msgstr ""
-
-#: package/contents/config/ConfigLayout.qml
 msgid "Alignment:"
 msgstr ""
 
@@ -599,10 +635,6 @@ msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
 msgid "Center"
-msgstr ""
-
-#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml
-msgid "Only in the icons-only mode."
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
@@ -891,10 +923,6 @@ msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Animate indicators"
-msgstr ""
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Style:"
 msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml

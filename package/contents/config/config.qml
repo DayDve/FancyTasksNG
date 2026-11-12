@@ -37,7 +37,7 @@ ConfigModel {
     ConfigCategory {
         name: i18nc("Short section name in the settings sidebar", "App Signals")
         icon: "preferences-desktop-notification-bell"
-        source: "../config/ConfigIndicators.qml"
+        source: "../config/ConfigAppSignals.qml"
     }
     ConfigCategory {
         name: i18n("Advanced")
