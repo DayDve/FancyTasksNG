@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-12 13:45+0200\n"
+"POT-Creation-Date: 2026-11-12 13:48+0200\n"
 "PO-Revision-Date: 2023-09-21 16:18-0300\n"
 "Last-Translator:  Douglas Guimarães <<dg2003gh@gmail.com>>\n"
 "Language-Team: \n"
@@ -85,7 +85,7 @@ msgstr ""
 msgid "App signals are turned off."
 msgstr ""
 
-#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigWindowIndicators.qml
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigTooltips.qml package/contents/config/ConfigWindowIndicators.qml
 msgid "Turn on \"%1\" first."
 msgstr ""
 
@@ -247,70 +247,6 @@ msgstr ""
 
 #: package/contents/config/ConfigAppSignals.qml
 msgid "Colorize the task button when a window wants attention"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Show tooltips when hovering over task buttons"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Not for pinned apps that aren't running"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Show window thumbnails in tooltips"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Thumbnail aspect ratio:"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Match screen aspect ratio"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Match window aspect ratio"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Hide other windows when hovering over a window in the tooltip"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Show media controls"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Show volume controls"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Media controls location:"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "On thumbnails (Overlay)"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Under thumbnails"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "In group tooltips:"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "One panel below the windows"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Hidden"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "For apps that play from one process for all their windows, such as web browsers. Apps with a process per window keep their controls on each window."
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
@@ -945,6 +881,86 @@ msgstr ""
 msgid "Glow following the cursor over task buttons"
 msgstr ""
 
+#: package/contents/config/ConfigTooltips.qml
+msgid "Task Tooltips"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Show tooltips when hovering over task buttons"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Tooltips are turned off."
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Not for pinned apps that aren't running"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Hide other windows when hovering over a window in the tooltip"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Window thumbnails:"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Show window thumbnails in tooltips"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Thumbnail aspect ratio:"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Match screen aspect ratio"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Match window aspect ratio"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Media controls:"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Show media controls"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Show volume controls"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Media controls location:"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "On thumbnails (Overlay)"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Under thumbnails"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "In group tooltips:"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "One panel below the windows"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Hidden"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "For apps that play from one process for all their windows, such as web browsers. Apps with a process per window keep their controls on each window."
+msgstr ""
+
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Window Indicators"
 msgstr ""
@@ -1148,10 +1164,6 @@ msgid "Task Styling"
 msgstr ""
 
 #: package/contents/config/config.qml
-msgid "Behavior"
-msgstr "Comportamento"
-
-#: package/contents/config/config.qml
 msgctxt "Short section name in the settings sidebar"
 msgid "Window Indicators"
 msgstr ""
@@ -1169,6 +1181,11 @@ msgstr ""
 #: package/contents/config/config.qml
 msgctxt "Short section name in the settings sidebar"
 msgid "Task Actions"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task Tooltips"
 msgstr ""
 
 #: package/contents/config/config.qml
@@ -1428,6 +1445,9 @@ msgstr ""
 msgctxt "Stream name and its number among streams with the same name"
 msgid "%1 %2"
 msgstr ""
+
+#~ msgid "Behavior"
+#~ msgstr "Comportamento"
 
 #~ msgid "Use plasma borders"
 #~ msgstr "Usar bordas do plasma"

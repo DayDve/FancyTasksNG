@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-12 13:45+0200\n"
+"POT-Creation-Date: 2026-11-12 13:48+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -85,7 +85,7 @@ msgstr "Сигналы приложений"
 msgid "App signals are turned off."
 msgstr "Сигналы приложений выключены."
 
-#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigWindowIndicators.qml
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigTooltips.qml package/contents/config/ConfigWindowIndicators.qml
 msgid "Turn on \"%1\" first."
 msgstr "Сначала включите «%1»."
 
@@ -248,70 +248,6 @@ msgstr "Только в режиме «Только значки»."
 #: package/contents/config/ConfigAppSignals.qml
 msgid "Colorize the task button when a window wants attention"
 msgstr "Использовать свой цвет для кнопки окна, требующего внимания"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Show tooltips when hovering over task buttons"
-msgstr "Отображать всплывающие подсказки при наведении курсора мыши на кнопку задачи"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Not for pinned apps that aren't running"
-msgstr "Кроме незапущенных закреплённых приложений"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Show window thumbnails in tooltips"
-msgstr "Отображать миниатюры окон в подсказках"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Thumbnail aspect ratio:"
-msgstr "Пропорции миниатюр:"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Match screen aspect ratio"
-msgstr "Как у экрана"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Match window aspect ratio"
-msgstr "Как у окна"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Hide other windows when hovering over a window in the tooltip"
-msgstr "Скрывать другие окна при наведении на окно в подсказке"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Show media controls"
-msgstr "Отображать элементы управления медиа"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Show volume controls"
-msgstr "Показывать регулятор громкости"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Media controls location:"
-msgstr "Расположение элементов управления медиа:"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "On thumbnails (Overlay)"
-msgstr "Поверх миниатюры"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Under thumbnails"
-msgstr "Под миниатюрами"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "In group tooltips:"
-msgstr "В подсказках групп:"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "One panel below the windows"
-msgstr "Одна панель под окнами"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Hidden"
-msgstr "Скрыть"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "For apps that play from one process for all their windows, such as web browsers. Apps with a process per window keep their controls on each window."
-msgstr "Для приложений, которые играют из одного процесса на все свои окна, например браузеров. У приложений с отдельным процессом на каждое окно элементы управления остаются на каждом окне."
 
 #: package/contents/config/ConfigLayout.qml
 msgid "Task Layout"
@@ -946,6 +882,86 @@ msgstr "Длительность анимации увеличения в мил
 msgid "Glow following the cursor over task buttons"
 msgstr "Подсветка панели под кнопками, следующая за курсором"
 
+#: package/contents/config/ConfigTooltips.qml
+msgid "Task Tooltips"
+msgstr "Всплывающие подсказки задач"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Show tooltips when hovering over task buttons"
+msgstr "Отображать всплывающие подсказки при наведении курсора мыши на кнопку задачи"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Tooltips are turned off."
+msgstr "Подсказки выключены."
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Not for pinned apps that aren't running"
+msgstr "Кроме незапущенных закреплённых приложений"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Hide other windows when hovering over a window in the tooltip"
+msgstr "Скрывать другие окна при наведении на окно в подсказке"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Window thumbnails:"
+msgstr "Миниатюры окон:"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Show window thumbnails in tooltips"
+msgstr "Отображать миниатюры окон в подсказках"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Thumbnail aspect ratio:"
+msgstr "Пропорции миниатюр:"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Match screen aspect ratio"
+msgstr "Как у экрана"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Match window aspect ratio"
+msgstr "Как у окна"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Media controls:"
+msgstr "Элементы управления медиа:"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Show media controls"
+msgstr "Отображать элементы управления медиа"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Show volume controls"
+msgstr "Показывать регулятор громкости"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Media controls location:"
+msgstr "Расположение элементов управления медиа:"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "On thumbnails (Overlay)"
+msgstr "Поверх миниатюры"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Under thumbnails"
+msgstr "Под миниатюрами"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "In group tooltips:"
+msgstr "В подсказках групп:"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "One panel below the windows"
+msgstr "Одна панель под окнами"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Hidden"
+msgstr "Скрыть"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "For apps that play from one process for all their windows, such as web browsers. Apps with a process per window keep their controls on each window."
+msgstr "Для приложений, которые играют из одного процесса на все свои окна, например браузеров. У приложений с отдельным процессом на каждое окно элементы управления остаются на каждом окне."
+
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Window Indicators"
 msgstr "Индикаторы окон"
@@ -1149,10 +1165,6 @@ msgid "Task Styling"
 msgstr "Оформление"
 
 #: package/contents/config/config.qml
-msgid "Behavior"
-msgstr "Поведение"
-
-#: package/contents/config/config.qml
 msgctxt "Short section name in the settings sidebar"
 msgid "Window Indicators"
 msgstr "Индикаторы"
@@ -1171,6 +1183,11 @@ msgstr "Список задач"
 msgctxt "Short section name in the settings sidebar"
 msgid "Task Actions"
 msgstr "Действия"
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task Tooltips"
+msgstr "Подсказки"
 
 #: package/contents/config/config.qml
 msgid "Advanced"
@@ -1431,6 +1448,9 @@ msgstr "Аудиопоток"
 msgctxt "Stream name and its number among streams with the same name"
 msgid "%1 %2"
 msgstr "%1 %2"
+
+#~ msgid "Behavior"
+#~ msgstr "Поведение"
 
 #~ msgid "With Ctrl"
 #~ msgstr "С Ctrl"

@@ -25,11 +25,6 @@ ConfigModel {
         source: "../config/ConfigTaskStyle.qml"
     }
     ConfigCategory {
-        name: i18n("Behavior")
-        icon: "preferences-desktop"
-        source: "../config/ConfigBehavior.qml"
-    }
-    ConfigCategory {
         name: i18nc("Short section name in the settings sidebar", "Window Indicators")
         icon: "preferences-desktop-navigation"
         source: "../config/ConfigWindowIndicators.qml"
@@ -48,6 +43,11 @@ ConfigModel {
         name: i18nc("Short section name in the settings sidebar", "Task Actions")
         icon: "input-mouse"
         source: "../config/ConfigTaskActions.qml"
+    }
+    ConfigCategory {
+        name: i18nc("Short section name in the settings sidebar", "Task Tooltips")
+        icon: "help-hint"
+        source: "../config/ConfigTooltips.qml"
     }
     ConfigCategory {
         name: i18n("Advanced")
