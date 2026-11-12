@@ -156,6 +156,14 @@
       </choices>
       <default>5</default>
     </entry>
+    <entry name="wheelGroupAction" type="Int">
+      <label>Mouse wheel over a group button: -1 = as before this option existed (wheelAction, whose CycleGroupTasks values only work over a group), 0 = as wheelAction elsewhere, 3 = CycleGroupTasks, 4 = CycleGroupTasksSkipMinimized, 5 = AdjustVolume.</label>
+      <default>-1</default>
+    </entry>
+    <entry name="wheelCtrlGroupAction" type="Int">
+      <label>Ctrl+wheel over a group button, as wheelGroupAction but against wheelCtrlAction.</label>
+      <default>-1</default>
+    </entry>
     <entry name="wheelCtrlActionEnabled" type="Bool">
       <label>Enable separate mouse wheel action with Ctrl key</label>
       <default>true</default>

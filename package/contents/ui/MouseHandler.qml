@@ -198,7 +198,8 @@ DropArea {
 
         property bool handleWheelEvents: true
 
-        enabled: handleWheelEvents && (dropArea.config.wheelAction !== 0 || (dropArea.config.wheelCtrlActionEnabled && dropArea.config.wheelCtrlAction !== 0))
+        enabled: handleWheelEvents && (dropArea.config.wheelAction !== 0 || dropArea.config.wheelGroupAction > 0
+            || (dropArea.config.wheelCtrlActionEnabled && (dropArea.config.wheelCtrlAction !== 0 || dropArea.config.wheelCtrlGroupAction > 0)))
 
         onWheel: event => {
             dropArea._rotationAccumulator += (event.angleDelta.y / 8.0);
@@ -216,7 +217,8 @@ DropArea {
 
             const anchor = dropArea.target.childAt(event.x, event.y);
             const isCtrl = (event.modifiers & Qt.ControlModifier) && dropArea.config.wheelCtrlActionEnabled;
-            const action = isCtrl ? dropArea.config.wheelCtrlAction : dropArea.config.wheelAction;
+            const overGroup = !!anchor && !!anchor.model && anchor.model.IsGroupParent;
+            const action = TaskTools.wheelActionFor(dropArea.config, isCtrl, overGroup);
 
             if (action >= 1 && action <= 4) { // Cycle Tasks
                 const skipMinimized = (action === 2 || action === 4);

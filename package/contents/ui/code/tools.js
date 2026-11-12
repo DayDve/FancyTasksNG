@@ -67,6 +67,44 @@ function launchClaimOwner(url, appId) {
     return null;
 }
 
+// Mouse wheel actions (wheelAction and friends in main.xml).
+const WheelNone = 0;
+const WheelCycleGroup = 3;
+const WheelCycleGroupSkipMinimized = 4;
+const WheelVolume = 5;
+
+function isGroupWheelAction(action) {
+    return action === WheelCycleGroup || action === WheelCycleGroupSkipMinimized;
+}
+
+// The wheel action away from group buttons. A group-only action there is
+// what wheelAction held before group buttons got their own setting: it
+// never did anything away from them.
+function wheelElsewhereAction(elsewhere) {
+    return isGroupWheelAction(elsewhere) ? WheelNone : elsewhere;
+}
+
+// The wheel action over a group button, or 0 for "as elsewhere".
+// -1 (never set) keeps the old behavior: a group-only wheelAction applied
+// over groups.
+function wheelGroupChoice(group, elsewhere) {
+    if (group === -1)
+        return isGroupWheelAction(elsewhere) ? elsewhere : WheelNone;
+    return group;
+}
+
+// The action to run for a wheel event, with or without Ctrl, over a group
+// button or elsewhere.
+function wheelActionFor(config, ctrl, overGroup) {
+    const elsewhere = ctrl ? config.wheelCtrlAction : config.wheelAction;
+    if (overGroup) {
+        const group = wheelGroupChoice(ctrl ? config.wheelCtrlGroupAction : config.wheelGroupAction, elsewhere);
+        if (group !== WheelNone)
+            return group;
+    }
+    return wheelElsewhereAction(elsewhere);
+}
+
 function activateNextPrevTask(anchor, next, wheelSkipMinimized, tasks, groupOnly) {
     let taskIndexList = [];
     const activeTaskIndex = tasks.tasksModel.activeTask;
