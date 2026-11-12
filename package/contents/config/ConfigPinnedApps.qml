@@ -584,13 +584,17 @@ ConfigPage {
                     }
 
                     RowLayout {
-                        visible: cfg_unpinByDrag.checked && cfg_page.cfg_iconOnly === 1
                         Item { implicitWidth: cfg_page.gridUnit }
                         CheckBox {
                             id: cfg_unpinByDragExplosion
-                            text: Wrappers.i18n("Play removal animation")
+                            enabled: cfg_unpinByDrag.checked && cfg_page.cfg_iconOnly === 1
+                            text: Wrappers.i18n("Animate unpinning by dragging")
                             checked: cfg_page.cfg_unpinByDragExplosion
                             onToggled: cfg_page.cfg_unpinByDragExplosion = checked
+                        }
+                        ConfigHint {
+                            target: cfg_unpinByDragExplosion
+                            reason: cfg_page.cfg_iconOnly !== 1 ? Wrappers.i18n("Only in the icons-only mode.") : ""
                         }
                     }
                 }

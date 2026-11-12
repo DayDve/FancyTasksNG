@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-12 17:44+0200\n"
+"POT-Creation-Date: 2026-11-12 18:38+0200\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -209,7 +209,7 @@ msgstr ""
 msgid "Animate task icon when a window wants attention"
 msgstr ""
 
-#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml package/contents/config/ConfigTaskStyle.qml
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigPinnedApps.qml package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml package/contents/config/ConfigTaskStyle.qml
 msgid "Only in the icons-only mode."
 msgstr ""
 
@@ -499,7 +499,7 @@ msgid "Unpin app by dragging its icon off the panel"
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
-msgid "Play removal animation"
+msgid "Animate unpinning by dragging"
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml

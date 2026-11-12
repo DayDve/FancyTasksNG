@@ -54,9 +54,9 @@ ConfigPage {
                         Layout.fillWidth: true
                         from: 0
                         to: 100
-                        stepSize: 1
+                        // No stepSize: with it the style draws a tick per step.
                         value: stylePage.cfg_iconClipRadius
-                        onMoved: stylePage.cfg_iconClipRadius = value
+                        onMoved: stylePage.cfg_iconClipRadius = Math.round(value)
                     }
                     SpinBox {
                         from: 0

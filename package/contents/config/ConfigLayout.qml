@@ -163,12 +163,12 @@ ConfigPage {
                 spacing: layoutPage.smallSpacing
                 readonly property bool absolute: layoutPage.cfg_iconSizeOverride
 
+                // No stepSize: with it the style draws a tick per step.
                 Slider {
                     id: iconSize
                     Layout.fillWidth: true
                     from: 0
                     to: parent.absolute ? 100 : 300
-                    stepSize: 1
                     value: parent.absolute ? layoutPage.cfg_iconSizePx : layoutPage.cfg_iconScale
                     onMoved: {
                         if (parent.absolute)

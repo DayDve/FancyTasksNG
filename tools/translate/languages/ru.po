@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-12 17:44+0200\n"
+"POT-Creation-Date: 2026-11-12 18:38+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -207,7 +207,7 @@ msgstr "Только когда виджет находится на панел�
 msgid "Animate task icon when a window wants attention"
 msgstr "Анимировать значок окна, требующего внимания"
 
-#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml package/contents/config/ConfigTaskStyle.qml
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigPinnedApps.qml package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml package/contents/config/ConfigTaskStyle.qml
 msgid "Only in the icons-only mode."
 msgstr "Только в режиме «Только значки»."
 
@@ -499,8 +499,8 @@ msgid "Unpin app by dragging its icon off the panel"
 msgstr "Откреплять, перетащив значок с панели"
 
 #: package/contents/config/ConfigPinnedApps.qml
-msgid "Play removal animation"
-msgstr "Анимация удаления"
+msgid "Animate unpinning by dragging"
+msgstr "Анимировать открепление перетаскиванием"
 
 #: package/contents/config/ConfigPinnedApps.qml
 msgid "Add Application..."
@@ -1472,6 +1472,9 @@ msgstr "Аудиопоток"
 msgctxt "Stream name and its number among streams with the same name"
 msgid "%1 %2"
 msgstr "%1 %2"
+
+#~ msgid "Play removal animation"
+#~ msgstr "Анимация удаления"
 
 #~ msgid "Rows"
 #~ msgstr "Ряды"
