@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-12 13:17+0200\n"
+"POT-Creation-Date: 2026-11-12 13:45+0200\n"
 "PO-Revision-Date: 2023-09-21 16:18-0300\n"
 "Last-Translator:  Douglas Guimarães <<dg2003gh@gmail.com>>\n"
 "Language-Team: \n"
@@ -176,7 +176,7 @@ msgstr ""
 msgid "Style:"
 msgstr ""
 
-#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigBehavior.qml
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigTaskList.qml
 msgctxt "State"
 msgid "Disabled"
 msgstr ""
@@ -241,128 +241,12 @@ msgstr ""
 msgid "Animate task icon when a window wants attention"
 msgstr ""
 
-#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskActions.qml package/contents/config/ConfigTaskStyle.qml
 msgid "Only in the icons-only mode."
 msgstr ""
 
 #: package/contents/config/ConfigAppSignals.qml
 msgid "Colorize the task button when a window wants attention"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Grouping of tasks:"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Place windows of one application side-by-side"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Combine into one button by application name"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Sort tasks:"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Manually"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Alphabetically"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "By desktop"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "By activity"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "By horizontal window position"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Keep launchers separate"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Pinned apps always come first and stay in place when launched. Pinned apps can be dragged among themselves, other tasks among themselves."
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Drag any task anywhere. A newly opened window of a pinned app goes to the end of the list."
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Clicking active task minimizes the task"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Middle-clicking any task:"
-msgstr "Clicando no botão do scroll em qualquer tarefa:"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Does nothing"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Closes window or group"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Opens a new window"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Minimizes/Restores window or group"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Toggles grouping"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Brings it to the current virtual desktop"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Animation of closing/removing an icon from the panel"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Mouse wheel:"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Cycles through all tasks"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Cycles through all tasks (skip minimized)"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Cycles through tasks of the current group"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Cycles through tasks of the current group (skip minimized)"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Adjusts volume of the window"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Adjust system volume with Shift key"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Additional action with Ctrl key"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
@@ -427,62 +311,6 @@ msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "For apps that play from one process for all their windows, such as web browsers. Apps with a process per window keep their controls on each window."
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Clicking group button:"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Cycles through tasks"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Shows small window previews"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Shows large window previews"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Shows textual list"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Show only tasks:"
-msgstr "Exibir apenas tarefas:"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "From current screen"
-msgstr "No monitor atual"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "From current desktop"
-msgstr "Na área de trabalho atual"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "From current activity"
-msgstr "Na atividade atual"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Invert selected filters"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Hide matching tasks instead of showing them."
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "In any state"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Only minimized"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Only not minimized"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
@@ -729,6 +557,238 @@ msgstr ""
 msgid "Search applications..."
 msgstr ""
 
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Task Actions"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Does nothing"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Cycles through all tasks"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Cycles through all tasks (skip minimized)"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Adjusts volume of the window"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Same as elsewhere"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Cycles through the group's windows"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Cycles through the group's windows (skip minimized)"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Adjusts the group's volume"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Clicking the active window's button:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Minimizes the window"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Clicking group button:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Cycles through tasks"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Shows small window previews"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Shows large window previews"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Shows textual list"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Middle-clicking any task:"
+msgstr "Clicando no botão do scroll em qualquer tarefa:"
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Closes window or group"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Opens a new window"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Minimizes/Restores window or group"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Toggles grouping"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Brings it to the current virtual desktop"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Animation of closing/removing an icon from the panel"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Only when middle-clicking closes the window."
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Mouse wheel:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Over a group button"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Only when the windows of an application are combined into one button."
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Elsewhere"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "+ wheel: the system volume instead of the window's"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Wherever the wheel adjusts the volume of a window or a group, it adjusts the system volume while Shift is held."
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Only when the wheel or Ctrl+wheel adjusts the volume."
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Task List"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Filters"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Show only tasks:"
+msgstr "Exibir apenas tarefas:"
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "From current screen"
+msgstr "No monitor atual"
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "From current desktop"
+msgstr "Na área de trabalho atual"
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "From current activity"
+msgstr "Na atividade atual"
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Invert selected filters"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Hide matching tasks instead of showing them."
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Turn on one of the filters above first."
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "In any state"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Only minimized"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Only not minimized"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Grouping"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Grouping of tasks:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Place windows of one application side-by-side"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Combine into one button by application name"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Sorting"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Sort tasks:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Manually"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Alphabetically"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "By desktop"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "By activity"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "By horizontal window position"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Keep launchers separate"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Only for manual sorting."
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Pinned apps always come first and stay in place when launched. Pinned apps can be dragged among themselves, other tasks among themselves."
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Drag any task anywhere. A newly opened window of a pinned app goes to the end of the list."
+msgstr ""
+
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Task Styling"
 msgstr ""
@@ -911,10 +971,6 @@ msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Group mark from the Plasma theme"
-msgstr ""
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Only when the windows of an application are combined into one button."
 msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml
@@ -1103,6 +1159,16 @@ msgstr ""
 #: package/contents/config/config.qml
 msgctxt "Short section name in the settings sidebar"
 msgid "App Signals"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task List"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task Actions"
 msgstr ""
 
 #: package/contents/config/config.qml

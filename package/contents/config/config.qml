@@ -40,6 +40,16 @@ ConfigModel {
         source: "../config/ConfigAppSignals.qml"
     }
     ConfigCategory {
+        name: i18nc("Short section name in the settings sidebar", "Task List")
+        icon: "view-list-details"
+        source: "../config/ConfigTaskList.qml"
+    }
+    ConfigCategory {
+        name: i18nc("Short section name in the settings sidebar", "Task Actions")
+        icon: "input-mouse"
+        source: "../config/ConfigTaskActions.qml"
+    }
+    ConfigCategory {
         name: i18n("Advanced")
         icon: "preferences-other"
         source: "../config/ConfigAdvanced.qml"
