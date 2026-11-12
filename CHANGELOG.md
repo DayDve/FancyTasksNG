@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Audio Badge Icon:** The speaker is now drawn as a vector shape instead of a font glyph, so it looks the same whatever fonts are installed and stays sharp at any size; muted, it's crossed by a red "no" sign. Digits in the notification count are centered by their actual shape, no longer sitting high.
 - **Tooltip Volume Controls:** The volume slider on window thumbnails and in tooltips without thumbnails is now the same thin one as everywhere else in tooltips, and the wheel over it in a tooltip without thumbnails changes the volume too.
 - **Settings Preview:** The preview at the top of the settings pages is now drawn by the widget's own task buttons instead of an imitation of them, so it shows the settings being edited the way the panel will: every indicator option, icon size and clipping, button colors, badges and so on.
+- **Task Layout Settings:** A new first settings section, Task Layout, gathers what was spread over Appearance, Behavior and Advanced, in three tabs: Buttons (display mode, button width, inner padding, spacing, and a new "Lines of title text" option), Rows, and Placement (where new tasks appear, filling the panel, floating mode). Options that don't apply in the current mode are greyed out instead of hidden.
 
 ### Fixed
 - **Badge Count Rounding:** Shortened counts were rounded up, so 9 999 read "10k" and 1 960 read "2k"; they now round down ("9.9k", "1.9k").

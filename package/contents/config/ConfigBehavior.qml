@@ -10,7 +10,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.core as PlasmaCore
 
 import "../ui/code/singletones"
 
@@ -462,53 +461,6 @@ ConfigPage {
             ButtonGroup.group: minimizedFilterButtonGroup
             onToggled: if (checked)
                 behaviorPage.cfg_minimizedFilter = 2
-        }
-    
-        Item {
-            height: behaviorPage.largeSpacing
-        }
-        Label {
-            text: Wrappers.i18n("New tasks appear:")
-        }
-    
-        ButtonGroup {
-            id: reverseModeRadioButtonGroup
-        }
-    
-        RadioButton {
-            checked: !behaviorPage.cfg_reverseMode
-            text: {
-                if (behaviorPage.plasmoidFormFactor === PlasmaCore.Types.Vertical) {
-                    return Wrappers.i18n("On the bottom");
-                }
-                // horizontal
-                if (!LayoutMirroring.enabled) {
-                    return Wrappers.i18n("To the right");
-                } else {
-                    return Wrappers.i18n("To the left");
-                }
-            }
-            ButtonGroup.group: reverseModeRadioButtonGroup
-            onToggled: if (checked)
-                behaviorPage.cfg_reverseMode = false
-        }
-    
-        RadioButton {
-            id: cfg_reverseMode
-            checked: behaviorPage.cfg_reverseMode
-            onToggled: behaviorPage.cfg_reverseMode = checked
-            text: {
-                if (behaviorPage.plasmoidFormFactor === PlasmaCore.Types.Vertical) {
-                    return Wrappers.i18n("On the top");
-                }
-                // horizontal
-                if (!LayoutMirroring.enabled) {
-                    return Wrappers.i18n("To the left");
-                } else {
-                    return Wrappers.i18n("To the right");
-                }
-            }
-            ButtonGroup.group: reverseModeRadioButtonGroup
         }
     }
 }

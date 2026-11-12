@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-10 12:43+0200\n"
+"POT-Creation-Date: 2026-11-12 11:53+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -14,34 +14,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "This option is disabled when the widget is on a panel."
-msgstr "Эта опция недоступна, когда виджет находится на панели."
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Floating Mode Settings:"
-msgstr "Настройки плавающего режима:"
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Override system direction"
-msgstr "Переопределить системное направление"
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "As on top panel"
-msgstr "Как панель сверху"
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "As on bottom panel"
-msgstr "Как панель снизу"
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "As on left panel"
-msgstr "Как панель слева"
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "As on right panel"
-msgstr "Как панель справа"
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "When a window wants attention:"
@@ -58,34 +30,6 @@ msgstr "Анимация кнопки окна, требующего внима�
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Colorize the task button when a window wants attention"
 msgstr "Использовать свой цвет для кнопки окна, требующего внимания"
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Layout settings:"
-msgstr "Настройки разметки:"
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "These options are only available when the widget is on a panel."
-msgstr "Эти опции доступны только тогда, когда виджет находится на панели."
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "These options are only available in icon-only mode."
-msgstr "Эти опции доступны только в режиме «Только значки»."
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Fill free space on panel"
-msgstr "Заполнять свободное место панели"
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Alignment:"
-msgstr "Выравнивание:"
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Edge"
-msgstr "По краю"
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Center"
-msgstr "По центру"
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Context menu:"
@@ -160,18 +104,6 @@ msgstr "Конфигурация импортирована. Нажмите «П
 #: package/contents/config/ConfigAppearance.qml
 msgid "Use plasma borders"
 msgstr "Использовать рамки Plasma"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Display:"
-msgstr "Отображение:"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Classic panel"
-msgstr "Классическая панель"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Show icons only"
-msgstr "Только значки"
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Icon size:"
@@ -262,22 +194,6 @@ msgid "Colorize inactive buttons"
 msgstr "Окрашивать неактивные кнопки"
 
 #: package/contents/config/ConfigAppearance.qml
-msgid "Maximum button width (px):"
-msgstr "Максимальная ширина кнопки (px):"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Fit button width to its title"
-msgstr "Подгонять ширину кнопки под название"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Minimum button width (px):"
-msgstr "Минимальная ширина кнопки (px):"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Space between taskbar items (px):"
-msgstr "Расстояние между элементами (px):"
-
-#: package/contents/config/ConfigAppearance.qml
 msgid "Icon Shape:"
 msgstr "Форма значков:"
 
@@ -312,58 +228,6 @@ msgstr "Акцентный цвет Plasma"
 #: package/contents/config/ConfigAppearance.qml
 msgid "Background opacity:"
 msgstr "Непрозрачность подложки:"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Use multi-column view:"
-msgstr "Многоколоночный вид:"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Use multi-row view:"
-msgstr "Многострочный вид:"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Never"
-msgstr "Никогда"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "When panel is low on space and thick enough"
-msgstr "Когда мало места и панель широкая"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Always when panel is thick enough"
-msgstr "Всегда, если панель достаточно широкая"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Maximum columns:"
-msgstr "Макс. столбцов:"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Maximum rows:"
-msgstr "Макс. строк:"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Inner padding:"
-msgstr "Внутренние отступы кнопок:"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Small"
-msgstr "Маленький"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Normal"
-msgstr "Обычный"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Large"
-msgstr "Большой"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Huge"
-msgstr "Огромный"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Automatically set to Large when in Touch mode"
-msgstr "Автоматически «Большой» в сенсорном режиме"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Grouping of tasks:"
@@ -605,26 +469,6 @@ msgstr "Только свернутые"
 #: package/contents/config/ConfigBehavior.qml
 msgid "Only not minimized"
 msgstr "Только развернутые"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "New tasks appear:"
-msgstr "Новые задачи появляются:"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "On the bottom"
-msgstr "Снизу"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "To the right"
-msgstr "Справа"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "To the left"
-msgstr "Слева"
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "On the top"
-msgstr "Сверху"
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "Active application indicators:"
@@ -870,6 +714,174 @@ msgstr "Цвет прогресса:"
 msgid "Opacity:"
 msgstr "Непрозрачность:"
 
+#: package/contents/config/ConfigLayout.qml
+msgid "Buttons"
+msgstr "Кнопки"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Display:"
+msgstr "Отображение:"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Classic panel"
+msgstr "Классическая панель"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Show icons only"
+msgstr "Только значки"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Maximum button width (px):"
+msgstr "Максимальная ширина кнопки (px):"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Fit button width to its title"
+msgstr "Подгонять ширину кнопки под название"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Minimum button width (px):"
+msgstr "Минимальная ширина кнопки (px):"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Lines of title text:"
+msgstr "Строк в заголовке:"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "As many as fit"
+msgstr "Сколько поместится"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Space between taskbar items (px):"
+msgstr "Расстояние между элементами (px):"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Inner padding:"
+msgstr "Внутренние отступы кнопок:"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Small"
+msgstr "Маленький"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Normal"
+msgstr "Обычный"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Large"
+msgstr "Большой"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Huge"
+msgstr "Огромный"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Automatically set to Large when in Touch mode"
+msgstr "Автоматически «Большой» в сенсорном режиме"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Rows"
+msgstr "Ряды"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Use multi-column view:"
+msgstr "Многоколоночный вид:"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Use multi-row view:"
+msgstr "Многострочный вид:"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Never"
+msgstr "Никогда"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "When panel is low on space and thick enough"
+msgstr "Когда мало места и панель широкая"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Always when panel is thick enough"
+msgstr "Всегда, если панель достаточно широкая"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Maximum columns:"
+msgstr "Макс. столбцов:"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Maximum rows:"
+msgstr "Макс. строк:"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Placement"
+msgstr "Размещение"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "New tasks appear:"
+msgstr "Новые задачи появляются:"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "On the bottom"
+msgstr "Снизу"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "To the left"
+msgstr "Слева"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "To the right"
+msgstr "Справа"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "On the top"
+msgstr "Сверху"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "These options are only available when the widget is on a panel."
+msgstr "Эти опции доступны только тогда, когда виджет находится на панели."
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Fill free space on panel"
+msgstr "Заполнять свободное место панели"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Alignment:"
+msgstr "Выравнивание:"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Edge"
+msgstr "По краю"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Center"
+msgstr "По центру"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Floating Mode Settings:"
+msgstr "Настройки плавающего режима:"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "This option is disabled when the widget is on a panel."
+msgstr "Эта опция недоступна, когда виджет находится на панели."
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Override system direction"
+msgstr "Переопределить системное направление"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "As on top panel"
+msgstr "Как панель сверху"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "As on bottom panel"
+msgstr "Как панель снизу"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "As on left panel"
+msgstr "Как панель слева"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "As on right panel"
+msgstr "Как панель справа"
+
 #: package/contents/config/ConfigPinnedApps.qml
 msgid "Default Web Browser"
 msgstr "Браузер по умолчанию"
@@ -960,6 +972,10 @@ msgid "Remove"
 msgstr "Удалить"
 
 #: package/contents/config/config.qml
+msgid "Task Layout"
+msgstr "Расположение задач"
+
+#: package/contents/config/config.qml
 msgid "Appearance"
 msgstr "Внешний вид"
 
@@ -1043,7 +1059,7 @@ msgstr "Восстановить"
 msgid "Unmute"
 msgstr "Включить звук"
 
-#: package/contents/ui/ContextMenu.qml package/contents/ui/ToolTipInstance.qml package/contents/ui/ToolTipMediaBar.qml package/contents/ui/ToolTipMediaControls.qml package/contents/ui/ToolTipStreamList.qml
+#: package/contents/ui/ContextMenu.qml package/contents/ui/MediaVolumeRow.qml package/contents/ui/ToolTipInstance.qml package/contents/ui/ToolTipMediaBar.qml package/contents/ui/ToolTipStreamList.qml
 msgid "Mute"
 msgstr "Выключить звук"
 
@@ -1229,6 +1245,12 @@ msgstr "Аудиопоток"
 msgctxt "Stream name and its number among streams with the same name"
 msgid "%1 %2"
 msgstr "%1 %2"
+
+#~ msgid "Layout settings:"
+#~ msgstr "Настройки разметки:"
+
+#~ msgid "These options are only available in icon-only mode."
+#~ msgstr "Эти опции доступны только в режиме «Только значки»."
 
 #~ msgctxt "Invalid"
 #~ msgid "—"

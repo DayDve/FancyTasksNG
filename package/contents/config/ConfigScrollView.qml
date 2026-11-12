@@ -26,6 +26,12 @@ Item {
     property int scrollDir: 0
     property real _lastY: 0
 
+    function scrollToTop(): void {
+        const flick = scrollView.contentItem as Flickable;
+        if (flick)
+            flick.contentY = 0;
+    }
+
     Component.onCompleted: {
         let flick = scrollView.contentItem as Flickable
         if (flick) {

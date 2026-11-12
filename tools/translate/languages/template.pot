@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-10 12:43+0200\n"
+"POT-Creation-Date: 2026-11-12 11:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,34 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "This option is disabled when the widget is on a panel."
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Floating Mode Settings:"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Override system direction"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "As on top panel"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "As on bottom panel"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "As on left panel"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "As on right panel"
-msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "When a window wants attention:"
@@ -60,34 +32,6 @@ msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Colorize the task button when a window wants attention"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Layout settings:"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "These options are only available when the widget is on a panel."
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "These options are only available in icon-only mode."
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Fill free space on panel"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Alignment:"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Edge"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Center"
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
@@ -160,18 +104,6 @@ msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Use plasma borders"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Display:"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Classic panel"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Show icons only"
 msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml
@@ -263,22 +195,6 @@ msgid "Colorize inactive buttons"
 msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml
-msgid "Maximum button width (px):"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Fit button width to its title"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Minimum button width (px):"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Space between taskbar items (px):"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
 msgid "Icon Shape:"
 msgstr ""
 
@@ -312,58 +228,6 @@ msgstr ""
 
 #: package/contents/config/ConfigAppearance.qml
 msgid "Background opacity:"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Use multi-column view:"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Use multi-row view:"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Never"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "When panel is low on space and thick enough"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Always when panel is thick enough"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Maximum columns:"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Maximum rows:"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Inner padding:"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Small"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Normal"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Large"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Huge"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Automatically set to Large when in Touch mode"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
@@ -605,26 +469,6 @@ msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Only not minimized"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "New tasks appear:"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "On the bottom"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "To the right"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "To the left"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "On the top"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
@@ -871,6 +715,174 @@ msgstr ""
 msgid "Opacity:"
 msgstr ""
 
+#: package/contents/config/ConfigLayout.qml
+msgid "Buttons"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Display:"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Classic panel"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Show icons only"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Maximum button width (px):"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Fit button width to its title"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Minimum button width (px):"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Lines of title text:"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "As many as fit"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Space between taskbar items (px):"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Inner padding:"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Small"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Normal"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Large"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Huge"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Automatically set to Large when in Touch mode"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Rows"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Use multi-column view:"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Use multi-row view:"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Never"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "When panel is low on space and thick enough"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Always when panel is thick enough"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Maximum columns:"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Maximum rows:"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Placement"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "New tasks appear:"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "On the bottom"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "To the left"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "To the right"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "On the top"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "These options are only available when the widget is on a panel."
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Fill free space on panel"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Alignment:"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Edge"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Center"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Floating Mode Settings:"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "This option is disabled when the widget is on a panel."
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Override system direction"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "As on top panel"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "As on bottom panel"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "As on left panel"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "As on right panel"
+msgstr ""
+
 #: package/contents/config/ConfigPinnedApps.qml
 msgid "Default Web Browser"
 msgstr ""
@@ -960,6 +972,10 @@ msgid "Remove"
 msgstr ""
 
 #: package/contents/config/config.qml
+msgid "Task Layout"
+msgstr ""
+
+#: package/contents/config/config.qml
 msgid "Appearance"
 msgstr ""
 
@@ -1042,8 +1058,7 @@ msgstr ""
 msgid "Unmute"
 msgstr ""
 
-#: package/contents/ui/ContextMenu.qml package/contents/ui/ToolTipInstance.qml package/contents/ui/ToolTipMediaBar.qml package/contents/ui/ToolTipMediaControls.qml
-#: package/contents/ui/ToolTipStreamList.qml
+#: package/contents/ui/ContextMenu.qml package/contents/ui/MediaVolumeRow.qml package/contents/ui/ToolTipInstance.qml package/contents/ui/ToolTipMediaBar.qml package/contents/ui/ToolTipStreamList.qml
 msgid "Mute"
 msgstr ""
 

@@ -15,6 +15,11 @@ import org.kde.plasma.configuration
 ConfigModel {
     // qmllint disable unqualified
     ConfigCategory {
+        name: i18n("Task Layout")
+        icon: "distribute-horizontal-x"
+        source: "../config/ConfigLayout.qml"
+    }
+    ConfigCategory {
         name: i18n("Appearance")
         icon: "preferences-desktop-color"
         source: "../config/ConfigAppearance.qml"

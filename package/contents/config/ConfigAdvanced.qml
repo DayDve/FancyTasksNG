@@ -19,43 +19,6 @@ ConfigPage {
     ConfigFormPage {
         cfg_page: advancedPage
 
-        Kirigami.InlineMessage {
-            Layout.fillWidth: true
-            visible: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating
-            type: Kirigami.MessageType.Information
-            text: Wrappers.i18n("This option is disabled when the widget is on a panel.")
-        }
-    
-        Label {
-            text: Wrappers.i18n("Floating Mode Settings:")
-            opacity: advancedPage.plasmoidLocation === PlasmaCore.Types.Floating ? 1.0 : 0.6
-        }
-    
-        CheckBox {
-            id: overridePlasmaButtonDirection
-            text: Wrappers.i18n("Override system direction")
-            enabled: advancedPage.plasmoidLocation === PlasmaCore.Types.Floating
-            checked: advancedPage.cfg_overridePlasmaButtonDirection
-            onToggled: advancedPage.cfg_overridePlasmaButtonDirection = checked
-        }
-    
-        ComboBox {
-            id: plasmaButtonDirection
-            Layout.fillWidth: true
-            enabled: overridePlasmaButtonDirection.enabled && overridePlasmaButtonDirection.checked
-            visible: overridePlasmaButtonDirection.checked
-            model: [
-                Wrappers.i18n("As on top panel"),
-                Wrappers.i18n("As on bottom panel"),
-                Wrappers.i18n("As on left panel"),
-                Wrappers.i18n("As on right panel")
-            ]
-            currentIndex: advancedPage.cfg_plasmaButtonDirection
-            onActivated: (index) => advancedPage.cfg_plasmaButtonDirection = index
-        }
-    
-        Item { height: advancedPage.largeSpacing }
-    
         Label {
             text: Wrappers.i18n("When a window wants attention:")
         }
@@ -100,49 +63,6 @@ ConfigPage {
             }
         }
 
-        Item { height: advancedPage.largeSpacing }
-    
-        Label {
-            text: Wrappers.i18n("Layout settings:")
-            opacity: fillEnabled ? 1.0 : 0.6
-    
-            readonly property bool fillEnabled: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating
-        }
-    
-        Kirigami.InlineMessage {
-            Layout.fillWidth: true
-            visible: advancedPage.plasmoidLocation === PlasmaCore.Types.Floating
-            type: Kirigami.MessageType.Information
-            text: Wrappers.i18n("These options are only available when the widget is on a panel.")
-        }
-    
-        CheckBox {
-            id: fill
-            text: Wrappers.i18n("Fill free space on panel")
-            enabled: advancedPage.plasmoidLocation !== PlasmaCore.Types.Floating
-            checked: advancedPage.cfg_fill
-            onToggled: advancedPage.cfg_fill = checked
-        }
-    
-        RowLayout {
-            visible: fill.checked && fill.enabled && advancedPage.cfg_iconOnly
-            Item { implicitWidth: advancedPage.gridUnit }
-    
-            Label {
-                text: Wrappers.i18n("Alignment:")
-            }
-            ComboBox {
-                id: fillAlignment
-                Layout.fillWidth: true
-                model: [
-                    Wrappers.i18n("Edge"),
-                    Wrappers.i18n("Center")
-                ]
-                currentIndex: advancedPage.cfg_fillAlignment
-                onActivated: (index) => advancedPage.cfg_fillAlignment = index
-            }
-        }
-    
         Item { height: advancedPage.largeSpacing }
     
         Label {
