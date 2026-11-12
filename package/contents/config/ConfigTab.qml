@@ -11,4 +11,14 @@ import org.kde.kirigami as Kirigami
 Kirigami.FormLayout {
     property string title
     property string iconName
+    // A tab whose options all depend on a switch above the tabs is greyed
+    // out while it's off, and the page says why.
+    property bool available: true
+    property string unavailableReason
+    // Set by ConfigTabbedPage.
+    property bool current: false
+
+    enabled: current && available
+    opacity: current ? 1 : 0
+    z: current ? 1 : 0
 }

@@ -30,8 +30,13 @@ ConfigModel {
         source: "../config/ConfigBehavior.qml"
     }
     ConfigCategory {
-        name: i18n("Indicators")
+        name: i18n("Window Indicators")
         icon: "preferences-desktop-navigation"
+        source: "../config/ConfigWindowIndicators.qml"
+    }
+    ConfigCategory {
+        name: i18n("App Signals")
+        icon: "preferences-desktop-notification-bell"
         source: "../config/ConfigIndicators.qml"
     }
     ConfigCategory {

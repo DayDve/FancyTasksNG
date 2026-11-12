@@ -52,15 +52,6 @@ ConfigPage {
                     behaviorPage.cfg_groupPopups = true;
                 }
             }
-    
-            CheckBox {
-                id: groupIconEnabled
-                Layout.leftMargin: behaviorPage.gridUnit * 2
-                visible: groupCollapsed.checked
-                text: Wrappers.i18n("Standard group overlay")
-                checked: behaviorPage.cfg_groupIconEnabled
-                onToggled: behaviorPage.cfg_groupIconEnabled = checked
-            }
         }
     
         Item {

@@ -7,6 +7,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
@@ -33,14 +34,11 @@ ColumnLayout {
     // height it measured at zero width when its tab is shown.
     function _syncTabs(): void {
         const tabs = tabColumn.children;
-        for (let i = 0; i < tabs.length; ++i) {
-            const current = i === tabbedPage.currentTab;
-            tabs[i].opacity = current ? 1 : 0;
-            tabs[i].enabled = current;
-            tabs[i].z = current ? 1 : 0;
-        }
+        for (let i = 0; i < tabs.length; ++i)
+            tabs[i].current = i === tabbedPage.currentTab;
         scrollView.scrollToTop();
     }
+    readonly property ConfigTab _currentTabItem: tabColumn.children[tabbedPage.currentTab] as ConfigTab
     onCurrentTabChanged: _syncTabs()
     Component.onCompleted: _syncTabs()
 
@@ -82,6 +80,21 @@ ColumnLayout {
             for (let i = 0; i < tabActions.count; ++i)
                 list.push(tabActions.objectAt(i));
             return list;
+        }
+    }
+
+    // Why the current tab is greyed out.
+    RowLayout {
+        Layout.alignment: Qt.AlignHCenter
+        visible: !!tabbedPage._currentTabItem && !tabbedPage._currentTabItem.available
+        spacing: tabbedPage.cfg_page.smallSpacing
+        Kirigami.Icon {
+            source: "dialog-information"
+            implicitWidth: Kirigami.Units.iconSizes.small
+            implicitHeight: Kirigami.Units.iconSizes.small
+        }
+        QQC2.Label {
+            text: tabbedPage._currentTabItem ? tabbedPage._currentTabItem.unavailableReason : ""
         }
     }
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-12 12:32+0200\n"
+"POT-Creation-Date: 2026-11-12 12:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -109,10 +109,6 @@ msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Combine into one button by application name"
-msgstr ""
-
-#: package/contents/config/ConfigBehavior.qml
-msgid "Standard group overlay"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
@@ -336,159 +332,6 @@ msgid "Only not minimized"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
-msgid "Use plasma borders"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Active application indicators:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgctxt "State"
-msgid "Enabled"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Animate indicators"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Style:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Line"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Dashes"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Override indicator location"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Bottom"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Left"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Right"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Top"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Edge offset:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Thickness:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Segment length:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Resize indicators on activation/hover"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Length:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Segment alignment:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Align Left"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Align Center"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Align Right"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Align Top"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Align Bottom"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Separate settings for hovered indicators"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Separate settings for group indicators"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Highlight active window in group"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Dim inactive indicators"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Inactive indicator opacity:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Roundness:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Side padding:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Max segments:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Show '+' on overflow"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Colors:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Use plasma accent color"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml package/contents/config/ConfigTaskStyle.qml
-msgid "Use dominant icon color"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Custom color:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Behavior:"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
-msgid "Desaturate when minimized"
-msgstr ""
-
-#: package/contents/config/ConfigIndicators.qml
 msgid "Feedback:"
 msgstr ""
 
@@ -524,7 +367,7 @@ msgstr ""
 msgid "System accent color"
 msgstr ""
 
-#: package/contents/config/ConfigIndicators.qml package/contents/config/ConfigTaskStyle.qml
+#: package/contents/config/ConfigIndicators.qml package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigWindowIndicators.qml
 msgid "Custom color"
 msgstr ""
 
@@ -587,6 +430,10 @@ msgstr ""
 msgid "Progress color:"
 msgstr ""
 
+#: package/contents/config/ConfigIndicators.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Thickness:"
+msgstr ""
+
 #: package/contents/config/ConfigIndicators.qml
 msgid "Opacity:"
 msgstr ""
@@ -627,7 +474,7 @@ msgstr ""
 msgid "Minimum button width (px):"
 msgstr ""
 
-#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigWindowIndicators.qml
 msgid "Turn on \"%1\" first."
 msgstr ""
 
@@ -935,6 +782,10 @@ msgstr ""
 msgid "Using Plasma Style/Accent"
 msgstr ""
 
+#: package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Use dominant icon color"
+msgstr ""
+
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Colorize inactive buttons"
 msgstr ""
@@ -987,6 +838,174 @@ msgstr ""
 msgid "Glow following the cursor over task buttons"
 msgstr ""
 
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Fancy Tasks indicators are turned off."
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Fancy Tasks indicators"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Stripe from the Plasma theme"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Draws the edges of the theme's task button frame. In Breeze that's the stripe along the panel edge; in other themes the button frame may change its shape."
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Buttons have no background (Task Styling › Background)."
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Group mark from the Plasma theme"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Only when the windows of an application are combined into one button."
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Look"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Animate indicators"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Style:"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Line"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Dashes"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Override indicator location"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Bottom"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Left"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Right"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Top"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Edge offset:"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Roundness:"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Max segments:"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Show '+' on overflow"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Size"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Segment length:"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Side padding:"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Only for the Line style."
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Resize indicators on activation/hover"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Length:"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Segment alignment:"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Align Left"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Align Center"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Align Right"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Align Top"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Align Bottom"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Separate settings for hovered indicators"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Separate settings for group indicators"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Color"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Colors:"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Use plasma accent color"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Highlight active window in group"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Dim inactive indicators"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Inactive indicator opacity:"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Desaturate when minimized"
+msgstr ""
+
 #: package/contents/config/LivePreview.qml
 msgid "Preview"
 msgstr ""
@@ -1028,7 +1047,11 @@ msgid "Behavior"
 msgstr ""
 
 #: package/contents/config/config.qml
-msgid "Indicators"
+msgid "Window Indicators"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgid "App Signals"
 msgstr ""
 
 #: package/contents/config/config.qml
