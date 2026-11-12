@@ -39,6 +39,14 @@ ColumnLayout {
         scrollView.scrollToTop();
     }
     readonly property ConfigTab _currentTabItem: tabColumn.children[tabbedPage.currentTab] as ConfigTab
+    // Only pages with tabs that can be greyed out reserve a line for why.
+    readonly property bool _hasUnavailableTabs: {
+        for (const tab of tabColumn.children) {
+            if ((tab as ConfigTab).unavailableReason !== "")
+                return true;
+        }
+        return false;
+    }
     onCurrentTabChanged: _syncTabs()
     Component.onCompleted: _syncTabs()
 
@@ -83,10 +91,12 @@ ColumnLayout {
         }
     }
 
-    // Why the current tab is greyed out.
+    // Why the current tab is greyed out. It keeps its place when there's
+    // nothing to say, so the form under it doesn't jump.
     RowLayout {
         Layout.alignment: Qt.AlignHCenter
-        visible: !!tabbedPage._currentTabItem && !tabbedPage._currentTabItem.available
+        visible: tabbedPage._hasUnavailableTabs
+        opacity: !!tabbedPage._currentTabItem && !tabbedPage._currentTabItem.available ? 1 : 0
         spacing: tabbedPage.cfg_page.smallSpacing
         Kirigami.Icon {
             source: "dialog-information"

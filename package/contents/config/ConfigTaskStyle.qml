@@ -44,68 +44,57 @@ ConfigPage {
                 onActivated: (index) => stylePage.cfg_iconSizeOverride = (index === 1)
             }
 
+            // One row for both units, so the form doesn't shift when they
+            // change.
             RowLayout {
                 Layout.fillWidth: true
-                visible: !stylePage.cfg_iconSizeOverride
                 spacing: stylePage.smallSpacing
+                readonly property bool absolute: stylePage.cfg_iconSizeOverride
 
                 Slider {
-                    id: iconScale
+                    id: iconSize
                     Layout.fillWidth: true
                     from: 0
-                    to: 300
-                    stepSize: 1.0
-                    value: stylePage.cfg_iconScale
-                    onMoved: stylePage.cfg_iconScale = value
-                }
-                SpinBox {
-                    from: 0
-                    to: 300
-                    editable: true
-                    value: Math.round(iconScale.value)
-                    onValueModified: stylePage.cfg_iconScale = value
-                }
-                Label {
-                    text: "%"
-                }
-                Button {
-                    icon.name: "edit-reset"
-                    flat: true
-                    onClicked: stylePage.cfg_iconScale = 100
-                    ToolTip.text: Wrappers.i18n("Reset to default")
-                    ToolTip.visible: hovered
-                    ToolTip.delay: 1000
-                }
-            }
-
-            RowLayout {
-                Layout.fillWidth: true
-                visible: stylePage.cfg_iconSizeOverride
-                spacing: stylePage.smallSpacing
-
-                Slider {
-                    id: iconSizePx
-                    Layout.fillWidth: true
-                    from: 0
-                    to: 100
+                    to: parent.absolute ? 100 : 300
                     stepSize: 1
-                    value: stylePage.cfg_iconSizePx
-                    onMoved: stylePage.cfg_iconSizePx = value
+                    value: parent.absolute ? stylePage.cfg_iconSizePx : stylePage.cfg_iconScale
+                    onMoved: {
+                        if (parent.absolute)
+                            stylePage.cfg_iconSizePx = Math.round(value);
+                        else
+                            stylePage.cfg_iconScale = Math.round(value);
+                    }
                 }
                 SpinBox {
                     from: 0
-                    to: 100
+                    to: parent.absolute ? 100 : 300
                     editable: true
-                    value: iconSizePx.value
-                    onValueModified: stylePage.cfg_iconSizePx = value
+                    value: Math.round(iconSize.value)
+                    onValueModified: {
+                        if (parent.absolute)
+                            stylePage.cfg_iconSizePx = value;
+                        else
+                            stylePage.cfg_iconScale = value;
+                    }
                 }
                 Label {
-                    text: "px"
+                    // Both units take the same room.
+                    Layout.minimumWidth: unitMetrics.advanceWidth
+                    text: parent.absolute ? "px" : "%"
+                    TextMetrics {
+                        id: unitMetrics
+                        text: "px"
+                    }
                 }
                 Button {
                     icon.name: "edit-reset"
                     flat: true
-                    onClicked: stylePage.cfg_iconSizePx = 32
+                    onClicked: {
+                        if (parent.absolute)
+                            stylePage.cfg_iconSizePx = 32;
+                        else
+                            stylePage.cfg_iconScale = 100;
+                    }
                     ToolTip.text: Wrappers.i18n("Reset to default")
                     ToolTip.visible: hovered
                     ToolTip.delay: 1000
@@ -138,7 +127,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: iconEdgeOffset
-                    toolTipText: stylePage.turnOnFirst(iconScaleFromEdge.text)
+                    reason: stylePage.turnOnFirst(iconScaleFromEdge.text)
                 }
             }
 
@@ -183,7 +172,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: iconClipRadius
-                    toolTipText: stylePage.turnOnFirst(clipIconToShape.text)
+                    reason: stylePage.turnOnFirst(clipIconToShape.text)
                 }
             }
             RowLayout {
@@ -196,7 +185,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: clipIconBackgroundEnabled
-                    toolTipText: stylePage.turnOnFirst(clipIconToShape.text)
+                    reason: stylePage.turnOnFirst(clipIconToShape.text)
                 }
             }
 
@@ -212,7 +201,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: clipBackgroundColorLabel
-                    toolTipText: iconTab.clipBackgroundReason
+                    reason: iconTab.clipBackgroundReason
                 }
             }
             RowLayout {
@@ -232,7 +221,7 @@ ConfigPage {
                     onActivated: (index) => stylePage.cfg_clipIconBackgroundColorMode = index
                 }
                 KQuickAddons.ColorButton {
-                    visible: stylePage.cfg_clipIconBackgroundColorMode === 0
+                    enabled: stylePage.cfg_clipIconBackgroundColorMode === 0
                     showAlphaChannel: true
                     Layout.maximumHeight: clipIconBackgroundColorMode.height
                     color: stylePage.cfg_clipIconBackgroundColor
@@ -272,7 +261,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: clipBackgroundOpacity
-                    toolTipText: iconTab.clipBackgroundReason
+                    reason: iconTab.clipBackgroundReason
                 }
             }
         }
@@ -309,7 +298,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: buttonColorsLabel
-                    toolTipText: Wrappers.i18n("Buttons have no background.")
+                    reason: Wrappers.i18n("Buttons have no background.")
                 }
             }
             RowLayout {
@@ -337,7 +326,7 @@ ConfigPage {
                 }
                 KQuickAddons.ColorButton {
                     showAlphaChannel: true
-                    visible: stylePage.cfg_buttonColorize && !stylePage.cfg_buttonColorizeDominant
+                    enabled: stylePage.cfg_buttonColorize && !stylePage.cfg_buttonColorizeDominant
                     Layout.maximumHeight: buttonColorCombo.height
                     color: stylePage.cfg_buttonColorizeCustom
                     onColorChanged: {
@@ -356,7 +345,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: buttonColorizeInactive
-                    toolTipText: stylePage.backgroundMode !== 0 ? Wrappers.i18n("Only when all buttons have a background.")
+                    reason: stylePage.backgroundMode !== 0 ? Wrappers.i18n("Only when all buttons have a background.")
                         : Wrappers.i18n("Choose a button color other than the Plasma style first.")
                 }
             }
@@ -378,7 +367,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: taskHoverEffect
-                    toolTipText: Wrappers.i18n("Only in the icons-only mode.")
+                    reason: Wrappers.i18n("Only in the icons-only mode.")
                 }
             }
 
@@ -405,7 +394,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: hoverStyle
-                    toolTipText: hoverTab.zoomReason
+                    reason: hoverTab.zoomReason
                 }
             }
             RowLayout {
@@ -430,7 +419,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: iconZoomFactor
-                    toolTipText: hoverTab.zoomReason
+                    reason: hoverTab.zoomReason
                 }
             }
             RowLayout {
@@ -455,7 +444,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: iconZoomDuration
-                    toolTipText: hoverTab.zoomReason
+                    reason: hoverTab.zoomReason
                 }
             }
 

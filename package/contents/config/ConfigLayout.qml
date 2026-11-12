@@ -53,7 +53,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: maxButtonLengthLabel
-                    toolTipText: layoutPage.classicRowReason
+                    reason: layoutPage.classicRowReason
                 }
             }
             SpinBox {
@@ -74,7 +74,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: fitButtonToText
-                    toolTipText: layoutPage.classicRowReason
+                    reason: layoutPage.classicRowReason
                 }
             }
 
@@ -86,7 +86,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: minFitButtonLengthLabel
-                    toolTipText: fitButtonToText.enabled ? Wrappers.i18n("Turn on \"%1\" first.", fitButtonToText.text) : layoutPage.classicRowReason
+                    reason: fitButtonToText.enabled ? Wrappers.i18n("Turn on \"%1\" first.", fitButtonToText.text) : layoutPage.classicRowReason
                 }
             }
             SpinBox {
@@ -105,7 +105,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: maxTextLinesLabel
-                    toolTipText: Wrappers.i18n("Only in the classic panel mode.")
+                    reason: Wrappers.i18n("Only in the classic panel mode.")
                 }
             }
             SpinBox {
@@ -144,7 +144,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: iconSpacing
-                    toolTipText: Wrappers.i18n("Automatically set to Large when in Touch mode")
+                    reason: Wrappers.i18n("Automatically set to Large when in Touch mode")
                 }
             }
         }
@@ -195,7 +195,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: maxStripesLabel
-                    toolTipText: Wrappers.i18n("Choose when to use the multi-row view first.")
+                    reason: Wrappers.i18n("Choose when to use the multi-row view first.")
                 }
             }
             SpinBox {
@@ -244,7 +244,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: fill
-                    toolTipText: Wrappers.i18n("Only when the widget is on a panel.")
+                    reason: Wrappers.i18n("Only when the widget is on a panel.")
                 }
             }
 
@@ -265,7 +265,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: fillAlignment
-                    toolTipText: !fill.enabled ? Wrappers.i18n("Only when the widget is on a panel.")
+                    reason: !fill.enabled ? Wrappers.i18n("Only when the widget is on a panel.")
                         : layoutPage.cfg_iconOnly !== 1 ? Wrappers.i18n("Only in the icons-only mode.")
                         : Wrappers.i18n("Turn on \"%1\" first.", fill.text)
                 }
@@ -287,7 +287,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: overridePlasmaButtonDirection
-                    toolTipText: Wrappers.i18n("Only when the widget is on the desktop, not on a panel.")
+                    reason: Wrappers.i18n("Only when the widget is on the desktop, not on a panel.")
                 }
             }
             RowLayout {
@@ -306,7 +306,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: plasmaButtonDirection
-                    toolTipText: overridePlasmaButtonDirection.enabled ? Wrappers.i18n("Turn on \"%1\" first.", overridePlasmaButtonDirection.text)
+                    reason: overridePlasmaButtonDirection.enabled ? Wrappers.i18n("Turn on \"%1\" first.", overridePlasmaButtonDirection.text)
                         : Wrappers.i18n("Only when the widget is on the desktop, not on a panel.")
                 }
             }

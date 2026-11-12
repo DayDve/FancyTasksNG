@@ -47,12 +47,9 @@ ConfigPage {
                     onToggled: indicatorsPage.cfg_useBorders = checked
                 }
                 ConfigHint {
-                    visible: useBorders.enabled
-                    toolTipText: Wrappers.i18n("Draws the edges of the theme's task button frame. In Breeze that's the stripe along the panel edge; in other themes the button frame may change its shape.")
-                }
-                ConfigHint {
                     target: useBorders
-                    toolTipText: Wrappers.i18n("Buttons have no background (Task Styling › Background).")
+                    info: Wrappers.i18n("Draws the edges of the theme's task button frame. In Breeze that's the stripe along the panel edge; in other themes the button frame may change its shape.")
+                    reason: Wrappers.i18n("Buttons have no background (Task Styling › Background).")
                 }
             }
             RowLayout {
@@ -65,7 +62,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: groupIconEnabled
-                    toolTipText: Wrappers.i18n("Only when the windows of an application are combined into one button.")
+                    reason: Wrappers.i18n("Only when the windows of an application are combined into one button.")
                 }
             }
         }
@@ -117,7 +114,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: indicatorLocation
-                    toolTipText: indicatorsPage.turnOnFirst(indicatorOverride.text)
+                    reason: indicatorsPage.turnOnFirst(indicatorOverride.text)
                 }
             }
 
@@ -231,7 +228,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: indicatorShrink
-                    toolTipText: Wrappers.i18n("Only for the Line style.")
+                    reason: Wrappers.i18n("Only for the Line style.")
                 }
             }
 
@@ -281,7 +278,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: activeSize
-                    toolTipText: sizeTab.resizeReason
+                    reason: sizeTab.resizeReason
                 }
             }
 
@@ -310,7 +307,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: indicatorAlignment
-                    toolTipText: sizeTab.resizeReason
+                    reason: sizeTab.resizeReason
                 }
             }
 
@@ -325,7 +322,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: indicatorHoverSeparate
-                    toolTipText: sizeTab.resizeReason
+                    reason: sizeTab.resizeReason
                 }
             }
             RowLayout {
@@ -363,7 +360,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: hoverSize
-                    toolTipText: indicatorResize.checked ? indicatorsPage.turnOnFirst(indicatorHoverSeparate.text) : sizeTab.resizeReason
+                    reason: indicatorResize.checked ? indicatorsPage.turnOnFirst(indicatorHoverSeparate.text) : sizeTab.resizeReason
                 }
             }
 
@@ -378,7 +375,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: indicatorGroupSeparate
-                    toolTipText: sizeTab.resizeReason
+                    reason: sizeTab.resizeReason
                 }
             }
             RowLayout {
@@ -416,7 +413,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: groupSize
-                    toolTipText: indicatorResize.checked ? indicatorsPage.turnOnFirst(indicatorGroupSeparate.text) : sizeTab.resizeReason
+                    reason: indicatorResize.checked ? indicatorsPage.turnOnFirst(indicatorGroupSeparate.text) : sizeTab.resizeReason
                 }
             }
         }
@@ -450,7 +447,7 @@ ConfigPage {
                     }
                 }
                 KQuickAddons.ColorButton {
-                    visible: indicatorColorCombo.currentIndex === 2
+                    enabled: indicatorColorCombo.currentIndex === 2
                     showAlphaChannel: true
                     Layout.maximumHeight: indicatorColorCombo.height
                     color: indicatorsPage.cfg_indicatorCustomColor
@@ -497,7 +494,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: inactiveOpacity
-                    toolTipText: indicatorsPage.turnOnFirst(indicatorDimInactive.text)
+                    reason: indicatorsPage.turnOnFirst(indicatorDimInactive.text)
                 }
             }
             CheckBox {
