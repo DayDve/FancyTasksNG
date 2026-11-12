@@ -50,6 +50,11 @@ ConfigModel {
         source: "../config/ConfigTooltips.qml"
     }
     ConfigCategory {
+        name: i18nc("Short section name in the settings sidebar", "Context Menu")
+        icon: "application-menu"
+        source: "../config/ConfigContextMenu.qml"
+    }
+    ConfigCategory {
         name: i18n("Advanced")
         icon: "preferences-other"
         source: "../config/ConfigAdvanced.qml"

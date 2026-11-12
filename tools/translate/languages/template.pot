@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-12 13:48+0200\n"
+"POT-Creation-Date: 2026-11-12 13:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,22 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Context menu:"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Hide 'Move to Desktop' if only one virtual desktop is used"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Show browsing history in the context menu of web browsers (Experimental)"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Number of browser history items:"
-msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Configuration:"
@@ -86,8 +70,8 @@ msgstr ""
 msgid "App signals are turned off."
 msgstr ""
 
-#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigTooltips.qml
-#: package/contents/config/ConfigWindowIndicators.qml
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigContextMenu.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml
+#: package/contents/config/ConfigTooltips.qml package/contents/config/ConfigWindowIndicators.qml
 msgid "Turn on \"%1\" first."
 msgstr ""
 
@@ -249,6 +233,26 @@ msgstr ""
 
 #: package/contents/config/ConfigAppSignals.qml
 msgid "Colorize the task button when a window wants attention"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Context Menu"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Task Menu"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Hide 'Move to Desktop' if only one virtual desktop is used"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Show browsing history in the context menu of web browsers"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Number of browser history items:"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
@@ -1188,6 +1192,11 @@ msgstr ""
 #: package/contents/config/config.qml
 msgctxt "Short section name in the settings sidebar"
 msgid "Task Tooltips"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Context Menu"
 msgstr ""
 
 #: package/contents/config/config.qml

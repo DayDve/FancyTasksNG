@@ -13,114 +13,57 @@ import "../ui/code/singletones"
 
 ConfigPage {
     id: advancedPage
-    ConfigFormPage {
+    ConfigTabbedPage {
         cfg_page: advancedPage
 
-    
-        Label {
-            text: Wrappers.i18n("Context menu:")
-        }
-    
-        CheckBox {
-            id: cfg_hideMoveToDesktopMenuWithOneDesktop
-            text: Wrappers.i18n("Hide 'Move to Desktop' if only one virtual desktop is used")
-            checked: advancedPage.cfg_hideMoveToDesktopMenuWithOneDesktop
-            onToggled: advancedPage.cfg_hideMoveToDesktopMenuWithOneDesktop = checked
-    
-            Layout.fillWidth: true
-    
-            contentItem: Text {
-                text: cfg_hideMoveToDesktopMenuWithOneDesktop.text
-                font: cfg_hideMoveToDesktopMenuWithOneDesktop.font
-                color: advancedPage.themeTextColor
-                wrapMode: Text.WordWrap
-                verticalAlignment: Text.AlignVCenter
-                leftPadding: cfg_hideMoveToDesktopMenuWithOneDesktop.indicator.width + cfg_hideMoveToDesktopMenuWithOneDesktop.spacing
-            }
-        }
-    
-        CheckBox {
-            id: cfg_showBrowserHistory
-            text: Wrappers.i18n("Show browsing history in the context menu of web browsers (Experimental)")
-            checked: advancedPage.cfg_showBrowserHistory
-            onToggled: advancedPage.cfg_showBrowserHistory = checked
-    
-            Layout.fillWidth: true
-    
-            contentItem: Text {
-                text: cfg_showBrowserHistory.text
-                font: cfg_showBrowserHistory.font
-                color: advancedPage.themeTextColor
-                wrapMode: Text.WordWrap
-                verticalAlignment: Text.AlignVCenter
-                leftPadding: cfg_showBrowserHistory.indicator.width + cfg_showBrowserHistory.spacing
-            }
-        }
-    
-        RowLayout {
-            visible: cfg_showBrowserHistory.checked
-            Item { implicitWidth: advancedPage.gridUnit }
+        ConfigTab {
             Label {
-                text: Wrappers.i18n("Number of browser history items:")
-            }
-            SpinBox {
-                id: cfg_browserHistoryLimit
-                from: 1
-                to: 50
-                value: advancedPage.cfg_browserHistoryLimit
-                onValueModified: advancedPage.cfg_browserHistoryLimit = value
-            }
-        }
-
-        Item { height: advancedPage.largeSpacing }
-
-        Label {
-            text: Wrappers.i18n("Configuration:")
-        }
-
-        RowLayout {
-            spacing: advancedPage.smallSpacing
-
-            Button {
-                text: Wrappers.i18n("Export Configuration…")
-                icon.name: "document-export"
-                onClicked: exportFileDialog.open()
+                text: Wrappers.i18n("Configuration:")
             }
 
-            Button {
-                text: Wrappers.i18n("Import Configuration…")
-                icon.name: "document-import"
-                onClicked: importFileDialog.open()
+            RowLayout {
+                spacing: advancedPage.smallSpacing
+
+                Button {
+                    text: Wrappers.i18n("Export Configuration…")
+                    icon.name: "document-export"
+                    onClicked: exportFileDialog.open()
+                }
+
+                Button {
+                    text: Wrappers.i18n("Import Configuration…")
+                    icon.name: "document-import"
+                    onClicked: importFileDialog.open()
+                }
+            }
+
+            Label {
+                id: configIoStatusLabel
+                Layout.fillWidth: true
+                wrapMode: Text.WordWrap
+                visible: text.length > 0
+                color: configIoIsError ? advancedPage.themeNegativeTextColor : advancedPage.themeTextColor
+
+                property bool configIoIsError: false
+            }
+
+            Labs.FileDialog {
+                id: exportFileDialog
+                title: Wrappers.i18n("Export FancyTasksNG Configuration")
+                fileMode: Labs.FileDialog.SaveFile
+                nameFilters: [Wrappers.i18n("JSON files (*.json)")]
+                defaultSuffix: "json"
+                onAccepted: advancedPage.exportConfig(exportFileDialog.file)
+            }
+
+            Labs.FileDialog {
+                id: importFileDialog
+                title: Wrappers.i18n("Import FancyTasksNG Configuration")
+                fileMode: Labs.FileDialog.OpenFile
+                nameFilters: [Wrappers.i18n("JSON files (*.json)")]
+                onAccepted: advancedPage.importConfig(importFileDialog.file)
             }
         }
-
-        Label {
-            id: configIoStatusLabel
-            Layout.fillWidth: true
-            wrapMode: Text.WordWrap
-            visible: text.length > 0
-            color: configIoIsError ? advancedPage.themeNegativeTextColor : advancedPage.themeTextColor
-
-            property bool configIoIsError: false
-        }
-
-        Labs.FileDialog {
-            id: exportFileDialog
-            title: Wrappers.i18n("Export FancyTasksNG Configuration")
-            fileMode: Labs.FileDialog.SaveFile
-            nameFilters: [Wrappers.i18n("JSON files (*.json)")]
-            defaultSuffix: "json"
-            onAccepted: advancedPage.exportConfig(exportFileDialog.file)
-        }
-
-        Labs.FileDialog {
-            id: importFileDialog
-            title: Wrappers.i18n("Import FancyTasksNG Configuration")
-            fileMode: Labs.FileDialog.OpenFile
-            nameFilters: [Wrappers.i18n("JSON files (*.json)")]
-            onAccepted: advancedPage.importConfig(importFileDialog.file)
-        }
-
     }
 
     readonly property string configAppId: "io.github.daydve.fancytasksng"
