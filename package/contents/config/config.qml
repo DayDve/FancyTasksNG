@@ -15,6 +15,11 @@ import org.kde.plasma.configuration
 ConfigModel {
     // qmllint disable unqualified
     ConfigCategory {
+        name: i18nc("Short section name in the settings sidebar", "Quick Setup")
+        icon: "speedometer"
+        source: "../config/ConfigQuickSetup.qml"
+    }
+    ConfigCategory {
         name: i18nc("Short section name in the settings sidebar", "Task Layout")
         icon: "distribute-horizontal-x"
         source: "../config/ConfigLayout.qml"

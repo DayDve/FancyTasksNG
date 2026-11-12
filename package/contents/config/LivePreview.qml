@@ -14,6 +14,7 @@ import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 
 import "../ui/code/singletones"
+import "previewtasks.js" as PreviewTasks
 import org.kde.plasma.core as PlasmaCore
 
 Item {
@@ -38,9 +39,7 @@ Item {
 
     readonly property bool cfg_showToolTips: cfg_page.cfg_showToolTips
 
-    // Mock tasks for the real delegates, with TasksModel role names; the
-    // mock* roles stand for what the delegates otherwise get from the app
-    // (notification count, progress, audio).
+    // Mock tasks for the real delegates (previewtasks.js).
     ListModel {
         id: taskModel
     }
@@ -52,32 +51,8 @@ Item {
     onGroupPopupsChanged: rebuildTaskModel()
     Component.onCompleted: rebuildTaskModel()
 
-    function mockTask(icon, name, extra) {
-        return Object.assign({
-            decoration: icon, display: name, AppId: "",
-            IsWindow: true, IsLauncher: false, IsStartup: false,
-            IsActive: false, IsMinimized: false, IsDemandingAttention: false,
-            IsGroupParent: false, ChildCount: 0,
-            mockBadgeCount: 0, mockProgress: -1, mockPlaying: false, mockMuted: false
-        }, extra);
-    }
-
     function rebuildTaskModel() {
-        taskModel.clear();
-        const grouped = groupMode !== 0 && groupPopups;
-        const sideBySide = groupMode !== 0 && !groupPopups;
-        taskModel.append(mockTask("plasmadiscover", "Discover", { IsMinimized: true, mockProgress: 0.7 }));
-        taskModel.append(mockTask("org.kde.dolphin", "Dolphin", grouped
-            ? { IsActive: true, IsGroupParent: true, ChildCount: 2, mockBadgeCount: 3 }
-            : { IsActive: true, mockBadgeCount: 3 }));
-        if (sideBySide) {
-            taskModel.append(mockTask("org.kde.dolphin", "Dolphin", {}));
-        }
-        taskModel.append(mockTask("utilities-terminal", "Konsole", { mockBadgeCount: 12 }));
-        taskModel.append(mockTask("internet-web-browser", "Browser", { mockPlaying: true }));
-        if (groupMode === 0) {
-            taskModel.append(mockTask("org.kde.dolphin", "Dolphin", {}));
-        }
+        PreviewTasks.fill(taskModel, groupMode, groupPopups, false);
     }
 
     readonly property bool isVertical: location === PlasmaCore.Types.LeftEdge || location === PlasmaCore.Types.RightEdge

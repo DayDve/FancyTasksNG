@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-12 13:54+0200\n"
+"POT-Creation-Date: 2026-11-12 14:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,7 +61,7 @@ msgstr ""
 msgid "Configuration imported. Click Apply to save the changes."
 msgstr ""
 
-#: package/contents/config/ConfigAppSignals.qml
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigQuickSetup.qml
 msgid "App Signals"
 msgstr ""
 
@@ -73,11 +73,11 @@ msgstr ""
 msgid "Turn on \"%1\" first."
 msgstr ""
 
-#: package/contents/config/ConfigAppSignals.qml
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigQuickSetup.qml
 msgid "Show app signals"
 msgstr ""
 
-#: package/contents/config/ConfigAppSignals.qml
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigQuickSetup.qml
 msgid "The audio mark, the notification count and progress on task buttons. Turning this off keeps their own settings."
 msgstr ""
 
@@ -160,7 +160,7 @@ msgstr ""
 msgid "Style:"
 msgstr ""
 
-#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigTaskList.qml
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskList.qml
 msgctxt "State"
 msgid "Disabled"
 msgstr ""
@@ -217,7 +217,7 @@ msgstr ""
 msgid "Unhide panel when a window wants attention"
 msgstr ""
 
-#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
 msgid "Only when the widget is on a panel."
 msgstr ""
 
@@ -225,7 +225,7 @@ msgstr ""
 msgid "Animate task icon when a window wants attention"
 msgstr ""
 
-#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskActions.qml package/contents/config/ConfigTaskStyle.qml
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml package/contents/config/ConfigTaskStyle.qml
 msgid "Only in the icons-only mode."
 msgstr ""
 
@@ -253,7 +253,7 @@ msgstr ""
 msgid "Number of browser history items:"
 msgstr ""
 
-#: package/contents/config/ConfigLayout.qml
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
 msgid "Task Layout"
 msgstr ""
 
@@ -273,11 +273,11 @@ msgstr ""
 msgid "Display:"
 msgstr "显示："
 
-#: package/contents/config/ConfigLayout.qml
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
 msgid "Classic panel"
 msgstr ""
 
-#: package/contents/config/ConfigLayout.qml
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
 msgid "Show icons only"
 msgstr "只显示图标"
 
@@ -389,7 +389,7 @@ msgstr "右边"
 msgid "On the top"
 msgstr ""
 
-#: package/contents/config/ConfigLayout.qml
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
 msgid "Fill free space on panel"
 msgstr ""
 
@@ -495,6 +495,87 @@ msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
 msgid "Search applications..."
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml
+msgid "Quick Setup"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml
+msgid "Display"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml
+msgid "Icon size"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskStyle.qml
+msgid "Icon hover effects"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskStyle.qml
+msgid "Task Styling"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Window Indicators"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Line"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Dashes"
+msgstr "Dashes"
+
+#: package/contents/config/ConfigQuickSetup.qml
+msgctxt "No window indicators"
+msgid "None"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Stripe from the Plasma theme"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Draws the edges of the theme's task button frame. In Breeze that's the stripe along the panel edge; in other themes the button frame may change its shape."
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Buttons have no background (Task Styling › Background)."
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml
+msgid "Grouping of tasks"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml
+msgid "Windows side by side"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml
+msgid "Combined into one button"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskList.qml
+msgid "Task List"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTooltips.qml
+msgid "Task Tooltips"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml
+msgid "Off"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml
+msgid "Without window thumbnails"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml
+msgid "With window thumbnails"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
@@ -622,10 +703,6 @@ msgid "Only when the wheel or Ctrl+wheel adjusts the volume."
 msgstr ""
 
 #: package/contents/config/ConfigTaskList.qml
-msgid "Task List"
-msgstr ""
-
-#: package/contents/config/ConfigTaskList.qml
 msgid "Filters"
 msgstr ""
 
@@ -727,10 +804,6 @@ msgstr ""
 
 #: package/contents/config/ConfigTaskList.qml
 msgid "Drag any task anywhere. A newly opened window of a pinned app goes to the end of the list."
-msgstr ""
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Task Styling"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
@@ -850,10 +923,6 @@ msgid "Hover"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
-msgid "Icon hover effects"
-msgstr ""
-
-#: package/contents/config/ConfigTaskStyle.qml
 msgid "Hover style:"
 msgstr ""
 
@@ -883,10 +952,6 @@ msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Glow following the cursor over task buttons"
-msgstr ""
-
-#: package/contents/config/ConfigTooltips.qml
-msgid "Task Tooltips"
 msgstr ""
 
 #: package/contents/config/ConfigTooltips.qml
@@ -966,27 +1031,11 @@ msgid "For apps that play from one process for all their windows, such as web br
 msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml
-msgid "Window Indicators"
-msgstr ""
-
-#: package/contents/config/ConfigWindowIndicators.qml
 msgid "Fancy Tasks indicators are turned off."
 msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Fancy Tasks indicators"
-msgstr ""
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Stripe from the Plasma theme"
-msgstr ""
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Draws the edges of the theme's task button frame. In Breeze that's the stripe along the panel edge; in other themes the button frame may change its shape."
-msgstr ""
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Buttons have no background (Task Styling › Background)."
 msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml
@@ -1000,14 +1049,6 @@ msgstr ""
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Animate indicators"
 msgstr ""
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Line"
-msgstr ""
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Dashes"
-msgstr "Dashes"
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Override indicator location"
@@ -1155,6 +1196,11 @@ msgstr ""
 
 #: package/contents/config/PinnedAppCard.qml
 msgid "Remove"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Quick Setup"
 msgstr ""
 
 #: package/contents/config/config.qml

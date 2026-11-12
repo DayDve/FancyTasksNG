@@ -333,6 +333,38 @@ Kirigami.Page {
             configPage._openedValues[key] = configPage._comparable(config[key]);
     }
 
+    // Opens another section of the dialog, as clicking it in the sidebar
+    // does (with the dialog's own prompt for unsaved changes). The dialog
+    // has no API for it: this finds the sidebar entry whose page is
+    // fileName and activates it. Returns false if there's none, say in a
+    // Plasma whose dialog is built differently.
+    function _sectionEntry(fileName: string): var {
+        let top = configPage;
+        while (top.parent)
+            top = top.parent;
+        const stack = [top];
+        while (stack.length > 0) {
+            const item = stack.pop();
+            const entry = item.item;
+            if (entry && typeof entry === "object" && typeof item.activated === "function"
+                    && String(entry.source).endsWith("/" + fileName))
+                return item;
+            for (const child of item.children)
+                stack.push(child);
+        }
+        return null;
+    }
+    function canOpenSection(fileName: string): bool {
+        return configPage._sectionEntry(fileName) !== null;
+    }
+    function openSection(fileName: string): bool {
+        const entry = configPage._sectionEntry(fileName);
+        if (!entry)
+            return false;
+        entry.activated();
+        return true;
+    }
+
     // The sidebar is narrow and wraps long words mid-word, so its entries
     // use short names (config.qml); a page shows its full name as its title.
     property string fullTitle
