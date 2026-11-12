@@ -16,6 +16,7 @@ import "../ui/code/singletones"
 // the cursor.
 ConfigPage {
     id: stylePage
+    fullTitle: Wrappers.i18n("Task Styling")
 
     readonly property bool iconsOnly: stylePage.cfg_iconOnly === 1
     // 0 = on all buttons, 1 = only on the active and hovered ones, 2 = none.

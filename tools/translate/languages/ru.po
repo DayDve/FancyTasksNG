@@ -331,6 +331,10 @@ msgid "Only not minimized"
 msgstr "Только развернутые"
 
 #: package/contents/config/ConfigIndicators.qml
+msgid "App Signals"
+msgstr "Сигналы приложений"
+
+#: package/contents/config/ConfigIndicators.qml
 msgid "Feedback:"
 msgstr "Обратная связь:"
 
@@ -436,6 +440,10 @@ msgstr "Толщина:"
 #: package/contents/config/ConfigIndicators.qml
 msgid "Opacity:"
 msgstr "Непрозрачность:"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Task Layout"
+msgstr "Расположение задач"
 
 #: package/contents/config/ConfigLayout.qml
 msgid "Only in the classic panel mode."
@@ -626,6 +634,10 @@ msgid "As on right panel"
 msgstr "Как панель справа"
 
 #: package/contents/config/ConfigPinnedApps.qml
+msgid "Pinned Applications"
+msgstr "Закрепленные приложения"
+
+#: package/contents/config/ConfigPinnedApps.qml
 msgid "Default Web Browser"
 msgstr "Браузер по умолчанию"
 
@@ -685,6 +697,10 @@ msgstr "Добавить приложение"
 #: package/contents/config/ConfigPinnedApps.qml
 msgid "Search applications..."
 msgstr "Поиск приложений..."
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Task Styling"
+msgstr "Оформление задач"
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Icons"
@@ -837,6 +853,10 @@ msgstr "Длительность анимации увеличения в мил
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Glow following the cursor over task buttons"
 msgstr "Подсветка панели под кнопками, следующая за курсором"
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Window Indicators"
+msgstr "Индикаторы окон"
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Fancy Tasks indicators are turned off."
@@ -1035,32 +1055,37 @@ msgid "Remove"
 msgstr "Удалить"
 
 #: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
 msgid "Task Layout"
-msgstr "Расположение задач"
+msgstr "Расстановка"
 
 #: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
 msgid "Task Styling"
-msgstr "Оформление задач"
+msgstr "Оформление"
 
 #: package/contents/config/config.qml
 msgid "Behavior"
 msgstr "Поведение"
 
 #: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
 msgid "Window Indicators"
-msgstr "Индикаторы окон"
+msgstr "Индикаторы"
 
 #: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
 msgid "App Signals"
-msgstr "Сигналы приложений"
+msgstr "Сигналы"
 
 #: package/contents/config/config.qml
 msgid "Advanced"
 msgstr "Прочее"
 
 #: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
 msgid "Pinned Applications"
-msgstr "Закрепленные приложения"
+msgstr "Закрепы"
 
 # --- ContextMenu.qml ---
 #: package/contents/ui/ContextMenu.qml
@@ -1312,26 +1337,6 @@ msgstr "Аудиопоток"
 msgctxt "Stream name and its number among streams with the same name"
 msgid "%1 %2"
 msgstr "%1 %2"
-
-#~ msgctxt "Short section name in the settings sidebar"
-#~ msgid "Task Layout"
-#~ msgstr "Расстановка"
-
-#~ msgctxt "Short section name in the settings sidebar"
-#~ msgid "Task Styling"
-#~ msgstr "Оформление"
-
-#~ msgctxt "Short section name in the settings sidebar"
-#~ msgid "Window Indicators"
-#~ msgstr "Индикаторы"
-
-#~ msgctxt "Short section name in the settings sidebar"
-#~ msgid "App Signals"
-#~ msgstr "Сигналы"
-
-#~ msgctxt "Short section name in the settings sidebar"
-#~ msgid "Pinned Applications"
-#~ msgstr "Закрепы"
 
 #~ msgid "Standard group overlay"
 #~ msgstr "Стандартный оверлей групп"

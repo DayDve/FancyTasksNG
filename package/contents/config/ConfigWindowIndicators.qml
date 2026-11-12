@@ -19,6 +19,7 @@ import "../ui/code/singletones"
 // Plasma theme draws. Any combination of the three is valid.
 ConfigPage {
     id: indicatorsPage
+    fullTitle: Wrappers.i18n("Window Indicators")
 
     readonly property bool isLineStyle: indicatorsPage.cfg_indicatorStyle === 0
     readonly property string offReason: Wrappers.i18n("Fancy Tasks indicators are turned off.")

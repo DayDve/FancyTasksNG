@@ -325,7 +325,14 @@ Kirigami.Page {
             configPage._openedValues[key] = configPage._comparable(config[key]);
     }
 
-    Component.onCompleted: configPage._snapshotOpenedValues()
+    // The sidebar is narrow and wraps long words mid-word, so its entries
+    // use short names (config.qml); a page shows its full name as its title.
+    property string fullTitle
+    Component.onCompleted: {
+        if (configPage.fullTitle !== "")
+            configPage.title = configPage.fullTitle;
+        configPage._snapshotOpenedValues();
+    }
 
     // Changes written from QML (the widget itself) arrive here right away.
     Connections {

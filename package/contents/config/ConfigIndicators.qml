@@ -15,6 +15,7 @@ import "../ui/code/singletones"
 
 ConfigPage {
     id: indicatorsPage
+    fullTitle: Wrappers.i18n("App Signals")
 
     // Silence KCM errors for legacy/removed properties
     readonly property bool plasmaPaAvailable: true

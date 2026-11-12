@@ -332,6 +332,10 @@ msgid "Only not minimized"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
+msgid "App Signals"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml
 msgid "Feedback:"
 msgstr ""
 
@@ -436,6 +440,10 @@ msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "Opacity:"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Task Layout"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
@@ -627,6 +635,10 @@ msgid "As on right panel"
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
+msgid "Pinned Applications"
+msgstr ""
+
+#: package/contents/config/ConfigPinnedApps.qml
 msgid "Default Web Browser"
 msgstr ""
 
@@ -684,6 +696,10 @@ msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
 msgid "Search applications..."
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Task Styling"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
@@ -836,6 +852,10 @@ msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Glow following the cursor over task buttons"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "Window Indicators"
 msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml
@@ -1035,10 +1055,12 @@ msgid "Remove"
 msgstr ""
 
 #: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
 msgid "Task Layout"
 msgstr ""
 
 #: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
 msgid "Task Styling"
 msgstr ""
 
@@ -1047,10 +1069,12 @@ msgid "Behavior"
 msgstr ""
 
 #: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
 msgid "Window Indicators"
 msgstr ""
 
 #: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
 msgid "App Signals"
 msgstr ""
 
@@ -1059,6 +1083,7 @@ msgid "Advanced"
 msgstr ""
 
 #: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
 msgid "Pinned Applications"
 msgstr ""
 

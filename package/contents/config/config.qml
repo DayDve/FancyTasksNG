@@ -15,12 +15,12 @@ import org.kde.plasma.configuration
 ConfigModel {
     // qmllint disable unqualified
     ConfigCategory {
-        name: i18n("Task Layout")
+        name: i18nc("Short section name in the settings sidebar", "Task Layout")
         icon: "distribute-horizontal-x"
         source: "../config/ConfigLayout.qml"
     }
     ConfigCategory {
-        name: i18n("Task Styling")
+        name: i18nc("Short section name in the settings sidebar", "Task Styling")
         icon: "preferences-desktop-color"
         source: "../config/ConfigTaskStyle.qml"
     }
@@ -30,12 +30,12 @@ ConfigModel {
         source: "../config/ConfigBehavior.qml"
     }
     ConfigCategory {
-        name: i18n("Window Indicators")
+        name: i18nc("Short section name in the settings sidebar", "Window Indicators")
         icon: "preferences-desktop-navigation"
         source: "../config/ConfigWindowIndicators.qml"
     }
     ConfigCategory {
-        name: i18n("App Signals")
+        name: i18nc("Short section name in the settings sidebar", "App Signals")
         icon: "preferences-desktop-notification-bell"
         source: "../config/ConfigIndicators.qml"
     }
@@ -45,7 +45,7 @@ ConfigModel {
         source: "../config/ConfigAdvanced.qml"
     }
     ConfigCategory {
-        name: i18n("Pinned Applications")
+        name: i18nc("Short section name in the settings sidebar", "Pinned Applications")
         icon: "window-pin"
         source: "../config/ConfigPinnedApps.qml"
     }

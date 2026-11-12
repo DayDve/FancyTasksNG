@@ -17,6 +17,7 @@ import "../ui/code/singletones"
 
 ConfigPage {
     id: cfg_page
+    fullTitle: Wrappers.i18n("Pinned Applications")
 
     property var pinnedLaunchers: cfg_page.cfg_launchers
     onPinnedLaunchersChanged: {

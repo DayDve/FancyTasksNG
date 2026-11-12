@@ -16,6 +16,7 @@ import "../ui/code/singletones"
 // buttons go on the panel.
 ConfigPage {
     id: layoutPage
+    fullTitle: Wrappers.i18n("Task Layout")
 
     readonly property bool plasmoidVertical: layoutPage.plasmoidFormFactor === PlasmaCore.Types.Vertical
     readonly property bool onPanel: layoutPage.plasmoidLocation !== PlasmaCore.Types.Floating
