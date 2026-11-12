@@ -130,6 +130,10 @@
       <label>Media controls on thumbnails</label>
       <default>true</default>
     </entry>
+    <entry name="tooltipVolumeControls" type="Int">
+      <label>Volume controls in tooltips: -1 = as indicateAudioStreams (the setting they were tied to before), 0 = off, 1 = on.</label>
+      <default>-1</default>
+    </entry>
     <entry name="wheelAction" type="Enum">
       <choices>
         <choice name="None" />
@@ -188,6 +192,10 @@
     <entry name="indicateAudioStreams" type="Bool">
       <label
             >Whether to indicate applications that are playing audio including an option to mute them.</label>
+      <default>true</default>
+    </entry>
+    <entry name="showAppSignals" type="Bool">
+      <label>Show the audio mark, the notification count and progress on task buttons; their own settings are kept when this is off.</label>
       <default>true</default>
     </entry>
     <entry name="iconScale" type="Int">

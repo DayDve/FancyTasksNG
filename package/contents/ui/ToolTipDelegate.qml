@@ -258,7 +258,7 @@ Loader {
                         id: badge
                         colorMode: singleRoot.config.badgeColorMode
                         customColor: singleRoot.config.badgeCustomColor
-                        visible: singleRoot.config.showBadges && (singleRoot.parentTask ? singleRoot.parentTask.badgeVisible : false)
+                        visible: singleRoot.config.showAppSignals && singleRoot.config.showBadges && (singleRoot.parentTask ? singleRoot.parentTask.badgeVisible : false)
                         number: singleRoot.parentTask ? singleRoot.parentTask.badgeCount : 0
                         isUrgent: (singleRoot.config.badgeHighlightNew && singleRoot.parentTask) ? singleRoot.parentTask.hasUnseenNotifications : false
                         height: Math.round(Kirigami.Units.gridUnit * 0.85)
@@ -494,7 +494,7 @@ Loader {
                         id: groupBadge
                         colorMode: groupRoot.config.badgeColorMode
                         customColor: groupRoot.config.badgeCustomColor
-                        visible: groupRoot.config.showBadges && (groupRoot.parentTask ? groupRoot.parentTask.badgeVisible : false)
+                        visible: groupRoot.config.showAppSignals && groupRoot.config.showBadges && (groupRoot.parentTask ? groupRoot.parentTask.badgeVisible : false)
                         number: groupRoot.parentTask ? groupRoot.parentTask.badgeCount : 0
                         isUrgent: (groupRoot.config.badgeHighlightNew && groupRoot.parentTask) ? groupRoot.parentTask.hasUnseenNotifications : false
                         height: Math.round(Kirigami.Units.gridUnit * 0.85)

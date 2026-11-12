@@ -268,7 +268,9 @@ Item {
 
 
     property bool completed: false
-    readonly property bool audioIndicatorsEnabled: task.config.indicateAudioStreams
+    // The audio mark, the count and progress all hide with "Show app signals".
+    readonly property bool audioIndicatorsEnabled: task.config.showAppSignals && task.config.indicateAudioStreams
+    readonly property bool countEnabled: task.config.showAppSignals && task.config.showBadges
     property var winIdList: {
         if (!task.model || !task.model.WinIdList) return [];
         // Deep copy without slice() just in case
@@ -840,7 +842,7 @@ Item {
 
         anchors.fill: backgroundFrame
         asynchronous: true
-        active: !!(task.model && task.model.IsWindow) && task.taskProgress >= 0 && task.config.indicatorProgressStyle > 0
+        active: !!(task.model && task.model.IsWindow) && task.taskProgress >= 0 && task.config.showAppSignals && task.config.indicatorProgressStyle > 0
 
         source: "TaskProgressOverlay.qml"
         onLoaded: {
@@ -896,7 +898,7 @@ Item {
         id: badgeLoader
         anchors.fill: parent
         asynchronous: true
-        active: (task.config.showBadges && task.badgeVisible) || (task.audioIndicatorsEnabled && (task.playingAudio || task.muted))
+        active: (task.countEnabled && task.badgeVisible) || (task.audioIndicatorsEnabled && (task.playingAudio || task.muted))
         z: 999
         sourceComponent: TaskBadgeOverlay {
             button: taskIconBox.boxRect
@@ -911,7 +913,7 @@ Item {
             customColor: task.config.badgeCustomColor
             audioVisible: task.audioIndicatorsEnabled && (task.playingAudio || task.muted)
             muted: task.muted
-            countVisible: task.config.showBadges && task.badgeVisible
+            countVisible: task.countEnabled && task.badgeVisible
             count: task.badgeCount
             urgent: (task.config.badgeHighlightNew && task.hasUnseenNotifications) || !!task.model?.IsDemandingAttention
             onMuteToggled: task.toggleMuted()

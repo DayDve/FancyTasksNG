@@ -74,10 +74,14 @@ Kirigami.Page {
     property bool cfg_wheelShiftSystemVolumeEnabledDefault: true
     property bool cfg_showMediaControls: true
     property bool cfg_showMediaControlsDefault: true
+    property int cfg_tooltipVolumeControls: -1
+    property int cfg_tooltipVolumeControlsDefault: -1
     property bool cfg_highlightWindows: true
     property bool cfg_highlightWindowsDefault: true
     property bool cfg_indicateAudioStreams: true
     property bool cfg_indicateAudioStreamsDefault: true
+    property bool cfg_showAppSignals: true
+    property bool cfg_showAppSignalsDefault: true
     property int cfg_iconScale: 100
     property int cfg_iconScaleDefault: 100
     property int cfg_iconSizePx: 32

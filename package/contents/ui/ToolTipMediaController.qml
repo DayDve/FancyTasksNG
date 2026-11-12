@@ -24,7 +24,8 @@ Item {
     property bool strictPlayer: false
 
     readonly property var config: Plasmoid.configuration
-    readonly property bool audioIndicatorsEnabled: config ? config.indicateAudioStreams : false
+    // -1: as the audio mark on buttons, which these controls were tied to before.
+    readonly property bool volumeControlsEnabled: !!config && (config.tooltipVolumeControls < 0 ? config.indicateAudioStreams : config.tooltipVolumeControls === 1)
 
     // Media Player Data
     readonly property var playerData: mediaRegistry && toolTipDelegate ? mediaRegistry.playerFor(toolTipDelegate.launcherUrl, appPid) : null
@@ -97,7 +98,7 @@ Item {
 
         return !strictPlayer || mediaRegistry.ownsPlayer(playerData, appPid) || hasAudioStream || titleIncludesTrack;
     }
-    readonly property bool showVolumeControls: index !== -1 && mediaRegistry && mediaRegistry.audio !== null && audioIndicatorsEnabled && hasAudioStream
+    readonly property bool showVolumeControls: index !== -1 && mediaRegistry && mediaRegistry.audio !== null && volumeControlsEnabled && hasAudioStream
     readonly property bool controlsAreEffective: config && config.showMediaControls && (showPlayerControls || showVolumeControls)
 }
 

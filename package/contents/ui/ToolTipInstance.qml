@@ -194,6 +194,8 @@ Item {
     }
 
     readonly property var mediaController: mediaControllerLoader.item
+    // -1: as the audio mark on buttons, which these controls were tied to before.
+    readonly property bool volumeControlsEnabled: root.config.tooltipVolumeControls < 0 ? root.config.indicateAudioStreams : root.config.tooltipVolumeControls === 1
 
     // Bridge Properties to maintain full compatibility with visual overlays and controllers
     readonly property var playerData: mediaController ? mediaController.playerData : null
@@ -207,7 +209,7 @@ Item {
     // shared panel; this window only gets a speaker badge, and only when a
     // stream can actually be pinned to it (see MediaRegistry.streamsForWindow).
     readonly property var windowStreams: {
-        if (!root.sharesProcess || !root.showThumbnails || !root.mediaRegistry || !root.config.showMediaControls || !root.config.indicateAudioStreams) {
+        if (!root.sharesProcess || !root.showThumbnails || !root.mediaRegistry || !root.config.showMediaControls || !root.volumeControlsEnabled) {
             return [];
         }
         void root.mediaRegistry.revision;

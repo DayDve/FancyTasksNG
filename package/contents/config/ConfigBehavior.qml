@@ -300,6 +300,19 @@ ConfigPage {
                 onToggled: behaviorPage.cfg_showMediaControls = checked
             }
         }
+
+        RowLayout {
+            visible: enableToolTips.checked && showMediaControls.checked
+            Item {
+                implicitWidth: behaviorPage.gridUnit * 2
+            }
+            // -1 follows the audio mark on buttons, which these were tied to before.
+            CheckBox {
+                text: Wrappers.i18n("Show volume controls")
+                checked: behaviorPage.cfg_tooltipVolumeControls < 0 ? behaviorPage.cfg_indicateAudioStreams : behaviorPage.cfg_tooltipVolumeControls === 1
+                onToggled: behaviorPage.cfg_tooltipVolumeControls = checked ? 1 : 0
+            }
+        }
     
         RowLayout {
             visible: enableToolTips.checked && showToolTips.checked && showMediaControls.checked
