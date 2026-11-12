@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-12 11:53+0200\n"
+"POT-Creation-Date: 2026-11-12 12:32+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -50,14 +50,6 @@ msgid "Number of browser history items:"
 msgstr "Количество элементов истории:"
 
 #: package/contents/config/ConfigAdvanced.qml
-msgid "Effects:"
-msgstr "Эффекты:"
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Glow following the cursor over task buttons"
-msgstr "Подсветка панели под кнопками, следующая за курсором"
-
-#: package/contents/config/ConfigAdvanced.qml
 msgid "Configuration:"
 msgstr "Конфигурация:"
 
@@ -100,134 +92,6 @@ msgstr "Этот файл не является корректной конфи�
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Configuration imported. Click Apply to save the changes."
 msgstr "Конфигурация импортирована. Нажмите «Применить», чтобы сохранить изменения."
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Use plasma borders"
-msgstr "Использовать рамки Plasma"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Icon size:"
-msgstr "Размер значков:"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Relative"
-msgstr "Относительный"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Absolute"
-msgstr "Абсолютный"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Reset to default"
-msgstr "Сбросить по умолчанию"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Scale icons from panel edge"
-msgstr "Масштабировать значки от края панели"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Edge offset (px):"
-msgstr "Отступ от края (px):"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Icon hover effects"
-msgstr "Эффекты при наведении"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Hover style:"
-msgstr "Эффект наведения:"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Simple"
-msgstr "Простой"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Parabolic"
-msgstr "Параболический"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Icon zoom factor (px):"
-msgstr "Увеличение значка (px):"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "How much the icon should grow when hovered (in pixels)"
-msgstr "На сколько пикселей увеличится значок при наведении"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Zoom animation duration (ms):"
-msgstr "Длительность анимации (мс):"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Duration of the zoom animation in milliseconds"
-msgstr "Длительность анимации увеличения в миллисекундах"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Disable plasma context decorations"
-msgstr "Скрыть системный фон Plasma"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Button Colors:"
-msgstr "Цвета кнопок:"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Using Plasma Style/Accent"
-msgstr "Стиль Plasma / Акцентный цвет"
-
-#: package/contents/config/ConfigAppearance.qml package/contents/config/ConfigIndicators.qml
-msgid "Use dominant icon color"
-msgstr "Основной цвет значка"
-
-#: package/contents/config/ConfigAppearance.qml package/contents/config/ConfigIndicators.qml
-msgid "Custom color"
-msgstr "Пользовательский цвет"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "For inactive buttons:"
-msgstr "Для неактивных кнопок:"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Hide backgrounds for inactive buttons"
-msgstr "Скрывать фон неактивных кнопок"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Colorize inactive buttons"
-msgstr "Окрашивать неактивные кнопки"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Icon Shape:"
-msgstr "Форма значков:"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Clip icons to a custom shape"
-msgstr "Скруглять значки приложений"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Icon corner radius:"
-msgstr "Радиус скругления значка:"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Show background under clipped icons"
-msgstr "Показывать подложку под скругленными значками"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Background color source:"
-msgstr "Источник цвета подложки:"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Dominant icon color"
-msgstr "Основной цвет значка"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Average icon color"
-msgstr "Усредненный цвет значка"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Plasma accent color"
-msgstr "Акцентный цвет Plasma"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Background opacity:"
-msgstr "Непрозрачность подложки:"
 
 #: package/contents/config/ConfigBehavior.qml
 msgid "Grouping of tasks:"
@@ -471,6 +335,10 @@ msgid "Only not minimized"
 msgstr "Только развернутые"
 
 #: package/contents/config/ConfigIndicators.qml
+msgid "Use plasma borders"
+msgstr "Использовать рамки Plasma"
+
+#: package/contents/config/ConfigIndicators.qml
 msgid "Active application indicators:"
 msgstr "Индикаторы запущенных приложений:"
 
@@ -603,6 +471,10 @@ msgstr "Цвета:"
 msgid "Use plasma accent color"
 msgstr "Использовать цвет акцента Plasma"
 
+#: package/contents/config/ConfigIndicators.qml package/contents/config/ConfigTaskStyle.qml
+msgid "Use dominant icon color"
+msgstr "Основной цвет значка"
+
 #: package/contents/config/ConfigIndicators.qml
 msgid "Custom color:"
 msgstr "Свой цвет:"
@@ -650,6 +522,10 @@ msgstr "Сплошной красный (Классический)"
 #: package/contents/config/ConfigIndicators.qml
 msgid "System accent color"
 msgstr "Акцентный цвет системы"
+
+#: package/contents/config/ConfigIndicators.qml package/contents/config/ConfigTaskStyle.qml
+msgid "Custom color"
+msgstr "Пользовательский цвет"
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "Custom badge color:"
@@ -715,6 +591,14 @@ msgid "Opacity:"
 msgstr "Непрозрачность:"
 
 #: package/contents/config/ConfigLayout.qml
+msgid "Only in the classic panel mode."
+msgstr "Только в режиме классической панели."
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Not available on a vertical panel."
+msgstr "Недоступно на вертикальной панели."
+
+#: package/contents/config/ConfigLayout.qml
 msgid "Buttons"
 msgstr "Кнопки"
 
@@ -741,6 +625,10 @@ msgstr "Подгонять ширину кнопки под название"
 #: package/contents/config/ConfigLayout.qml
 msgid "Minimum button width (px):"
 msgstr "Минимальная ширина кнопки (px):"
+
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml
+msgid "Turn on \"%1\" first."
+msgstr "Сначала включите «%1»."
 
 #: package/contents/config/ConfigLayout.qml
 msgid "Lines of title text:"
@@ -811,6 +699,10 @@ msgid "Maximum rows:"
 msgstr "Макс. строк:"
 
 #: package/contents/config/ConfigLayout.qml
+msgid "Choose when to use the multi-row view first."
+msgstr "Сначала выберите, когда включать многострочный вид."
+
+#: package/contents/config/ConfigLayout.qml
 msgid "Placement"
 msgstr "Размещение"
 
@@ -835,12 +727,12 @@ msgid "On the top"
 msgstr "Сверху"
 
 #: package/contents/config/ConfigLayout.qml
-msgid "These options are only available when the widget is on a panel."
-msgstr "Эти опции доступны только тогда, когда виджет находится на панели."
-
-#: package/contents/config/ConfigLayout.qml
 msgid "Fill free space on panel"
 msgstr "Заполнять свободное место панели"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Only when the widget is on a panel."
+msgstr "Только когда виджет находится на панели."
 
 #: package/contents/config/ConfigLayout.qml
 msgid "Alignment:"
@@ -854,17 +746,21 @@ msgstr "По краю"
 msgid "Center"
 msgstr "По центру"
 
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml
+msgid "Only in the icons-only mode."
+msgstr "Только в режиме «Только значки»."
+
 #: package/contents/config/ConfigLayout.qml
 msgid "Floating Mode Settings:"
 msgstr "Настройки плавающего режима:"
 
 #: package/contents/config/ConfigLayout.qml
-msgid "This option is disabled when the widget is on a panel."
-msgstr "Эта опция недоступна, когда виджет находится на панели."
-
-#: package/contents/config/ConfigLayout.qml
 msgid "Override system direction"
 msgstr "Переопределить системное направление"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Only when the widget is on the desktop, not on a panel."
+msgstr "Только когда виджет на рабочем столе, а не на панели."
 
 #: package/contents/config/ConfigLayout.qml
 msgid "As on top panel"
@@ -943,6 +839,154 @@ msgstr "Добавить приложение"
 msgid "Search applications..."
 msgstr "Поиск приложений..."
 
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Icons"
+msgstr "Значки"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Icon size:"
+msgstr "Размер значков:"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Relative"
+msgstr "Относительный"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Absolute"
+msgstr "Абсолютный"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Reset to default"
+msgstr "Сбросить по умолчанию"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Scale icons from panel edge"
+msgstr "Масштабировать значки от края панели"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Edge offset (px):"
+msgstr "Отступ от края (px):"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Icon Shape:"
+msgstr "Форма значков:"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Clip icons to a custom shape"
+msgstr "Скруглять значки приложений"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Icon corner radius:"
+msgstr "Радиус скругления значка:"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Show background under clipped icons"
+msgstr "Показывать подложку под скругленными значками"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Background color source:"
+msgstr "Источник цвета подложки:"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Dominant icon color"
+msgstr "Основной цвет значка"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Average icon color"
+msgstr "Усредненный цвет значка"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Plasma accent color"
+msgstr "Акцентный цвет Plasma"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Background opacity:"
+msgstr "Непрозрачность подложки:"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Background"
+msgstr "Фон"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Button background:"
+msgstr "Фон кнопок:"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "On all buttons"
+msgstr "У всех кнопок"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Only on the active and hovered buttons"
+msgstr "Только у активной и под курсором"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "None"
+msgstr "Нет"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Button Colors:"
+msgstr "Цвета кнопок:"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Buttons have no background."
+msgstr "У кнопок нет фона."
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Using Plasma Style/Accent"
+msgstr "Стиль Plasma / Акцентный цвет"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Colorize inactive buttons"
+msgstr "Окрашивать неактивные кнопки"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Only when all buttons have a background."
+msgstr "Только когда фон есть у всех кнопок."
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Choose a button color other than the Plasma style first."
+msgstr "Сначала выберите цвет кнопок, отличный от стиля Plasma."
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Hover"
+msgstr "Наведение"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Icon hover effects"
+msgstr "Эффекты при наведении"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Hover style:"
+msgstr "Эффект наведения:"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Simple"
+msgstr "Простой"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Parabolic"
+msgstr "Параболический"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Icon zoom factor (px):"
+msgstr "Увеличение значка (px):"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "How much the icon should grow when hovered (in pixels)"
+msgstr "На сколько пикселей увеличится значок при наведении"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Zoom animation duration (ms):"
+msgstr "Длительность анимации (мс):"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Duration of the zoom animation in milliseconds"
+msgstr "Длительность анимации увеличения в миллисекундах"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Glow following the cursor over task buttons"
+msgstr "Подсветка панели под кнопками, следующая за курсором"
+
 #: package/contents/config/LivePreview.qml
 msgid "Preview"
 msgstr "Предпросмотр"
@@ -976,8 +1020,8 @@ msgid "Task Layout"
 msgstr "Расположение задач"
 
 #: package/contents/config/config.qml
-msgid "Appearance"
-msgstr "Внешний вид"
+msgid "Task Styling"
+msgstr "Оформление задач"
 
 #: package/contents/config/config.qml
 msgid "Behavior"
@@ -1245,6 +1289,33 @@ msgstr "Аудиопоток"
 msgctxt "Stream name and its number among streams with the same name"
 msgid "%1 %2"
 msgstr "%1 %2"
+
+#~ msgid "Hover effects"
+#~ msgstr "Эффекты при наведении"
+
+#~ msgid "Icon"
+#~ msgstr "Значок"
+
+#~ msgid "These options are only available when the widget is on a panel."
+#~ msgstr "Эти опции доступны только тогда, когда виджет находится на панели."
+
+#~ msgid "This option is disabled when the widget is on a panel."
+#~ msgstr "Эта опция недоступна, когда виджет находится на панели."
+
+#~ msgid "Effects:"
+#~ msgstr "Эффекты:"
+
+#~ msgid "Disable plasma context decorations"
+#~ msgstr "Скрыть системный фон Plasma"
+
+#~ msgid "For inactive buttons:"
+#~ msgstr "Для неактивных кнопок:"
+
+#~ msgid "Hide backgrounds for inactive buttons"
+#~ msgstr "Скрывать фон неактивных кнопок"
+
+#~ msgid "Appearance"
+#~ msgstr "Внешний вид"
 
 #~ msgid "Layout settings:"
 #~ msgstr "Настройки разметки:"

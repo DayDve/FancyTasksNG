@@ -8,7 +8,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
 
 import "../ui/code/singletones"
@@ -22,6 +21,8 @@ ConfigPage {
     readonly property bool onPanel: layoutPage.plasmoidLocation !== PlasmaCore.Types.Floating
     // Button width and title options apply to buttons with titles in a row.
     readonly property bool classicRow: layoutPage.cfg_iconOnly === 0 && !layoutPage.plasmoidVertical
+    readonly property string classicRowReason: layoutPage.cfg_iconOnly === 1 ? Wrappers.i18n("Only in the classic panel mode.")
+        : Wrappers.i18n("Not available on a vertical panel.")
 
     ConfigTabbedPage {
         cfg_page: layoutPage
@@ -43,9 +44,16 @@ ConfigPage {
 
             Item { height: layoutPage.largeSpacing }
 
-            Label {
-                enabled: layoutPage.classicRow
-                text: Wrappers.i18n("Maximum button width (px):")
+            RowLayout {
+                Label {
+                    id: maxButtonLengthLabel
+                    enabled: layoutPage.classicRow
+                    text: Wrappers.i18n("Maximum button width (px):")
+                }
+                ConfigHint {
+                    target: maxButtonLengthLabel
+                    toolTipText: layoutPage.classicRowReason
+                }
             }
             SpinBox {
                 enabled: layoutPage.classicRow
@@ -55,17 +63,30 @@ ConfigPage {
                 onValueModified: layoutPage.cfg_maxButtonLength = value
             }
 
-            CheckBox {
-                id: fitButtonToText
-                enabled: layoutPage.classicRow
-                text: Wrappers.i18n("Fit button width to its title")
-                checked: layoutPage.cfg_fitButtonToText
-                onToggled: layoutPage.cfg_fitButtonToText = checked
+            RowLayout {
+                CheckBox {
+                    id: fitButtonToText
+                    enabled: layoutPage.classicRow
+                    text: Wrappers.i18n("Fit button width to its title")
+                    checked: layoutPage.cfg_fitButtonToText
+                    onToggled: layoutPage.cfg_fitButtonToText = checked
+                }
+                ConfigHint {
+                    target: fitButtonToText
+                    toolTipText: layoutPage.classicRowReason
+                }
             }
 
-            Label {
-                enabled: fitButtonToText.enabled && fitButtonToText.checked
-                text: Wrappers.i18n("Minimum button width (px):")
+            RowLayout {
+                Label {
+                    id: minFitButtonLengthLabel
+                    enabled: fitButtonToText.enabled && fitButtonToText.checked
+                    text: Wrappers.i18n("Minimum button width (px):")
+                }
+                ConfigHint {
+                    target: minFitButtonLengthLabel
+                    toolTipText: fitButtonToText.enabled ? Wrappers.i18n("Turn on \"%1\" first.", fitButtonToText.text) : layoutPage.classicRowReason
+                }
             }
             SpinBox {
                 enabled: fitButtonToText.enabled && fitButtonToText.checked
@@ -75,9 +96,16 @@ ConfigPage {
                 onValueModified: layoutPage.cfg_minFitButtonLength = value
             }
 
-            Label {
-                enabled: layoutPage.cfg_iconOnly === 0
-                text: Wrappers.i18n("Lines of title text:")
+            RowLayout {
+                Label {
+                    id: maxTextLinesLabel
+                    enabled: layoutPage.cfg_iconOnly === 0
+                    text: Wrappers.i18n("Lines of title text:")
+                }
+                ConfigHint {
+                    target: maxTextLinesLabel
+                    toolTipText: Wrappers.i18n("Only in the classic panel mode.")
+                }
             }
             SpinBox {
                 enabled: layoutPage.cfg_iconOnly === 0
@@ -105,16 +133,18 @@ ConfigPage {
                 text: Wrappers.i18n("Inner padding:")
             }
             // The padding along the panel, around the icon and title.
-            ComboBox {
-                enabled: !layoutPage.tabletMode
-                model: [Wrappers.i18n("Small"), Wrappers.i18n("Normal"), Wrappers.i18n("Large"), Wrappers.i18n("Huge")]
-                currentIndex: layoutPage.tabletMode ? 3 : layoutPage.cfg_iconSpacing
-                onActivated: (index) => layoutPage.cfg_iconSpacing = index
-            }
-            Label {
-                visible: layoutPage.tabletMode
-                text: Wrappers.i18n("Automatically set to Large when in Touch mode")
-                font: layoutPage.themeSmallFont
+            RowLayout {
+                ComboBox {
+                    id: iconSpacing
+                    enabled: !layoutPage.tabletMode
+                    model: [Wrappers.i18n("Small"), Wrappers.i18n("Normal"), Wrappers.i18n("Large"), Wrappers.i18n("Huge")]
+                    currentIndex: layoutPage.tabletMode ? 3 : layoutPage.cfg_iconSpacing
+                    onActivated: (index) => layoutPage.cfg_iconSpacing = index
+                }
+                ConfigHint {
+                    target: iconSpacing
+                    toolTipText: Wrappers.i18n("Automatically set to Large when in Touch mode")
+                }
             }
         }
 
@@ -156,9 +186,16 @@ ConfigPage {
 
             Item { height: layoutPage.largeSpacing }
 
-            Label {
-                enabled: layoutPage.cfg_maxStripes > 1
-                text: layoutPage.plasmoidVertical ? Wrappers.i18n("Maximum columns:") : Wrappers.i18n("Maximum rows:")
+            RowLayout {
+                Label {
+                    id: maxStripesLabel
+                    enabled: layoutPage.cfg_maxStripes > 1
+                    text: layoutPage.plasmoidVertical ? Wrappers.i18n("Maximum columns:") : Wrappers.i18n("Maximum rows:")
+                }
+                ConfigHint {
+                    target: maxStripesLabel
+                    toolTipText: Wrappers.i18n("Choose when to use the multi-row view first.")
+                }
             }
             SpinBox {
                 enabled: layoutPage.cfg_maxStripes > 1
@@ -196,33 +233,40 @@ ConfigPage {
 
             Item { height: layoutPage.largeSpacing }
 
-
-            Kirigami.InlineMessage {
-                Layout.fillWidth: true
-                visible: !layoutPage.onPanel
-                type: Kirigami.MessageType.Information
-                text: Wrappers.i18n("These options are only available when the widget is on a panel.")
-            }
-
-            CheckBox {
-                id: fill
-                enabled: layoutPage.onPanel
-                text: Wrappers.i18n("Fill free space on panel")
-                checked: layoutPage.cfg_fill
-                onToggled: layoutPage.cfg_fill = checked
+            RowLayout {
+                CheckBox {
+                    id: fill
+                    enabled: layoutPage.onPanel
+                    text: Wrappers.i18n("Fill free space on panel")
+                    checked: layoutPage.cfg_fill
+                    onToggled: layoutPage.cfg_fill = checked
+                }
+                ConfigHint {
+                    target: fill
+                    toolTipText: Wrappers.i18n("Only when the widget is on a panel.")
+                }
             }
 
             RowLayout {
-                enabled: fill.enabled && fill.checked && layoutPage.cfg_iconOnly === 1
                 Item { implicitWidth: layoutPage.gridUnit }
-                Label {
-                    text: Wrappers.i18n("Alignment:")
+                RowLayout {
+                    id: fillAlignment
+                    enabled: fill.enabled && fill.checked && layoutPage.cfg_iconOnly === 1
+                    Label {
+                        text: Wrappers.i18n("Alignment:")
+                    }
+                    ComboBox {
+                        Layout.fillWidth: true
+                        model: [Wrappers.i18n("Edge"), Wrappers.i18n("Center")]
+                        currentIndex: layoutPage.cfg_fillAlignment
+                        onActivated: (index) => layoutPage.cfg_fillAlignment = index
+                    }
                 }
-                ComboBox {
-                    Layout.fillWidth: true
-                    model: [Wrappers.i18n("Edge"), Wrappers.i18n("Center")]
-                    currentIndex: layoutPage.cfg_fillAlignment
-                    onActivated: (index) => layoutPage.cfg_fillAlignment = index
+                ConfigHint {
+                    target: fillAlignment
+                    toolTipText: !fill.enabled ? Wrappers.i18n("Only when the widget is on a panel.")
+                        : layoutPage.cfg_iconOnly !== 1 ? Wrappers.i18n("Only in the icons-only mode.")
+                        : Wrappers.i18n("Turn on \"%1\" first.", fill.text)
                 }
             }
 
@@ -232,32 +276,38 @@ ConfigPage {
                 enabled: !layoutPage.onPanel
                 text: Wrappers.i18n("Floating Mode Settings:")
             }
-
-            Kirigami.InlineMessage {
-                Layout.fillWidth: true
-                visible: layoutPage.onPanel
-                type: Kirigami.MessageType.Information
-                text: Wrappers.i18n("This option is disabled when the widget is on a panel.")
+            RowLayout {
+                CheckBox {
+                    id: overridePlasmaButtonDirection
+                    enabled: !layoutPage.onPanel
+                    text: Wrappers.i18n("Override system direction")
+                    checked: layoutPage.cfg_overridePlasmaButtonDirection
+                    onToggled: layoutPage.cfg_overridePlasmaButtonDirection = checked
+                }
+                ConfigHint {
+                    target: overridePlasmaButtonDirection
+                    toolTipText: Wrappers.i18n("Only when the widget is on the desktop, not on a panel.")
+                }
             }
-
-            CheckBox {
-                id: overridePlasmaButtonDirection
-                enabled: !layoutPage.onPanel
-                text: Wrappers.i18n("Override system direction")
-                checked: layoutPage.cfg_overridePlasmaButtonDirection
-                onToggled: layoutPage.cfg_overridePlasmaButtonDirection = checked
-            }
-            ComboBox {
-                Layout.fillWidth: true
-                enabled: overridePlasmaButtonDirection.enabled && overridePlasmaButtonDirection.checked
-                model: [
-                    Wrappers.i18n("As on top panel"),
-                    Wrappers.i18n("As on bottom panel"),
-                    Wrappers.i18n("As on left panel"),
-                    Wrappers.i18n("As on right panel")
-                ]
-                currentIndex: layoutPage.cfg_plasmaButtonDirection
-                onActivated: (index) => layoutPage.cfg_plasmaButtonDirection = index
+            RowLayout {
+                ComboBox {
+                    id: plasmaButtonDirection
+                    Layout.fillWidth: true
+                    enabled: overridePlasmaButtonDirection.enabled && overridePlasmaButtonDirection.checked
+                    model: [
+                        Wrappers.i18n("As on top panel"),
+                        Wrappers.i18n("As on bottom panel"),
+                        Wrappers.i18n("As on left panel"),
+                        Wrappers.i18n("As on right panel")
+                    ]
+                    currentIndex: layoutPage.cfg_plasmaButtonDirection
+                    onActivated: (index) => layoutPage.cfg_plasmaButtonDirection = index
+                }
+                ConfigHint {
+                    target: plasmaButtonDirection
+                    toolTipText: overridePlasmaButtonDirection.enabled ? Wrappers.i18n("Turn on \"%1\" first.", overridePlasmaButtonDirection.text)
+                        : Wrappers.i18n("Only when the widget is on the desktop, not on a panel.")
+                }
             }
         }
     }

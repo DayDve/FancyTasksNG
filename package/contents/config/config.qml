@@ -20,9 +20,9 @@ ConfigModel {
         source: "../config/ConfigLayout.qml"
     }
     ConfigCategory {
-        name: i18n("Appearance")
+        name: i18n("Task Styling")
         icon: "preferences-desktop-color"
-        source: "../config/ConfigAppearance.qml"
+        source: "../config/ConfigTaskStyle.qml"
     }
     ConfigCategory {
         name: i18n("Behavior")

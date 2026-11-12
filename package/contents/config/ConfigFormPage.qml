@@ -10,7 +10,7 @@ import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
 
 // Shared scaffold for a settings page that's just a Live Preview above a
-// scrollable form: ConfigAppearance/Behavior/Indicators/Advanced each
+// scrollable form: ConfigBehavior/Indicators/Advanced each
 // instantiate this once instead of repeating the ColumnLayout/LivePreview/
 // ConfigScrollView/FormLayout structure themselves. Content declared inside
 // a `ConfigFormPage { ... }` instance becomes rows of the form.

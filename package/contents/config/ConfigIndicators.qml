@@ -25,6 +25,14 @@ ConfigPage {
     ConfigFormPage {
         cfg_page: indicatorsPage
 
+        CheckBox {
+            text: Wrappers.i18n("Use plasma borders")
+            checked: indicatorsPage.cfg_useBorders
+            onToggled: indicatorsPage.cfg_useBorders = checked
+        }
+
+        Item { height: indicatorsPage.largeSpacing }
+
         Label {
             text: Wrappers.i18n("Active application indicators:")
         }

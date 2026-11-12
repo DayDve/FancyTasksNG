@@ -8,7 +8,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Qt.labs.platform as Labs
-import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
 import org.kde.kquickcontrols as KQuickAddons
 
@@ -118,19 +117,6 @@ ConfigPage {
                 value: advancedPage.cfg_browserHistoryLimit
                 onValueModified: advancedPage.cfg_browserHistoryLimit = value
             }
-        }
-
-        Item { height: advancedPage.largeSpacing }
-
-        Label {
-            text: Wrappers.i18n("Effects:")
-        }
-
-        CheckBox {
-            id: cfg_cursorGlow
-            text: Wrappers.i18n("Glow following the cursor over task buttons")
-            checked: advancedPage.cfg_cursorGlow
-            onToggled: advancedPage.cfg_cursorGlow = checked
         }
 
         Item { height: advancedPage.largeSpacing }

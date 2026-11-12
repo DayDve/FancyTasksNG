@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-12 11:53+0200\n"
+"POT-Creation-Date: 2026-11-12 12:32+0200\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -47,14 +47,6 @@ msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Number of browser history items:"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Effects:"
-msgstr ""
-
-#: package/contents/config/ConfigAdvanced.qml
-msgid "Glow following the cursor over task buttons"
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
@@ -99,134 +91,6 @@ msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Configuration imported. Click Apply to save the changes."
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Use plasma borders"
-msgstr "Plasmakaders gebruiken"
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Icon size:"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Relative"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Absolute"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Reset to default"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Scale icons from panel edge"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Edge offset (px):"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Icon hover effects"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Hover style:"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Simple"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Parabolic"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Icon zoom factor (px):"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "How much the icon should grow when hovered (in pixels)"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Zoom animation duration (ms):"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Duration of the zoom animation in milliseconds"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Disable plasma context decorations"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Button Colors:"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Using Plasma Style/Accent"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml package/contents/config/ConfigIndicators.qml
-msgid "Use dominant icon color"
-msgstr "Dominante pictogramkleur gebruiken"
-
-#: package/contents/config/ConfigAppearance.qml package/contents/config/ConfigIndicators.qml
-msgid "Custom color"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "For inactive buttons:"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Hide backgrounds for inactive buttons"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Colorize inactive buttons"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Icon Shape:"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Clip icons to a custom shape"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Icon corner radius:"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Show background under clipped icons"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Background color source:"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Dominant icon color"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Average icon color"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Plasma accent color"
-msgstr ""
-
-#: package/contents/config/ConfigAppearance.qml
-msgid "Background opacity:"
 msgstr ""
 
 #: package/contents/config/ConfigBehavior.qml
@@ -471,6 +335,10 @@ msgid "Only not minimized"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
+msgid "Use plasma borders"
+msgstr "Plasmakaders gebruiken"
+
+#: package/contents/config/ConfigIndicators.qml
 msgid "Active application indicators:"
 msgstr ""
 
@@ -603,6 +471,10 @@ msgstr ""
 msgid "Use plasma accent color"
 msgstr "Plasma-accentkleur"
 
+#: package/contents/config/ConfigIndicators.qml package/contents/config/ConfigTaskStyle.qml
+msgid "Use dominant icon color"
+msgstr "Dominante pictogramkleur gebruiken"
+
 #: package/contents/config/ConfigIndicators.qml
 msgid "Custom color:"
 msgstr ""
@@ -649,6 +521,10 @@ msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
 msgid "System accent color"
+msgstr ""
+
+#: package/contents/config/ConfigIndicators.qml package/contents/config/ConfigTaskStyle.qml
+msgid "Custom color"
 msgstr ""
 
 #: package/contents/config/ConfigIndicators.qml
@@ -715,6 +591,14 @@ msgid "Opacity:"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
+msgid "Only in the classic panel mode."
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Not available on a vertical panel."
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
 msgid "Buttons"
 msgstr ""
 
@@ -740,6 +624,10 @@ msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
 msgid "Minimum button width (px):"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml
+msgid "Turn on \"%1\" first."
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
@@ -811,6 +699,10 @@ msgid "Maximum rows:"
 msgstr "Maximaal aantal rĳen:"
 
 #: package/contents/config/ConfigLayout.qml
+msgid "Choose when to use the multi-row view first."
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
 msgid "Placement"
 msgstr ""
 
@@ -835,11 +727,11 @@ msgid "On the top"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "These options are only available when the widget is on a panel."
+msgid "Fill free space on panel"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Fill free space on panel"
+msgid "Only when the widget is on a panel."
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
@@ -854,16 +746,20 @@ msgstr ""
 msgid "Center"
 msgstr ""
 
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml
+msgid "Only in the icons-only mode."
+msgstr ""
+
 #: package/contents/config/ConfigLayout.qml
 msgid "Floating Mode Settings:"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "This option is disabled when the widget is on a panel."
+msgid "Override system direction"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Override system direction"
+msgid "Only when the widget is on the desktop, not on a panel."
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
@@ -942,6 +838,154 @@ msgstr ""
 msgid "Search applications..."
 msgstr ""
 
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Icons"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Icon size:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Relative"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Absolute"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Reset to default"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Scale icons from panel edge"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Edge offset (px):"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Icon Shape:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Clip icons to a custom shape"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Icon corner radius:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Show background under clipped icons"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Background color source:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Dominant icon color"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Average icon color"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Plasma accent color"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Background opacity:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Background"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Button background:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "On all buttons"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Only on the active and hovered buttons"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "None"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Button Colors:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Buttons have no background."
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Using Plasma Style/Accent"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Colorize inactive buttons"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Only when all buttons have a background."
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Choose a button color other than the Plasma style first."
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Hover"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Icon hover effects"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Hover style:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Simple"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Parabolic"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Icon zoom factor (px):"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "How much the icon should grow when hovered (in pixels)"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Zoom animation duration (ms):"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Duration of the zoom animation in milliseconds"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Glow following the cursor over task buttons"
+msgstr ""
+
 #: package/contents/config/LivePreview.qml
 msgid "Preview"
 msgstr ""
@@ -975,8 +1019,8 @@ msgid "Task Layout"
 msgstr ""
 
 #: package/contents/config/config.qml
-msgid "Appearance"
-msgstr "Vormgeving"
+msgid "Task Styling"
+msgstr ""
 
 #: package/contents/config/config.qml
 msgid "Behavior"
@@ -1242,6 +1286,9 @@ msgstr ""
 msgctxt "Stream name and its number among streams with the same name"
 msgid "%1 %2"
 msgstr ""
+
+#~ msgid "Appearance"
+#~ msgstr "Vormgeving"
 
 #~ msgid "Custom Color:"
 #~ msgstr "Zelfgekozen kleur:"
