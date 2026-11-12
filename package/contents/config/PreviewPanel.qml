@@ -7,6 +7,9 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+// Not used by name: without it, child.Layout below reads as undefined and a
+// classic panel's content width comes out as 0.
+import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
 import org.kde.ksvg as KSvg
