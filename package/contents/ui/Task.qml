@@ -745,7 +745,9 @@ Item {
 
         imagePath: task.config.disableButtonSvg ? "" : "widgets/tasks"
         enabledBorders: task.config.useBorders ? 1 | 2 | 4 | 8 : 0
-        property bool isHovered: task.highlighted && task.config.taskHoverEffect
+        // Hover effects are an icons-only feature; a classic panel always
+        // shows the theme's hover state, as Plasma's own task manager does.
+        property bool isHovered: task.highlighted && (!task.tasksRoot.iconsOnly || task.config.taskHoverEffect)
         
         property string basePrefix: !task.model ? "normal" :
                                     task.model.IsLauncher ? "" :
