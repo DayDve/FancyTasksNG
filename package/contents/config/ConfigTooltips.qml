@@ -20,9 +20,6 @@ ConfigPage {
     id: tooltipsPage
     fullTitle: Wrappers.i18n("Task Tooltips")
 
-    function turnOnFirst(option: string): string {
-        return Wrappers.i18n("Turn on \"%1\" first.", option);
-    }
 
     ConfigTabbedPage {
         cfg_page: tooltipsPage
@@ -79,10 +76,6 @@ ConfigPage {
                         onActivated: (index) => tooltipsPage.cfg_tooltipMatchWindowAspectRatio = index === 1
                     }
                 }
-                ConfigHint {
-                    target: aspectRatio
-                    reason: tooltipsPage.turnOnFirst(showToolTips.text)
-                }
             }
 
             Item { height: tooltipsPage.largeSpacing }
@@ -107,10 +100,6 @@ ConfigPage {
                     checked: tooltipsPage.cfg_tooltipVolumeControls < 0 ? tooltipsPage.cfg_indicateAudioStreams : tooltipsPage.cfg_tooltipVolumeControls === 1
                     onToggled: tooltipsPage.cfg_tooltipVolumeControls = checked ? 1 : 0
                 }
-                ConfigHint {
-                    target: volumeControls
-                    reason: tooltipsPage.turnOnFirst(showMediaControls.text)
-                }
             }
             RowLayout {
                 spacing: tooltipsPage.smallSpacing
@@ -129,10 +118,6 @@ ConfigPage {
                         currentIndex: tooltipsPage.cfg_mediaControlsLocation
                         onActivated: (index) => tooltipsPage.cfg_mediaControlsLocation = index
                     }
-                }
-                ConfigHint {
-                    target: mediaControlsLocation
-                    reason: tooltipsPage.turnOnFirst(showMediaControls.checked ? showToolTips.text : showMediaControls.text)
                 }
             }
             RowLayout {
@@ -155,8 +140,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: groupMediaControls
-                    info: Wrappers.i18n("For apps that play from one process for all their windows, such as web browsers. Apps with a process per window keep their controls on each window.")
-                    reason: tooltipsPage.turnOnFirst(showMediaControls.text)
+                    info: Wrappers.i18n("Some apps, such as web browsers, don't report which window plays the audio. For them, the playback controls are shown once for the whole group.")
                 }
             }
         }

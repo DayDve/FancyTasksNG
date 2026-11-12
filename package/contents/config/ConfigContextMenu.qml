@@ -51,10 +51,6 @@ ConfigPage {
                         onValueModified: menuPage.cfg_browserHistoryLimit = value
                     }
                 }
-                ConfigHint {
-                    target: browserHistoryLimit
-                    reason: Wrappers.i18n("Turn on \"%1\" first.", showBrowserHistory.text)
-                }
             }
         }
     }

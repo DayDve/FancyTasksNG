@@ -23,9 +23,6 @@ ConfigPage {
 
     readonly property string offReason: Wrappers.i18n("App signals are turned off.")
 
-    function turnOnFirst(option: string): string {
-        return Wrappers.i18n("Turn on \"%1\" first.", option);
-    }
 
     ConfigTabbedPage {
         cfg_page: signalsPage
@@ -38,7 +35,7 @@ ConfigPage {
                     onToggled: signalsPage.cfg_showAppSignals = checked
                 }
                 ConfigHint {
-                    info: Wrappers.i18n("The audio mark, the notification count and progress on task buttons. Turning this off keeps their own settings.")
+                    info: Wrappers.i18n("Some apps send signals about audio playback, notification count and operation progress. When on, Fancy Tasks NG receives these signals and shows the matching indicators on the buttons of such apps.")
                 }
             }
             RowLayout {
@@ -48,10 +45,6 @@ ConfigPage {
                     text: Wrappers.i18n("Mark applications playing audio")
                     checked: signalsPage.cfg_indicateAudioStreams
                     onToggled: signalsPage.cfg_indicateAudioStreams = checked
-                }
-                ConfigHint {
-                    target: indicateAudioStreams
-                    reason: signalsPage.offReason
                 }
             }
             RowLayout {
@@ -85,12 +78,6 @@ ConfigPage {
                         text: "px"
                     }
                 }
-                ConfigHint {
-                    target: dotMode
-                    info: Wrappers.i18n("The audio and notification count badges on task icons. A dot grows into the full badge while its task is under the cursor; \"When smaller than\" keeps the full badges on big icons.")
-                    reason: !signalsPage.cfg_showAppSignals ? signalsPage.offReason
-                        : Wrappers.i18n("Turn on the audio mark or the notification count first.")
-                }
             }
         }
 
@@ -108,8 +95,6 @@ ConfigPage {
                 onToggled: signalsPage.cfg_showBadges = checked
             }
 
-            readonly property string badgesReason: signalsPage.turnOnFirst(showBadges.text)
-
             RowLayout {
                 Item { implicitWidth: signalsPage.gridUnit }
                 CheckBox {
@@ -118,10 +103,6 @@ ConfigPage {
                     text: Wrappers.i18n("Highlight new notifications")
                     checked: signalsPage.cfg_badgeHighlightNew
                     onToggled: signalsPage.cfg_badgeHighlightNew = checked
-                }
-                ConfigHint {
-                    target: badgeHighlightNew
-                    reason: counterTab.badgesReason
                 }
             }
             RowLayout {
@@ -136,7 +117,6 @@ ConfigPage {
                 ConfigHint {
                     target: showBadgesOnLaunchers
                     info: Wrappers.i18n("Show counters even when the application has no windows in the current view (e.g., minimized to tray or on another screen/desktop/activity).")
-                    reason: counterTab.badgesReason
                 }
             }
             RowLayout {
@@ -172,10 +152,6 @@ ConfigPage {
                         }
                     }
                 }
-                ConfigHint {
-                    target: badgeColor
-                    reason: counterTab.badgesReason
-                }
             }
         }
 
@@ -205,7 +181,6 @@ ConfigPage {
             }
 
             readonly property bool progressOn: indicatorProgressStyle.currentIndex > 0
-            readonly property string progressReason: Wrappers.i18n("Choose a progress style first.")
 
             RowLayout {
                 spacing: signalsPage.smallSpacing
@@ -224,10 +199,6 @@ ConfigPage {
                                 signalsPage.cfg_indicatorProgressColor = color;
                         }
                     }
-                }
-                ConfigHint {
-                    target: progressColor
-                    reason: progressTab.progressReason
                 }
             }
             RowLayout {
@@ -250,7 +221,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: progressThickness
-                    reason: progressTab.progressOn ? Wrappers.i18n("Only for the strip styles.") : progressTab.progressReason
+                    reason: progressTab.progressOn ? Wrappers.i18n("Only for the strip styles.") : ""
                 }
             }
             RowLayout {
@@ -269,10 +240,6 @@ ConfigPage {
                         value: signalsPage.cfg_indicatorProgressOpacity
                         onMoved: signalsPage.cfg_indicatorProgressOpacity = value
                     }
-                }
-                ConfigHint {
-                    target: progressOpacity
-                    reason: progressTab.progressReason
                 }
             }
         }

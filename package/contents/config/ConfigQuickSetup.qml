@@ -84,22 +84,21 @@ ConfigPage {
 
             Item { height: quickPage.smallSpacing }
 
-            Kirigami.Heading {
-                level: 4
-                text: Wrappers.i18n("Icon size")
-            }
-            // The size in the unit chosen under Task Styling › Icons.
+            // The size in the unit chosen under Task Layout › Buttons. A
+            // short slider: it's one option among many here.
             RowLayout {
-                Layout.fillWidth: true
                 spacing: quickPage.smallSpacing
                 readonly property bool absolute: quickPage.cfg_iconSizeOverride
 
+                Label {
+                    text: Wrappers.i18n("Icon size:")
+                }
+                // No stepSize: with it the style draws a tick per step.
                 Slider {
                     id: iconSize
-                    Layout.fillWidth: true
+                    Layout.preferredWidth: Kirigami.Units.gridUnit * 10
                     from: 0
                     to: parent.absolute ? 100 : 300
-                    stepSize: 1
                     value: parent.absolute ? quickPage.cfg_iconSizePx : quickPage.cfg_iconScale
                     onMoved: {
                         if (parent.absolute)
@@ -219,13 +218,13 @@ ConfigPage {
                 CheckBox {
                     id: useBorders
                     enabled: !quickPage.cfg_disableButtonSvg
-                    text: Wrappers.i18n("Stripe from the Plasma theme")
+                    text: Wrappers.i18n("Use Plasma borders")
                     checked: quickPage.cfg_useBorders
                     onToggled: quickPage.cfg_useBorders = checked
                 }
                 ConfigHint {
                     target: useBorders
-                    info: Wrappers.i18n("Draws the edges of the theme's task button frame. In Breeze that's the stripe along the panel edge; in other themes the button frame may change its shape.")
+                    info: Wrappers.i18n("Task buttons are drawn with the borders from the Plasma theme. In Breeze it's a stripe along the panel edge; in other themes it may look different.")
                     reason: Wrappers.i18n("Buttons have no background (Task Styling › Background).")
                 }
             }
@@ -249,7 +248,7 @@ ConfigPage {
                     onToggled: quickPage.cfg_showAppSignals = checked
                 }
                 ConfigHint {
-                    info: Wrappers.i18n("The audio mark, the notification count and progress on task buttons. Turning this off keeps their own settings.")
+                    info: Wrappers.i18n("Some apps send signals about audio playback, notification count and operation progress. When on, Fancy Tasks NG receives these signals and shows the matching indicators on the buttons of such apps.")
                 }
             }
             SectionLink {

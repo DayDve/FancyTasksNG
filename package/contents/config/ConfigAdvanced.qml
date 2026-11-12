@@ -49,7 +49,7 @@ ConfigPage {
 
             Labs.FileDialog {
                 id: exportFileDialog
-                title: Wrappers.i18n("Export FancyTasksNG Configuration")
+                title: Wrappers.i18n("Export Fancy Tasks NG Configuration")
                 fileMode: Labs.FileDialog.SaveFile
                 nameFilters: [Wrappers.i18n("JSON files (*.json)")]
                 defaultSuffix: "json"
@@ -58,7 +58,7 @@ ConfigPage {
 
             Labs.FileDialog {
                 id: importFileDialog
-                title: Wrappers.i18n("Import FancyTasksNG Configuration")
+                title: Wrappers.i18n("Import Fancy Tasks NG Configuration")
                 fileMode: Labs.FileDialog.OpenFile
                 nameFilters: [Wrappers.i18n("JSON files (*.json)")]
                 onAccepted: advancedPage.importConfig(importFileDialog.file)
@@ -114,14 +114,14 @@ ConfigPage {
             try {
                 advancedPage.applyImportedSettings(JSON.parse(result));
             } catch (e) {
-                advancedPage.showConfigIoStatus(Wrappers.i18n("This file is not a valid FancyTasksNG configuration."), true);
+                advancedPage.showConfigIoStatus(Wrappers.i18n("This file is not a valid Fancy Tasks NG configuration."), true);
             }
         });
     }
 
     function applyImportedSettings(parsed) {
         if (!parsed || parsed.app !== advancedPage.configAppId || typeof parsed.settings !== "object") {
-            advancedPage.showConfigIoStatus(Wrappers.i18n("This file is not a valid FancyTasksNG configuration."), true);
+            advancedPage.showConfigIoStatus(Wrappers.i18n("This file is not a valid Fancy Tasks NG configuration."), true);
             return;
         }
         const keys = Object.keys(parsed.settings);

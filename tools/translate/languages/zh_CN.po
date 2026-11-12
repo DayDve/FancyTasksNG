@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-12 14:12+0200\n"
+"POT-Creation-Date: 2026-11-12 17:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgid "Import Configuration…"
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
-msgid "Export FancyTasksNG Configuration"
+msgid "Export Fancy Tasks NG Configuration"
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
@@ -38,7 +38,7 @@ msgid "JSON files (*.json)"
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
-msgid "Import FancyTasksNG Configuration"
+msgid "Import Fancy Tasks NG Configuration"
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
@@ -54,7 +54,7 @@ msgid "Failed to read the configuration file."
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
-msgid "This file is not a valid FancyTasksNG configuration."
+msgid "This file is not a valid Fancy Tasks NG configuration."
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
@@ -69,16 +69,12 @@ msgstr ""
 msgid "App signals are turned off."
 msgstr ""
 
-#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigContextMenu.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigTooltips.qml package/contents/config/ConfigWindowIndicators.qml
-msgid "Turn on \"%1\" first."
-msgstr ""
-
 #: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigQuickSetup.qml
 msgid "Show app signals"
 msgstr ""
 
 #: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigQuickSetup.qml
-msgid "The audio mark, the notification count and progress on task buttons. Turning this off keeps their own settings."
+msgid "Some apps send signals about audio playback, notification count and operation progress. When on, Fancy Tasks NG receives these signals and shows the matching indicators on the buttons of such apps."
 msgstr ""
 
 #: package/contents/config/ConfigAppSignals.qml
@@ -102,14 +98,6 @@ msgstr ""
 #: package/contents/config/ConfigAppSignals.qml
 msgctxt "Show badges as dots"
 msgid "When smaller than"
-msgstr ""
-
-#: package/contents/config/ConfigAppSignals.qml
-msgid "The audio and notification count badges on task icons. A dot grows into the full badge while its task is under the cursor; \"When smaller than\" keeps the full badges on big icons."
-msgstr ""
-
-#: package/contents/config/ConfigAppSignals.qml
-msgid "Turn on the audio mark or the notification count first."
 msgstr ""
 
 #: package/contents/config/ConfigAppSignals.qml
@@ -187,10 +175,6 @@ msgstr ""
 
 #: package/contents/config/ConfigAppSignals.qml
 msgid "Strip (Right)"
-msgstr ""
-
-#: package/contents/config/ConfigAppSignals.qml
-msgid "Choose a progress style first."
 msgstr ""
 
 #: package/contents/config/ConfigAppSignals.qml
@@ -282,15 +266,21 @@ msgid "Show icons only"
 msgstr "只显示图标"
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Maximum button width (px):"
+msgid "Button width (px):"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Fit button width to its title"
+msgctxt "Button width"
+msgid "maximum:"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Minimum button width (px):"
+msgctxt "Button width"
+msgid "minimum:"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Fit to the title"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
@@ -302,11 +292,17 @@ msgid "As many as fit"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Space between taskbar items (px):"
-msgstr "任务栏组件间距（px）"
+msgid "Margins:"
+msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Inner padding:"
+msgctxt "Margins"
+msgid "outer (px):"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgctxt "Margins"
+msgid "inner:"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
@@ -326,43 +322,39 @@ msgid "Huge"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
+msgid "Outer: the space between neighboring buttons. Inner: the padding inside a button around its icon and title, so it also sets the button size."
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
 msgid "Automatically set to Large when in Touch mode"
 msgstr ""
 
-#: package/contents/config/ConfigLayout.qml
-msgid "Rows"
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
+msgid "Icon size:"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Use multi-column view:"
+msgid "Relative"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Use multi-row view:"
+msgid "Absolute"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Never"
+msgid "Reset to default"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "When panel is low on space and thick enough"
+msgid "Scale icons from panel edge"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Always when panel is thick enough"
+msgid "When on, icons scale from the panel edge, not from their center. Automatic centering is then off; the icons are aligned with the \"Edge offset\" option."
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Maximum columns:"
-msgstr "最大列数"
-
-#: package/contents/config/ConfigLayout.qml
-msgid "Maximum rows:"
-msgstr "最大行数"
-
-#: package/contents/config/ConfigLayout.qml
-msgid "Choose when to use the multi-row view first."
+msgid "Edge offset (px):"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
@@ -406,31 +398,64 @@ msgid "Center"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Floating Mode Settings:"
+msgid "Buttons in several columns:"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Override system direction"
+msgid "Buttons in several rows:"
 msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Never"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "When short of space"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Always"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgctxt "Rows or columns"
+msgid "at most"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "When on, task buttons on a wide vertical panel are placed in several columns. The number of columns is limited by the panel width and the \"at most\" value."
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "When on, task buttons on a thick panel are placed in several rows. The number of rows is limited by the panel thickness and the \"at most\" value."
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "On the desktop:"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Behave as a panel:"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Top"
+msgstr "顶部"
+
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Bottom"
+msgstr "底部"
+
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Left"
+msgstr "左边"
+
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Right"
+msgstr "右边"
 
 #: package/contents/config/ConfigLayout.qml
 msgid "Only when the widget is on the desktop, not on a panel."
-msgstr ""
-
-#: package/contents/config/ConfigLayout.qml
-msgid "As on top panel"
-msgstr ""
-
-#: package/contents/config/ConfigLayout.qml
-msgid "As on bottom panel"
-msgstr ""
-
-#: package/contents/config/ConfigLayout.qml
-msgid "As on left panel"
-msgstr ""
-
-#: package/contents/config/ConfigLayout.qml
-msgid "As on right panel"
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
@@ -505,10 +530,6 @@ msgstr ""
 msgid "Display"
 msgstr ""
 
-#: package/contents/config/ConfigQuickSetup.qml
-msgid "Icon size"
-msgstr ""
-
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskStyle.qml
 msgid "Icon hover effects"
 msgstr ""
@@ -535,11 +556,11 @@ msgid "None"
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigWindowIndicators.qml
-msgid "Stripe from the Plasma theme"
+msgid "Use Plasma borders"
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigWindowIndicators.qml
-msgid "Draws the edges of the theme's task button frame. In Breeze that's the stripe along the panel edge; in other themes the button frame may change its shape."
+msgid "Task buttons are drawn with the borders from the Plasma theme. In Breeze it's a stripe along the panel edge; in other themes it may look different."
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigWindowIndicators.qml
@@ -667,7 +688,7 @@ msgid "Brings it to the current virtual desktop"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
-msgid "Animation of closing/removing an icon from the panel"
+msgid "Animate closing"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
@@ -728,10 +749,6 @@ msgstr ""
 
 #: package/contents/config/ConfigTaskList.qml
 msgid "Hide matching tasks instead of showing them."
-msgstr ""
-
-#: package/contents/config/ConfigTaskList.qml
-msgid "Turn on one of the filters above first."
 msgstr ""
 
 #: package/contents/config/ConfigTaskList.qml
@@ -808,30 +825,6 @@ msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Icons"
-msgstr ""
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Icon size:"
-msgstr ""
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Relative"
-msgstr ""
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Absolute"
-msgstr ""
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Reset to default"
-msgstr ""
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Scale icons from panel edge"
-msgstr ""
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Edge offset (px):"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
@@ -939,15 +932,7 @@ msgid "Icon zoom factor (px):"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
-msgid "How much the icon should grow when hovered (in pixels)"
-msgstr ""
-
-#: package/contents/config/ConfigTaskStyle.qml
 msgid "Zoom animation duration (ms):"
-msgstr ""
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Duration of the zoom animation in milliseconds"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
@@ -1027,19 +1012,23 @@ msgid "Hidden"
 msgstr ""
 
 #: package/contents/config/ConfigTooltips.qml
-msgid "For apps that play from one process for all their windows, such as web browsers. Apps with a process per window keep their controls on each window."
+msgid "Some apps, such as web browsers, don't report which window plays the audio. For them, the playback controls are shown once for the whole group."
 msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml
-msgid "Fancy Tasks indicators are turned off."
+msgid "Fancy Tasks NG indicators are turned off."
 msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml
-msgid "Fancy Tasks indicators"
+msgid "Fancy Tasks NG indicators"
 msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml
-msgid "Group mark from the Plasma theme"
+msgid "Group overlay from the Plasma theme"
+msgstr ""
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "A \"+\" sign from the Plasma theme on a group button, as in the standard task manager."
 msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml
@@ -1053,22 +1042,6 @@ msgstr ""
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Override indicator location"
 msgstr ""
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Bottom"
-msgstr "底部"
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Left"
-msgstr "左边"
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Right"
-msgstr "右边"
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Top"
-msgstr "顶部"
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Edge offset:"
@@ -1103,7 +1076,7 @@ msgid "Only for the Line style."
 msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml
-msgid "Resize indicators on activation/hover"
+msgid "Resize the indicator when its window is active or hovered"
 msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml
@@ -1176,10 +1149,6 @@ msgstr ""
 
 #: package/contents/config/LivePreview.qml
 msgid "Panel thickness (preview):"
-msgstr ""
-
-#: package/contents/config/LivePreview.qml
-msgid "This setting only changes the appearance of this preview and does not affect your actual system panel."
 msgstr ""
 
 #: package/contents/config/LivePreview.qml
@@ -1500,6 +1469,15 @@ msgstr ""
 msgctxt "Stream name and its number among streams with the same name"
 msgid "%1 %2"
 msgstr ""
+
+#~ msgid "Maximum columns:"
+#~ msgstr "最大列数"
+
+#~ msgid "Maximum rows:"
+#~ msgstr "最大行数"
+
+#~ msgid "Space between taskbar items (px):"
+#~ msgstr "任务栏组件间距（px）"
 
 #~ msgid "Behavior"
 #~ msgstr "行为"

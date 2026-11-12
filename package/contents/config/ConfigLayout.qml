@@ -12,8 +12,8 @@ import org.kde.plasma.core as PlasmaCore
 
 import "../ui/code/singletones"
 
-// Task layout: what a button holds and how big it is, rows, and where the
-// buttons go on the panel.
+// Task layout: what a button holds, how big it and its icon are and where
+// the icon sits, and where the buttons go on the panel, in how many rows.
 ConfigPage {
     id: layoutPage
     fullTitle: Wrappers.i18n("Task Layout")
@@ -47,54 +47,46 @@ ConfigPage {
 
             RowLayout {
                 Label {
-                    id: maxButtonLengthLabel
+                    id: buttonWidthLabel
                     enabled: layoutPage.classicRow
-                    text: Wrappers.i18n("Maximum button width (px):")
+                    text: Wrappers.i18n("Button width (px):")
                 }
                 ConfigHint {
-                    target: maxButtonLengthLabel
+                    target: buttonWidthLabel
                     reason: layoutPage.classicRowReason
                 }
             }
-            SpinBox {
+            RowLayout {
                 enabled: layoutPage.classicRow
-                from: 40
-                to: 1000
-                value: layoutPage.cfg_maxButtonLength
-                onValueModified: layoutPage.cfg_maxButtonLength = value
-            }
-
-            RowLayout {
-                CheckBox {
-                    id: fitButtonToText
-                    enabled: layoutPage.classicRow
-                    text: Wrappers.i18n("Fit button width to its title")
-                    checked: layoutPage.cfg_fitButtonToText
-                    onToggled: layoutPage.cfg_fitButtonToText = checked
-                }
-                ConfigHint {
-                    target: fitButtonToText
-                    reason: layoutPage.classicRowReason
-                }
-            }
-
-            RowLayout {
+                spacing: layoutPage.smallSpacing
                 Label {
-                    id: minFitButtonLengthLabel
-                    enabled: fitButtonToText.enabled && fitButtonToText.checked
-                    text: Wrappers.i18n("Minimum button width (px):")
+                    text: Wrappers.i18nc("Button width", "maximum:")
                 }
-                ConfigHint {
-                    target: minFitButtonLengthLabel
-                    reason: fitButtonToText.enabled ? Wrappers.i18n("Turn on \"%1\" first.", fitButtonToText.text) : layoutPage.classicRowReason
+                SpinBox {
+                    from: 40
+                    to: 1000
+                    value: layoutPage.cfg_maxButtonLength
+                    onValueModified: layoutPage.cfg_maxButtonLength = value
+                }
+                Item { implicitWidth: layoutPage.largeSpacing }
+                Label {
+                    enabled: fitButtonToText.checked
+                    text: Wrappers.i18nc("Button width", "minimum:")
+                }
+                SpinBox {
+                    enabled: fitButtonToText.checked
+                    from: 40
+                    to: 1000
+                    value: layoutPage.cfg_minFitButtonLength
+                    onValueModified: layoutPage.cfg_minFitButtonLength = value
                 }
             }
-            SpinBox {
-                enabled: fitButtonToText.enabled && fitButtonToText.checked
-                from: 40
-                to: 1000
-                value: layoutPage.cfg_minFitButtonLength
-                onValueModified: layoutPage.cfg_minFitButtonLength = value
+            CheckBox {
+                id: fitButtonToText
+                enabled: layoutPage.classicRow
+                text: Wrappers.i18n("Fit to the title")
+                checked: layoutPage.cfg_fitButtonToText
+                onToggled: layoutPage.cfg_fitButtonToText = checked
             }
 
             RowLayout {
@@ -121,20 +113,23 @@ ConfigPage {
             Item { height: layoutPage.largeSpacing }
 
             Label {
-                text: Wrappers.i18n("Space between taskbar items (px):")
+                text: Wrappers.i18n("Margins:")
             }
-            SpinBox {
-                from: 0
-                to: 99
-                value: layoutPage.cfg_taskSpacingSize
-                onValueModified: layoutPage.cfg_taskSpacingSize = value
-            }
-
-            Label {
-                text: Wrappers.i18n("Inner padding:")
-            }
-            // The padding along the panel, around the icon and title.
             RowLayout {
+                spacing: layoutPage.smallSpacing
+                Label {
+                    text: Wrappers.i18nc("Margins", "outer (px):")
+                }
+                SpinBox {
+                    from: 0
+                    to: 99
+                    value: layoutPage.cfg_taskSpacingSize
+                    onValueModified: layoutPage.cfg_taskSpacingSize = value
+                }
+                Item { implicitWidth: layoutPage.largeSpacing }
+                Label {
+                    text: Wrappers.i18nc("Margins", "inner:")
+                }
                 ComboBox {
                     id: iconSpacing
                     enabled: !layoutPage.tabletMode
@@ -144,65 +139,109 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: iconSpacing
+                    info: Wrappers.i18n("Outer: the space between neighboring buttons. Inner: the padding inside a button around its icon and title, so it also sets the button size.")
                     reason: Wrappers.i18n("Automatically set to Large when in Touch mode")
-                }
-            }
-        }
-
-        ConfigTab {
-            title: Wrappers.i18n("Rows")
-            iconName: "view-split-top-bottom"
-
-            Label {
-                text: layoutPage.plasmoidVertical ? Wrappers.i18n("Use multi-column view:") : Wrappers.i18n("Use multi-row view:")
-            }
-            RadioButton {
-                text: Wrappers.i18n("Never")
-                checked: layoutPage.cfg_maxStripes === 1
-                onToggled: {
-                    if (checked)
-                        layoutPage.cfg_maxStripes = 1;
-                }
-            }
-            RadioButton {
-                text: Wrappers.i18n("When panel is low on space and thick enough")
-                checked: layoutPage.cfg_maxStripes > 1 && !layoutPage.cfg_forceStripes
-                onToggled: {
-                    if (checked) {
-                        layoutPage.cfg_maxStripes = Math.max(2, layoutPage.cfg_maxStripes);
-                        layoutPage.cfg_forceStripes = false;
-                    }
-                }
-            }
-            RadioButton {
-                text: Wrappers.i18n("Always when panel is thick enough")
-                checked: layoutPage.cfg_maxStripes > 1 && layoutPage.cfg_forceStripes
-                onToggled: {
-                    if (checked) {
-                        layoutPage.cfg_maxStripes = Math.max(2, layoutPage.cfg_maxStripes);
-                        layoutPage.cfg_forceStripes = true;
-                    }
                 }
             }
 
             Item { height: layoutPage.largeSpacing }
 
+            Label {
+                text: Wrappers.i18n("Icon size:")
+            }
+            ComboBox {
+                Layout.fillWidth: true
+                model: [Wrappers.i18n("Relative"), Wrappers.i18n("Absolute")]
+                currentIndex: layoutPage.cfg_iconSizeOverride ? 1 : 0
+                onActivated: (index) => layoutPage.cfg_iconSizeOverride = (index === 1)
+            }
+
+            // One row for both units, so the form doesn't shift when they
+            // change.
             RowLayout {
-                Label {
-                    id: maxStripesLabel
-                    enabled: layoutPage.cfg_maxStripes > 1
-                    text: layoutPage.plasmoidVertical ? Wrappers.i18n("Maximum columns:") : Wrappers.i18n("Maximum rows:")
+                Layout.fillWidth: true
+                spacing: layoutPage.smallSpacing
+                readonly property bool absolute: layoutPage.cfg_iconSizeOverride
+
+                Slider {
+                    id: iconSize
+                    Layout.fillWidth: true
+                    from: 0
+                    to: parent.absolute ? 100 : 300
+                    stepSize: 1
+                    value: parent.absolute ? layoutPage.cfg_iconSizePx : layoutPage.cfg_iconScale
+                    onMoved: {
+                        if (parent.absolute)
+                            layoutPage.cfg_iconSizePx = Math.round(value);
+                        else
+                            layoutPage.cfg_iconScale = Math.round(value);
+                    }
                 }
-                ConfigHint {
-                    target: maxStripesLabel
-                    reason: Wrappers.i18n("Choose when to use the multi-row view first.")
+                SpinBox {
+                    from: 0
+                    to: parent.absolute ? 100 : 300
+                    editable: true
+                    value: Math.round(iconSize.value)
+                    onValueModified: {
+                        if (parent.absolute)
+                            layoutPage.cfg_iconSizePx = value;
+                        else
+                            layoutPage.cfg_iconScale = value;
+                    }
+                }
+                Label {
+                    // Both units take the same room.
+                    Layout.minimumWidth: unitMetrics.advanceWidth
+                    text: parent.absolute ? "px" : "%"
+                    TextMetrics {
+                        id: unitMetrics
+                        text: "px"
+                    }
+                }
+                Button {
+                    icon.name: "edit-reset"
+                    flat: true
+                    onClicked: {
+                        if (parent.absolute)
+                            layoutPage.cfg_iconSizePx = 32;
+                        else
+                            layoutPage.cfg_iconScale = 100;
+                    }
+                    ToolTip.text: Wrappers.i18n("Reset to default")
+                    ToolTip.visible: hovered
+                    ToolTip.delay: 1000
                 }
             }
-            SpinBox {
-                enabled: layoutPage.cfg_maxStripes > 1
-                from: 1
-                value: layoutPage.cfg_maxStripes
-                onValueModified: layoutPage.cfg_maxStripes = value
+
+            RowLayout {
+                CheckBox {
+                    id: iconScaleFromEdge
+                    text: Wrappers.i18n("Scale icons from panel edge")
+                    checked: layoutPage.cfg_iconScaleFromEdge
+                    onToggled: layoutPage.cfg_iconScaleFromEdge = checked
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("When on, icons scale from the panel edge, not from their center. Automatic centering is then off; the icons are aligned with the \"Edge offset\" option.")
+                }
+            }
+            RowLayout {
+                spacing: layoutPage.smallSpacing
+                Item { implicitWidth: layoutPage.gridUnit }
+                RowLayout {
+                    id: iconEdgeOffset
+                    enabled: iconScaleFromEdge.checked
+                    spacing: layoutPage.smallSpacing
+                    Label {
+                        text: Wrappers.i18n("Edge offset (px):")
+                    }
+                    SpinBox {
+                        from: 0
+                        to: 15
+                        stepSize: 1
+                        value: layoutPage.cfg_iconEdgeOffset
+                        onValueModified: layoutPage.cfg_iconEdgeOffset = value
+                    }
+                }
             }
         }
 
@@ -266,8 +305,42 @@ ConfigPage {
                 ConfigHint {
                     target: fillAlignment
                     reason: !fill.enabled ? Wrappers.i18n("Only when the widget is on a panel.")
-                        : layoutPage.cfg_iconOnly !== 1 ? Wrappers.i18n("Only in the icons-only mode.")
-                        : Wrappers.i18n("Turn on \"%1\" first.", fill.text)
+                        : layoutPage.cfg_iconOnly !== 1 ? Wrappers.i18n("Only in the icons-only mode.") : ""
+                }
+            }
+
+            Item { height: layoutPage.largeSpacing }
+
+            // Like the stock task manager: on a thick panel the buttons can
+            // stack in rows (columns on a vertical panel).
+            RowLayout {
+                spacing: layoutPage.smallSpacing
+                Label {
+                    text: layoutPage.plasmoidVertical ? Wrappers.i18n("Buttons in several columns:") : Wrappers.i18n("Buttons in several rows:")
+                }
+                ComboBox {
+                    id: stripesMode
+                    model: [Wrappers.i18n("Never"), Wrappers.i18n("When short of space"), Wrappers.i18n("Always")]
+                    currentIndex: layoutPage.cfg_maxStripes <= 1 ? 0 : (layoutPage.cfg_forceStripes ? 2 : 1)
+                    onActivated: (index) => {
+                        layoutPage.cfg_maxStripes = index === 0 ? 1 : Math.max(2, layoutPage.cfg_maxStripes);
+                        layoutPage.cfg_forceStripes = index === 2;
+                    }
+                }
+                Label {
+                    enabled: stripesMode.currentIndex > 0
+                    text: Wrappers.i18nc("Rows or columns", "at most")
+                }
+                SpinBox {
+                    enabled: stripesMode.currentIndex > 0
+                    from: 2
+                    value: Math.max(2, layoutPage.cfg_maxStripes)
+                    onValueModified: layoutPage.cfg_maxStripes = value
+                }
+                ConfigHint {
+                    info: layoutPage.plasmoidVertical
+                        ? Wrappers.i18n("When on, task buttons on a wide vertical panel are placed in several columns. The number of columns is limited by the panel width and the \"at most\" value.")
+                        : Wrappers.i18n("When on, task buttons on a thick panel are placed in several rows. The number of rows is limited by the panel thickness and the \"at most\" value.")
                 }
             }
 
@@ -275,39 +348,32 @@ ConfigPage {
 
             Label {
                 enabled: !layoutPage.onPanel
-                text: Wrappers.i18n("Floating Mode Settings:")
+                text: Wrappers.i18n("On the desktop:")
             }
+            // Off a panel the widget has no screen edge; this picks the one
+            // it acts as if it were on (indicators, popups).
             RowLayout {
                 CheckBox {
                     id: overridePlasmaButtonDirection
                     enabled: !layoutPage.onPanel
-                    text: Wrappers.i18n("Override system direction")
+                    text: Wrappers.i18n("Behave as a panel:")
                     checked: layoutPage.cfg_overridePlasmaButtonDirection
                     onToggled: layoutPage.cfg_overridePlasmaButtonDirection = checked
                 }
-                ConfigHint {
-                    target: overridePlasmaButtonDirection
-                    reason: Wrappers.i18n("Only when the widget is on the desktop, not on a panel.")
-                }
-            }
-            RowLayout {
                 ComboBox {
-                    id: plasmaButtonDirection
-                    Layout.fillWidth: true
                     enabled: overridePlasmaButtonDirection.enabled && overridePlasmaButtonDirection.checked
                     model: [
-                        Wrappers.i18n("As on top panel"),
-                        Wrappers.i18n("As on bottom panel"),
-                        Wrappers.i18n("As on left panel"),
-                        Wrappers.i18n("As on right panel")
+                        Wrappers.i18n("Top"),
+                        Wrappers.i18n("Bottom"),
+                        Wrappers.i18n("Left"),
+                        Wrappers.i18n("Right")
                     ]
                     currentIndex: layoutPage.cfg_plasmaButtonDirection
                     onActivated: (index) => layoutPage.cfg_plasmaButtonDirection = index
                 }
                 ConfigHint {
-                    target: plasmaButtonDirection
-                    reason: overridePlasmaButtonDirection.enabled ? Wrappers.i18n("Turn on \"%1\" first.", overridePlasmaButtonDirection.text)
-                        : Wrappers.i18n("Only when the widget is on the desktop, not on a panel.")
+                    target: overridePlasmaButtonDirection
+                    reason: Wrappers.i18n("Only when the widget is on the desktop, not on a panel.")
                 }
             }
         }

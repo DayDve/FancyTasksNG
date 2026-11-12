@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-12 14:12+0200\n"
+"POT-Creation-Date: 2026-11-12 17:44+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -28,16 +28,16 @@ msgid "Import Configuration…"
 msgstr "Импортировать конфигурацию…"
 
 #: package/contents/config/ConfigAdvanced.qml
-msgid "Export FancyTasksNG Configuration"
-msgstr "Экспорт конфигурации FancyTasksNG"
+msgid "Export Fancy Tasks NG Configuration"
+msgstr "Экспорт конфигурации Fancy Tasks NG"
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "JSON files (*.json)"
 msgstr "Файлы JSON (*.json)"
 
 #: package/contents/config/ConfigAdvanced.qml
-msgid "Import FancyTasksNG Configuration"
-msgstr "Импорт конфигурации FancyTasksNG"
+msgid "Import Fancy Tasks NG Configuration"
+msgstr "Импорт конфигурации Fancy Tasks NG"
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Configuration exported successfully."
@@ -52,8 +52,8 @@ msgid "Failed to read the configuration file."
 msgstr "Не удалось прочитать файл конфигурации."
 
 #: package/contents/config/ConfigAdvanced.qml
-msgid "This file is not a valid FancyTasksNG configuration."
-msgstr "Этот файл не является корректной конфигурацией FancyTasksNG."
+msgid "This file is not a valid Fancy Tasks NG configuration."
+msgstr "Этот файл не является корректной конфигурацией Fancy Tasks NG."
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Configuration imported. Click Apply to save the changes."
@@ -65,19 +65,15 @@ msgstr "Сигналы приложений"
 
 #: package/contents/config/ConfigAppSignals.qml
 msgid "App signals are turned off."
-msgstr "Сигналы приложений выключены."
-
-#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigContextMenu.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigTooltips.qml package/contents/config/ConfigWindowIndicators.qml
-msgid "Turn on \"%1\" first."
-msgstr "Сначала включите «%1»."
+msgstr "Сигналы приложений не принимаются."
 
 #: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigQuickSetup.qml
 msgid "Show app signals"
 msgstr "Принимать сигналы приложений"
 
 #: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigQuickSetup.qml
-msgid "The audio mark, the notification count and progress on task buttons. Turning this off keeps their own settings."
-msgstr "Индикатор звука, счётчик уведомлений и прогресс на кнопках задач. При выключении их собственные настройки сохраняются."
+msgid "Some apps send signals about audio playback, notification count and operation progress. When on, Fancy Tasks NG receives these signals and shows the matching indicators on the buttons of such apps."
+msgstr "Некоторые приложения передают сигналы о воспроизводимом звуке, числе уведомлений и ходе выполнения операций. Если включено, Fancy Tasks NG принимает эти сигналы и показывает соответствующие индикаторы на кнопках таких приложений."
 
 #: package/contents/config/ConfigAppSignals.qml
 msgid "Mark applications playing audio"
@@ -103,14 +99,6 @@ msgid "When smaller than"
 msgstr "Если меньше"
 
 #: package/contents/config/ConfigAppSignals.qml
-msgid "The audio and notification count badges on task icons. A dot grows into the full badge while its task is under the cursor; \"When smaller than\" keeps the full badges on big icons."
-msgstr "Бейджи звука и счётчика уведомлений на значках задач. Точка разворачивается в полный бейдж, пока задача под курсором; «Если меньше» оставляет полные бейджи на крупных значках."
-
-#: package/contents/config/ConfigAppSignals.qml
-msgid "Turn on the audio mark or the notification count first."
-msgstr "Сначала включите индикатор звука или счётчик уведомлений."
-
-#: package/contents/config/ConfigAppSignals.qml
 msgid "Counter"
 msgstr "Счётчик"
 
@@ -128,7 +116,7 @@ msgstr "Показывать счётчики на значках закрепл
 
 #: package/contents/config/ConfigAppSignals.qml
 msgid "Show counters even when the application has no windows in the current view (e.g., minimized to tray or on another screen/desktop/activity)."
-msgstr "Отображать счётчики для запущенных приложений при отсутствии видимых окон (например, если приложение свёрнуто в трей или находится на другом рабочем столе/экране/в другой комнате)."
+msgstr "Показывать счётчики, даже если у приложения нет видимых окон (например, оно свёрнуто в трей или находится на другом экране, рабочем столе или в другой комнате)."
 
 #: package/contents/config/ConfigAppSignals.qml
 msgid "Count background color:"
@@ -140,7 +128,7 @@ msgstr "Адаптивный (цвет темы)"
 
 #: package/contents/config/ConfigAppSignals.qml
 msgid "Fixed red (Classic)"
-msgstr "Сплошной красный (Классический)"
+msgstr "Всегда красный (классический)"
 
 #: package/contents/config/ConfigAppSignals.qml
 msgid "System accent color"
@@ -188,10 +176,6 @@ msgid "Strip (Right)"
 msgstr "Полоска (Справа)"
 
 #: package/contents/config/ConfigAppSignals.qml
-msgid "Choose a progress style first."
-msgstr "Сначала выберите вид прогресса."
-
-#: package/contents/config/ConfigAppSignals.qml
 msgid "Progress color:"
 msgstr "Цвет прогресса:"
 
@@ -221,7 +205,7 @@ msgstr "Только когда виджет находится на панел�
 
 #: package/contents/config/ConfigAppSignals.qml
 msgid "Animate task icon when a window wants attention"
-msgstr "Анимация кнопки окна, требующего внимания"
+msgstr "Анимировать значок окна, требующего внимания"
 
 #: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml package/contents/config/ConfigTaskStyle.qml
 msgid "Only in the icons-only mode."
@@ -229,7 +213,7 @@ msgstr "Только в режиме «Только значки»."
 
 #: package/contents/config/ConfigAppSignals.qml
 msgid "Colorize the task button when a window wants attention"
-msgstr "Использовать свой цвет для кнопки окна, требующего внимания"
+msgstr "Подсвечивать кнопку окна, требующего внимания"
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "Context Menu"
@@ -242,12 +226,12 @@ msgstr "Меню задачи"
 #: package/contents/config/ConfigContextMenu.qml
 msgid "Hide 'Move to Desktop' if only one virtual desktop is used"
 msgstr ""
-"Скрывать «Переместить на рабочий стол»,\n"
+"Скрывать «Переместить на рабочий стол», если рабочий стол одинСкрывать «Переместить на рабочий стол»,\n"
 "если используется только один рабочий стол"
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "Show browsing history in the context menu of web browsers"
-msgstr "Отображать историю браузеров в контекстном меню"
+msgstr "Показывать историю браузеров в контекстном меню"
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "Number of browser history items:"
@@ -255,7 +239,7 @@ msgstr "Количество элементов истории:"
 
 #: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
 msgid "Task Layout"
-msgstr "Расположение задач"
+msgstr "Расстановка задач"
 
 #: package/contents/config/ConfigLayout.qml
 msgid "Only in the classic panel mode."
@@ -282,32 +266,44 @@ msgid "Show icons only"
 msgstr "Только значки"
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Maximum button width (px):"
-msgstr "Максимальная ширина кнопки (px):"
+msgid "Button width (px):"
+msgstr "Ширина кнопок (px):"
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Fit button width to its title"
-msgstr "Подгонять ширину кнопки под название"
+msgctxt "Button width"
+msgid "maximum:"
+msgstr "максимальная:"
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Minimum button width (px):"
-msgstr "Минимальная ширина кнопки (px):"
+msgctxt "Button width"
+msgid "minimum:"
+msgstr "минимальная:"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Fit to the title"
+msgstr "Подгонять под название"
 
 #: package/contents/config/ConfigLayout.qml
 msgid "Lines of title text:"
-msgstr "Строк в заголовке:"
+msgstr "Строк в названии:"
 
 #: package/contents/config/ConfigLayout.qml
 msgid "As many as fit"
 msgstr "Сколько поместится"
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Space between taskbar items (px):"
-msgstr "Расстояние между элементами (px):"
+msgid "Margins:"
+msgstr "Отступы:"
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Inner padding:"
-msgstr "Внутренние отступы кнопок:"
+msgctxt "Margins"
+msgid "outer (px):"
+msgstr "внешние (px):"
+
+#: package/contents/config/ConfigLayout.qml
+msgctxt "Margins"
+msgid "inner:"
+msgstr "внутренние:"
 
 #: package/contents/config/ConfigLayout.qml
 msgid "Small"
@@ -326,44 +322,40 @@ msgid "Huge"
 msgstr "Огромный"
 
 #: package/contents/config/ConfigLayout.qml
+msgid "Outer: the space between neighboring buttons. Inner: the padding inside a button around its icon and title, so it also sets the button size."
+msgstr "Внешние ‒ расстояние между соседними кнопками. Внутренние ‒ поля внутри кнопки вокруг значка и названия, от них зависит и размер кнопки."
+
+#: package/contents/config/ConfigLayout.qml
 msgid "Automatically set to Large when in Touch mode"
 msgstr "Автоматически «Большой» в сенсорном режиме"
 
-#: package/contents/config/ConfigLayout.qml
-msgid "Rows"
-msgstr "Ряды"
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
+msgid "Icon size:"
+msgstr "Размер значков:"
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Use multi-column view:"
-msgstr "Многоколоночный вид:"
+msgid "Relative"
+msgstr "Относительный"
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Use multi-row view:"
-msgstr "Многострочный вид:"
+msgid "Absolute"
+msgstr "Абсолютный"
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Never"
-msgstr "Никогда"
+msgid "Reset to default"
+msgstr "Сбросить"
 
 #: package/contents/config/ConfigLayout.qml
-msgid "When panel is low on space and thick enough"
-msgstr "Когда мало места и панель широкая"
+msgid "Scale icons from panel edge"
+msgstr "Масштабировать значки от края панели"
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Always when panel is thick enough"
-msgstr "Всегда, если панель достаточно широкая"
+msgid "When on, icons scale from the panel edge, not from their center. Automatic centering is then off; the icons are aligned with the \"Edge offset\" option."
+msgstr "Если включено, значки масштабируются не от центра, а от края панели. Автоматическое центрирование при этом отключается, положение значков выравнивается опцией «Отступ от края»."
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Maximum columns:"
-msgstr "Макс. столбцов:"
-
-#: package/contents/config/ConfigLayout.qml
-msgid "Maximum rows:"
-msgstr "Макс. строк:"
-
-#: package/contents/config/ConfigLayout.qml
-msgid "Choose when to use the multi-row view first."
-msgstr "Сначала выберите, когда включать многострочный вид."
+msgid "Edge offset (px):"
+msgstr "Отступ от края (px):"
 
 #: package/contents/config/ConfigLayout.qml
 msgid "Placement"
@@ -406,36 +398,69 @@ msgid "Center"
 msgstr "По центру"
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Floating Mode Settings:"
-msgstr "Настройки плавающего режима:"
+msgid "Buttons in several columns:"
+msgstr "Кнопки в несколько столбцов:"
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Override system direction"
-msgstr "Переопределить системное направление"
+msgid "Buttons in several rows:"
+msgstr "Кнопки в несколько рядов:"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Never"
+msgstr "Никогда"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "When short of space"
+msgstr "Когда не хватает места"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Always"
+msgstr "Всегда"
+
+#: package/contents/config/ConfigLayout.qml
+msgctxt "Rows or columns"
+msgid "at most"
+msgstr "не больше"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "When on, task buttons on a wide vertical panel are placed in several columns. The number of columns is limited by the panel width and the \"at most\" value."
+msgstr "Если включено, на широкой вертикальной панели кнопки задач располагаются в несколько столбцов. Число столбцов ограничено шириной панели и значением «не больше»."
+
+#: package/contents/config/ConfigLayout.qml
+msgid "When on, task buttons on a thick panel are placed in several rows. The number of rows is limited by the panel thickness and the \"at most\" value."
+msgstr "Если включено, на толстой панели кнопки задач располагаются в несколько рядов. Число рядов ограничено толщиной панели и значением «не больше»."
+
+#: package/contents/config/ConfigLayout.qml
+msgid "On the desktop:"
+msgstr "На рабочем столе:"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Behave as a panel:"
+msgstr "Вести себя как панель:"
+
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Top"
+msgstr "Сверху"
+
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Bottom"
+msgstr "Снизу"
+
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Left"
+msgstr "Слева"
+
+#: package/contents/config/ConfigLayout.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Right"
+msgstr "Справа"
 
 #: package/contents/config/ConfigLayout.qml
 msgid "Only when the widget is on the desktop, not on a panel."
 msgstr "Только когда виджет на рабочем столе, а не на панели."
 
-#: package/contents/config/ConfigLayout.qml
-msgid "As on top panel"
-msgstr "Как панель сверху"
-
-#: package/contents/config/ConfigLayout.qml
-msgid "As on bottom panel"
-msgstr "Как панель снизу"
-
-#: package/contents/config/ConfigLayout.qml
-msgid "As on left panel"
-msgstr "Как панель слева"
-
-#: package/contents/config/ConfigLayout.qml
-msgid "As on right panel"
-msgstr "Как панель справа"
-
 #: package/contents/config/ConfigPinnedApps.qml
 msgid "Pinned Applications"
-msgstr "Закрепленные приложения"
+msgstr "Закреплённые приложения"
 
 #: package/contents/config/ConfigPinnedApps.qml
 msgid "Default Web Browser"
@@ -471,7 +496,7 @@ msgstr "Добавьте приложения для закрепления. П�
 
 #: package/contents/config/ConfigPinnedApps.qml
 msgid "Unpin app by dragging its icon off the panel"
-msgstr "Удалять значки перетаскиванием с панели"
+msgstr "Откреплять, перетащив значок с панели"
 
 #: package/contents/config/ConfigPinnedApps.qml
 msgid "Play removal animation"
@@ -506,13 +531,9 @@ msgstr "Быстрая настройка"
 msgid "Display"
 msgstr "Отображение"
 
-#: package/contents/config/ConfigQuickSetup.qml
-msgid "Icon size"
-msgstr "Размер значков"
-
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskStyle.qml
 msgid "Icon hover effects"
-msgstr "Эффекты при наведении"
+msgstr "Эффекты значков при наведении"
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskStyle.qml
 msgid "Task Styling"
@@ -536,12 +557,12 @@ msgid "None"
 msgstr "Нет"
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigWindowIndicators.qml
-msgid "Stripe from the Plasma theme"
-msgstr "Полоска из темы Plasma"
+msgid "Use Plasma borders"
+msgstr "Использовать рамки Plasma"
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigWindowIndicators.qml
-msgid "Draws the edges of the theme's task button frame. In Breeze that's the stripe along the panel edge; in other themes the button frame may change its shape."
-msgstr "Рисует края рамки кнопки из темы. В Breeze это полоска у края панели, в других темах может измениться форма рамки кнопки."
+msgid "Task buttons are drawn with the borders from the Plasma theme. In Breeze it's a stripe along the panel edge; in other themes it may look different."
+msgstr "Кнопки задач рисуются с рамкой из темы Plasma. В Breeze это полоска у края панели, в других темах рамка может выглядеть иначе."
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigWindowIndicators.qml
 msgid "Buttons have no background (Task Styling › Background)."
@@ -589,11 +610,11 @@ msgstr "Ничего не делает"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Cycles through all tasks"
-msgstr "Переключает все задачи"
+msgstr "Перебирает все задачи"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Cycles through all tasks (skip minimized)"
-msgstr "Переключает все задачи (пропуская свёрнутые)"
+msgstr "Перебирает все задачи (пропуская свёрнутые)"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Adjusts volume of the window"
@@ -605,11 +626,11 @@ msgstr "Как везде"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Cycles through the group's windows"
-msgstr "Переключает окна группы"
+msgstr "Перебирает окна группы"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Cycles through the group's windows (skip minimized)"
-msgstr "Переключает окна группы (пропуская свёрнутые)"
+msgstr "Перебирает окна группы (пропуская свёрнутые)"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Adjusts the group's volume"
@@ -629,7 +650,7 @@ msgstr "Нажатие на кнопку группы:"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Cycles through tasks"
-msgstr "Переключение задач"
+msgstr "Перебирает окна группы"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Shows small window previews"
@@ -637,7 +658,7 @@ msgstr "Показывает миниатюры окон"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Shows large window previews"
-msgstr "Показывает большие превью"
+msgstr "Показывает крупные миниатюры окон"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Shows textual list"
@@ -645,7 +666,7 @@ msgstr "Показывает текстовый список"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Middle-clicking any task:"
-msgstr "Средняя кнопка мыши:"
+msgstr "Щелчок средней кнопкой:"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Closes window or group"
@@ -657,7 +678,7 @@ msgstr "Открывает новое окно"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Minimizes/Restores window or group"
-msgstr "Сворачивает/Восстанавливает окно или группу"
+msgstr "Сворачивает и восстанавливает окно или группу"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Toggles grouping"
@@ -668,12 +689,12 @@ msgid "Brings it to the current virtual desktop"
 msgstr "Переносит на текущий рабочий стол"
 
 #: package/contents/config/ConfigTaskActions.qml
-msgid "Animation of closing/removing an icon from the panel"
-msgstr "Анимация закрытия/удаления значка с панели"
+msgid "Animate closing"
+msgstr "Анимировать закрытие"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Only when middle-clicking closes the window."
-msgstr "Только когда средний щелчок закрывает окно."
+msgstr "Только когда щелчок средней кнопкой закрывает окно."
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Mouse wheel:"
@@ -729,11 +750,7 @@ msgstr "Инвертировать выбранные фильтры"
 
 #: package/contents/config/ConfigTaskList.qml
 msgid "Hide matching tasks instead of showing them."
-msgstr "Скрывать задачи, подпадающие под выбранные условия, вместо их показа."
-
-#: package/contents/config/ConfigTaskList.qml
-msgid "Turn on one of the filters above first."
-msgstr "Сначала включите один из фильтров выше."
+msgstr "Скрывать задачи, подходящие под фильтры."
 
 #: package/contents/config/ConfigTaskList.qml
 msgid "In any state"
@@ -741,11 +758,11 @@ msgstr "В любом состоянии"
 
 #: package/contents/config/ConfigTaskList.qml
 msgid "Only minimized"
-msgstr "Только свернутые"
+msgstr "Только свёрнутые"
 
 #: package/contents/config/ConfigTaskList.qml
 msgid "Only not minimized"
-msgstr "Только развернутые"
+msgstr "Только несвёрнутые"
 
 #: package/contents/config/ConfigTaskList.qml
 msgid "Grouping"
@@ -812,30 +829,6 @@ msgid "Icons"
 msgstr "Значки"
 
 #: package/contents/config/ConfigTaskStyle.qml
-msgid "Icon size:"
-msgstr "Размер значков:"
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Relative"
-msgstr "Относительный"
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Absolute"
-msgstr "Абсолютный"
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Reset to default"
-msgstr "Сбросить по умолчанию"
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Scale icons from panel edge"
-msgstr "Масштабировать значки от края панели"
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Edge offset (px):"
-msgstr "Отступ от края (px):"
-
-#: package/contents/config/ConfigTaskStyle.qml
 msgid "Icon Shape:"
 msgstr "Форма значков:"
 
@@ -849,7 +842,7 @@ msgstr "Радиус скругления значка:"
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Show background under clipped icons"
-msgstr "Показывать подложку под скругленными значками"
+msgstr "Показывать подложку под скруглёнными значками"
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Background color source:"
@@ -861,7 +854,7 @@ msgstr "Основной цвет значка"
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Average icon color"
-msgstr "Усредненный цвет значка"
+msgstr "Усреднённый цвет значка"
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Plasma accent color"
@@ -901,7 +894,7 @@ msgstr "У кнопок нет фона."
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Using Plasma Style/Accent"
-msgstr "Стиль Plasma / Акцентный цвет"
+msgstr "Как в теме Plasma"
 
 #: package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigWindowIndicators.qml
 msgid "Use dominant icon color"
@@ -940,24 +933,16 @@ msgid "Icon zoom factor (px):"
 msgstr "Увеличение значка (px):"
 
 #: package/contents/config/ConfigTaskStyle.qml
-msgid "How much the icon should grow when hovered (in pixels)"
-msgstr "На сколько пикселей увеличится значок при наведении"
-
-#: package/contents/config/ConfigTaskStyle.qml
 msgid "Zoom animation duration (ms):"
 msgstr "Длительность анимации (мс):"
 
 #: package/contents/config/ConfigTaskStyle.qml
-msgid "Duration of the zoom animation in milliseconds"
-msgstr "Длительность анимации увеличения в миллисекундах"
-
-#: package/contents/config/ConfigTaskStyle.qml
 msgid "Glow following the cursor over task buttons"
-msgstr "Подсветка панели под кнопками, следующая за курсором"
+msgstr "Подсвечивать панель под курсором"
 
 #: package/contents/config/ConfigTooltips.qml
 msgid "Show tooltips when hovering over task buttons"
-msgstr "Отображать всплывающие подсказки при наведении курсора мыши на кнопку задачи"
+msgstr "Показывать подсказки при наведении на кнопку задачи"
 
 #: package/contents/config/ConfigTooltips.qml
 msgid "Tooltips are turned off."
@@ -977,7 +962,7 @@ msgstr "Миниатюры окон:"
 
 #: package/contents/config/ConfigTooltips.qml
 msgid "Show window thumbnails in tooltips"
-msgstr "Отображать миниатюры окон в подсказках"
+msgstr "Показывать миниатюры окон в подсказках"
 
 #: package/contents/config/ConfigTooltips.qml
 msgid "Thumbnail aspect ratio:"
@@ -993,11 +978,11 @@ msgstr "Как у окна"
 
 #: package/contents/config/ConfigTooltips.qml
 msgid "Media controls:"
-msgstr "Элементы управления медиа:"
+msgstr "Управление воспроизведением:"
 
 #: package/contents/config/ConfigTooltips.qml
 msgid "Show media controls"
-msgstr "Отображать элементы управления медиа"
+msgstr "Показывать управление воспроизведением"
 
 #: package/contents/config/ConfigTooltips.qml
 msgid "Show volume controls"
@@ -1005,11 +990,11 @@ msgstr "Показывать регулятор громкости"
 
 #: package/contents/config/ConfigTooltips.qml
 msgid "Media controls location:"
-msgstr "Расположение элементов управления медиа:"
+msgstr "Где показывать:"
 
 #: package/contents/config/ConfigTooltips.qml
 msgid "On thumbnails (Overlay)"
-msgstr "Поверх миниатюры"
+msgstr "Поверх миниатюр"
 
 #: package/contents/config/ConfigTooltips.qml
 msgid "Under thumbnails"
@@ -1025,23 +1010,27 @@ msgstr "Одна панель под окнами"
 
 #: package/contents/config/ConfigTooltips.qml
 msgid "Hidden"
-msgstr "Скрыть"
+msgstr "Не показывать"
 
 #: package/contents/config/ConfigTooltips.qml
-msgid "For apps that play from one process for all their windows, such as web browsers. Apps with a process per window keep their controls on each window."
-msgstr "Для приложений, которые играют из одного процесса на все свои окна, например браузеров. У приложений с отдельным процессом на каждое окно элементы управления остаются на каждом окне."
+msgid "Some apps, such as web browsers, don't report which window plays the audio. For them, the playback controls are shown once for the whole group."
+msgstr "Ряд приложений, таких как браузеры, не сообщает, в каком окне воспроизводится звук. Для них управление воспроизведением показывается одно на всю группу."
 
 #: package/contents/config/ConfigWindowIndicators.qml
-msgid "Fancy Tasks indicators are turned off."
-msgstr "Индикаторы Fancy Tasks выключены."
+msgid "Fancy Tasks NG indicators are turned off."
+msgstr "Индикаторы Fancy Tasks NG выключены."
 
 #: package/contents/config/ConfigWindowIndicators.qml
-msgid "Fancy Tasks indicators"
-msgstr "Индикаторы Fancy Tasks"
+msgid "Fancy Tasks NG indicators"
+msgstr "Индикаторы Fancy Tasks NG"
 
 #: package/contents/config/ConfigWindowIndicators.qml
-msgid "Group mark from the Plasma theme"
-msgstr "Значок группы из темы Plasma"
+msgid "Group overlay from the Plasma theme"
+msgstr "Оверлей группы из темы Plasma"
+
+#: package/contents/config/ConfigWindowIndicators.qml
+msgid "A \"+\" sign from the Plasma theme on a group button, as in the standard task manager."
+msgstr "Знак «+» из темы Plasma на кнопке группы, как в стандартной панели задач."
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Look"
@@ -1053,27 +1042,11 @@ msgstr "Анимация индикаторов"
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Override indicator location"
-msgstr "Переопределить расположение индикаторов"
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Bottom"
-msgstr "Снизу"
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Left"
-msgstr "Слева"
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Right"
-msgstr "Справа"
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Top"
-msgstr "Сверху"
+msgstr "Своё расположение индикаторов"
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Edge offset:"
-msgstr "Сдвиг от края:"
+msgstr "Отступ от края:"
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Roundness:"
@@ -1085,7 +1058,7 @@ msgstr "Макс. сегментов:"
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Show '+' on overflow"
-msgstr "Отображать «+» при переполнении"
+msgstr "Показывать «+» при переполнении"
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Size"
@@ -1104,8 +1077,8 @@ msgid "Only for the Line style."
 msgstr "Только для стиля «Линия»."
 
 #: package/contents/config/ConfigWindowIndicators.qml
-msgid "Resize indicators on activation/hover"
-msgstr "Изменение размеров индикаторов при активации/наведении"
+msgid "Resize the indicator when its window is active or hovered"
+msgstr "Менять размер индикатора, когда окно активно или под курсором"
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Length:"
@@ -1153,7 +1126,7 @@ msgstr "Цвета:"
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Use plasma accent color"
-msgstr "Использовать цвет акцента Plasma"
+msgstr "Акцентный цвет Plasma"
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Highlight active window in group"
@@ -1161,11 +1134,11 @@ msgstr "Выделять активное окно в группе"
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Dim inactive indicators"
-msgstr "Затемнять неактивные индикаторы"
+msgstr "Приглушать неактивные индикаторы"
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Inactive indicator opacity:"
-msgstr "Прозрачность неактивных индикаторов:"
+msgstr "Непрозрачность неактивных индикаторов:"
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Desaturate when minimized"
@@ -1178,10 +1151,6 @@ msgstr "Предпросмотр"
 #: package/contents/config/LivePreview.qml
 msgid "Panel thickness (preview):"
 msgstr "Толщина панели (превью):"
-
-#: package/contents/config/LivePreview.qml
-msgid "This setting only changes the appearance of this preview and does not affect your actual system panel."
-msgstr "Этот параметр меняет только вид предпросмотра и не влияет на реальную системную панель."
 
 #: package/contents/config/LivePreview.qml
 msgid "App name"
@@ -1379,7 +1348,7 @@ msgstr "Открепить от панели задач"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "More"
-msgstr "Еще"
+msgstr "Ещё"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "&Move"
@@ -1423,7 +1392,7 @@ msgstr "&Скрыть из трансляции"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Allow this program to be grouped"
-msgstr "Разрешить группировку этой программы"
+msgstr "Разрешить группировку этого приложения"
 
 #: package/contents/ui/ContextMenu.qml
 msgctxt "@item:inmenu"
@@ -1493,7 +1462,7 @@ msgstr "Доступно в %1"
 
 #: package/contents/ui/ToolTipStreamList.qml
 msgid "Show where this is playing"
-msgstr "Показать, где это играет"
+msgstr "Показать, где воспроизводится"
 
 #: package/contents/ui/ToolTipStreamList.qml
 msgid "Audio stream"
@@ -1503,6 +1472,84 @@ msgstr "Аудиопоток"
 msgctxt "Stream name and its number among streams with the same name"
 msgid "%1 %2"
 msgstr "%1 %2"
+
+#~ msgid "Rows"
+#~ msgstr "Ряды"
+
+#~ msgid "Use multi-column view:"
+#~ msgstr "Несколько столбцов:"
+
+#~ msgid "Use multi-row view:"
+#~ msgstr "Несколько рядов:"
+
+#~ msgid "When panel is low on space and thick enough"
+#~ msgstr "Когда мало места, если позволяет толщина панели"
+
+#~ msgid "Always when panel is thick enough"
+#~ msgstr "Всегда, если позволяет толщина панели"
+
+#~ msgid "Maximum columns:"
+#~ msgstr "Макс. столбцов:"
+
+#~ msgid "Maximum rows:"
+#~ msgstr "Макс. рядов:"
+
+#~ msgid "Maximum button width (px):"
+#~ msgstr "Максимальная ширина кнопки (px):"
+
+#~ msgid "Fit button width to its title"
+#~ msgstr "Подгонять ширину кнопки под название"
+
+#~ msgid "Minimum button width (px):"
+#~ msgstr "Минимальная ширина кнопки (px):"
+
+#~ msgid "Space between buttons (px):"
+#~ msgstr "Расстояние между кнопками (px):"
+
+#~ msgid "Inner padding:"
+#~ msgstr "Внутренний отступ кнопок:"
+
+#~ msgid "As on top panel"
+#~ msgstr "Как панель сверху"
+
+#~ msgid "As on bottom panel"
+#~ msgstr "Как панель снизу"
+
+#~ msgid "As on left panel"
+#~ msgstr "Как панель слева"
+
+#~ msgid "As on right panel"
+#~ msgstr "Как панель справа"
+
+#~ msgid "The audio and notification badges are shown on icons as dots, and in full under the cursor. \"When smaller than\": as dots only when the badge is smaller than the set size."
+#~ msgstr "Бейджи звука и уведомлений показываются на значках точками, при наведении курсора ‒ полностью. «Если меньше» ‒ точками, только когда бейдж меньше заданного размера."
+
+#~ msgid "Turn on \"%1\" first."
+#~ msgstr "Сначала включите «%1»."
+
+#~ msgid "Turn on the audio mark or the notification count first."
+#~ msgstr "Сначала включите индикатор звука или счётчик уведомлений."
+
+#~ msgid "Choose a progress style first."
+#~ msgstr "Сначала выберите вид прогресса."
+
+#~ msgid "Choose when to use the multi-row view first."
+#~ msgstr "Сначала выберите, когда включать многострочный вид."
+
+#~ msgid "Turn on one of the filters above first."
+#~ msgstr "Сначала включите один из фильтров выше."
+
+#~ msgid "How much the icon should grow when hovered (in pixels)"
+#~ msgstr "На сколько пикселей увеличится значок при наведении"
+
+#~ msgid "Duration of the zoom animation in milliseconds"
+#~ msgstr "Длительность анимации увеличения в миллисекундах"
+
+#~ msgid "This setting only changes the appearance of this preview and does not affect your actual system panel."
+#~ msgstr "Этот параметр меняет только вид предпросмотра и не влияет на реальную системную панель."
+
+#~ msgid "Icon size"
+#~ msgstr "Размер значков"
 
 #~ msgid "More settings:"
 #~ msgstr "Подробнее:"
@@ -1590,9 +1637,6 @@ msgstr "%1 %2"
 
 #~ msgid "Standard group overlay"
 #~ msgstr "Стандартный оверлей групп"
-
-#~ msgid "Use plasma borders"
-#~ msgstr "Использовать рамки Plasma"
 
 #~ msgid "Active application indicators:"
 #~ msgstr "Индикаторы запущенных приложений:"

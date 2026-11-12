@@ -56,7 +56,6 @@ ConfigPage {
                 ConfigHint {
                     target: reverseFilters
                     info: Wrappers.i18n("Hide matching tasks instead of showing them.")
-                    reason: Wrappers.i18n("Turn on one of the filters above first.")
                 }
             }
 

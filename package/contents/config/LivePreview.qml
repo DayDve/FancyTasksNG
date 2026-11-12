@@ -153,10 +153,6 @@ Item {
                         stepSize: 2
                         editable: true
 
-                        ToolTip.text: Wrappers.i18n("This setting only changes the appearance of this preview and does not affect your actual system panel.")
-                        ToolTip.visible: hovered
-                        ToolTip.delay: Kirigami.Units.toolTipDelay
-
                         // Smaller SpinBox for overlay
                         contentItem: TextInput {
                             z: 2

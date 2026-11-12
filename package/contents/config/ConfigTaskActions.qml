@@ -111,7 +111,7 @@ ConfigPage {
                 CheckBox {
                     id: smokeExplosionOnClose
                     enabled: actionsPage.cfg_iconOnly === 1 && middleClickAction.currentIndex === 1
-                    text: Wrappers.i18n("Animation of closing/removing an icon from the panel")
+                    text: Wrappers.i18n("Animate closing")
                     checked: actionsPage.cfg_smokeExplosionOnClose
                     onToggled: actionsPage.cfg_smokeExplosionOnClose = checked
                 }

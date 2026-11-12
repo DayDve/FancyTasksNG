@@ -15,25 +15,22 @@ import org.kde.kquickcontrols as KQuickAddons
 
 import "../ui/code/singletones"
 
-// Window indicators: Fancy Tasks' own indicators, plus the two marks the
+// Window indicators: Fancy Tasks NG's own indicators, plus the two marks the
 // Plasma theme draws. Any combination of the three is valid.
 ConfigPage {
     id: indicatorsPage
     fullTitle: Wrappers.i18n("Window Indicators")
 
     readonly property bool isLineStyle: indicatorsPage.cfg_indicatorStyle === 0
-    readonly property string offReason: Wrappers.i18n("Fancy Tasks indicators are turned off.")
+    readonly property string offReason: Wrappers.i18n("Fancy Tasks NG indicators are turned off.")
 
-    function turnOnFirst(option: string): string {
-        return Wrappers.i18n("Turn on \"%1\" first.", option);
-    }
 
     ConfigTabbedPage {
         cfg_page: indicatorsPage
 
         header: Kirigami.FormLayout {
             CheckBox {
-                text: Wrappers.i18n("Fancy Tasks indicators")
+                text: Wrappers.i18n("Fancy Tasks NG indicators")
                 checked: indicatorsPage.cfg_indicatorsEnabled
                 onToggled: indicatorsPage.cfg_indicatorsEnabled = checked
             }
@@ -42,13 +39,13 @@ ConfigPage {
                     id: useBorders
                     // The stripe is the edge of the button background.
                     enabled: !indicatorsPage.cfg_disableButtonSvg
-                    text: Wrappers.i18n("Stripe from the Plasma theme")
+                    text: Wrappers.i18n("Use Plasma borders")
                     checked: indicatorsPage.cfg_useBorders
                     onToggled: indicatorsPage.cfg_useBorders = checked
                 }
                 ConfigHint {
                     target: useBorders
-                    info: Wrappers.i18n("Draws the edges of the theme's task button frame. In Breeze that's the stripe along the panel edge; in other themes the button frame may change its shape.")
+                    info: Wrappers.i18n("Task buttons are drawn with the borders from the Plasma theme. In Breeze it's a stripe along the panel edge; in other themes it may look different.")
                     reason: Wrappers.i18n("Buttons have no background (Task Styling › Background).")
                 }
             }
@@ -56,12 +53,13 @@ ConfigPage {
                 CheckBox {
                     id: groupIconEnabled
                     enabled: indicatorsPage.cfg_groupingStrategy === 1 && indicatorsPage.cfg_groupPopups
-                    text: Wrappers.i18n("Group mark from the Plasma theme")
+                    text: Wrappers.i18n("Group overlay from the Plasma theme")
                     checked: indicatorsPage.cfg_groupIconEnabled
                     onToggled: indicatorsPage.cfg_groupIconEnabled = checked
                 }
                 ConfigHint {
                     target: groupIconEnabled
+                    info: Wrappers.i18n("A \"+\" sign from the Plasma theme on a group button, as in the standard task manager.")
                     reason: Wrappers.i18n("Only when the windows of an application are combined into one button.")
                 }
             }
@@ -111,10 +109,6 @@ ConfigPage {
                     ]
                     currentIndex: indicatorsPage.cfg_indicatorLocation
                     onActivated: (index) => indicatorsPage.cfg_indicatorLocation = index
-                }
-                ConfigHint {
-                    target: indicatorLocation
-                    reason: indicatorsPage.turnOnFirst(indicatorOverride.text)
                 }
             }
 
@@ -236,12 +230,11 @@ ConfigPage {
 
             CheckBox {
                 id: indicatorResize
-                text: Wrappers.i18n("Resize indicators on activation/hover")
+                text: Wrappers.i18n("Resize the indicator when its window is active or hovered")
                 checked: indicatorsPage.cfg_indicatorResize
                 onToggled: indicatorsPage.cfg_indicatorResize = checked
             }
 
-            readonly property string resizeReason: indicatorsPage.turnOnFirst(indicatorResize.text)
 
             RowLayout {
                 spacing: indicatorsPage.smallSpacing
@@ -276,10 +269,6 @@ ConfigPage {
                         text: "px"
                     }
                 }
-                ConfigHint {
-                    target: activeSize
-                    reason: sizeTab.resizeReason
-                }
             }
 
             RowLayout {
@@ -305,10 +294,6 @@ ConfigPage {
                         onActivated: (index) => indicatorsPage.cfg_indicatorAlignment = index
                     }
                 }
-                ConfigHint {
-                    target: indicatorAlignment
-                    reason: sizeTab.resizeReason
-                }
             }
 
             RowLayout {
@@ -319,10 +304,6 @@ ConfigPage {
                     text: Wrappers.i18n("Separate settings for hovered indicators")
                     checked: indicatorsPage.cfg_indicatorHoverSeparate
                     onToggled: indicatorsPage.cfg_indicatorHoverSeparate = checked
-                }
-                ConfigHint {
-                    target: indicatorHoverSeparate
-                    reason: sizeTab.resizeReason
                 }
             }
             RowLayout {
@@ -358,10 +339,6 @@ ConfigPage {
                         text: "px"
                     }
                 }
-                ConfigHint {
-                    target: hoverSize
-                    reason: indicatorResize.checked ? indicatorsPage.turnOnFirst(indicatorHoverSeparate.text) : sizeTab.resizeReason
-                }
             }
 
             RowLayout {
@@ -372,10 +349,6 @@ ConfigPage {
                     text: Wrappers.i18n("Separate settings for group indicators")
                     checked: indicatorsPage.cfg_indicatorGroupSeparate
                     onToggled: indicatorsPage.cfg_indicatorGroupSeparate = checked
-                }
-                ConfigHint {
-                    target: indicatorGroupSeparate
-                    reason: sizeTab.resizeReason
                 }
             }
             RowLayout {
@@ -410,10 +383,6 @@ ConfigPage {
                     Label {
                         text: "px"
                     }
-                }
-                ConfigHint {
-                    target: groupSize
-                    reason: indicatorResize.checked ? indicatorsPage.turnOnFirst(indicatorGroupSeparate.text) : sizeTab.resizeReason
                 }
             }
         }
@@ -491,10 +460,6 @@ ConfigPage {
                     Label {
                         text: "%"
                     }
-                }
-                ConfigHint {
-                    target: inactiveOpacity
-                    reason: indicatorsPage.turnOnFirst(indicatorDimInactive.text)
                 }
             }
             CheckBox {

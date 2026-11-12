@@ -12,8 +12,8 @@ import org.kde.kquickcontrols as KQuickAddons
 
 import "../ui/code/singletones"
 
-// Task styling: the icon, the button background, and what happens under
-// the cursor.
+// Task styling: how the icon and the button look, and what happens under
+// the cursor. Where the icon sits and how big it is is under Task Layout.
 ConfigPage {
     id: stylePage
     fullTitle: Wrappers.i18n("Task Styling")
@@ -22,9 +22,6 @@ ConfigPage {
     // 0 = on all buttons, 1 = only on the active and hovered ones, 2 = none.
     readonly property int backgroundMode: stylePage.cfg_disableButtonSvg ? 2 : (stylePage.cfg_disableButtonInactiveSvg ? 1 : 0)
 
-    function turnOnFirst(option: string): string {
-        return Wrappers.i18n("Turn on \"%1\" first.", option);
-    }
 
     ConfigTabbedPage {
         cfg_page: stylePage
@@ -33,105 +30,6 @@ ConfigPage {
             id: iconTab
             title: Wrappers.i18n("Icons")
             iconName: "preferences-desktop-icons"
-
-            Label {
-                text: Wrappers.i18n("Icon size:")
-            }
-            ComboBox {
-                Layout.fillWidth: true
-                model: [Wrappers.i18n("Relative"), Wrappers.i18n("Absolute")]
-                currentIndex: stylePage.cfg_iconSizeOverride ? 1 : 0
-                onActivated: (index) => stylePage.cfg_iconSizeOverride = (index === 1)
-            }
-
-            // One row for both units, so the form doesn't shift when they
-            // change.
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: stylePage.smallSpacing
-                readonly property bool absolute: stylePage.cfg_iconSizeOverride
-
-                Slider {
-                    id: iconSize
-                    Layout.fillWidth: true
-                    from: 0
-                    to: parent.absolute ? 100 : 300
-                    stepSize: 1
-                    value: parent.absolute ? stylePage.cfg_iconSizePx : stylePage.cfg_iconScale
-                    onMoved: {
-                        if (parent.absolute)
-                            stylePage.cfg_iconSizePx = Math.round(value);
-                        else
-                            stylePage.cfg_iconScale = Math.round(value);
-                    }
-                }
-                SpinBox {
-                    from: 0
-                    to: parent.absolute ? 100 : 300
-                    editable: true
-                    value: Math.round(iconSize.value)
-                    onValueModified: {
-                        if (parent.absolute)
-                            stylePage.cfg_iconSizePx = value;
-                        else
-                            stylePage.cfg_iconScale = value;
-                    }
-                }
-                Label {
-                    // Both units take the same room.
-                    Layout.minimumWidth: unitMetrics.advanceWidth
-                    text: parent.absolute ? "px" : "%"
-                    TextMetrics {
-                        id: unitMetrics
-                        text: "px"
-                    }
-                }
-                Button {
-                    icon.name: "edit-reset"
-                    flat: true
-                    onClicked: {
-                        if (parent.absolute)
-                            stylePage.cfg_iconSizePx = 32;
-                        else
-                            stylePage.cfg_iconScale = 100;
-                    }
-                    ToolTip.text: Wrappers.i18n("Reset to default")
-                    ToolTip.visible: hovered
-                    ToolTip.delay: 1000
-                }
-            }
-
-            CheckBox {
-                id: iconScaleFromEdge
-                text: Wrappers.i18n("Scale icons from panel edge")
-                checked: stylePage.cfg_iconScaleFromEdge
-                onToggled: stylePage.cfg_iconScaleFromEdge = checked
-            }
-            RowLayout {
-                spacing: stylePage.smallSpacing
-                Item { implicitWidth: stylePage.gridUnit }
-                RowLayout {
-                    id: iconEdgeOffset
-                    enabled: iconScaleFromEdge.checked
-                    spacing: stylePage.smallSpacing
-                    Label {
-                        text: Wrappers.i18n("Edge offset (px):")
-                    }
-                    SpinBox {
-                        from: 0
-                        to: 15
-                        stepSize: 1
-                        value: stylePage.cfg_iconEdgeOffset
-                        onValueModified: stylePage.cfg_iconEdgeOffset = value
-                    }
-                }
-                ConfigHint {
-                    target: iconEdgeOffset
-                    reason: stylePage.turnOnFirst(iconScaleFromEdge.text)
-                }
-            }
-
-            Item { height: stylePage.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Icon Shape:")
@@ -170,10 +68,6 @@ ConfigPage {
                         valueFromText: (text, locale) => parseInt(text)
                     }
                 }
-                ConfigHint {
-                    target: iconClipRadius
-                    reason: stylePage.turnOnFirst(clipIconToShape.text)
-                }
             }
             RowLayout {
                 CheckBox {
@@ -183,14 +77,9 @@ ConfigPage {
                     checked: stylePage.cfg_clipIconBackgroundEnabled
                     onToggled: stylePage.cfg_clipIconBackgroundEnabled = checked
                 }
-                ConfigHint {
-                    target: clipIconBackgroundEnabled
-                    reason: stylePage.turnOnFirst(clipIconToShape.text)
-                }
             }
 
             // Why the background options below are greyed out.
-            readonly property string clipBackgroundReason: stylePage.turnOnFirst(clipIconToShape.checked ? clipIconBackgroundEnabled.text : clipIconToShape.text)
             readonly property bool clipBackgroundOn: clipIconBackgroundEnabled.enabled && clipIconBackgroundEnabled.checked
 
             RowLayout {
@@ -198,10 +87,6 @@ ConfigPage {
                     id: clipBackgroundColorLabel
                     enabled: iconTab.clipBackgroundOn
                     text: Wrappers.i18n("Background color source:")
-                }
-                ConfigHint {
-                    target: clipBackgroundColorLabel
-                    reason: iconTab.clipBackgroundReason
                 }
             }
             RowLayout {
@@ -258,10 +143,6 @@ ConfigPage {
                         textFromValue: (value, locale) => value + "%"
                         valueFromText: (text, locale) => parseInt(text)
                     }
-                }
-                ConfigHint {
-                    target: clipBackgroundOpacity
-                    reason: iconTab.clipBackgroundReason
                 }
             }
         }
@@ -372,7 +253,7 @@ ConfigPage {
             }
 
             readonly property bool zoomOn: stylePage.iconsOnly && taskHoverEffect.checked
-            readonly property string zoomReason: stylePage.iconsOnly ? stylePage.turnOnFirst(taskHoverEffect.text)
+            readonly property string zoomReason: stylePage.iconsOnly ? ""
                 : Wrappers.i18n("Only in the icons-only mode.")
 
             RowLayout {
@@ -412,9 +293,6 @@ ConfigPage {
                         stepSize: 1
                         value: stylePage.cfg_iconZoomFactor
                         onValueModified: stylePage.cfg_iconZoomFactor = value
-                        ToolTip.delay: 1000
-                        ToolTip.visible: hovered
-                        ToolTip.text: Wrappers.i18n("How much the icon should grow when hovered (in pixels)")
                     }
                 }
                 ConfigHint {
@@ -437,9 +315,6 @@ ConfigPage {
                         stepSize: 50
                         value: stylePage.cfg_iconZoomDuration
                         onValueModified: stylePage.cfg_iconZoomDuration = value
-                        ToolTip.delay: 1000
-                        ToolTip.visible: hovered
-                        ToolTip.text: Wrappers.i18n("Duration of the zoom animation in milliseconds")
                     }
                 }
                 ConfigHint {
@@ -450,10 +325,18 @@ ConfigPage {
 
             Item { height: stylePage.largeSpacing }
 
-            CheckBox {
-                text: Wrappers.i18n("Glow following the cursor over task buttons")
-                checked: stylePage.cfg_cursorGlow
-                onToggled: stylePage.cfg_cursorGlow = checked
+            RowLayout {
+                CheckBox {
+                    id: cursorGlow
+                    enabled: stylePage.iconsOnly
+                    text: Wrappers.i18n("Glow following the cursor over task buttons")
+                    checked: stylePage.cfg_cursorGlow
+                    onToggled: stylePage.cfg_cursorGlow = checked
+                }
+                ConfigHint {
+                    target: cursorGlow
+                    reason: Wrappers.i18n("Only in the icons-only mode.")
+                }
             }
         }
     }

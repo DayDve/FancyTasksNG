@@ -944,7 +944,8 @@ PlasmoidItem {
         Shape {
             id: hoverGlow
             anchors.fill: tmf
-            visible: tasks.config.cursorGlow
+            // A hover effect, so none on a classic panel.
+            visible: tasks.config.cursorGlow && tasks.iconsOnly
             preferredRendererType: Shape.CurveRenderer
 
             // Kept after the cursor leaves so the glow fades out in place
