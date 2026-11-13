@@ -101,12 +101,9 @@ def main() -> int:
                 print(f"WARN unsupported default for {key} (type {etype}, value {text!r}), left as-is")
             out.append(line)
             continue
-        if literal != old:
-            changes.append((key, old, literal))
-            new_line = f"{m.group('prefix')}{m.group('name')}Default{m.group('mid')}{literal}{m.group('suffix')}\n"
-            out.append(new_line)
-        else:
-            out.append(line)
+        changes.append((key, old, literal))
+        new_line = f"{m.group('prefix')}{m.group('name')}Default{m.group('mid')}{literal}{m.group('suffix')}\n"
+        out.append(new_line)
 
     # cfg_*Default without a schema entry (kept, reported only)
     phantom_report = sorted(k for k in seen_keys if k not in schema)

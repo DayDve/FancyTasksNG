@@ -34,11 +34,8 @@ potArgs="--from-code=UTF-8 --width=200 --add-location=file"
 
 grep -rl \
   --include="*.qml" \
-  --include="*.js" \
-  --include="*.cpp" \
-  --include="*.h" \
-  --include="*.c" 'i18n' "${PACKAGE_DIR}" \
-| sort -u | \
+  --include="*.js" 'i18n' "${PACKAGE_DIR}" \
+| LC_ALL=C sort -u | \
 xgettext \
     ${potArgs} \
     --files-from=- \

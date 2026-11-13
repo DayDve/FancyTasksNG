@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-13 18:20+0200\n"
+"POT-Creation-Date: 2026-11-13 18:36+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -522,60 +522,6 @@ msgstr "Добавить приложение"
 #: package/contents/config/ConfigPinnedApps.qml
 msgid "Search applications..."
 msgstr "Поиск приложений..."
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Quick Setup"
-msgstr "Быстрая настройка"
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Task Layout"
-msgstr "Расстановка"
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Task Styling"
-msgstr "Оформление"
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Window Indicators"
-msgstr "Индикаторы"
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "App Signals"
-msgstr "Сигналы"
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Task List"
-msgstr "Список задач"
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Task Actions"
-msgstr "Действия"
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Task Tooltips"
-msgstr "Подсказки"
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Context Menu"
-msgstr "Контекстное меню"
-
-#: package/contents/config/config.qml
-msgid "Advanced"
-msgstr "Прочее"
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Pinned Applications"
-msgstr "Закрепы"
 
 #: package/contents/config/ConfigQuickSetup.qml
 msgid "Quick Setup"
@@ -1226,6 +1172,60 @@ msgstr "%1 — %2"
 msgid "Remove"
 msgstr "Удалить"
 
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Quick Setup"
+msgstr "Быстрая настройка"
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task Layout"
+msgstr "Расстановка"
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task Styling"
+msgstr "Оформление"
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Window Indicators"
+msgstr "Индикаторы"
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "App Signals"
+msgstr "Сигналы"
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task List"
+msgstr "Список задач"
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task Actions"
+msgstr "Действия"
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task Tooltips"
+msgstr "Подсказки"
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Context Menu"
+msgstr "Контекстное меню"
+
+#: package/contents/config/config.qml
+msgid "Advanced"
+msgstr "Прочее"
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Pinned Applications"
+msgstr "Закрепы"
+
 # --- ContextMenu.qml ---
 #: package/contents/ui/ContextMenu.qml
 msgid "Places"
@@ -1439,27 +1439,27 @@ msgctxt "@info:usagetip %1 task name"
 msgid "Open textual list of windows for %1"
 msgstr "Открыть список окон для %1"
 
-#: package/contents/ui/ToolTipDelegate.qml package/contents/ui/ToolTipInstance.qml
+#: package/contents/ui/ToolTipDelegate.qml
 msgctxt "Comma-separated list of desktops"
 msgid "On %1"
 msgstr "На %1"
 
-#: package/contents/ui/ToolTipDelegate.qml package/contents/ui/ToolTipInstance.qml
+#: package/contents/ui/ToolTipDelegate.qml
 msgctxt "Comma-separated list of desktops"
 msgid "Pinned to all desktops"
 msgstr "Закреплено на всех рабочих столах"
 
-#: package/contents/ui/ToolTipDelegate.qml package/contents/ui/ToolTipInstance.qml
+#: package/contents/ui/ToolTipDelegate.qml
 msgctxt "Which virtual desktop a window is currently on"
 msgid "Available on all activities"
 msgstr "Доступно во всех комнатах"
 
-#: package/contents/ui/ToolTipDelegate.qml package/contents/ui/ToolTipInstance.qml
+#: package/contents/ui/ToolTipDelegate.qml
 msgctxt "Activities a window is currently on (apart from the current one)"
 msgid "Also available on %1"
 msgstr "Также доступно в %1"
 
-#: package/contents/ui/ToolTipDelegate.qml package/contents/ui/ToolTipInstance.qml
+#: package/contents/ui/ToolTipDelegate.qml
 msgctxt "Which activities a window is currently on"
 msgid "Available on %1"
 msgstr "Доступно в %1"

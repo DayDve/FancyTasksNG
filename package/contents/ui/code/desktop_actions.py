@@ -28,7 +28,6 @@ Interface io.github.daydve.fancytasksng.Config:
 import configparser
 import hashlib
 import json
-import mimetypes
 import os
 import re
 import shlex
@@ -89,14 +88,6 @@ def resolve_launcher_url(url_str):
         name = parsed.path.lstrip("/")
         if not name.endswith(".desktop"):
             name += ".desktop"
-        for d in DESKTOP_DIRS:
-            candidate = os.path.join(d, name)
-            if os.path.isfile(candidate):
-                return candidate
-
-    # Bare name (e.g. "org.kde.dolphin.desktop")
-    if parsed.scheme == "" and not os.path.sep in url_str:
-        name = url_str if url_str.endswith(".desktop") else url_str + ".desktop"
         for d in DESKTOP_DIRS:
             candidate = os.path.join(d, name)
             if os.path.isfile(candidate):
