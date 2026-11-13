@@ -96,6 +96,18 @@ def resolve_launcher_url(url_str):
     return None
 
 
+def get_categories(desktop_path):
+    """The Categories list of a .desktop file."""
+    cp = configparser.RawConfigParser(interpolation=None)
+    cp.optionxform = str
+    try:
+        cp.read(desktop_path, encoding="utf-8")
+    except Exception:
+        return []
+    value = cp.get("Desktop Entry", "Categories", fallback="")
+    return [c.strip() for c in value.split(";") if c.strip()]
+
+
 def get_jump_list_actions(desktop_path):
     """Parse [Desktop Action ...] sections from a .desktop file."""
     actions = []
@@ -763,6 +775,7 @@ class DesktopActionsService(dbus.service.Object):
             "browserHistory": browser_history,
             "places": places,
             "desktopPath": desktop_path or "",
+            "categories": get_categories(desktop_path) if desktop_path else [],
         }
         return json.dumps(data)
 

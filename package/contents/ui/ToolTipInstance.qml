@@ -198,6 +198,10 @@ Item {
     // Bridge Properties to maintain full compatibility with visual overlays and controllers
     readonly property var playerData: mediaController ? mediaController.playerData : null
     readonly property bool titleIncludesTrack: mediaController ? mediaController.titleIncludesTrack : false
+    readonly property bool isWebBrowser: {
+        void DesktopActionsManager.revision;
+        return root.toolTipDelegate ? DesktopActionsManager.categoriesFor(root.toolTipDelegate.launcherUrl).includes("WebBrowser") : false;
+    }
     
 
     readonly property bool controlsAreEffective: mediaController ? mediaController.controlsAreEffective : false
@@ -458,7 +462,9 @@ Item {
 
         Image {
             id: albumArtImage
-            readonly property bool available: (status === Image.Ready || status === Image.Loading) && (!(root.toolTipDelegate.isGroup || /firefox|chrome|chromium|opera|vivaldi|brave|edge|konqueror/i.test(root.toolTipDelegate.launcherUrl.toString())) || root.titleIncludesTrack)
+            // A browser window's thumbnail shows the page, not the player:
+            // the cover replaces it only when the title shows the track.
+            readonly property bool available: (status === Image.Ready || status === Image.Loading) && (!(root.toolTipDelegate.isGroup || root.isWebBrowser) || root.titleIncludesTrack)
 
             anchors.fill: hoverHandler
             anchors.margins: thumbnailSourceItem.imageInset

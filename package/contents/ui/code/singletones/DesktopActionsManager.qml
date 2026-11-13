@@ -18,6 +18,8 @@ Item {
     id: root
 
     property var cache: ({})
+    // Bumped whenever a result is cached, so bindings over the cache update.
+    property int revision: 0
 
     Plasma5Support.DataSource {
         id: dbusDaemonStarter
@@ -99,6 +101,7 @@ Item {
                 try {
                     result = JSON.parse(stdout);
                     root.cache[key] = result;
+                    root.revision++;
                 } catch (e) {
                     console.warn("DesktopActionsManager JSON parse error:", e, stdout);
                     result = {jumpList: [], recentDocs: []};
@@ -109,6 +112,18 @@ Item {
             }
             pendingReply.destroy();
         });
+    }
+
+    // Categories from the app's .desktop file, from any cached query for
+    // it; empty until one has answered (bind through revision).
+    function categoriesFor(launcherUrl) {
+        const prefix = String(launcherUrl) + "|";
+        for (let k in cache) {
+            if (k.startsWith(prefix) && cache[k].categories) {
+                return cache[k].categories;
+            }
+        }
+        return [];
     }
 
     function invalidate(launcherUrl) {
