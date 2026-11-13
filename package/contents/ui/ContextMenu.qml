@@ -451,13 +451,13 @@ PlasmaExtras.Menu {
             target: menu.virtualDesktopInfo
 
             function onNumberOfDesktopsChanged(): void {
-                Qt.callLater(virtualDesktopsMenuItem._virtualDesktopsMenu["refresh"]);
+                Qt.callLater(virtualDesktopsMenuItem._virtualDesktopsMenu.refresh);
             }
             function onDesktopIdsChanged(): void {
-                Qt.callLater(virtualDesktopsMenuItem._virtualDesktopsMenu["refresh"]);
+                Qt.callLater(virtualDesktopsMenuItem._virtualDesktopsMenu.refresh);
             }
             function onDesktopNamesChanged(): void {
-                Qt.callLater(virtualDesktopsMenuItem._virtualDesktopsMenu["refresh"]);
+                Qt.callLater(virtualDesktopsMenuItem._virtualDesktopsMenu.refresh);
             }
         }
 
@@ -534,7 +534,7 @@ PlasmaExtras.Menu {
             target: menu.activityInfo
 
             function onNumberOfRunningActivitiesChanged(): void {
-                activitiesDesktopsMenuItem._activitiesDesktopsMenu["refresh"]();
+                activitiesDesktopsMenuItem._activitiesDesktopsMenu.refresh();
             }
         }
 
@@ -676,7 +676,7 @@ PlasmaExtras.Menu {
             target: menu.activityInfo
 
             function onNumberOfRunningActivitiesChanged(): void {
-                showLauncherInActivitiesItem._activitiesLaunchersMenu["refresh"]();
+                showLauncherInActivitiesItem._activitiesLaunchersMenu.refresh();
             }
         }
 

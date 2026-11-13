@@ -743,13 +743,11 @@ PlasmoidItem {
             return;
 
         const lastResult = mediaRegistry.adjustVolume([mediaRegistry.preferredSink], increment);
-        if (lastResult && globalVolumeOverlayLoader.item) {
-            const pVol = "volume";
-            const pMute = "muted";
-            const pShow = "show";
-            globalVolumeOverlayLoader.item[pVol] = lastResult.volume;
-            globalVolumeOverlayLoader.item[pMute] = lastResult.muted;
-            globalVolumeOverlayLoader.item[pShow]();
+        const overlay = globalVolumeOverlayLoader.item as TaskVolumeOverlay;
+        if (lastResult && overlay) {
+            overlay.volume = lastResult.volume;
+            overlay.muted = lastResult.muted;
+            overlay.show();
         }
     }
     function createContextMenu(rootTask, modelIndex, args = {}) {

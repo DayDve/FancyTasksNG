@@ -20,7 +20,7 @@ QtObject {
 
     signal streamsChanged()
 
-    readonly property QtObject globalConfig: PlasmaPa.GlobalConfig { }
+    readonly property PlasmaPa.GlobalConfig globalConfig: PlasmaPa.GlobalConfig { }
 
     // The default output, as Plasma's volume applet uses it; SinkModel has
     // no preferred-sink property.
@@ -99,7 +99,7 @@ QtObject {
     function adjustObjectVolume(obj, increment) {
         if (!obj) return;
 
-        const step = (normalVolume - minimalVolume) * (globalConfig["volumeStep"] || 5) / 100;
+        const step = (normalVolume - minimalVolume) * (globalConfig.volumeStep || 5) / 100;
         const currentVolume = obj.Volume !== undefined ? obj.Volume : (obj.volume !== undefined ? obj.volume : 0);
         const newVolume = Math.round(Math.max(minimalVolume, Math.min(currentVolume + (step * increment), normalVolume)));
 

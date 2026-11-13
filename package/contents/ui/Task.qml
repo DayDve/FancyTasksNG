@@ -258,7 +258,6 @@ Item {
     }
 
 
-
     property bool completed: false
     // The audio mark, the count and progress all hide with "Show app signals".
     readonly property bool audioIndicatorsEnabled: task.config.showAppSignals && task.config.indicateAudioStreams
@@ -285,7 +284,6 @@ Item {
 
     readonly property bool highlighted: containsMouse || isHovered || (tasksRoot.currentHoveredTask === task) || 
         (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open)
-
 
 
     readonly property bool isBadgeHovered: badgeLoader.item ? (badgeLoader.item as TaskBadgeOverlay).hovered : false
@@ -494,9 +492,6 @@ Item {
     }
 
 
-
-
-
     Keys.onMenuPressed: event => contextMenuTimer.start()
     Keys.onReturnPressed: event => {
         TaskTools.activateTask(task.modelIndex(), task.model, event.modifiers, task, Plasmoid, tasksRoot, tasksRoot.effectWatcher.registered);
@@ -547,7 +542,6 @@ Item {
     }
 
 
-
     function openTooltip(byClick = false): void {
         if (!task.config.enableToolTips)
             return;
@@ -567,16 +561,11 @@ Item {
         contextMenu.show();
     }
 
-    // qmllint disable unqualified
     function toggleMuted(): void {
-        if (mediaController) {
-            mediaController.toggleMuted();
+        if (task.mediaController) {
+            task.mediaController.toggleMuted();
         }
     }
-    // qmllint enable unqualified
-
-
-
 
 
     Indicators {
@@ -691,12 +680,10 @@ Item {
     KSvg.FrameSvgItem {
         id: backgroundFrame
 
-        // qmllint disable unqualified
         Kirigami.ImageColors {
             id: imageColors
             source: task.model.decoration
         }
-        // qmllint enable unqualified
         property color dominantColor: imageColors.dominant
         property color indicatorColor: Kirigami.ColorUtils.tintWithAlpha(dominantColor, task.tintColor, .38)
 
