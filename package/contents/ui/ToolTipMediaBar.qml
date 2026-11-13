@@ -276,7 +276,7 @@ Item {
                             width: 3
                             height: volumeSlider.availableHeight
                             radius: 1.5
-                            color: Qt.rgba(255, 255, 255, 0.15)
+                            color: Qt.rgba(1, 1, 1, 0.15)
                             
                             Rectangle {
                                 width: parent.width
