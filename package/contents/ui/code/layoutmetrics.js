@@ -54,18 +54,6 @@ function maxStripes(panel) {
     return Math.min(panel.config.maxStripes, Math.max(1, Math.floor(length / minimum)));
 }
 
-function optimumCapacity(panel, width, height) {
-    const length = panel.vertical ? height : width;
-    const maximum = panel.vertical ? preferredMaxHeight(panel) : preferredMaxWidth(panel);
-
-    if (!panel.vertical) {
-        //  Fit more tasks in this case, that is possible to cut text, before combining tasks.
-        return Math.ceil(length / maximum) * maxStripes(panel) + 1;
-    }
-
-    return Math.floor(length / maximum) * maxStripes(panel);
-}
-
 function preferredMinWidth(panel) {
     let width = preferredMinLauncherWidth(panel);
 
@@ -140,11 +128,6 @@ function preferredMaxHeight(panel) {
                 Kirigami.Units.iconSizes.small * 3,
                 Kirigami.Units.iconSizes.sizeForLabels * 3);
     }
-}
-
-function preferredHeightInPopup(panel) {
-    return verticalMargins(panel) + Math.max(Kirigami.Units.iconSizes.sizeForLabels,
-        Kirigami.Units.iconSizes.medium);
 }
 
 function spaceRequiredToShowText(panel) {

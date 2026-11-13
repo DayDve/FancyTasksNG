@@ -53,7 +53,7 @@ Item {
     // then takes no input and no keyboard focus.
     property bool interactive: true
     activeFocusOnTab: interactive
-    opacity: tasksRoot.dragSource === task ? (task.inPopup ? 1.0 : 0.5) : 1.0
+    opacity: tasksRoot.dragSource === task ? 0.5 : 1.0
     Behavior on opacity {
         NumberAnimation { duration: task.shortDuration }
     }
@@ -81,7 +81,6 @@ Item {
 
     implicitHeight: {
         if (!tasksRoot) return 0;
-        if (task.inPopup) return LayoutMetrics.preferredHeightInPopup(task.tasksRoot);
         if (tasksRoot.vertical) {
             if (task.isIcon) {
                 let cols = (tasksRoot.taskList && tasksRoot.taskList.columns > 0) ? tasksRoot.taskList.columns : (task.config.maxStripes || 1);
@@ -153,7 +152,7 @@ Item {
     }
 
     Layout.fillWidth: true
-    Layout.fillHeight: !task.inPopup
+    Layout.fillHeight: true
     Layout.maximumWidth: (!tasksRoot || tasksRoot.vertical) ?
         -1 : ((task.model?.IsLauncher && !tasksRoot.iconsOnly) ? (tasksRoot.height / tasksRoot.taskList.rows) + LayoutMetrics.horizontalMargins(task.tasksRoot) : (tasksRoot.iconsOnly ? LayoutMetrics.preferredMaxWidth(task.tasksRoot) : task.classicButtonWidth))
     Layout.maximumHeight: (!tasksRoot || !tasksRoot.vertical) ?
@@ -168,7 +167,6 @@ Item {
     readonly property string appId: (task.model && task.model.AppId) ? task.model.AppId.replace(/\.desktop/, '') : ""
     readonly property bool isIcon: task.model ? (tasksRoot.iconsOnly || !!task.model.IsLauncher) : tasksRoot.iconsOnly
     readonly property bool toolTipOpen: tasksRoot.currentHoveredTask === task
-    property bool inPopup: false
 
     property bool isWindow: !!(task.model && task.model.IsWindow)
     readonly property bool isHovered: tasksRoot.mouseHandler.hoveredItem === task
@@ -193,9 +191,7 @@ Item {
 
     property int childCount: (task.model && task.model.ChildCount) ? task.model.ChildCount : 0
     property int previousChildCount: 0
-    property alias labelText: label.text
     property var contextMenu: null
-    readonly property bool smartLauncherEnabled: !task.inPopup && task.model && !task.model.IsStartup
     // standalone notification counting (BadgeManager singleton)
     property int lastSeenCount: 0
     property bool hasUnseenNotifications: false
@@ -291,8 +287,7 @@ Item {
     readonly property var audioStreams: mediaController ? mediaController.audioStreams : []
     readonly property var volumeOverlay: taskVolumeOverlayLoader.item
 
-    readonly property bool highlighted: (task.inPopup && activeFocus) ||
-        (!task.inPopup && (containsMouse || isHovered)) || (tasksRoot.currentHoveredTask === task) || 
+    readonly property bool highlighted: containsMouse || isHovered || (tasksRoot.currentHoveredTask === task) || 
         (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open)
 
 
@@ -497,7 +492,7 @@ Item {
              tasksRoot.currentHoveredTask = null;
         }
 
-        if (!task.inPopup && !tasksRoot.vertical) {
+        if (!tasksRoot.vertical) {
             tasksRoot.requestLayout();
         }
     }
@@ -515,14 +510,14 @@ Item {
     Keys.onUpPressed: event => Keys.leftPressed(event)
     Keys.onDownPressed: event => Keys.rightPressed(event)
     Keys.onLeftPressed: event => {
-        if (!task.inPopup && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
+        if ((event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
             task.moveBy(-1);
         } else {
             event.accepted = false;
         }
     }
     Keys.onRightPressed: event => {
-        if (!task.inPopup && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
+        if ((event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
             task.moveBy(1);
         } else {
             event.accepted = false;
@@ -720,7 +715,7 @@ Item {
         property color indicatorColor: Kirigami.ColorUtils.tintWithAlpha(dominantColor, task.tintColor, .38)
 
         readonly property int _vMargin: (!task.tasksRoot.vertical && task.tasksRoot.taskList.rows > 1) ? LayoutMetrics.iconMargin : 0
-        readonly property int _hMargin: ((task.inPopup || task.tasksRoot.vertical) && task.tasksRoot.taskList.columns > 1) ? LayoutMetrics.iconMargin : 0
+        readonly property int _hMargin: (task.tasksRoot.vertical && task.tasksRoot.taskList.columns > 1) ? LayoutMetrics.iconMargin : 0
 
         anchors {
             fill: parent
@@ -851,7 +846,7 @@ Item {
     Loader {
         id: groupExpanderLoader
         asynchronous: true
-        active: task.config.groupIconEnabled && !task.inPopup && !!task.model && task.model.IsWindow && task.model.IsGroupParent
+        active: task.config.groupIconEnabled && !!task.model && task.model.IsWindow && task.model.IsGroupParent
         sourceComponent: Component {
             GroupExpanderOverlay {
                 iconBox: taskIconBox
@@ -908,7 +903,7 @@ Item {
     PlasmaComponents3.Label {
         id: label
 
-        visible: (task.inPopup || !task.tasksRoot.iconsOnly && !task.model.IsLauncher && (parent.width - taskIconBox.height - task.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText(task.tasksRoot))
+        visible: !task.tasksRoot.iconsOnly && !task.model.IsLauncher && (parent.width - taskIconBox.height - task.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText(task.tasksRoot)
 
         anchors {
             fill: parent

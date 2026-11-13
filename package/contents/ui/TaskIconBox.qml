@@ -219,13 +219,8 @@ Item {
 
                 roundToIconSize: false
                 active: iconBox._taskHighlighted
-                enabled: true
 
                 source: iconBox._taskHasModel ? iconBox.taskItem.model.decoration : ""
-                opacity: 1.0
-                Behavior on opacity {
-                    NumberAnimation { duration: 250 }
-                }
 
                 layer.enabled: iconBox._iconOverflows || iconBox.config.clipIconToShape
                 layer.smooth: true

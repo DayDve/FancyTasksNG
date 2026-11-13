@@ -33,7 +33,6 @@ import org.kde.plasma.workspace.trianglemousefilter
 
 import org.kde.taskmanager as TaskManager
 import QtCore as QtCore
-// import org.kde.plasma.private.taskmanager as TaskManagerApplet
 import org.kde.plasma.workspace.dbus as DBus
 import org.kde.kitemmodels as KItemModels
 
@@ -68,7 +67,6 @@ PlasmoidItem {
         return Plasmoid.formFactor === PlasmaCore.Types.Vertical;
     }
     readonly property bool iconsOnly: tasks.config.iconOnly
-    property bool showBadges: tasks.config.showBadges
 
     property alias globalVolumeOverlay: globalVolumeOverlayLoader
     property Item dropIndicator: dropIndicatorRect
@@ -80,7 +78,6 @@ PlasmoidItem {
 
     property bool _isApplyingConfig: false
     property bool _initialStartup: true
-    property bool _isDestroying: false
 
     Timer {
         id: startupTimer
@@ -144,7 +141,7 @@ PlasmoidItem {
     }
 
     function snapshotTaskOrder() {
-        if (!tasks.tasksModel || tasks._isDestroying)
+        if (!tasks.tasksModel)
             return;
         const order = [];
         for (let i = 0; i < tasks.tasksModel.count; i++) {
@@ -184,10 +181,6 @@ PlasmoidItem {
 
     Connections {
         target: tasks.config
-        function onShowBadgesChanged() {
-            tasks.showBadges = tasks.config.showBadges;
-        }
-
         function onShowOnlyCurrentDesktopChanged() {
             modelUpdateTimer.restart();
             tasks.filteredTasksModel.invalidateFilter();
@@ -450,7 +443,7 @@ PlasmoidItem {
     property bool _isPublishingGeometries: false
 
     function publishIconGeometries(taskItems: var): void {
-        if (_isPublishingGeometries || tasks._isDestroying)
+        if (_isPublishingGeometries)
             return;
         if (TaskTools.taskManagerInstanceCount >= 2)
             return;
@@ -614,8 +607,8 @@ PlasmoidItem {
         tasks.tasksModel.filterByVirtualDesktop = tasks.config.showOnlyCurrentDesktop && !tasks.config.reverseFilters;
         tasks.tasksModel.filterByScreen = tasks.config.showOnlyCurrentScreen && !tasks.config.reverseFilters;
         tasks.tasksModel.filterByActivity = tasks.config.showOnlyCurrentActivity && !tasks.config.reverseFilters;
-        // tasks.tasksModel.filterNotMinimized = tasks.config.showOnlyMinimized;
-        // The above is now handled by filteredTasksModel proxy to prevent crashes.
+        // The minimized filter is done by filteredTasksModel instead, which
+        // also avoids crashes in TasksModel's own one.
         tasks.tasksModel.filterNotMinimized = false;
 
         // Must be set before sortMode: setting sortMode to SortManual can
@@ -1095,7 +1088,7 @@ PlasmoidItem {
         flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.BypassWindowManagerHint
         hideOnWindowDeactivate: false
 
-        readonly property bool shouldShow: tasks.config.enableToolTips && tasks.currentHoveredTask !== null && !tasks.currentHoveredTask.inPopup
+        readonly property bool shouldShow: tasks.config.enableToolTips && tasks.currentHoveredTask !== null
         visible: (shouldShow && toolTipInstance.implicitWidth > 0) || winContainer.opacity > 0
         visualParent: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : tasks.lastTooltipParent
 

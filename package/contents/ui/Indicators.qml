@@ -24,14 +24,6 @@ Flow {
 
     readonly property var config: indicatorsFlow.tasksRoot.config
 
-    // Max possible cross-axis thickness across all indicator states
-    readonly property int maxIndicatorThickness: Math.max(
-        config.indicatorSize,
-        config.indicatorActiveSize,
-        config.indicatorHoverSize,
-        config.indicatorGroupSize
-    )
-
     function getActiveChildIndex() {
         if (!indicatorsFlow.taskItem || !indicatorsFlow.taskItem.model) {
             return -1;
@@ -66,8 +58,6 @@ Flow {
     Repeater {
         model: {
             if(!indicatorsFlow.config.indicatorsEnabled)
-            return 0;
-            if(indicatorsFlow.taskItem.isSubTask)//Target only the main task items.
             return 0;
             if(indicatorsFlow.taskItem.taskState === 'launcher') {
                 return 0;
