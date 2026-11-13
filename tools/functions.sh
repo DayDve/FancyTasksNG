@@ -172,7 +172,8 @@ update_translation_status() {
             locale=$(basename "$po_file" .po)
             
             local stat_output
-            stat_output=$(msgfmt --statistics -o /dev/null "$po_file" 2>&1 || true)
+            # The counts are parsed from the English wording, so pin the locale.
+            stat_output=$(LC_ALL=C LANGUAGE=C msgfmt --statistics -o /dev/null "$po_file" 2>&1 || true)
             local translated
             translated=$(echo "$stat_output" | grep -oP '\d+(?= translated)' || echo 0)
             
