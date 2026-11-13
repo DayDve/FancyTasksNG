@@ -66,9 +66,6 @@ KSvg.FrameSvgItem {
     property Item dragSource: null
     readonly property Item dragHelper: null
     readonly property Component busyIndicator: null
-    readonly property Component taskInitComponent: Component {
-        Item {}
-    }
     readonly property QtObject effectWatcher: QtObject {
         readonly property bool registered: false
     }

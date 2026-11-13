@@ -681,10 +681,6 @@ PlasmoidItem {
         watchedService: "org.kde.KWin.Effect.WindowView1"
     }
 
-    readonly property Component taskInitComponent: Component {
-        Item {}
-    }
-
     Connections {
         target: Plasmoid
         function onLocationChanged(): void {

@@ -484,14 +484,6 @@ Item {
         tasksRoot.cancelHighlightWindows();
     }
 
-
-
-    onIsWindowChanged: {
-        if (task.model && task.model.IsWindow) {
-            tasksRoot.taskInitComponent.createObject(task);
-        }
-    }
-
     onChildCountChanged: {
         if (task.model && TaskTools.taskManagerInstanceCount < 2 && task.childCount > task.previousChildCount) {
             tasksRoot.tasksModel.requestPublishDelegateGeometry(task.modelIndex(), task.getGlobalRect(), task);
@@ -950,9 +942,6 @@ Item {
     Component.onCompleted: {
         task.lastSeenCount = task.badgeCount;
 
-        if (!task.inPopup && !task.model.IsWindow) {
-            tasksRoot.taskInitComponent.createObject(task);
-        }
         task.completed = true;
 
         if (task.model && task.model.LauncherUrlWithoutIcon) {
