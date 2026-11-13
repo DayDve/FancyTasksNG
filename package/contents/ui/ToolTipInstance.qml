@@ -688,9 +688,9 @@ Item {
         id: mediaBarLoader
         Layout.fillWidth: true
         Layout.topMargin: Kirigami.Units.smallSpacing
-        // Tighter padding in a single-window tooltip; a group's ScrollView
-        // clips to the delegate's height, so there it would cut the bar off.
-        Layout.bottomMargin: root.isGroup ? 0 : -Kirigami.Units.smallSpacing
+        // A small gap below, so a hovered button's frame isn't cut off by
+        // the tooltip's edge.
+        Layout.bottomMargin: Math.round(Kirigami.Units.smallSpacing / 2)
 
         active: root.showThumbnails && root.config.mediaControlsLocation === 1 && root.showOwnControls
         visible: active

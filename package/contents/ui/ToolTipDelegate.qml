@@ -642,7 +642,7 @@ Loader {
                 visible: active
                 Layout.alignment: Qt.AlignHCenter
                 Layout.preferredWidth: Math.min(groupRoot.tooltipInstanceMaximumWidth, scrollView.Layout.preferredWidth)
-                Layout.bottomMargin: groupRoot.showThumbnails ? 0 : Kirigami.Units.smallSpacing
+                Layout.bottomMargin: groupRoot.showThumbnails ? Math.round(Kirigami.Units.smallSpacing / 2) : Kirigami.Units.smallSpacing
 
                 sourceComponent: ToolTipMediaBar {
                     mediaController: groupMediaBarLoader.controller
