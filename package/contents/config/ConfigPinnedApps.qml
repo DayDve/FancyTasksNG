@@ -23,10 +23,8 @@ ConfigPage {
     onPinnedLaunchersChanged: {
         refreshPinnedAppsModel();
     }
-    property bool appsLoaded: false
     property bool initialLoadDone: false
     property bool isLoadingApps: false
-    property int appsBatchSize: 15
     property var appMetadataCache: ({})
     property string currentSearchText: ""
 
@@ -210,7 +208,6 @@ ConfigPage {
             } else {
                 // All batches scheduled
                 isLoadingApps = false;
-                appsLoaded = true;
                 // Once loaded, refresh pinned apps to ensure metadata is caught up
                 refreshPinnedAppsModel();
             }
@@ -752,10 +749,7 @@ ConfigPage {
                             
                             onClicked: {
                                 cfg_page.addLauncher(appsDelegate.model.url);
-                                // Don't close the page, just remove from the list
-                                // stackView.pop(); 
-                                
-                                // Remove item from filtered model immediately
+                                // The page stays open; the app leaves the list right away.
                                 filteredAppsModel.remove(index);
                             }
 
