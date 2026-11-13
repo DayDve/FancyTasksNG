@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-12 19:06+0200\n"
+"POT-Creation-Date: 2026-11-13 18:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -523,6 +523,60 @@ msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
 msgid "Search applications..."
+msgstr ""
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Quick Setup"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task Layout"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task Styling"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Window Indicators"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "App Signals"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task List"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task Actions"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task Tooltips"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Context Menu"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgid "Advanced"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Pinned Applications"
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml
@@ -1174,60 +1228,6 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Quick Setup"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Task Layout"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Task Styling"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Window Indicators"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "App Signals"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Task List"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Task Actions"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Task Tooltips"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Context Menu"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgid "Advanced"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Pinned Applications"
-msgstr ""
-
 #: package/contents/ui/ContextMenu.qml
 msgid "Places"
 msgstr ""
@@ -1421,6 +1421,10 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: package/contents/ui/Task.qml
+msgid "Activate %1"
+msgstr ""
+
+#: package/contents/ui/Task.qml
 msgctxt "@info:usagetip %1 task name"
 msgid "Show Task tooltip for %1"
 msgstr ""
@@ -1433,10 +1437,6 @@ msgstr ""
 #: package/contents/ui/Task.qml
 msgctxt "@info:usagetip %1 task name"
 msgid "Open textual list of windows for %1"
-msgstr ""
-
-#: package/contents/ui/Task.qml
-msgid "Activate %1"
 msgstr ""
 
 #: package/contents/ui/ToolTipDelegate.qml package/contents/ui/ToolTipInstance.qml

@@ -450,39 +450,32 @@ Item {
             return Wrappers.i18nc("@info:usagetip %1 application name", "Launch %1", task.model.display);
         }
 
-        let smartLauncherDescription = "";
-        if (task.model && taskIconBox.active) {
-            smartLauncherDescription += Wrappers.i18ncp("@info:tooltip", "There is %1 new message.", "There are %1 new messages.", task.badgeCount);
-        }
+        // Matches what a click does (tools.js activateTask): the group
+        // tooltip opens on click even with hover tooltips off, and without
+        // the window view effect the text list is shown instead.
+        const badgeDescription = task.badgeVisible
+            ? Wrappers.i18ncp("@info:tooltip", "There is %1 new message.", "There are %1 new messages.", task.badgeCount) : "";
+        let action = Wrappers.i18n("Activate %1", task.model.display);
 
         if (task.model.IsGroupParent) {
             switch (task.config.groupedTaskVisualization) {
             case 0:
                 break;
             case 1:
-                {
-                    if (task.config.showToolTips) {
-                        return `${Wrappers.i18nc("@info:usagetip %1 task name", "Show Task tooltip for %1", task.model.display)};
-                                ${smartLauncherDescription}`;
-                    }
-                }
+                action = Wrappers.i18nc("@info:usagetip %1 task name", "Show Task tooltip for %1", task.model.display);
                 break;
             case 2:
-                {
-                    if (tasksRoot.effectWatcher.registered) {
-                        return `${Wrappers.i18nc("@info:usagetip %1 task name", "Show windows side by side for %1", task.model.display)};
-                                ${smartLauncherDescription}`;
-                    }
+                if (tasksRoot.effectWatcher.registered) {
+                    action = Wrappers.i18nc("@info:usagetip %1 task name", "Show windows side by side for %1", task.model.display);
+                    break;
                 }
-                break;
+                // fallthrough
             default:
-                return `${Wrappers.i18nc("@info:usagetip %1 task name", "Open textual list of windows for %1", task.model.display)};
-                        ${smartLauncherDescription}`;
+                action = Wrappers.i18nc("@info:usagetip %1 task name", "Open textual list of windows for %1", task.model.display);
             }
         }
 
-        return `${Wrappers.i18n("Activate %1", task.model.display)};
-                ${smartLauncherDescription}`;
+        return badgeDescription ? `${action}; ${badgeDescription}` : action;
     }
     Accessible.role: Accessible.Button
     Accessible.onPressAction: leftTapHandler.leftClick()
