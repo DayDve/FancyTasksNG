@@ -41,6 +41,9 @@ Loader {
     // Pass Cache from Root (tasks) down to Instances
     property var thumbnailCache: tasks.thumbnailCache
     readonly property int thumbnailCacheTtlMs: tasks.thumbnailCacheTtlMs
+    function cacheThumbnail(winId, result): void {
+        tasks.cacheThumbnail(winId, result);
+    }
 
     readonly property var config: Plasmoid.configuration
 
@@ -224,9 +227,6 @@ Loader {
             readonly property int pidParent: toolTipDelegate.pidParent
             readonly property string display: toolTipDelegate.display
             readonly property bool isMinimized: toolTipDelegate.isMinimized
-            readonly property bool isOnAllVirtualDesktops: toolTipDelegate.isOnAllVirtualDesktops
-            readonly property var virtualDesktops: toolTipDelegate.virtualDesktops
-            readonly property var activities: toolTipDelegate.activities
             readonly property bool isActive: toolTipDelegate.isActive
             readonly property var tasksModel: toolTipDelegate.tasksModel
             readonly property var mediaRegistry: toolTipDelegate.mediaRegistry
@@ -313,9 +313,6 @@ Loader {
                     appId: (singleRoot.parentTask && singleRoot.parentTask.appId) ? singleRoot.parentTask.appId : ""
                     display: singleRoot.display
                     isMinimized: singleRoot.isMinimized
-                    isOnAllVirtualDesktops: singleRoot.isOnAllVirtualDesktops
-                    virtualDesktops: singleRoot.virtualDesktops
-                    activities: singleRoot.activities
                     
                     isWindowActive: singleRoot.isActive
                     
@@ -624,9 +621,6 @@ Loader {
                         appPid: model.AppPid !== undefined ? model.AppPid : 0
                         appId: model.AppId !== undefined ? model.AppId : ""
                         isMinimized: model.IsMinimized !== undefined ? model.IsMinimized : false
-                        isOnAllVirtualDesktops: model.IsOnAllVirtualDesktops !== undefined ? model.IsOnAllVirtualDesktops : false
-                        virtualDesktops: model.VirtualDesktops !== undefined ? model.VirtualDesktops : []
-                        activities: model.Activities !== undefined ? model.Activities : []
                         isWindowActive: model.IsActive !== undefined ? model.IsActive : false
 
                         submodelIndex: groupRoot.tasksModel.makeModelIndex(groupRoot.rootIndex.row, index)

@@ -76,8 +76,8 @@ Item {
     PlasmaExtras.Highlight {
         anchors.fill: parent
         anchors.margins: -Kirigami.Units.smallSpacing / 2
-        visible: (root.isHovered || (root.isGroup && isWindowActive)) && !root.showThumbnails
-        opacity: root.isHovered ? 1.0 : (isWindowActive ? 0.6 : 0.0)
+        visible: (root.isHovered || (root.isGroup && root.isWindowActive)) && !root.showThumbnails
+        opacity: root.isHovered ? 1.0 : (root.isWindowActive ? 0.6 : 0.0)
 
         pressed: (textModeMouseArea.item as MouseArea)?.containsPress ?? false
         hovered: true
@@ -106,9 +106,6 @@ Item {
     required property string display
     required property bool isMinimized
     required property bool isWindowActive
-    required property bool isOnAllVirtualDesktops
-    required property var virtualDesktops
-    required property list<string> activities
 
     readonly property string calculatedAppName: {
         let name = "";
@@ -219,15 +216,6 @@ Item {
     readonly property bool windowPlaying: windowStreams.some(stream => !stream.corked)
     readonly property bool windowMuted: windowStreams.length > 0 && windowStreams.every(stream => stream.muted)
 
-    PlasmaExtras.Highlight {
-        anchors.fill: parent
-        anchors.margins: -Kirigami.Units.smallSpacing / 2
-        visible: root.isGroup && root.isHovered && !root.showThumbnails
-        pressed: (textModeMouseArea.item as MouseArea)?.containsPress ?? false
-        hovered: true
-        z: -1
-    }
-
     ColumnLayout {
         id: mainLayout
         width: parent.width
@@ -263,23 +251,6 @@ Item {
             Layout.preferredWidth: 0 
             Layout.minimumWidth: 0 
 
-            Kirigami.Heading {
-                id: appNameHeading
-                level: 3
-                maximumLineCount: 1
-                lineHeight: 1
-                
-                Layout.fillWidth: true
-                Layout.minimumWidth: 0
-                elide: Text.ElideRight
-                
-                text: root.calculatedAppName
-
-                opacity: 1
-                visible: text.length !== 0 && root.showThumbnails
-                textFormat: Text.PlainText
-                horizontalAlignment: Text.AlignHCenter
-            }
             PlasmaComponents3.Label {
                 id: winTitle
                 maximumLineCount: 1
@@ -288,24 +259,8 @@ Item {
                 Layout.minimumWidth: 0
                 elide: Text.ElideRight
                 
-                text: root.showThumbnails ? (root.titleIncludesTrack ? "" : root.title) : root.display
-                opacity: root.showThumbnails ? 0.75 : 1.0
-                horizontalAlignment: root.showThumbnails ? Text.AlignHCenter : Text.AlignLeft
+                text: root.display
                 visible: text.length !== 0
-                textFormat: Text.PlainText
-            }
-            PlasmaComponents3.Label {
-                id: subtext
-                maximumLineCount: 2
-                
-                Layout.fillWidth: true
-                Layout.minimumWidth: 0
-                elide: Text.ElideRight
-                
-                text: toolTipDelegate.isWin ? root.generateSubText() : ""
-                opacity: 0.6
-                horizontalAlignment: Text.AlignHCenter
-                visible: root.showThumbnails && text.length !== 0 && text !== appNameHeading.text
                 textFormat: Text.PlainText
             }
         }
@@ -323,7 +278,7 @@ Item {
                 if (root.parentTask && root.parentTask.tasksRoot) {
                     root.parentTask.tasksRoot.cancelHighlightWindows();
                 }
-                tasksModel.requestClose(root.submodelIndex);
+                root.tasksModel.requestClose(root.submodelIndex);
             }
         }
     }
@@ -367,7 +322,7 @@ Item {
             anchors.fill: hoverHandler
             
             // Use opacity for smooth transition matching the player controls
-            opacity: thumbnailSourceItem.thumbnailAreaHovered ? 1.0 : ((root.isGroup && isWindowActive) ? 0.6 : 0.0)
+            opacity: thumbnailSourceItem.thumbnailAreaHovered ? 1.0 : ((root.isGroup && root.isWindowActive) ? 0.6 : 0.0)
             Behavior on opacity { NumberAnimation { duration: Kirigami.Units.longDuration } }
             
             visible: opacity > 0 // Optimization
@@ -380,7 +335,7 @@ Item {
 
         Loader {
             id: thumbnailLoader
-            active: root.showThumbnails && !root.isLauncher && !albumArtImage.visible && (Number.isInteger(root.currentWinId) || pipeWireLoader.item && !pipeWireLoader.item.hasThumbnail) && root.index !== -1
+            active: root.showThumbnails && !root.isLauncher && !albumArtImage.visible && (Number.isInteger(root.currentWinId) || pipeWireLoader.pipeWireItem && !pipeWireLoader.pipeWireItem.hasThumbnail) && root.index !== -1
             asynchronous: true
             
             visible: active
@@ -406,7 +361,7 @@ Item {
                     visible: valid
                     
                     // Avoid flashing the fallback while the PipeWire stream starts normally.
-                    property bool thumbnailReady: pipeWireLoader.active && pipeWireLoader.item && pipeWireLoader.item.hasThumbnail
+                    property bool thumbnailReady: pipeWireLoader.active && pipeWireLoader.pipeWireItem && pipeWireLoader.pipeWireItem.hasThumbnail
                     property bool fallbackDelayElapsed: false
                     opacity: thumbnailReady || !fallbackDelayElapsed ? 0 : 1
                     
@@ -439,6 +394,7 @@ Item {
 
         Loader {
             id: pipeWireLoader
+            readonly property PipeWireThumbnail pipeWireItem: item as PipeWireThumbnail
             anchors.fill: hoverHandler
             anchors.margins: thumbnailLoader.anchors.margins
 
@@ -458,17 +414,17 @@ Item {
                 repeat: false
                 running: pipeWireLoader.status === Loader.Ready 
                          && pipeWireLoader.item 
-                         && pipeWireLoader.item.hasThumbnail
+                         && pipeWireLoader.pipeWireItem.hasThumbnail
                          && root.currentWinId !== undefined
                 
                 onTriggered: {
                     if (pipeWireLoader.item) {
-                        if (pipeWireLoader.item.width <= 0 || pipeWireLoader.item.height <= 0) return;
-                        pipeWireLoader.item.grabToImage(function(result) {
+                        if (pipeWireLoader.pipeWireItem.width <= 0 || pipeWireLoader.pipeWireItem.height <= 0) return;
+                        pipeWireLoader.pipeWireItem.grabToImage(function(result) {
                             if (result && root.currentWinId) {
-                                tasks.cacheThumbnail(root.currentWinId, result);
+                                root.toolTipDelegate.cacheThumbnail(root.currentWinId, result);
                             }
-                        }, Qt.size(pipeWireLoader.item.width, pipeWireLoader.item.height));
+                        }, Qt.size(pipeWireLoader.pipeWireItem.width, pipeWireLoader.pipeWireItem.height));
                     }
                 }
             }
@@ -488,7 +444,7 @@ Item {
                  return entry.result.url;
              }
              
-             readonly property bool liveThumbnailReady: pipeWireLoader.active && pipeWireLoader.item && pipeWireLoader.item.hasThumbnail
+             readonly property bool liveThumbnailReady: pipeWireLoader.active && pipeWireLoader.pipeWireItem && pipeWireLoader.pipeWireItem.hasThumbnail
              
              visible: !liveThumbnailReady && status === Image.Ready
              
@@ -497,21 +453,9 @@ Item {
              cache: false
         }
 
-        Loader {
-            active: albumArtImage.visible && albumArtImage.status === Image.Ready && root.index !== -1 
-            asynchronous: true
-            visible: active
-            anchors.centerIn: hoverHandler
-
-            sourceComponent: Item { 
-                 id: albumArtBackground
-                 readonly property Image source: albumArtImage
-            }
-        }
-
         Image {
             id: albumArtImage
-            readonly property bool available: (status === Image.Ready || status === Image.Loading) && (!(toolTipDelegate.isGroup || /firefox|chrome|chromium|opera|vivaldi|brave|edge|konqueror/i.test(toolTipDelegate.launcherUrl.toString())) || root.titleIncludesTrack)
+            readonly property bool available: (status === Image.Ready || status === Image.Loading) && (!(root.toolTipDelegate.isGroup || /firefox|chrome|chromium|opera|vivaldi|brave|edge|konqueror/i.test(root.toolTipDelegate.launcherUrl.toString())) || root.titleIncludesTrack)
 
             anchors.fill: hoverHandler
             anchors.margins: Kirigami.Units.smallSpacing
@@ -725,7 +669,7 @@ Item {
                 if (root.parentTask && root.parentTask.tasksRoot) {
                     root.parentTask.tasksRoot.cancelHighlightWindows();
                 }
-                tasksModel.requestClose(root.submodelIndex);
+                root.tasksModel.requestClose(root.submodelIndex);
             }
         }
     }
@@ -771,35 +715,4 @@ Item {
         }
     }
 }
-
-    function generateSubText(): string {
-        const subTextEntries = [];
-        if (!root.config.showOnlyCurrentDesktop && virtualDesktopInfo.numberOfDesktops > 1) {
-            if (!isOnAllVirtualDesktops && virtualDesktops.length > 0) {
-                const virtualDesktopNameList = virtualDesktops.map(virtualDesktop => {
-                    const index = virtualDesktopInfo.desktopIds.indexOf(virtualDesktop);
-                    return virtualDesktopInfo.desktopNames[index];
-                });
-
-                subTextEntries.push(Wrappers.i18nc("Comma-separated list of desktops", "On %1", virtualDesktopNameList.join(", ")));
-            } else if (isOnAllVirtualDesktops) {
-                subTextEntries.push(Wrappers.i18nc("Comma-separated list of desktops", "Pinned to all desktops"));
-            }
-        }
-
-        if (activities.length === 0 && activityInfo.numberOfRunningActivities > 1) {
-            subTextEntries.push(Wrappers.i18nc("Which virtual desktop a window is currently on", "Available on all activities"));
-        } else if (activities.length > 0) {
-            const activityNames = activities.filter(activity => activity !== activityInfo.currentActivity).map(activity => activityInfo.activityName(activity)).filter(activityName => activityName !== "");
-            if (root.config.showOnlyCurrentActivity) {
-                if (activityNames.length > 0) {
-                    subTextEntries.push(Wrappers.i18nc("Activities a window is currently on (apart from the current one)", "Also available on %1", activityNames.join(", ")));
-                }
-            } else if (activityNames.length > 0) {
-                subTextEntries.push(Wrappers.i18nc("Which activities a window is currently on", "Available on %1", activityNames.join(", ")));
-            }
-        }
-
-        return subTextEntries.join("\n");
-    }
 }

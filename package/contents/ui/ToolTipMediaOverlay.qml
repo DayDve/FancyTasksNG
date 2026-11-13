@@ -19,12 +19,6 @@ Item {
     width: parent.width
     height: controlsColumn.implicitHeight + (overlayRoot.smallSpacing * 2)
 
-    readonly property bool isHovered: overlayHover.hovered
-
-    HoverHandler {
-        id: overlayHover
-    }
-
     Rectangle {
         anchors.fill: parent
         color: Qt.rgba(0, 0, 0, 0.6)

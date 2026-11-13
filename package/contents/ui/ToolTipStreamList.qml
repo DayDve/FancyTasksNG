@@ -41,7 +41,6 @@ ColumnLayout {
             id: row
 
             required property var modelData
-            required property int index
             readonly property var stream: modelData
 
             Layout.fillWidth: true
