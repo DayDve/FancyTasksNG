@@ -28,6 +28,7 @@ RowLayout {
     id: playerControllerRoot
     // Null while there is no player, or once it has gone away.
     required property var playerData
+    required property var mediaRegistry
     required property bool isWin
     property bool showText: true
 
@@ -104,11 +105,11 @@ RowLayout {
         icon.width: playerControllerRoot.showText ? playerControllerRoot.iconSmallMedium : playerControllerRoot.iconSmall
         icon.height: playerControllerRoot.showText ? playerControllerRoot.iconSmallMedium : playerControllerRoot.iconSmall
 
-        enabled: playerControllerRoot.isPlaying ? (playerControllerRoot.playerData?.canPause ?? false) : DesktopActionsManager.canPlay(playerControllerRoot.playerData)
+        enabled: playerControllerRoot.isPlaying ? (playerControllerRoot.playerData?.canPause ?? false) : (playerControllerRoot.mediaRegistry?.canPlay(playerControllerRoot.playerData) ?? false)
         icon.name: playerControllerRoot.isPlaying ? "media-playback-pause" : "media-playback-start"
         onClicked: {
             if (!playerControllerRoot.isPlaying) {
-                DesktopActionsManager.play(playerControllerRoot.playerData);
+                playerControllerRoot.mediaRegistry?.play(playerControllerRoot.playerData);
             } else {
                 playerControllerRoot.playerData?.Pause();
             }

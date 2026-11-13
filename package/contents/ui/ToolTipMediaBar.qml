@@ -46,6 +46,7 @@ Item {
             spacing: 2
             showText: false
             playerData: barRoot.player
+            mediaRegistry: barRoot.mediaController ? barRoot.mediaController.mediaRegistry : null
             isWin: barRoot.mediaController && barRoot.mediaController.toolTipDelegate ? barRoot.mediaController.toolTipDelegate.isWin : false
         }
 

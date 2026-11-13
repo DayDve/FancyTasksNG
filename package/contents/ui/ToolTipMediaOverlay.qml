@@ -51,6 +51,7 @@ Item {
             Layout.fillWidth: true
             showText: true // Show track details in the visual overlay as it fits nicely on thumbnails
             playerData: overlayRoot.mediaController ? overlayRoot.mediaController.playerData : null
+            mediaRegistry: overlayRoot.mediaController ? overlayRoot.mediaController.mediaRegistry : null
             isWin: overlayRoot.mediaController && overlayRoot.mediaController.toolTipDelegate ? overlayRoot.mediaController.toolTipDelegate.isWin : false
         }
 
