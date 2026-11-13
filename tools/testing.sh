@@ -176,7 +176,22 @@ export XDG_DATA_DIRS="${XDG_DATA_DIRS}:${HOME}/.local/share"
 unset DISPLAY XAUTHORITY
 export PATH="${NEST_DIR}/bin:${PATH}"
 
+# Services the private bus starts on demand (kded6, portals, ksecretd...)
+# outlive the session, and they hold the log pipe below open, so the script
+# wouldn't even return. Everything still running with the test config dir in
+# its environment is ended right after the session, and on Ctrl+C.
+end_test_processes() {
+    local pid
+    for pid in $(pgrep -u "$(id -u)"); do
+        grep -qzF "XDG_CONFIG_HOME=${NEST_DIR}/config" "/proc/${pid}/environ" 2> /dev/null && kill "${pid}" 2> /dev/null
+    done
+    return 0
+}
+trap end_test_processes EXIT
+
 # dbus-daemon logs every service activation; that's noise here.
-dbus-run-session --config-file="${NEST_DIR}/dbus.conf" \
-    kwin_wayland "${KWIN_SIZE[@]}" --no-lockscreen "${NEST_DIR}/session.sh" 2>&1 \
-    | { grep --line-buffered -v '^dbus-daemon\[' || true; }
+{
+    dbus-run-session --config-file="${NEST_DIR}/dbus.conf" \
+        kwin_wayland "${KWIN_SIZE[@]}" --no-lockscreen "${NEST_DIR}/session.sh" || true
+    end_test_processes
+} 2>&1 | { grep --line-buffered -v '^dbus-daemon\[' || true; }
