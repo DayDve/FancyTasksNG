@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 # FancyTasksNG Makefile
-.PHONY: all build install update test clean translate diag
+.PHONY: all build install update test test-panel test-desktop clean translate diag
 
 all: build
 
@@ -19,7 +19,14 @@ update:
 	@./tools/update.sh
 
 test:
-	@./tools/testing.sh
+	@./tools/testing.sh window
+
+# Nested KWin + plasmashell; SCREEN=WIDTHxHEIGHT for a window instead of full screen.
+test-panel:
+	@SCREEN="$(SCREEN)" ./tools/testing.sh panel
+
+test-desktop:
+	@SCREEN="$(SCREEN)" ./tools/testing.sh desktop
 
 translate:
 	@./tools/extract_messages.sh
