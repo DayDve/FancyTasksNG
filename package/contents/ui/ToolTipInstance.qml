@@ -79,13 +79,14 @@ Item {
         visible: (root.isHovered || (root.isGroup && isWindowActive)) && !root.showThumbnails
         opacity: root.isHovered ? 1.0 : (isWindowActive ? 0.6 : 0.0)
 
-        pressed: (rootHover.item as MouseArea)?.containsPress ?? false
+        pressed: (textModeMouseArea.item as MouseArea)?.containsPress ?? false
         hovered: true
         z: -1
     }
 
     // Mouse Interaction for Text Mode (when thumbnails hidden)
     Loader {
+        id: textModeMouseArea
         anchors.fill: parent
         active: !root.showThumbnails && root.isWin
         sourceComponent: ToolTipWindowMouseArea {
@@ -222,7 +223,7 @@ Item {
         anchors.fill: parent
         anchors.margins: -Kirigami.Units.smallSpacing / 2
         visible: root.isGroup && root.isHovered && !root.showThumbnails
-        pressed: (rootHover.item as MouseArea)?.containsPress ?? false
+        pressed: (textModeMouseArea.item as MouseArea)?.containsPress ?? false
         hovered: true
         z: -1
     }
