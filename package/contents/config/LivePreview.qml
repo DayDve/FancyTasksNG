@@ -202,31 +202,42 @@ Item {
                 // tooltip keeps its size relative to the task buttons.
                 Item {
                     id: previewScene
-                    readonly property real fitScale: {
+                    // Not a binding: the hovered button's place depends on the
+                    // scene size, which depends on the scale. Recomputed after
+                    // the changes settle, it converges in a step or two.
+                    property real fitScale: 1
+                    function updateFitScale(): void {
                         const tip = mockToolTip;
-                        if (!tip.visible || tip.width <= 0 || tip.height <= 0)
-                            return 1;
-                        // Room from the panel's outer edge to the tooltip's far
-                        // edge; the hovered icon's zoom can reach past the panel.
-                        const m = Kirigami.Units.smallSpacing;
-                        const t = previewRoot.simulatedThickness;
-                        let needW = tip.width + 2 * m;
-                        let needH = tip.height + 2 * m;
-                        switch (previewRoot.location) {
-                        case PlasmaCore.Types.LeftEdge:
-                            needW += tip.anchorInPanelX + tip.anchorW + m;
-                            break;
-                        case PlasmaCore.Types.RightEdge:
-                            needW += t - tip.anchorInPanelX + m;
-                            break;
-                        case PlasmaCore.Types.TopEdge:
-                            needH += tip.anchorInPanelY + tip.anchorH + m;
-                            break;
-                        default:
-                            needH += t - tip.anchorInPanelY + m;
+                        let s = 1;
+                        if (tip.visible && tip.width > 0 && tip.height > 0) {
+                            // Room from the panel's outer edge to the tooltip's far
+                            // edge; the hovered icon's zoom can reach past the panel.
+                            const m = Kirigami.Units.smallSpacing;
+                            const t = previewRoot.simulatedThickness;
+                            let needW = tip.width + 2 * m;
+                            let needH = tip.height + 2 * m;
+                            switch (previewRoot.location) {
+                            case PlasmaCore.Types.LeftEdge:
+                                needW += tip.anchorInPanelX + tip.anchorW + m;
+                                break;
+                            case PlasmaCore.Types.RightEdge:
+                                needW += t - tip.anchorInPanelX + m;
+                                break;
+                            case PlasmaCore.Types.TopEdge:
+                                needH += tip.anchorInPanelY + tip.anchorH + m;
+                                break;
+                            default:
+                                needH += t - tip.anchorInPanelY + m;
+                            }
+                            s = Math.min(1, innerPreviewArea.width / needW, innerPreviewArea.height / needH);
                         }
-                        return Math.min(1, innerPreviewArea.width / needW, innerPreviewArea.height / needH);
+                        if (s > 0 && Math.abs(s - fitScale) > 0.001)
+                            fitScale = s;
                     }
+                    readonly property var fitInputs: [mockToolTip.visible, mockToolTip.width, mockToolTip.height,
+                        mockToolTip.anchorInPanelX, mockToolTip.anchorInPanelY, mockToolTip.anchorW, mockToolTip.anchorH,
+                        innerPreviewArea.width, innerPreviewArea.height, previewRoot.simulatedThickness, previewRoot.location]
+                    onFitInputsChanged: Qt.callLater(updateFitScale)
                     width: innerPreviewArea.width / fitScale
                     height: innerPreviewArea.height / fitScale
                     scale: fitScale
