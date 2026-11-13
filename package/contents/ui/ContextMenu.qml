@@ -42,7 +42,6 @@ PlasmaExtras.Menu {
     readonly property var config: Plasmoid.configuration
     readonly property var atm: TaskManager.AbstractTasksModel
 
-    property bool showAllPlaces: false
     property var firstMediaItem: null
 
     // Opened from a window's thumbnail in a group tooltip: modelIndex is that
@@ -84,11 +83,6 @@ PlasmaExtras.Menu {
         }
     }
 
-    Component.onCompleted: {}
-
-    Component.onDestruction: {}
-
-
     function get(modelProp: int): var {
         return menu.tasksModel.data(modelIndex, modelProp);
     }
@@ -117,18 +111,9 @@ PlasmaExtras.Menu {
             `, parent);
     }
 
-    property var _dynamicDesktopItems: []
-
     function _insertDesktopActions(result, launcherUrl) {
         // Find where to insert (before firstMediaItem or startNewInstanceItem)
         let insertItem = menu.firstMediaItem || startNewInstanceItem;
-
-        // Clean up any previously added dynamic items to avoid duplicates on re-open
-        _dynamicDesktopItems.forEach(item => {
-            if (item)
-                item.destroy();
-        });
-        _dynamicDesktopItems = [];
 
         // Manually elide text since QMenu does not limit its width automatically
         const textMetrics = Qt.createQmlObject("import QtQuick; TextMetrics {}", menu);
@@ -160,12 +145,10 @@ PlasmaExtras.Menu {
                 setIcon(menuItem, action.icon);
                 menuItem.clicked.connect(() => DesktopActionsManager.launchAction(launcherUrl, action.actionId));
                 menu.addMenuItem(menuItem, insertItem);
-                _dynamicDesktopItems.push(menuItem);
             });
 
             let sep2 = menu.newSeparator(menu);
             menu.addMenuItem(sep2, insertItem);
-            _dynamicDesktopItems.push(sep2);
         }
 
         // 1.5 Add Places Submenu (for Dolphin / File Managers)
@@ -185,11 +168,9 @@ PlasmaExtras.Menu {
             });
 
             menu.addMenuItem(placesSubItem, insertItem);
-            _dynamicDesktopItems.push(placesSubItem);
 
             let sep3 = menu.newSeparator(menu);
             menu.addMenuItem(sep3, insertItem);
-            _dynamicDesktopItems.push(sep3);
         }
 
         // 1.7 Add Browser History (for Firefox/Browsers)
@@ -198,7 +179,6 @@ PlasmaExtras.Menu {
             title.text = Wrappers.i18n("Recent Pages");
             title.section = true;
             menu.addMenuItem(title, insertItem);
-            _dynamicDesktopItems.push(title);
 
             result.browserHistory.forEach(item => {
                 let menuItem = menu.newMenuItem(menu);
@@ -208,12 +188,10 @@ PlasmaExtras.Menu {
                     DesktopActionsManager.openUrl(item.url, launcherUrl);
                 });
                 menu.addMenuItem(menuItem, insertItem);
-                _dynamicDesktopItems.push(menuItem);
             });
 
             let sep4 = menu.newSeparator(menu);
             menu.addMenuItem(sep4, insertItem);
-            _dynamicDesktopItems.push(sep4);
         }
 
         // 2. Add Recent Folders
@@ -222,7 +200,6 @@ PlasmaExtras.Menu {
             title.text = Wrappers.i18n("Recent Folders");
             title.section = true;
             menu.addMenuItem(title, insertItem);
-            _dynamicDesktopItems.push(title);
 
             result.recentFolders.forEach(folder => {
                 let menuItem = menu.newMenuItem(menu);
@@ -232,7 +209,6 @@ PlasmaExtras.Menu {
                     DesktopActionsManager.openUrl(folder.url, launcherUrl);
                 });
                 menu.addMenuItem(menuItem, insertItem);
-                _dynamicDesktopItems.push(menuItem);
             });
         }
 
@@ -243,7 +219,6 @@ PlasmaExtras.Menu {
             title.text = Wrappers.i18n("Recent Documents");
             title.section = true;
             menu.addMenuItem(title, insertItem);
-            _dynamicDesktopItems.push(title);
 
             // Add the files
             result.recentDocs.forEach(doc => {
@@ -283,7 +258,6 @@ PlasmaExtras.Menu {
                     DesktopActionsManager.openUrl(doc.url, launcherUrl);
                 });
                 menu.addMenuItem(menuItem, insertItem);
-                _dynamicDesktopItems.push(menuItem);
             });
         }
 
@@ -296,12 +270,10 @@ PlasmaExtras.Menu {
                 DesktopActionsManager.clearRecentDocuments(launcherUrl);
             });
             menu.addMenuItem(clearItem, insertItem);
-            _dynamicDesktopItems.push(clearItem);
 
             // Separator after recent documents
             let sep = menu.newSeparator(menu);
             menu.addMenuItem(sep, insertItem);
-            _dynamicDesktopItems.push(sep);
         }
     }
 

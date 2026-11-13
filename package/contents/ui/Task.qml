@@ -607,17 +607,7 @@ Item {
         acceptedDevices: PointerDevice.TouchScreen |
             PointerDevice.Stylus
         gesturePolicy: TapHandler.ReleaseWithinBounds
-        onLongPressed: {
-            // When we're a launcher, there's no window controls, so we can show all
-            // places without the menu getting super huge.
-            if (task.model.IsLauncher) {
-                task.showContextMenu({
-                    showAllPlaces: true
-                });
-            } else {
-                task.showContextMenu();
-            }
-        }
+        onLongPressed: task.showContextMenu()
     }
 
     TapHandler {
