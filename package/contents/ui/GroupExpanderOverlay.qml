@@ -28,7 +28,7 @@ KSvg.SvgItem {
          tasksRoot.effectiveLocation === PlasmaCore.Types.LeftEdge ? 1 :
          tasksRoot.effectiveLocation === PlasmaCore.Types.RightEdge ? 2 : 0)
 
-    visible: arrow.taskModel.IsGroupParent
+    visible: !!arrow.taskModel && arrow.taskModel.IsGroupParent
 
     states: [
         State {
