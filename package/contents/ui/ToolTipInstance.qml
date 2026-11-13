@@ -313,6 +313,9 @@ Item {
         visible: root.isWin && root.config.showToolTips && root.showThumbnails
 
         readonly property bool thumbnailAreaHovered: thumbnailHoverHandler.hovered
+        // Gap between the window image and the thumbnail's edge, just enough
+        // for the hover highlight to show around the image.
+        readonly property int imageInset: Math.round(Kirigami.Units.smallSpacing / 2)
 
         HoverHandler {
             id: thumbnailHoverHandler
@@ -341,7 +344,7 @@ Item {
             visible: active
             
             anchors.fill: hoverHandler
-            anchors.margins: Kirigami.Units.smallSpacing
+            anchors.margins: thumbnailSourceItem.imageInset
 
             source: thumbnailLoader.active && !thumbnailSourceItem.showIcon ? "X11Thumbnail.qml" : ""
             sourceComponent: thumbnailLoader.active && thumbnailSourceItem.showIcon ? iconItem : null
@@ -458,7 +461,7 @@ Item {
             readonly property bool available: (status === Image.Ready || status === Image.Loading) && (!(root.toolTipDelegate.isGroup || /firefox|chrome|chromium|opera|vivaldi|brave|edge|konqueror/i.test(root.toolTipDelegate.launcherUrl.toString())) || root.titleIncludesTrack)
 
             anchors.fill: hoverHandler
-            anchors.margins: Kirigami.Units.smallSpacing
+            anchors.margins: thumbnailSourceItem.imageInset
             sourceSize: Qt.size(parent.width, parent.height)
 
             asynchronous: true
@@ -489,7 +492,7 @@ Item {
             id: thumbnailContentArea
             readonly property rect geometry: root.windowGeometry
             readonly property bool fitsWindow: root.isWin && !albumArtImage.visible && geometry.width > 0 && geometry.height > 0
-            readonly property real margin: Kirigami.Units.smallSpacing
+            readonly property real margin: thumbnailSourceItem.imageInset
             readonly property real innerWidth: Math.max(0, parent.width - 2 * margin)
             readonly property real innerHeight: Math.max(0, parent.height - 2 * margin)
             readonly property real ratio: fitsWindow ? geometry.width / geometry.height
