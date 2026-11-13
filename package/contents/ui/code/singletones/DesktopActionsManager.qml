@@ -20,6 +20,36 @@ Item {
     // Bumped whenever a result is cached, so bindings over the cache update.
     property int revision: 0
 
+    readonly property string _service: "io.github.daydve.fancytasksng.DesktopActions"
+
+    // Calls a helper method; onReply (optional) gets the reply value, or
+    // undefined when the call failed. Right after plasmashell starts the
+    // helper may not be on the bus yet; that error is expected and quiet.
+    function _call(member, signature, args, onReply, iface) {
+        const pendingReply = DBus.SessionBus.asyncCall({
+            "service": root._service,
+            "path": "/DesktopActions",
+            "iface": iface || root._service,
+            "member": member,
+            "arguments": args,
+            "signature": signature
+        });
+        pendingReply.finished.connect(() => {
+            let value;
+            if (pendingReply.isError) {
+                if (pendingReply.error.name !== "org.freedesktop.DBus.Error.ServiceUnknown") {
+                    console.warn("DesktopActionsManager:", member, pendingReply.error.name, pendingReply.error.message);
+                }
+            } else {
+                value = pendingReply.value;
+            }
+            if (onReply) {
+                onReply(value);
+            }
+            pendingReply.destroy();
+        });
+    }
+
     Plasma5Support.DataSource {
         id: dbusDaemonStarter
         engine: "executable"
@@ -73,43 +103,22 @@ Item {
 
     function _doQuery(launcherUrl, appPid, showHistory, limit, callback) {
         const key = _buildKey(launcherUrl, appPid, showHistory, limit);
-        const pendingReply = DBus.SessionBus.asyncCall({
-            "service": "io.github.daydve.fancytasksng.DesktopActions",
-            "path": "/DesktopActions",
-            "iface": "io.github.daydve.fancytasksng.DesktopActions",
-            "member": "Query",
-            "arguments": [String(launcherUrl || ""), !!showHistory, parseInt(limit || 10), parseInt(appPid || 0)],
-            "signature": "(sbii)"
-        });
-
-        pendingReply.finished.connect(() => {
-            const stdoutValue = pendingReply.value;
-            const stdout = stdoutValue !== undefined && stdoutValue !== null ? String(stdoutValue).trim() : "";
-            
-            // Native DBus might return empty array (coerced to "") or empty string on errors (e.g. service starting up)
-            if (!stdout) {
-                if (callback) callback({jumpList: [], recentDocs: []});
-            } else if (!stdout.startsWith("{")) {
-                // Ignore expected startup race condition
-                if (stdout.indexOf("was not provided by any .service files") === -1) {
-                    console.warn("DesktopActionsManager D-Bus error:", stdout);
-                }
-                if (callback) callback({jumpList: [], recentDocs: []});
-            } else {
-                let result = null;
+        _call("Query", "(sbii)", [String(launcherUrl || ""), !!showHistory, parseInt(limit || 10), parseInt(appPid || 0)], value => {
+            let result = {jumpList: [], recentDocs: []};
+            const reply = value === undefined || value === null ? "" : String(value);
+            if (reply) {
                 try {
-                    result = JSON.parse(stdout);
+                    result = JSON.parse(reply);
                     root.cache[key] = result;
                     root.revision++;
                 } catch (e) {
-                    console.warn("DesktopActionsManager JSON parse error:", e, stdout);
-                    result = {jumpList: [], recentDocs: []};
+                    console.warn("DesktopActionsManager JSON parse error:", e, reply);
                 }
-                
-                // Call callback outside the try-catch so UI errors aren't swallowed!
-                if (callback) callback(result);
             }
-            pendingReply.destroy();
+            // Outside the try, so errors in the callback aren't swallowed.
+            if (callback) {
+                callback(result);
+            }
         });
     }
 
@@ -141,76 +150,33 @@ Item {
     }
 
     function clearRecentDocuments(launcherUrl) {
-        const pendingReply = DBus.SessionBus.asyncCall({
-            "service": "io.github.daydve.fancytasksng.DesktopActions",
-            "path": "/DesktopActions",
-            "iface": "io.github.daydve.fancytasksng.DesktopActions",
-            "member": "ClearRecent",
-            "arguments": [String(launcherUrl || "")],
-            "signature": "(s)"
-        });
-        pendingReply.finished.connect(() => {
-            invalidate(launcherUrl);
-            pendingReply.destroy();
-        });
+        _call("ClearRecent", "(s)", [String(launcherUrl || "")], () => invalidate(launcherUrl));
     }
 
     function launchAction(launcherUrl, actionId) {
-        const pendingReply = DBus.SessionBus.asyncCall({
-            "service": "io.github.daydve.fancytasksng.DesktopActions",
-            "path": "/DesktopActions",
-            "iface": "io.github.daydve.fancytasksng.DesktopActions",
-            "member": "LaunchAction",
-            "arguments": [String(launcherUrl || ""), String(actionId || "")],
-            "signature": "(ss)"
-        });
-        pendingReply.finished.connect(() => pendingReply.destroy());
+        _call("LaunchAction", "(ss)", [String(launcherUrl || ""), String(actionId || "")]);
     }
 
+    // callback receives "OK" or an "ERROR: ..." text.
     function exportConfig(path, content, callback) {
-        const pendingReply = DBus.SessionBus.asyncCall({
-            "service": "io.github.daydve.fancytasksng.DesktopActions",
-            "path": "/DesktopActions",
-            "iface": "io.github.daydve.fancytasksng.Config",
-            "member": "ExportConfig",
-            "arguments": [String(path || ""), String(content || "")],
-            "signature": "(ss)"
-        });
-        pendingReply.finished.connect(() => {
-            if (callback) callback(String(pendingReply.value || ""));
-            pendingReply.destroy();
-        });
+        _call("ExportConfig", "(ss)", [String(path || ""), String(content || "")],
+              value => callback && callback(value === undefined ? "ERROR: no reply" : String(value)),
+              "io.github.daydve.fancytasksng.Config");
     }
 
+    // callback receives the file's text or an "ERROR: ..." text.
     function importConfig(path, callback) {
-        const pendingReply = DBus.SessionBus.asyncCall({
-            "service": "io.github.daydve.fancytasksng.DesktopActions",
-            "path": "/DesktopActions",
-            "iface": "io.github.daydve.fancytasksng.Config",
-            "member": "ImportConfig",
-            "arguments": [String(path || "")],
-            "signature": "(s)"
-        });
-        pendingReply.finished.connect(() => {
-            if (callback) callback(String(pendingReply.value || ""));
-            pendingReply.destroy();
-        });
+        _call("ImportConfig", "(s)", [String(path || "")],
+              value => callback && callback(value === undefined ? "ERROR: no reply" : String(value)),
+              "io.github.daydve.fancytasksng.Config");
     }
 
     // callback receives an object mapping each PID (as a string) to its parent
     // PID; empty while the helper is still starting up.
     function parentPids(pids, callback) {
-        const pendingReply = DBus.SessionBus.asyncCall({
-            "service": "io.github.daydve.fancytasksng.DesktopActions",
-            "path": "/DesktopActions",
-            "iface": "io.github.daydve.fancytasksng.DesktopActions",
-            "member": "ParentPids",
-            "arguments": [pids.join(",")],
-            "signature": "(s)"
-        });
-        pendingReply.finished.connect(() => {
+        _call("ParentPids", "(s)", [pids.join(",")], value => {
             let result = {};
-            const reply = String(pendingReply.value || "");
+            const reply = String(value || "");
             if (reply.startsWith("{")) {
                 try {
                     result = JSON.parse(reply);
@@ -218,37 +184,20 @@ Item {
                     console.warn("DesktopActionsManager ParentPids parse error:", e, reply);
                 }
             }
-            if (callback) callback(result);
-            pendingReply.destroy();
+            if (callback) {
+                callback(result);
+            }
         });
     }
 
     // callback receives true if a tab with that title was found and the
     // browser switched to it (needs the Plasma Browser Integration extension).
     function activateBrowserTab(browserPid, title, callback) {
-        const pendingReply = DBus.SessionBus.asyncCall({
-            "service": "io.github.daydve.fancytasksng.DesktopActions",
-            "path": "/DesktopActions",
-            "iface": "io.github.daydve.fancytasksng.DesktopActions",
-            "member": "ActivateBrowserTab",
-            "arguments": [parseInt(browserPid || 0), String(title || "")],
-            "signature": "(is)"
-        });
-        pendingReply.finished.connect(() => {
-            if (callback) callback(pendingReply.value === true);
-            pendingReply.destroy();
-        });
+        _call("ActivateBrowserTab", "(is)", [parseInt(browserPid || 0), String(title || "")],
+              value => callback && callback(value === true));
     }
 
     function openUrl(url, launcherUrl) {
-        const pendingReply = DBus.SessionBus.asyncCall({
-            "service": "io.github.daydve.fancytasksng.DesktopActions",
-            "path": "/DesktopActions",
-            "iface": "io.github.daydve.fancytasksng.DesktopActions",
-            "member": "OpenUrl",
-            "arguments": [String(url || ""), String(launcherUrl || "")],
-            "signature": "(ss)"
-        });
-        pendingReply.finished.connect(() => pendingReply.destroy());
+        _call("OpenUrl", "(ss)", [String(url || ""), String(launcherUrl || "")]);
     }
 }
