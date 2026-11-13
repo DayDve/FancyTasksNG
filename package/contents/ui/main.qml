@@ -1193,7 +1193,9 @@ PlasmoidItem {
                 anchors.leftMargin: winContainer.marginLeft
                 anchors.rightMargin: winContainer.marginRight
 
-                readonly property int tooltipFramePadding: 4
+                // Thumbnails get a thinner frame: they already sit in their own
+                // highlight box, and a wider edge only shrinks the window image.
+                readonly property int tooltipFramePadding: toolTipInstance.showThumbnails ? 2 : 4
                 readonly property var margins: ({
                         left: tooltipFramePadding,
                         top: tooltipFramePadding,
