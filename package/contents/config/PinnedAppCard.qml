@@ -47,7 +47,7 @@ Item {
                 onPaint: {
                     var ctx = getContext("2d");
                     ctx.clearRect(0, 0, width, height);
-                    ctx.fillStyle = pinnedAppDelegate.pageRoot.themeHighlightColor;
+                    ctx.fillStyle = Kirigami.Theme.highlightColor;
                     ctx.beginPath();
                     ctx.moveTo(0, 0);
                     ctx.lineTo(width, height / 2);
@@ -64,7 +64,7 @@ Item {
                 onPaint: {
                     var ctx = getContext("2d");
                     ctx.clearRect(0, 0, width, height);
-                    ctx.fillStyle = pinnedAppDelegate.pageRoot.themeHighlightColor;
+                    ctx.fillStyle = Kirigami.Theme.highlightColor;
                     ctx.beginPath();
                     ctx.moveTo(width, 0);
                     ctx.lineTo(0, height / 2);
@@ -80,7 +80,7 @@ Item {
                 anchors.leftMargin: 8
                 anchors.rightMargin: 8
                 height: 2
-                color: pinnedAppDelegate.pageRoot.themeHighlightColor
+                color: Kirigami.Theme.highlightColor
             }
         }
     }
@@ -146,7 +146,7 @@ Item {
 
         Rectangle {
             anchors.fill: parent
-            color: rowHoverHandler.hovered ? pinnedAppDelegate.pageRoot.themeHoverColor : "transparent"
+            color: rowHoverHandler.hovered ? Kirigami.Theme.hoverColor : "transparent"
             opacity: 0.3
             radius: 3
             visible: !pinnedAppDelegate.pageRoot.isDragging
@@ -217,7 +217,7 @@ Item {
                     visible: text !== ""
                     text: pinnedAppDelegate.model.genericName || ""
                     elide: Text.ElideRight
-                    font.pointSize: pinnedAppDelegate.pageRoot.themeSmallFont.pointSize
+                    font.pointSize: Kirigami.Theme.smallFont.pointSize
                     opacity: 0.7
                 }
             }
@@ -230,11 +230,11 @@ Item {
 
                 Kirigami.Icon {
                     anchors.centerIn: parent
-                    width: pinnedAppDelegate.pageRoot.iconSizeSmall
-                    height: pinnedAppDelegate.pageRoot.iconSizeSmall
+                    width: Kirigami.Units.iconSizes.small
+                    height: Kirigami.Units.iconSizes.small
                     source: "user-trash"
                     isMask: true
-                    color: removeMouseArea.containsMouse ? pinnedAppDelegate.pageRoot.themeNegativeTextColor : pinnedAppDelegate.pageRoot.themeTextColor
+                    color: removeMouseArea.containsMouse ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.textColor
                 }
 
                 MouseArea {

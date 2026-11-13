@@ -44,10 +44,6 @@ Item {
     readonly property var config: task.tasksRoot.config
     // The edge buttons face, which a floating widget can override.
     readonly property int location: task.tasksRoot ? task.tasksRoot.effectiveLocation : Plasmoid.location
-    readonly property int smallSpacing: Kirigami.Units.smallSpacing
-    readonly property int shortDuration: Kirigami.Units.shortDuration
-    readonly property int longDuration: Kirigami.Units.longDuration
-    readonly property color themeBgColor: Kirigami.Theme.backgroundColor
 
     // False for a task that is only shown, as in the settings preview: it
     // then takes no input and no keyboard focus.
@@ -55,7 +51,7 @@ Item {
     activeFocusOnTab: interactive
     opacity: tasksRoot.dragSource === task ? 0.5 : 1.0
     Behavior on opacity {
-        NumberAnimation { duration: task.shortDuration }
+        NumberAnimation { duration: Kirigami.Units.shortDuration }
     }
 
     readonly property int _cfgIconSize: task.config.iconSizeOverride ? task.config.iconSizePx : (Math.min(tasksRoot.width, tasksRoot.height) * task.config.iconScale / 100)
@@ -68,12 +64,12 @@ Item {
     Item {
         id: tooltipAnchor
         anchors.centerIn: parent
-        width: task.tasksRoot.vertical ? (Math.max(task.tasksRoot.width, task._maxIconSize) + task.smallSpacing * 2) : parent.width
-        height: !task.tasksRoot.vertical ? (Math.max(task.tasksRoot.height, task._maxIconSize) + task.smallSpacing * 2) : parent.height
+        width: task.tasksRoot.vertical ? (Math.max(task.tasksRoot.width, task._maxIconSize) + Kirigami.Units.smallSpacing * 2) : parent.width
+        height: !task.tasksRoot.vertical ? (Math.max(task.tasksRoot.height, task._maxIconSize) + Kirigami.Units.smallSpacing * 2) : parent.height
         visible: false
     }
     property alias tooltipAnchor: tooltipAnchor
-    property string tintColor: Kirigami.ColorUtils.brightnessForColor(task.themeBgColor) === Kirigami.ColorUtils.Dark ?
+    property string tintColor: Kirigami.ColorUtils.brightnessForColor(Kirigami.Theme.backgroundColor) === Kirigami.ColorUtils.Dark ?
         "#ffffff" : "#000000"
 
     rotation: (tasksRoot && task.config.reverseMode && tasksRoot.vertical) ?
@@ -420,14 +416,14 @@ Item {
                 properties: "x"
                 to: 0
                 easing.type: Easing.OutQuad
-                duration: task.longDuration
+                duration: Kirigami.Units.longDuration
             }
             NumberAnimation {
                 target: translateTransform
                 properties: "y"
                 to: 0
                 easing.type: Easing.OutQuad
-                duration: task.longDuration
+                duration: Kirigami.Units.longDuration
             }
         }
     }
@@ -596,7 +592,7 @@ Item {
             return true;
         }
         flow: Flow.LeftToRight
-        spacing: task.smallSpacing
+        spacing: Kirigami.Units.smallSpacing
         clip: false
     }
 
@@ -893,7 +889,7 @@ Item {
     PlasmaComponents3.Label {
         id: label
 
-        visible: !task.tasksRoot.iconsOnly && !task.model.IsLauncher && (parent.width - taskIconBox.height - task.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText(task.tasksRoot)
+        visible: !task.tasksRoot.iconsOnly && !task.model.IsLauncher && (parent.width - taskIconBox.height - Kirigami.Units.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText(task.tasksRoot)
 
         anchors {
             fill: parent

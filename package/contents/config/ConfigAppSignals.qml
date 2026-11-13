@@ -48,11 +48,11 @@ ConfigPage {
                 }
             }
             RowLayout {
-                spacing: signalsPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 RowLayout {
                     id: dotMode
                     enabled: signalsPage.cfg_showAppSignals && (signalsPage.cfg_showBadges || signalsPage.cfg_indicateAudioStreams)
-                    spacing: signalsPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Show signal badges as dots:")
                     }
@@ -96,7 +96,7 @@ ConfigPage {
             }
 
             RowLayout {
-                Item { implicitWidth: signalsPage.gridUnit }
+                Item { implicitWidth: Kirigami.Units.gridUnit }
                 CheckBox {
                     id: badgeHighlightNew
                     enabled: showBadges.checked
@@ -106,7 +106,7 @@ ConfigPage {
                 }
             }
             RowLayout {
-                Item { implicitWidth: signalsPage.gridUnit }
+                Item { implicitWidth: Kirigami.Units.gridUnit }
                 CheckBox {
                     id: showBadgesOnLaunchers
                     enabled: showBadges.checked
@@ -120,12 +120,12 @@ ConfigPage {
                 }
             }
             RowLayout {
-                spacing: signalsPage.smallSpacing
-                Item { implicitWidth: signalsPage.gridUnit }
+                spacing: Kirigami.Units.smallSpacing
+                Item { implicitWidth: Kirigami.Units.gridUnit }
                 RowLayout {
                     id: badgeColor
                     enabled: showBadges.checked
-                    spacing: signalsPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Count background color:")
                     }
@@ -183,11 +183,11 @@ ConfigPage {
             readonly property bool progressOn: indicatorProgressStyle.currentIndex > 0
 
             RowLayout {
-                spacing: signalsPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 RowLayout {
                     id: progressColor
                     enabled: progressTab.progressOn
-                    spacing: signalsPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Progress color:")
                     }
@@ -202,12 +202,12 @@ ConfigPage {
                 }
             }
             RowLayout {
-                spacing: signalsPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 RowLayout {
                     id: progressThickness
                     // Only strips have a thickness.
                     enabled: indicatorProgressStyle.currentIndex >= 3
-                    spacing: signalsPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Thickness:")
                     }
@@ -225,11 +225,11 @@ ConfigPage {
                 }
             }
             RowLayout {
-                spacing: signalsPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 RowLayout {
                     id: progressOpacity
                     enabled: progressTab.progressOn
-                    spacing: signalsPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Opacity:")
                     }
@@ -277,7 +277,7 @@ ConfigPage {
                 }
             }
             RowLayout {
-                spacing: signalsPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 CheckBox {
                     id: attentionCustomColorEnabled
                     text: Wrappers.i18n("Colorize the task button when a window wants attention")

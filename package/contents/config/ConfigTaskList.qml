@@ -6,6 +6,7 @@
 */
 
 import QtQuick
+import org.kde.kirigami as Kirigami
 import QtQuick.Controls
 import QtQuick.Layouts
 
@@ -59,7 +60,7 @@ ConfigPage {
                 }
             }
 
-            Item { height: listPage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
             ButtonGroup {
                 id: minimizedFilterGroup
@@ -131,7 +132,7 @@ ConfigPage {
             // picks between 0 and 1.
             ComboBox {
                 Layout.fillWidth: true
-                Layout.minimumWidth: listPage.gridUnit * 14
+                Layout.minimumWidth: Kirigami.Units.gridUnit * 14
                 model: [Wrappers.i18n("Manually"), Wrappers.i18n("Alphabetically"), Wrappers.i18n("By desktop"), Wrappers.i18n("By activity"), Wrappers.i18n("By horizontal window position")]
                 currentIndex: Math.max(0, listPage.cfg_sortingStrategy - 1)
                 onActivated: (index) => listPage.cfg_sortingStrategy = index === 0 ? (keepLaunchersSeparate.checked ? 0 : 1) : index + 1
@@ -155,9 +156,9 @@ ConfigPage {
                 Layout.fillWidth: true
                 // A wrapping label still reports its unwrapped text width as
                 // implicit width, which would stretch the whole form column.
-                Layout.preferredWidth: listPage.gridUnit * 14
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 14
                 wrapMode: Text.WordWrap
-                font: listPage.themeSmallFont
+                font: Kirigami.Theme.smallFont
                 opacity: 0.7
                 text: keepLaunchersSeparate.checked
                     ? Wrappers.i18n("Pinned apps always come first and stay in place when launched. Pinned apps can be dragged among themselves, other tasks among themselves.")

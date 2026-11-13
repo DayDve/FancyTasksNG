@@ -78,7 +78,7 @@ ConfigPage {
             }
 
             RowLayout {
-                spacing: indicatorsPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 Label {
                     text: Wrappers.i18n("Style:")
                 }
@@ -113,7 +113,7 @@ ConfigPage {
             }
 
             RowLayout {
-                spacing: indicatorsPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 Label {
                     text: Wrappers.i18n("Edge offset:")
                 }
@@ -129,7 +129,7 @@ ConfigPage {
             }
 
             RowLayout {
-                spacing: indicatorsPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 Label {
                     text: Wrappers.i18n("Roundness:")
                 }
@@ -144,10 +144,10 @@ ConfigPage {
                 }
             }
 
-            Item { height: indicatorsPage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
             RowLayout {
-                spacing: indicatorsPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 Label {
                     text: Wrappers.i18n("Max segments:")
                 }
@@ -173,7 +173,7 @@ ConfigPage {
             unavailableReason: indicatorsPage.offReason
 
             RowLayout {
-                spacing: indicatorsPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 Label {
                     text: Wrappers.i18n("Thickness:")
                 }
@@ -186,7 +186,7 @@ ConfigPage {
                 Label {
                     text: "px"
                 }
-                Item { implicitWidth: indicatorsPage.largeSpacing }
+                Item { implicitWidth: Kirigami.Units.largeSpacing }
                 Label {
                     text: Wrappers.i18n("Segment length:")
                 }
@@ -202,11 +202,11 @@ ConfigPage {
             }
 
             RowLayout {
-                spacing: indicatorsPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 RowLayout {
                     id: indicatorShrink
                     enabled: indicatorsPage.isLineStyle
-                    spacing: indicatorsPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Side padding:")
                     }
@@ -226,7 +226,7 @@ ConfigPage {
                 }
             }
 
-            Item { height: indicatorsPage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
             CheckBox {
                 id: indicatorResize
@@ -237,12 +237,12 @@ ConfigPage {
 
 
             RowLayout {
-                spacing: indicatorsPage.smallSpacing
-                Item { implicitWidth: indicatorsPage.gridUnit }
+                spacing: Kirigami.Units.smallSpacing
+                Item { implicitWidth: Kirigami.Units.gridUnit }
                 RowLayout {
                     id: activeSize
                     enabled: indicatorResize.checked
-                    spacing: indicatorsPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Thickness:")
                     }
@@ -255,7 +255,7 @@ ConfigPage {
                     Label {
                         text: "px"
                     }
-                    Item { implicitWidth: indicatorsPage.largeSpacing }
+                    Item { implicitWidth: Kirigami.Units.largeSpacing }
                     Label {
                         text: Wrappers.i18n("Length:")
                     }
@@ -272,12 +272,12 @@ ConfigPage {
             }
 
             RowLayout {
-                spacing: indicatorsPage.smallSpacing
-                Item { implicitWidth: indicatorsPage.gridUnit }
+                spacing: Kirigami.Units.smallSpacing
+                Item { implicitWidth: Kirigami.Units.gridUnit }
                 RowLayout {
                     id: indicatorAlignment
                     enabled: indicatorResize.checked
-                    spacing: indicatorsPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Segment alignment:")
                     }
@@ -297,7 +297,7 @@ ConfigPage {
             }
 
             RowLayout {
-                Item { implicitWidth: indicatorsPage.gridUnit }
+                Item { implicitWidth: Kirigami.Units.gridUnit }
                 CheckBox {
                     id: indicatorHoverSeparate
                     enabled: indicatorResize.checked
@@ -307,12 +307,12 @@ ConfigPage {
                 }
             }
             RowLayout {
-                spacing: indicatorsPage.smallSpacing
-                Item { implicitWidth: indicatorsPage.gridUnit * 2 }
+                spacing: Kirigami.Units.smallSpacing
+                Item { implicitWidth: Kirigami.Units.gridUnit * 2 }
                 RowLayout {
                     id: hoverSize
                     enabled: indicatorHoverSeparate.enabled && indicatorHoverSeparate.checked
-                    spacing: indicatorsPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Thickness:")
                     }
@@ -325,7 +325,7 @@ ConfigPage {
                     Label {
                         text: "px"
                     }
-                    Item { implicitWidth: indicatorsPage.largeSpacing }
+                    Item { implicitWidth: Kirigami.Units.largeSpacing }
                     Label {
                         text: Wrappers.i18n("Length:")
                     }
@@ -342,7 +342,7 @@ ConfigPage {
             }
 
             RowLayout {
-                Item { implicitWidth: indicatorsPage.gridUnit }
+                Item { implicitWidth: Kirigami.Units.gridUnit }
                 CheckBox {
                     id: indicatorGroupSeparate
                     enabled: indicatorResize.checked
@@ -352,12 +352,12 @@ ConfigPage {
                 }
             }
             RowLayout {
-                spacing: indicatorsPage.smallSpacing
-                Item { implicitWidth: indicatorsPage.gridUnit * 2 }
+                spacing: Kirigami.Units.smallSpacing
+                Item { implicitWidth: Kirigami.Units.gridUnit * 2 }
                 RowLayout {
                     id: groupSize
                     enabled: indicatorGroupSeparate.enabled && indicatorGroupSeparate.checked
-                    spacing: indicatorsPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Thickness:")
                     }
@@ -370,7 +370,7 @@ ConfigPage {
                     Label {
                         text: "px"
                     }
-                    Item { implicitWidth: indicatorsPage.largeSpacing }
+                    Item { implicitWidth: Kirigami.Units.largeSpacing }
                     Label {
                         text: Wrappers.i18n("Length:")
                     }
@@ -398,12 +398,12 @@ ConfigPage {
                 text: Wrappers.i18n("Colors:")
             }
             RowLayout {
-                spacing: indicatorsPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 Layout.fillWidth: true
                 ComboBox {
                     id: indicatorColorCombo
                     Layout.fillWidth: true
-                    Layout.minimumWidth: indicatorsPage.gridUnit * 14
+                    Layout.minimumWidth: Kirigami.Units.gridUnit * 14
                     model: [
                         Wrappers.i18n("Use plasma accent color"),
                         Wrappers.i18n("Use dominant icon color"),
@@ -427,7 +427,7 @@ ConfigPage {
                 }
             }
 
-            Item { height: indicatorsPage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
             CheckBox {
                 text: Wrappers.i18n("Highlight active window in group")
@@ -441,12 +441,12 @@ ConfigPage {
                 onToggled: indicatorsPage.cfg_indicatorDimInactive = checked
             }
             RowLayout {
-                spacing: indicatorsPage.smallSpacing
-                Item { implicitWidth: indicatorsPage.gridUnit }
+                spacing: Kirigami.Units.smallSpacing
+                Item { implicitWidth: Kirigami.Units.gridUnit }
                 RowLayout {
                     id: inactiveOpacity
                     enabled: indicatorDimInactive.checked
-                    spacing: indicatorsPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Inactive indicator opacity:")
                     }

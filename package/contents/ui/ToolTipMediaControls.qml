@@ -12,13 +12,11 @@ RowLayout {
 
     required property var mediaController
 
-    readonly property int smallSpacing: Kirigami.Units.smallSpacing
-    readonly property int gridUnit: Kirigami.Units.gridUnit
 
-    spacing: controlsRoot.smallSpacing
+    spacing: Kirigami.Units.smallSpacing
     
     // Strict width constraint for text mode to prevent stretching tooltips
-    Layout.maximumWidth: mediaController && mediaController.toolTipDelegate ? mediaController.toolTipDelegate.tooltipInstanceMaximumWidth : controlsRoot.gridUnit * 14
+    Layout.maximumWidth: mediaController && mediaController.toolTipDelegate ? mediaController.toolTipDelegate.tooltipInstanceMaximumWidth : Kirigami.Units.gridUnit * 14
     Layout.fillWidth: true
 
     // MPRIS Player Controls (Compact: no text, just buttons)

@@ -6,6 +6,7 @@
 */
 
 import QtQuick
+import org.kde.kirigami as Kirigami
 import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kquickcontrols as KQuickAddons
@@ -41,11 +42,11 @@ ConfigPage {
                 onToggled: stylePage.cfg_clipIconToShape = checked
             }
             RowLayout {
-                spacing: stylePage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 RowLayout {
                     id: iconClipRadius
                     enabled: clipIconToShape.checked
-                    spacing: stylePage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Icon corner radius:")
                     }
@@ -91,7 +92,7 @@ ConfigPage {
             }
             RowLayout {
                 enabled: iconTab.clipBackgroundOn
-                spacing: stylePage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 Layout.fillWidth: true
                 ComboBox {
                     id: clipIconBackgroundColorMode
@@ -117,11 +118,11 @@ ConfigPage {
                 }
             }
             RowLayout {
-                spacing: stylePage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 RowLayout {
                     id: clipBackgroundOpacity
                     enabled: iconTab.clipBackgroundOn
-                    spacing: stylePage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Background opacity:")
                     }
@@ -156,7 +157,7 @@ ConfigPage {
             }
             ComboBox {
                 Layout.fillWidth: true
-                Layout.minimumWidth: stylePage.gridUnit * 14
+                Layout.minimumWidth: Kirigami.Units.gridUnit * 14
                 model: [
                     Wrappers.i18n("On all buttons"),
                     Wrappers.i18n("Only on the active and hovered buttons"),
@@ -169,7 +170,7 @@ ConfigPage {
                 }
             }
 
-            Item { height: stylePage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
             RowLayout {
                 Label {
@@ -184,7 +185,7 @@ ConfigPage {
             }
             RowLayout {
                 enabled: stylePage.backgroundMode !== 2
-                spacing: stylePage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 Layout.fillWidth: true
 
                 ComboBox {
@@ -257,17 +258,17 @@ ConfigPage {
                 : Wrappers.i18n("Only in the icons-only mode.")
 
             RowLayout {
-                spacing: stylePage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 RowLayout {
                     id: hoverStyle
                     enabled: hoverTab.zoomOn
-                    spacing: stylePage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Hover style:")
                     }
                     ComboBox {
                         Layout.fillWidth: true
-                        Layout.minimumWidth: stylePage.gridUnit * 14
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 14
                         model: [Wrappers.i18n("Simple"), Wrappers.i18n("Parabolic")]
                         currentIndex: stylePage.cfg_taskHoverEffectStyle
                         onActivated: (index) => stylePage.cfg_taskHoverEffectStyle = index
@@ -279,11 +280,11 @@ ConfigPage {
                 }
             }
             RowLayout {
-                spacing: stylePage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 RowLayout {
                     id: iconZoomFactor
                     enabled: hoverTab.zoomOn
-                    spacing: stylePage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Icon zoom factor (px):")
                     }
@@ -301,11 +302,11 @@ ConfigPage {
                 }
             }
             RowLayout {
-                spacing: stylePage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 RowLayout {
                     id: iconZoomDuration
                     enabled: hoverTab.zoomOn
-                    spacing: stylePage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Zoom animation duration (ms):")
                     }
@@ -323,7 +324,7 @@ ConfigPage {
                 }
             }
 
-            Item { height: stylePage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
             RowLayout {
                 CheckBox {

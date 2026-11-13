@@ -5,6 +5,7 @@
 */
 
 import QtQuick
+import org.kde.kirigami as Kirigami
 import QtQuick.Controls
 import QtQuick.Layouts
 
@@ -35,12 +36,12 @@ ConfigPage {
                 onToggled: menuPage.cfg_showBrowserHistory = checked
             }
             RowLayout {
-                spacing: menuPage.smallSpacing
-                Item { implicitWidth: menuPage.gridUnit }
+                spacing: Kirigami.Units.smallSpacing
+                Item { implicitWidth: Kirigami.Units.gridUnit }
                 RowLayout {
                     id: browserHistoryLimit
                     enabled: showBrowserHistory.checked
-                    spacing: menuPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Number of browser history items:")
                     }

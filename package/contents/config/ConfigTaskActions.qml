@@ -6,6 +6,7 @@
 */
 
 import QtQuick
+import org.kde.kirigami as Kirigami
 import QtQuick.Controls
 import QtQuick.Layouts
 
@@ -74,13 +75,13 @@ ConfigPage {
             }
             ComboBox {
                 Layout.fillWidth: true
-                Layout.minimumWidth: actionsPage.gridUnit * 14
+                Layout.minimumWidth: Kirigami.Units.gridUnit * 14
                 model: [Wrappers.i18n("Minimizes the window"), Wrappers.i18n("Does nothing")]
                 currentIndex: actionsPage.cfg_minimizeActiveTaskOnClick ? 0 : 1
                 onActivated: (index) => actionsPage.cfg_minimizeActiveTaskOnClick = index === 0
             }
 
-            Item { height: actionsPage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
 
             Label {
@@ -88,13 +89,13 @@ ConfigPage {
             }
             ComboBox {
                 Layout.fillWidth: true
-                Layout.minimumWidth: actionsPage.gridUnit * 14
+                Layout.minimumWidth: Kirigami.Units.gridUnit * 14
                 model: [Wrappers.i18n("Cycles through tasks"), Wrappers.i18n("Shows small window previews"), Wrappers.i18n("Shows large window previews"), Wrappers.i18n("Shows textual list")]
                 currentIndex: actionsPage.cfg_groupedTaskVisualization
                 onActivated: (index) => actionsPage.cfg_groupedTaskVisualization = index
             }
 
-            Item { height: actionsPage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Middle-clicking any task:")
@@ -102,7 +103,7 @@ ConfigPage {
             ComboBox {
                 id: middleClickAction
                 Layout.fillWidth: true
-                Layout.minimumWidth: actionsPage.gridUnit * 14
+                Layout.minimumWidth: Kirigami.Units.gridUnit * 14
                 model: [Wrappers.i18n("Does nothing"), Wrappers.i18n("Closes window or group"), Wrappers.i18n("Opens a new window"), Wrappers.i18n("Minimizes/Restores window or group"), Wrappers.i18n("Toggles grouping"), Wrappers.i18n("Brings it to the current virtual desktop")]
                 currentIndex: actionsPage.cfg_middleClickAction
                 onActivated: (index) => actionsPage.cfg_middleClickAction = index
@@ -122,7 +123,7 @@ ConfigPage {
                 }
             }
 
-            Item { height: actionsPage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Mouse wheel:")
@@ -131,8 +132,8 @@ ConfigPage {
             // Ctrl+wheel.
             GridLayout {
                 columns: 4
-                columnSpacing: actionsPage.smallSpacing
-                rowSpacing: actionsPage.smallSpacing
+                columnSpacing: Kirigami.Units.smallSpacing
+                rowSpacing: Kirigami.Units.smallSpacing
 
                 Item { implicitWidth: 1 }
                 Item { implicitWidth: 1 }
@@ -151,7 +152,7 @@ ConfigPage {
                 }
                 ComboBox {
                     Layout.fillWidth: true
-                    Layout.preferredWidth: actionsPage.gridUnit * 11
+                    Layout.preferredWidth: Kirigami.Units.gridUnit * 11
                     enabled: actionsPage.groupsCombined
                     model: actionsPage.groupWheelModel
                     currentIndex: actionsPage.groupWheelValues.indexOf(TaskTools.wheelGroupChoice(actionsPage.cfg_wheelGroupAction, actionsPage.cfg_wheelAction))
@@ -159,7 +160,7 @@ ConfigPage {
                 }
                 ComboBox {
                     Layout.fillWidth: true
-                    Layout.preferredWidth: actionsPage.gridUnit * 11
+                    Layout.preferredWidth: Kirigami.Units.gridUnit * 11
                     enabled: actionsPage.groupsCombined && wheelCtrlActionEnabled.checked
                     model: actionsPage.groupWheelModel
                     currentIndex: actionsPage.groupWheelValues.indexOf(TaskTools.wheelGroupChoice(actionsPage.cfg_wheelCtrlGroupAction, actionsPage.cfg_wheelCtrlAction))
@@ -175,14 +176,14 @@ ConfigPage {
                 }
                 ComboBox {
                     Layout.fillWidth: true
-                    Layout.preferredWidth: actionsPage.gridUnit * 11
+                    Layout.preferredWidth: Kirigami.Units.gridUnit * 11
                     model: actionsPage.elsewhereWheelModel
                     currentIndex: actionsPage.elsewhereWheelValues.indexOf(TaskTools.wheelElsewhereAction(actionsPage.cfg_wheelAction))
                     onActivated: (index) => actionsPage.setElsewhereWheel(false, index)
                 }
                 ComboBox {
                     Layout.fillWidth: true
-                    Layout.preferredWidth: actionsPage.gridUnit * 11
+                    Layout.preferredWidth: Kirigami.Units.gridUnit * 11
                     enabled: wheelCtrlActionEnabled.checked
                     model: actionsPage.elsewhereWheelModel
                     currentIndex: actionsPage.elsewhereWheelValues.indexOf(TaskTools.wheelElsewhereAction(actionsPage.cfg_wheelCtrlAction))

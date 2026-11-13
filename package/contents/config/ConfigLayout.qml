@@ -6,6 +6,7 @@
 */
 
 import QtQuick
+import org.kde.kirigami as Kirigami
 import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.plasma.core as PlasmaCore
@@ -37,13 +38,13 @@ ConfigPage {
             }
             ComboBox {
                 Layout.fillWidth: true
-                Layout.minimumWidth: layoutPage.gridUnit * 14
+                Layout.minimumWidth: Kirigami.Units.gridUnit * 14
                 model: [Wrappers.i18n("Classic panel"), Wrappers.i18n("Show icons only")]
                 currentIndex: layoutPage.cfg_iconOnly
                 onActivated: (index) => layoutPage.cfg_iconOnly = index
             }
 
-            Item { height: layoutPage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
             RowLayout {
                 Label {
@@ -58,7 +59,7 @@ ConfigPage {
             }
             RowLayout {
                 enabled: layoutPage.classicRow
-                spacing: layoutPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 Label {
                     text: Wrappers.i18nc("Button width", "maximum:")
                 }
@@ -68,7 +69,7 @@ ConfigPage {
                     value: layoutPage.cfg_maxButtonLength
                     onValueModified: layoutPage.cfg_maxButtonLength = value
                 }
-                Item { implicitWidth: layoutPage.largeSpacing }
+                Item { implicitWidth: Kirigami.Units.largeSpacing }
                 Label {
                     enabled: fitButtonToText.checked
                     text: Wrappers.i18nc("Button width", "minimum:")
@@ -110,13 +111,13 @@ ConfigPage {
                 valueFromText: (text, locale) => text === Wrappers.i18n("As many as fit") ? 0 : Number.fromLocaleString(locale, text)
             }
 
-            Item { height: layoutPage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Margins:")
             }
             RowLayout {
-                spacing: layoutPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 Label {
                     text: Wrappers.i18nc("Margins", "outer (px):")
                 }
@@ -126,15 +127,15 @@ ConfigPage {
                     value: layoutPage.cfg_taskSpacingSize
                     onValueModified: layoutPage.cfg_taskSpacingSize = value
                 }
-                Item { implicitWidth: layoutPage.largeSpacing }
+                Item { implicitWidth: Kirigami.Units.largeSpacing }
                 Label {
                     text: Wrappers.i18nc("Margins", "inner:")
                 }
                 ComboBox {
                     id: iconSpacing
-                    enabled: !layoutPage.tabletMode
+                    enabled: !Kirigami.Settings.tabletMode
                     model: [Wrappers.i18n("Small"), Wrappers.i18n("Normal"), Wrappers.i18n("Large"), Wrappers.i18n("Huge")]
-                    currentIndex: layoutPage.tabletMode ? 3 : layoutPage.cfg_iconSpacing
+                    currentIndex: Kirigami.Settings.tabletMode ? 3 : layoutPage.cfg_iconSpacing
                     onActivated: (index) => layoutPage.cfg_iconSpacing = index
                 }
                 ConfigHint {
@@ -144,7 +145,7 @@ ConfigPage {
                 }
             }
 
-            Item { height: layoutPage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Icon size:")
@@ -160,7 +161,7 @@ ConfigPage {
             // change.
             RowLayout {
                 Layout.fillWidth: true
-                spacing: layoutPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 readonly property bool absolute: layoutPage.cfg_iconSizeOverride
 
                 // No stepSize: with it the style draws a tick per step.
@@ -225,12 +226,12 @@ ConfigPage {
                 }
             }
             RowLayout {
-                spacing: layoutPage.smallSpacing
-                Item { implicitWidth: layoutPage.gridUnit }
+                spacing: Kirigami.Units.smallSpacing
+                Item { implicitWidth: Kirigami.Units.gridUnit }
                 RowLayout {
                     id: iconEdgeOffset
                     enabled: iconScaleFromEdge.checked
-                    spacing: layoutPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Edge offset (px):")
                     }
@@ -271,7 +272,7 @@ ConfigPage {
                 onToggled: if (checked) layoutPage.cfg_reverseMode = true
             }
 
-            Item { height: layoutPage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
             RowLayout {
                 CheckBox {
@@ -288,7 +289,7 @@ ConfigPage {
             }
 
             RowLayout {
-                Item { implicitWidth: layoutPage.gridUnit }
+                Item { implicitWidth: Kirigami.Units.gridUnit }
                 RowLayout {
                     id: fillAlignment
                     enabled: fill.enabled && fill.checked && layoutPage.cfg_iconOnly === 1
@@ -309,12 +310,12 @@ ConfigPage {
                 }
             }
 
-            Item { height: layoutPage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
             // Like the stock task manager: on a thick panel the buttons can
             // stack in rows (columns on a vertical panel).
             RowLayout {
-                spacing: layoutPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 Label {
                     text: layoutPage.plasmoidVertical ? Wrappers.i18n("Buttons in several columns:") : Wrappers.i18n("Buttons in several rows:")
                 }
@@ -344,7 +345,7 @@ ConfigPage {
                 }
             }
 
-            Item { height: layoutPage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
             Label {
                 enabled: !layoutPage.onPanel

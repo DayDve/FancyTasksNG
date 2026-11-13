@@ -47,7 +47,7 @@ ConfigPage {
                 onToggled: tooltipsPage.cfg_highlightWindows = checked
             }
 
-            Item { height: tooltipsPage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Window thumbnails:")
@@ -59,18 +59,18 @@ ConfigPage {
                 onToggled: tooltipsPage.cfg_showToolTips = checked
             }
             RowLayout {
-                spacing: tooltipsPage.smallSpacing
-                Item { implicitWidth: tooltipsPage.gridUnit }
+                spacing: Kirigami.Units.smallSpacing
+                Item { implicitWidth: Kirigami.Units.gridUnit }
                 RowLayout {
                     id: aspectRatio
                     enabled: showToolTips.checked
-                    spacing: tooltipsPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Thumbnail aspect ratio:")
                     }
                     ComboBox {
                         Layout.fillWidth: true
-                        Layout.minimumWidth: tooltipsPage.gridUnit * 12
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 12
                         model: [Wrappers.i18n("Match screen aspect ratio"), Wrappers.i18n("Match window aspect ratio")]
                         currentIndex: tooltipsPage.cfg_tooltipMatchWindowAspectRatio ? 1 : 0
                         onActivated: (index) => tooltipsPage.cfg_tooltipMatchWindowAspectRatio = index === 1
@@ -78,11 +78,11 @@ ConfigPage {
                 }
             }
             RowLayout {
-                spacing: tooltipsPage.smallSpacing
-                Item { implicitWidth: tooltipsPage.gridUnit }
+                spacing: Kirigami.Units.smallSpacing
+                Item { implicitWidth: Kirigami.Units.gridUnit }
                 RowLayout {
                     enabled: showToolTips.checked
-                    spacing: tooltipsPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Thumbnail height:")
                     }
@@ -99,7 +99,7 @@ ConfigPage {
                 }
             }
 
-            Item { height: tooltipsPage.largeSpacing }
+            Item { height: Kirigami.Units.largeSpacing }
 
             Label {
                 text: Wrappers.i18n("Media controls:")
@@ -111,7 +111,7 @@ ConfigPage {
                 onToggled: tooltipsPage.cfg_showMediaControls = checked
             }
             RowLayout {
-                Item { implicitWidth: tooltipsPage.gridUnit }
+                Item { implicitWidth: Kirigami.Units.gridUnit }
                 // -1 follows the audio indicator on buttons, which these were
                 // tied to before.
                 CheckBox {
@@ -123,18 +123,18 @@ ConfigPage {
                 }
             }
             RowLayout {
-                spacing: tooltipsPage.smallSpacing
-                Item { implicitWidth: tooltipsPage.gridUnit }
+                spacing: Kirigami.Units.smallSpacing
+                Item { implicitWidth: Kirigami.Units.gridUnit }
                 RowLayout {
                     id: mediaControlsLocation
                     enabled: showMediaControls.checked && showToolTips.checked
-                    spacing: tooltipsPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("Media controls location:")
                     }
                     ComboBox {
                         Layout.fillWidth: true
-                        Layout.minimumWidth: tooltipsPage.gridUnit * 12
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 12
                         model: [Wrappers.i18n("On thumbnails (Overlay)"), Wrappers.i18n("Under thumbnails")]
                         currentIndex: tooltipsPage.cfg_mediaControlsLocation
                         onActivated: (index) => tooltipsPage.cfg_mediaControlsLocation = index
@@ -142,18 +142,18 @@ ConfigPage {
                 }
             }
             RowLayout {
-                spacing: tooltipsPage.smallSpacing
-                Item { implicitWidth: tooltipsPage.gridUnit }
+                spacing: Kirigami.Units.smallSpacing
+                Item { implicitWidth: Kirigami.Units.gridUnit }
                 RowLayout {
                     id: groupMediaControls
                     enabled: showMediaControls.checked
-                    spacing: tooltipsPage.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
                     Label {
                         text: Wrappers.i18n("In group tooltips:")
                     }
                     ComboBox {
                         Layout.fillWidth: true
-                        Layout.minimumWidth: tooltipsPage.gridUnit * 12
+                        Layout.minimumWidth: Kirigami.Units.gridUnit * 12
                         model: [Wrappers.i18n("One panel below the windows"), Wrappers.i18n("Hidden")]
                         currentIndex: tooltipsPage.cfg_groupMediaControls
                         onActivated: (index) => tooltipsPage.cfg_groupMediaControls = index

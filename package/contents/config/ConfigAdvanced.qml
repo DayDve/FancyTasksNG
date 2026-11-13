@@ -5,6 +5,7 @@
 */
 
 import QtQuick
+import org.kde.kirigami as Kirigami
 import QtQuick.Controls
 import QtQuick.Layouts
 import Qt.labs.platform as Labs
@@ -22,7 +23,7 @@ ConfigPage {
             }
 
             RowLayout {
-                spacing: advancedPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
 
                 Button {
                     text: Wrappers.i18n("Export Configuration…")
@@ -42,7 +43,7 @@ ConfigPage {
                 Layout.fillWidth: true
                 wrapMode: Text.WordWrap
                 visible: text.length > 0
-                color: configIoIsError ? advancedPage.themeNegativeTextColor : advancedPage.themeTextColor
+                color: configIoIsError ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.textColor
 
                 property bool configIoIsError: false
             }

@@ -82,12 +82,12 @@ ConfigPage {
                 }
             }
 
-            Item { height: quickPage.smallSpacing }
+            Item { height: Kirigami.Units.smallSpacing }
 
             // The size in the unit chosen under Task Layout › Buttons. A
             // short slider: it's one option among many here.
             RowLayout {
-                spacing: quickPage.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
                 readonly property bool absolute: quickPage.cfg_iconSizeOverride
 
                 Label {
@@ -235,7 +235,7 @@ ConfigPage {
                 text: Wrappers.i18n("Window Indicators")
             }
 
-            Item { height: quickPage.smallSpacing }
+            Item { height: Kirigami.Units.smallSpacing }
 
             Kirigami.Heading {
                 level: 4

@@ -33,9 +33,9 @@ ConfigPage {
     // ---------------------------------------
     QtObject {
         id: appListStyle
-        property int iconSize: cfg_page.iconSizeSmallMedium
-        property int spacing: cfg_page.smallSpacing
-        property int padding: cfg_page.smallSpacing
+        property int iconSize: Kirigami.Units.iconSizes.smallMedium
+        property int spacing: Kirigami.Units.smallSpacing
+        property int padding: Kirigami.Units.smallSpacing
     }
 
     // ---------------------------------------
@@ -476,7 +476,7 @@ ConfigPage {
             
             ColumnLayout {
                 anchors.fill: parent
-                spacing: cfg_page.largeSpacing
+                spacing: Kirigami.Units.largeSpacing
 
                 Kirigami.InlineMessage {
                     Layout.fillWidth: true
@@ -571,7 +571,7 @@ ConfigPage {
                 
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: cfg_page.smallSpacing
+                    spacing: Kirigami.Units.smallSpacing
 
                     CheckBox {
                         id: cfg_unpinByDrag
@@ -581,7 +581,7 @@ ConfigPage {
                     }
 
                     RowLayout {
-                        Item { implicitWidth: cfg_page.gridUnit }
+                        Item { implicitWidth: Kirigami.Units.gridUnit }
                         CheckBox {
                             id: cfg_unpinByDragExplosion
                             enabled: cfg_unpinByDrag.checked && cfg_page.cfg_iconOnly === 1
@@ -670,7 +670,7 @@ ConfigPage {
                 // Header
                 RowLayout {
                     Layout.fillWidth: true
-                    Layout.margins: cfg_page.smallSpacing
+                    Layout.margins: Kirigami.Units.smallSpacing
 
                     Button {
                         icon.name: "go-previous"
@@ -681,9 +681,9 @@ ConfigPage {
                     Label {
                         text: Wrappers.i18n("Add Application")
                         font.bold: true
-                        font.pointSize: cfg_page.themeDefaultFont.pointSize * 1.2
+                        font.pointSize: Kirigami.Theme.defaultFont.pointSize * 1.2
                         Layout.alignment: Qt.AlignVCenter
-                        color: cfg_page.themeTextColor
+                        color: Kirigami.Theme.textColor
                     }
 
                     Item { Layout.fillWidth: true }
@@ -693,24 +693,24 @@ ConfigPage {
                 TextField {
                     id: searchField
                     Layout.fillWidth: true
-                    Layout.margins: cfg_page.smallSpacing
+                    Layout.margins: Kirigami.Units.smallSpacing
                     placeholderText: Wrappers.i18n("Search applications...")
                     text: cfg_page.currentSearchText
                     onTextChanged: {
                         cfg_page.currentSearchText = text
                         searchTimer.restart()
                     }
-                    leftPadding: searchIcon.width + cfg_page.smallSpacing * 2
+                    leftPadding: searchIcon.width + Kirigami.Units.smallSpacing * 2
                     
                     Kirigami.Icon {
                         id: searchIcon
                         source: "search"
-                        width: cfg_page.iconSizeSmallMedium
+                        width: Kirigami.Units.iconSizes.smallMedium
                         height: width
                         anchors.left: parent.left
-                        anchors.leftMargin: cfg_page.smallSpacing
+                        anchors.leftMargin: Kirigami.Units.smallSpacing
                         anchors.verticalCenter: parent.verticalCenter
-                        color: cfg_page.themeTextColor
+                        color: Kirigami.Theme.textColor
                         opacity: 0.7
                     }
                 }
@@ -758,7 +758,7 @@ ConfigPage {
                             ToolTip.delay: 1000
 
                             contentItem: RowLayout {
-                                spacing: cfg_page.smallSpacing
+                                spacing: Kirigami.Units.smallSpacing
 
                                 Kirigami.Icon {
                                     source: appsDelegate.model.icon || "application-x-executable"
@@ -775,7 +775,7 @@ ConfigPage {
                                         Layout.fillWidth: true
                                         text: appsDelegate.model.name || appsDelegate.model.url
                                         wrapMode: Text.Wrap
-                                        color: cfg_page.themeTextColor
+                                        color: Kirigami.Theme.textColor
                                     }
 
                                     Label {
@@ -783,9 +783,9 @@ ConfigPage {
                                         visible: text !== ""
                                         text: appsDelegate.model.genericName || ""
                                         elide: Text.ElideRight
-                                        font.pointSize: cfg_page.themeSmallFont.pointSize
+                                        font.pointSize: Kirigami.Theme.smallFont.pointSize
                                         opacity: 0.7
-                                        color: cfg_page.themeTextColor
+                                        color: Kirigami.Theme.textColor
                                     }
                                 }
                             }

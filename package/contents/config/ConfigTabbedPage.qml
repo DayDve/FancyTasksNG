@@ -27,7 +27,7 @@ ColumnLayout {
     property int currentTab: 0
 
     anchors.fill: parent
-    spacing: tabbedPage.cfg_page.largeSpacing
+    spacing: Kirigami.Units.largeSpacing
 
     // Inactive tabs stay visible, just transparent and disabled: a hidden
     // form isn't laid out, and text that wraps (InlineMessage) keeps the
@@ -59,8 +59,8 @@ ColumnLayout {
 
     Loader {
         Layout.fillWidth: true
-        Layout.leftMargin: tabbedPage.cfg_page.gridUnit
-        Layout.rightMargin: tabbedPage.cfg_page.gridUnit
+        Layout.leftMargin: Kirigami.Units.gridUnit
+        Layout.rightMargin: Kirigami.Units.gridUnit
         active: tabbedPage.header !== null
         visible: active
         sourceComponent: tabbedPage.header
@@ -82,7 +82,7 @@ ColumnLayout {
     Kirigami.NavigationTabBar {
         Layout.fillWidth: true
         visible: tabActions.count > 1
-        maximumContentWidth: tabbedPage.cfg_page.gridUnit * 8 * Math.max(tabActions.count, 3)
+        maximumContentWidth: Kirigami.Units.gridUnit * 8 * Math.max(tabActions.count, 3)
         actions: {
             const list = [];
             for (let i = 0; i < tabActions.count; ++i)
@@ -97,7 +97,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         visible: tabbedPage._hasUnavailableTabs
         opacity: !!tabbedPage._currentTabItem && !tabbedPage._currentTabItem.available ? 1 : 0
-        spacing: tabbedPage.cfg_page.smallSpacing
+        spacing: Kirigami.Units.smallSpacing
         Kirigami.Icon {
             source: "dialog-information"
             implicitWidth: Kirigami.Units.iconSizes.small
@@ -115,7 +115,7 @@ ColumnLayout {
         // The tabs are stacked; the stack is as tall as the current one.
         Item {
             id: tabColumn
-            width: parent.width - tabbedPage.cfg_page.gridUnit * 2
+            width: parent.width - Kirigami.Units.gridUnit * 2
             implicitHeight: {
                 const tab = children[tabbedPage.currentTab];
                 return tab ? tab.implicitHeight : 0;

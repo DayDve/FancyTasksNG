@@ -13,21 +13,19 @@ Item {
     required property var mediaController
     required property bool hoveredState
 
-    readonly property int smallSpacing: Kirigami.Units.smallSpacing
-    readonly property int longDuration: Kirigami.Units.longDuration
 
     width: parent.width
-    height: controlsColumn.implicitHeight + (overlayRoot.smallSpacing * 2)
+    height: controlsColumn.implicitHeight + (Kirigami.Units.smallSpacing * 2)
 
     Rectangle {
         anchors.fill: parent
         color: Qt.rgba(0, 0, 0, 0.6)
-        radius: overlayRoot.smallSpacing
+        radius: Kirigami.Units.smallSpacing
 
         opacity: overlayRoot.hoveredState ? 1.0 : 0.0
         Behavior on opacity {
             NumberAnimation {
-                duration: overlayRoot.longDuration
+                duration: Kirigami.Units.longDuration
             }
         }
     }
@@ -35,13 +33,13 @@ Item {
     ColumnLayout {
         id: controlsColumn
         anchors.centerIn: parent
-        width: parent.width - (overlayRoot.smallSpacing * 2)
-        spacing: overlayRoot.smallSpacing
+        width: parent.width - (Kirigami.Units.smallSpacing * 2)
+        spacing: Kirigami.Units.smallSpacing
 
         opacity: overlayRoot.hoveredState ? 1.0 : 0.4
         Behavior on opacity {
             NumberAnimation {
-                duration: overlayRoot.longDuration
+                duration: Kirigami.Units.longDuration
             }
         }
 
