@@ -22,8 +22,9 @@ QtObject {
 
     readonly property QtObject globalConfig: PlasmaPa.GlobalConfig { }
 
-    readonly property PlasmaPa.SinkModel sinksModel: PlasmaPa.SinkModel { }
-    readonly property var preferredSink: sinksModel.preferredObject || sinksModel.preferredSink || (sinksModel.count > 0 ? sinksModel.data(sinksModel.index(0, 0), 257 /*ItemRole*/) : null)
+    // The default output, as Plasma's volume applet uses it; SinkModel has
+    // no preferred-sink property.
+    readonly property var preferredSink: PlasmaPa.PreferredDevice.sink
 
     readonly property int minimalVolume: PlasmaPa.PulseAudio.MinimalVolume ?? 0
     readonly property int normalVolume: PlasmaPa.PulseAudio.NormalVolume ?? 65536
