@@ -58,8 +58,7 @@
       <default>1</default>
     </entry>
     <entry name="groupedTaskVisualization" type="Enum">
-      <label
-            >What happens when clicking on a grouped task: 0 = cycle through grouped tasks, 1 = try to show tooltips, 2 = try to show present Windows effect, 3 = show textual list (AKA group dialog)</label>
+      <label>What happens when clicking on a grouped task: 0 = cycle through grouped tasks, 1 = show the group tooltip, 2 = show the Window View effect (falls back to 3 when unavailable), 3 = show a text list of the windows</label>
       <default>0</default>
     </entry>
     <entry name="groupPopups" type="Bool">
@@ -79,7 +78,7 @@
       <default />
     </entry>
     <entry name="sortingStrategy" type="Int">
-      <label>How to sort tasks: 0 = Manually with launchers kept separate (windows open in pinned slots, no drag-and-drop), 1 = Manually, 2 = Alphabetically, 3 = By desktop, 4 = By activity, 5 = By horizontal window position</label>
+      <label>How to sort tasks: 0 = Manually, pinned apps kept apart from windows (a window opens in its pinned app's place), 1 = Manually, 2 = Alphabetically, 3 = By desktop, 4 = By activity, 5 = By horizontal window position</label>
       <default>0</default>
     </entry>
 
@@ -298,8 +297,7 @@
       <default>1</default>
     </entry>
     <entry name="indicatorLocation" type="Int">
-      <label
-            >Sets where the indicator should be. 0 = Top, 1 = Bottom, 2 = Left, 3 = Right</label>
+      <label>Edge the indicators are drawn on when indicatorOverride is set: 0 = Bottom, 1 = Left, 2 = Right, 3 = Top</label>
       <default>0</default>
     </entry>
     <entry name="indicatorStyle" type="Int">
@@ -388,7 +386,7 @@
       <default>40</default>
     </entry>
     <entry name="indicatorAlignment" type="Int">
-      <label>Cross-axis alignment of indicator segments (0=edge, 1=center, 2=inner)</label>
+      <label>Cross-axis alignment of indicator segments: 0 = Top/Left, 1 = Center, 2 = Bottom/Right</label>
       <default>0</default>
     </entry>
     <entry name="indicatorDominantColor" type="Bool">
@@ -465,8 +463,7 @@
       <default>false</default>
     </entry>
     <entry name="plasmaButtonDirection" type="Int">
-      <label
-            >Direction of the plasma button SVG: 0 = North, 1 = West, 2 = South, 3 = East</label>
+      <label>Edge the Plasma button frame faces when overridePlasmaButtonDirection is set: 0 = Top, 1 = Bottom, 2 = Left, 3 = Right</label>
       <default>0</default>
     </entry>
     <entry name="indicatorOverride" type="Bool">
