@@ -135,7 +135,11 @@ Loader {
     }
 
     readonly property bool isVerticalPanel: tasks.vertical
-    readonly property int tooltipInstanceMaximumWidth: Kirigami.Units.gridUnit * 14
+    // The thumbnail size setting scales the whole tooltip column, so the
+    // title and media controls stay as wide as the thumbnail. Text-only
+    // tooltips keep the default width.
+    readonly property real thumbnailScale: toolTipDelegate.config.showToolTips ? toolTipDelegate.config.tooltipThumbnailScale / 100 : 1
+    readonly property int tooltipInstanceMaximumWidth: Math.round(Kirigami.Units.gridUnit * 14 * thumbnailScale)
     readonly property rect tooltipScreenGeometry: Plasmoid.containment?.screenGeometry ?? Qt.rect(0, 0, 0, 0)
     readonly property bool hasValidTooltipScreenGeometry: tooltipScreenGeometry.width > 0 && tooltipScreenGeometry.height > 0
     readonly property bool matchWindowAspectRatio: toolTipDelegate.config.tooltipMatchWindowAspectRatio

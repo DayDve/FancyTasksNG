@@ -64,6 +64,8 @@ Kirigami.Page {
     property bool cfg_showToolTipsDefault: true
     property bool cfg_tooltipMatchWindowAspectRatio: false
     property bool cfg_tooltipMatchWindowAspectRatioDefault: false
+    property int cfg_tooltipThumbnailScale: 100
+    property int cfg_tooltipThumbnailScaleDefault: 100
     property int cfg_wheelAction: 1
     property int cfg_wheelActionDefault: 2
     property int cfg_wheelCtrlAction: 2

@@ -126,6 +126,12 @@
       <label>Size tooltip thumbnails from window geometry instead of the screen aspect ratio</label>
       <default>false</default>
     </entry>
+    <entry name="tooltipThumbnailScale" type="Int">
+      <label>Height of tooltip window thumbnails, in percent of the default.</label>
+      <default>100</default>
+      <min>50</min>
+      <max>300</max>
+    </entry>
     <entry name="showMediaControls" type="Bool">
       <label>Media controls on thumbnails</label>
       <default>true</default>

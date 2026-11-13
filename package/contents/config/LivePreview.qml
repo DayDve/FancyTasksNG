@@ -38,6 +38,9 @@ Item {
     }
 
     readonly property bool cfg_showToolTips: cfg_page.cfg_showToolTips
+    // Thumbnail size as in the real tooltip (ToolTipDelegate.qml).
+    readonly property int mockThumbnailWidth: Math.round(Kirigami.Units.gridUnit * 14 * cfg_page.cfg_tooltipThumbnailScale / 100)
+    readonly property real mockScreenRatio: Math.max(4 / 3, Math.min(21 / 9, Screen.width / Screen.height))
 
     // Mock tasks for the real delegates (previewtasks.js).
     ListModel {
@@ -194,23 +197,59 @@ Item {
                     }
                 }
 
-                // The panel, with the widget's real task delegates in it.
-                PreviewPanel {
-                    id: dummyPanel
-                    cfgPage: previewRoot.cfg_page
-                    location: previewRoot.location
-                    previewModel: taskModel
-                    hoveredRow: 1
-                    activeRow: 1
+                // Panel and tooltip at real size. When a large tooltip doesn't
+                // fit the preview area, both are scaled down together, so the
+                // tooltip keeps its size relative to the task buttons.
+                Item {
+                    id: previewScene
+                    readonly property real fitScale: {
+                        const tip = mockToolTip;
+                        if (!tip.visible || tip.width <= 0 || tip.height <= 0)
+                            return 1;
+                        // Room from the panel's outer edge to the tooltip's far
+                        // edge; the hovered icon's zoom can reach past the panel.
+                        const m = Kirigami.Units.smallSpacing;
+                        const t = previewRoot.simulatedThickness;
+                        let needW = tip.width + 2 * m;
+                        let needH = tip.height + 2 * m;
+                        switch (previewRoot.location) {
+                        case PlasmaCore.Types.LeftEdge:
+                            needW += tip.anchorInPanelX + tip.anchorW + m;
+                            break;
+                        case PlasmaCore.Types.RightEdge:
+                            needW += t - tip.anchorInPanelX + m;
+                            break;
+                        case PlasmaCore.Types.TopEdge:
+                            needH += tip.anchorInPanelY + tip.anchorH + m;
+                            break;
+                        default:
+                            needH += t - tip.anchorInPanelY + m;
+                        }
+                        return Math.min(1, innerPreviewArea.width / needW, innerPreviewArea.height / needH);
+                    }
+                    width: innerPreviewArea.width / fitScale
+                    height: innerPreviewArea.height / fitScale
+                    scale: fitScale
+                    transformOrigin: Item.TopLeft
 
-                    width: previewRoot.isVertical ? previewRoot.simulatedThickness : parent.width
-                    height: previewRoot.isVertical ? parent.height : previewRoot.simulatedThickness
-                    x: previewRoot.isVertical
-                        ? (previewRoot.location === PlasmaCore.Types.LeftEdge ? 0 : parent.width - width)
-                        : 0
-                    y: !previewRoot.isVertical
-                        ? (previewRoot.location === PlasmaCore.Types.TopEdge ? 0 : parent.height - height)
-                        : 0
+                    // The panel, with the widget's real task delegates in it.
+                    PreviewPanel {
+                        id: dummyPanel
+                        cfgPage: previewRoot.cfg_page
+                        location: previewRoot.location
+                        previewModel: taskModel
+                        hoveredRow: 1
+                        activeRow: 1
+
+                        width: previewRoot.isVertical ? previewRoot.simulatedThickness : parent.width
+                        height: previewRoot.isVertical ? parent.height : previewRoot.simulatedThickness
+                        x: previewRoot.isVertical
+                            ? (previewRoot.location === PlasmaCore.Types.LeftEdge ? 0 : parent.width - width)
+                            : 0
+                        y: !previewRoot.isVertical
+                            ? (previewRoot.location === PlasmaCore.Types.TopEdge ? 0 : parent.height - height)
+                            : 0
+                    }
                 }
             }
     }
@@ -221,7 +260,7 @@ Item {
     Kirigami.ShadowedRectangle {
         id: mockToolTip
         z: 999
-        parent: innerPreviewArea
+        parent: previewScene
 
         readonly property var targetTask: dummyPanel.currentHoveredTask
         visible: targetTask !== null
@@ -239,8 +278,10 @@ Item {
         implicitHeight: mainLayout.implicitHeight + Kirigami.Units.smallSpacing * 2
 
         readonly property var anchorItem: targetTask ? targetTask.tooltipAnchor : null
-        readonly property real anchorX: anchorItem ? dummyPanel.x + dummyPanel.taskList.x + targetTask.x + anchorItem.x : 0
-        readonly property real anchorY: anchorItem ? dummyPanel.y + dummyPanel.taskList.y + targetTask.y + anchorItem.y : 0
+        readonly property real anchorInPanelX: anchorItem ? dummyPanel.taskList.x + targetTask.x + anchorItem.x : 0
+        readonly property real anchorInPanelY: anchorItem ? dummyPanel.taskList.y + targetTask.y + anchorItem.y : 0
+        readonly property real anchorX: dummyPanel.x + anchorInPanelX
+        readonly property real anchorY: dummyPanel.y + anchorInPanelY
         readonly property real anchorW: anchorItem ? anchorItem.width : 0
         readonly property real anchorH: anchorItem ? anchorItem.height : 0
 
@@ -283,8 +324,8 @@ Item {
                 // 2. Thumbnail Container with Overlays
                 Item {
                     id: thumbnailArea
-                    Layout.preferredWidth: Kirigami.Units.gridUnit * 12
-                    Layout.preferredHeight: Math.round(Layout.preferredWidth / 1.6)
+                    Layout.preferredWidth: previewRoot.mockThumbnailWidth
+                    Layout.preferredHeight: Math.round(previewRoot.mockThumbnailWidth / previewRoot.mockScreenRatio)
                     
                     Rectangle {
                         anchors.fill: parent

@@ -536,6 +536,25 @@ Item {
             }
         }
 
+        // Where the window image actually is. In screen aspect mode the box
+        // has the screen's proportions and a narrower or wider window is
+        // letterboxed inside it; the title, close button and media controls
+        // belong on the image, not on the empty bands beside it.
+        Item {
+            id: thumbnailContentArea
+            readonly property rect geometry: root.windowGeometry
+            readonly property bool fitsWindow: root.isWin && !albumArtImage.visible && geometry.width > 0 && geometry.height > 0
+            readonly property real margin: Kirigami.Units.smallSpacing
+            readonly property real innerWidth: Math.max(0, parent.width - 2 * margin)
+            readonly property real innerHeight: Math.max(0, parent.height - 2 * margin)
+            readonly property real ratio: fitsWindow ? geometry.width / geometry.height
+                : (innerHeight > 0 ? innerWidth / innerHeight : 1)
+
+            anchors.centerIn: parent
+            width: Math.min(innerWidth, innerHeight * ratio) + 2 * margin
+            height: Math.min(innerHeight, innerWidth / ratio) + 2 * margin
+        }
+
         // Overlay Media Controls (Ghost Controls)
         Loader {
             id: overlayControlsLoader
@@ -544,10 +563,10 @@ Item {
             
             z: 2002 
             
-            anchors.bottom: hoverHandler.bottom
-            anchors.horizontalCenter: hoverHandler.horizontalCenter
+            anchors.bottom: thumbnailContentArea.bottom
+            anchors.horizontalCenter: thumbnailContentArea.horizontalCenter
             anchors.margins: Kirigami.Units.smallSpacing
-            width: hoverHandler.width - (anchors.margins * 2)
+            width: thumbnailContentArea.width - (anchors.margins * 2)
             
             sourceComponent: ToolTipMediaOverlay {
                 mediaController: root.mediaController
@@ -561,12 +580,12 @@ Item {
             z: 9999
             visible: root.useOverlayStyle && root.isWin && (titleOverlayLabel.text.length > 0 || speakerBadge.visible)
             
-            anchors.left: parent.left
-            anchors.top: parent.top
+            anchors.left: thumbnailContentArea.left
+            anchors.top: thumbnailContentArea.top
             anchors.margins: Kirigami.Units.smallSpacing
             
             // Dynamic Sizing Logic
-            readonly property int maxOverlayWidth: parent.width - (closeButtonOverlay.visible ? closeButtonOverlay.width : 0) - Kirigami.Units.largeSpacing
+            readonly property int maxOverlayWidth: thumbnailContentArea.width - (closeButtonOverlay.visible ? closeButtonOverlay.width : 0) - Kirigami.Units.largeSpacing
             
             // Padding Constants
             readonly property int hPadding: Kirigami.Units.largeSpacing
@@ -675,8 +694,8 @@ Item {
             z: 2003
             visible: root.useOverlayStyle && root.isWin
             
-            anchors.right: parent.right
-            anchors.top: parent.top
+            anchors.right: thumbnailContentArea.right
+            anchors.top: thumbnailContentArea.top
             anchors.margins: Kirigami.Units.smallSpacing
             
             icon.name: "window-close"

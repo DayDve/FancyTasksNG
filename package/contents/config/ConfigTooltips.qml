@@ -77,6 +77,27 @@ ConfigPage {
                     }
                 }
             }
+            RowLayout {
+                spacing: tooltipsPage.smallSpacing
+                Item { implicitWidth: tooltipsPage.gridUnit }
+                RowLayout {
+                    enabled: showToolTips.checked
+                    spacing: tooltipsPage.smallSpacing
+                    Label {
+                        text: Wrappers.i18n("Thumbnail height:")
+                    }
+                    SpinBox {
+                        from: 50
+                        to: 300
+                        stepSize: 10
+                        value: tooltipsPage.cfg_tooltipThumbnailScale
+                        onValueModified: tooltipsPage.cfg_tooltipThumbnailScale = value
+                    }
+                    Label {
+                        text: "%"
+                    }
+                }
+            }
 
             Item { height: tooltipsPage.largeSpacing }
 
