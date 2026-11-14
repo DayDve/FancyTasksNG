@@ -7,8 +7,30 @@ import dbus.service
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GLib
 import sys
+import logging
+import logging.handlers
 import ctypes
 import signal
+
+
+def _make_logger(name):
+    """Logs to the journal (as "fancytasksng"): the executable engine that
+    starts the helpers only hands their output over when they exit, so
+    stdout/stderr would be lost. Falls back to stderr without /dev/log."""
+    logger = logging.getLogger(name)
+    try:
+        handler = logging.handlers.SysLogHandler(address="/dev/log")
+        handler.ident = "fancytasksng: "
+    except OSError:
+        handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter("%(name)s: %(message)s"))
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+    return logger
+
+
+log = _make_logger("unity_bridge")
+
 
 def set_pdeathsig():
     """Ensure the process dies when its parent (plasmashell) dies."""
@@ -31,9 +53,9 @@ class BridgeEmitter(dbus.service.Object):
             self.bus = dbus.SessionBus()
             self.bus_name = dbus.service.BusName('io.github.daydve.fancytasksng.Bridge', bus=self.bus, do_not_queue=True)
             dbus.service.Object.__init__(self, self.bus_name, '/Bridge')
-            print("Bridge: Re-emitter is ready on io.github.daydve.fancytasksng.Bridge")
+            log.info("re-emitter is ready on io.github.daydve.fancytasksng.Bridge")
         except Exception as e:
-            print(f"Bridge error: {e}")
+            log.error(f"error: {e}")
             sys.exit(1)
 
     @dbus.service.signal('io.github.daydve.fancytasksng.BadgeUpdate', signature='sidu')
@@ -98,11 +120,11 @@ if __name__ == '__main__':
             dbus.bus.NAME_FLAG_DO_NOT_QUEUE
         )
         if reply == dbus.bus.REQUEST_NAME_REPLY_PRIMARY_OWNER:
-            print("Bridge: Registered as com.canonical.Unity (primary owner)")
+            log.info("registered as com.canonical.Unity (primary owner)")
         else:
-            print("Bridge: com.canonical.Unity already owned, listening passively")
+            log.info("com.canonical.Unity already owned, listening passively")
     except Exception as e:
-        print(f"Bridge: Could not request com.canonical.Unity: {e}")
+        log.warning(f"could not request com.canonical.Unity: {e}")
 
     bus.add_signal_receiver(
         handle_unity_update,

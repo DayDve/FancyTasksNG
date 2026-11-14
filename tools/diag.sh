@@ -340,9 +340,10 @@ fi
 # --- Logs --------------------------------------------------------------------
 # Only lines from this boot that concern the plasmoid: the unfiltered tail is
 # dominated by other widgets and is useless here.
-section "plasmashell log lines about Fancy Tasks NG (this boot, last 150)"
+# The Python helpers log under the "fancytasksng" syslog identifier.
+section "plasmashell and helper log lines about Fancy Tasks NG (this boot, last 150)"
 if have journalctl; then
-    LOG="$(journalctl --user -b --no-pager -o short-iso _COMM=plasmashell 2> /dev/null \
+    LOG="$(journalctl --user -b --no-pager -o short-iso _COMM=plasmashell + SYSLOG_IDENTIFIER=fancytasksng 2> /dev/null \
         | grep -iE 'fancytasks|io\.github\.daydve|unity_bridge|desktop_actions')"
     if [ -n "${LOG}" ]; then
         printf '%s\n' "${LOG}" | tail -150 >> "${BUF}"

@@ -28,6 +28,8 @@ Interface io.github.daydve.fancytasksng.Config:
 import configparser
 import hashlib
 import json
+import logging
+import logging.handlers
 import os
 import re
 import shlex
@@ -45,6 +47,26 @@ from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import Gio, GLib
 from pathlib import Path
 from urllib.parse import unquote, urlparse
+
+
+def _make_logger(name):
+    """Logs to the journal (as "fancytasksng"): the executable engine that
+    starts the helpers only hands their output over when they exit, so
+    stdout/stderr would be lost. Falls back to stderr without /dev/log."""
+    logger = logging.getLogger(name)
+    try:
+        handler = logging.handlers.SysLogHandler(address="/dev/log")
+        handler.ident = "fancytasksng: "
+    except OSError:
+        handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter("%(name)s: %(message)s"))
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+    return logger
+
+
+log = _make_logger("desktop_actions")
+
 
 KACTIVITIES_DB = Path.home() / ".local/share/kactivitymanagerd/resources/database"
 DESKTOP_DIRS = [
@@ -303,7 +325,7 @@ def get_recent_documents(desktop_path):
 
         conn.close()
     except Exception as e:
-        print(f"desktop_actions: DB error: {e}", file=sys.stderr)
+        log.warning(f"DB error: {e}")
 
     return docs
 
@@ -342,7 +364,7 @@ def find_active_db_from_proc(db_name, app_pid=0):
             except (OSError, PermissionError):
                 continue
     except Exception as e:
-        print(f"desktop_actions: proc scan error: {e}", file=sys.stderr)
+        log.warning(f"proc scan error: {e}")
     return None
 
 
@@ -412,7 +434,7 @@ def extract_favicons(history_items, favicons_db_path, engine):
                         f.write(blob)
                     item["icon"] = f"file://{cached_png}"
                 except Exception as e:
-                    print(f"desktop_actions: failed to write favicon cache: {e}", file=sys.stderr)
+                    log.warning(f"failed to write favicon cache: {e}")
                     item["icon"] = "internet-services"
             else:
                 try:
@@ -424,7 +446,7 @@ def extract_favicons(history_items, favicons_db_path, engine):
 
         conn.close()
     except Exception as e:
-        print(f"desktop_actions: extract_favicons error: {e}", file=sys.stderr)
+        log.warning(f"extract_favicons error: {e}")
     finally:
         remove_sqlite_copy(temp_db)
 
@@ -595,7 +617,7 @@ def fetch_sqlite_history(db_path, query, temp_name, limit=10):
             if len(docs) >= limit: break
         conn.close()
     except Exception as e:
-        print(f"desktop_actions: fetch_history error ({db_path}): {e}", file=sys.stderr)
+        log.warning(f"fetch_history error ({db_path}): {e}")
     finally:
         remove_sqlite_copy(temp_db)
     return docs
@@ -621,7 +643,7 @@ def clear_recent_documents(desktop_path):
         )
         return True
     except dbus.exceptions.DBusException as e:
-        print(f"desktop_actions: clear recent error: {e}", file=sys.stderr)
+        log.warning(f"clear recent error: {e}")
         return False
 
 
@@ -738,9 +760,9 @@ class DesktopActionsService(dbus.service.Object):
             self.bus_name = dbus.service.BusName('io.github.daydve.fancytasksng.DesktopActions', bus=self.bus,
                                                  do_not_queue=True)
             dbus.service.Object.__init__(self, self.bus_name, '/DesktopActions')
-            print("DesktopActionsService ready", flush=True)
+            log.info("service ready")
         except Exception as e:
-            print(f"DesktopActionsService error: {e}", file=sys.stderr)
+            log.error(f"service error: {e}")
             sys.exit(1)
 
     def _check_caller(self, sender):
@@ -818,7 +840,7 @@ class DesktopActionsService(dbus.service.Object):
             if app and action_id in app.list_actions():
                 app.launch_action(action_id, None)
         except GLib.Error as e:
-            print(f"LaunchAction error: {e}", file=sys.stderr)
+            log.warning(f"LaunchAction error: {e}")
 
     @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='s', out_signature='s', sender_keyword='sender')
     def ParentPids(self, pids_csv, sender=None):
@@ -883,7 +905,7 @@ class DesktopActionsService(dbus.service.Object):
                 except (dbus.exceptions.DBusException, OSError, ValueError, StopIteration):
                     continue
         except dbus.exceptions.DBusException as e:
-            print(f"ActivateBrowserTab error: {e}", file=sys.stderr)
+            log.warning(f"ActivateBrowserTab error: {e}")
         return False
 
     @dbus.service.method('io.github.daydve.fancytasksng.Config', in_signature='ss', out_signature='s', sender_keyword='sender')
@@ -928,7 +950,7 @@ class DesktopActionsService(dbus.service.Object):
                 return
             Gio.AppInfo.launch_default_for_uri(url, None)
         except (GLib.Error, ValueError) as e:
-            print(f"OpenUrl error: {e}", file=sys.stderr)
+            log.warning(f"OpenUrl error: {e}")
 
 
 def expand_exec(commandline, url):
