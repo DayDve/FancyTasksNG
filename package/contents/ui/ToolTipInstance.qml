@@ -107,27 +107,7 @@ Item {
     required property bool isMinimized
     required property bool isWindowActive
 
-    readonly property string calculatedAppName: {
-        let name = "";
-        if (toolTipDelegate.appName && toolTipDelegate.appName.length > 0) {
-            name = toolTipDelegate.appName;
-        } else {
-            const text = display;
-            const versionRegex = /\s+(?:—|-|–)\s+([^\s(—|-|–)]+)\s+(?:—|-|–)\s+v?\d+(?:\.\d+)+.*$/i;
-            const matchVersion = text.match(versionRegex);
-            if (matchVersion && matchVersion[1]) {
-                name = matchVersion[1];
-            } else {
-                const lastSepRegex = /.*(?:—|-|–)\s+(.*)$/;
-                const matchLast = text.match(lastSepRegex);
-                if (matchLast && matchLast[1]) {
-                    name = matchLast[1];
-                }
-            }
-        }
-
-        return name;
-    }
+    readonly property string calculatedAppName: toolTipDelegate.appNameFromTitle(display)
 
     readonly property string title: {
         if (!root.isWin) {

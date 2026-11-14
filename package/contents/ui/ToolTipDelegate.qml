@@ -114,28 +114,24 @@ Loader {
     property list<string> activities: []
     property string appId: (tasksModel && rootIndex.valid) ? tasksModel.data(rootIndex, TaskManager.AbstractTasksModel.AppId) : ""
 
-    readonly property string calculatedAppName: {
-        let name = "";
-        if (appName && appName.length > 0) {
-            name = appName;
-        } else {
-            const text = display;
-            if (text) {
-                const versionRegex = /\s+(?:—|-|–)\s+([^\s(—|-|–)]+)\s+(?:—|-|–)\s+v?\d+(?:\.\d+)+.*$/i;
-                const matchVersion = text.match(versionRegex);
-                if (matchVersion && matchVersion[1]) {
-                    name = matchVersion[1];
-                } else {
-                    const lastSepRegex = /.*(?:—|-|–)\s+(.*)$/;
-                    const matchLast = text.match(lastSepRegex);
-                    if (matchLast && matchLast[1]) {
-                        name = matchLast[1];
-                    }
-                }
-            }
+    // The task's app name, or else one parsed from a window title such as
+    // "Document ‒ App" or "Page ‒ App ‒ v1.2". ToolTipInstance uses it with
+    // each window's own title.
+    function appNameFromTitle(title: string): string {
+        if (appName.length > 0) {
+            return appName;
         }
-        return name;
+        if (!title) {
+            return "";
+        }
+        const matchVersion = title.match(/\s+(?:—|-|–)\s+(\S+)\s+(?:—|-|–)\s+v?\d+(?:\.\d+)+.*$/i);
+        if (matchVersion && matchVersion[1]) {
+            return matchVersion[1];
+        }
+        const matchLast = title.match(/.*(?:—|-|–)\s+(.*)$/);
+        return matchLast && matchLast[1] ? matchLast[1] : "";
     }
+    readonly property string calculatedAppName: appNameFromTitle(display)
 
     readonly property bool isVerticalPanel: tasks.vertical
     // The thumbnail size setting scales the whole tooltip column, so the
@@ -203,6 +199,33 @@ Loader {
 
     sourceComponent: isGroup ? groupToolTip : singleTooltip
 
+    // The app name with its badge, above the single and the group tooltip.
+    component AppTitleRow: Row {
+        id: titleRow
+        required property int maximumWidth
+        opacity: 0.8
+        spacing: Kirigami.Units.smallSpacing
+
+        PlasmaComponents3.Label {
+            text: toolTipDelegate.calculatedAppName
+            font.bold: true
+            elide: Text.ElideRight
+            width: Math.min(implicitWidth, titleRow.maximumWidth - (titleBadge.visible ? titleBadge.width + titleRow.spacing : 0) - Kirigami.Units.gridUnit)
+        }
+
+        Badge {
+            id: titleBadge
+            readonly property var task: toolTipDelegate.parentTask
+            colorMode: toolTipDelegate.config.badgeColorMode
+            customColor: toolTipDelegate.config.badgeCustomColor
+            visible: toolTipDelegate.config.showAppSignals && toolTipDelegate.config.showBadges && (task ? task.badgeVisible : false)
+            number: task ? task.badgeCount : 0
+            isUrgent: (toolTipDelegate.config.badgeHighlightNew && task) ? task.hasUnseenNotifications : false
+            height: Math.round(Kirigami.Units.gridUnit * 0.85)
+            maxNumber: 0
+        }
+    }
+
     Component {
         id: singleTooltip
 
@@ -212,24 +235,6 @@ Loader {
             implicitHeight: singleLayout.implicitHeight
 
             property bool isHovered: singleHover.hovered || singleDrop.containsDrag
-
-            // Cached delegate properties
-            readonly property bool showThumbnails: toolTipDelegate.showThumbnails
-            readonly property bool isWin: toolTipDelegate.isWin
-            readonly property string calculatedAppName: toolTipDelegate.calculatedAppName
-            readonly property string appId: toolTipDelegate.appId
-            readonly property var config: toolTipDelegate.config
-            readonly property var parentTask: toolTipDelegate.parentTask
-            readonly property int tooltipInstanceMaximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
-            readonly property var windows: toolTipDelegate.windows
-            
-            readonly property var rootIndex: toolTipDelegate.rootIndex
-            readonly property int pidParent: toolTipDelegate.pidParent
-            readonly property string display: toolTipDelegate.display
-            readonly property bool isMinimized: toolTipDelegate.isMinimized
-            readonly property bool isActive: toolTipDelegate.isActive
-            readonly property var tasksModel: toolTipDelegate.tasksModel
-            readonly property var mediaRegistry: toolTipDelegate.mediaRegistry
 
             HoverHandler {
                 id: singleHover
@@ -244,30 +249,10 @@ Loader {
                 id: singleLayout
                 spacing: Kirigami.Units.smallSpacing
 
-                Row {
+                AppTitleRow {
                     Layout.alignment: Qt.AlignHCenter
-                    visible: singleRoot.calculatedAppName.length > 0 && (!singleRoot.isWin || singleRoot.showThumbnails)
-                    opacity: 0.8
-                    spacing: Kirigami.Units.smallSpacing
-
-                    PlasmaComponents3.Label {
-                        id: nameLabel
-                        text: singleRoot.calculatedAppName
-                        font.bold: true
-                        elide: Text.ElideRight
-                        width: Math.min(implicitWidth, singleRoot.tooltipInstanceMaximumWidth - (badge.visible ? badge.width + parent.spacing : 0) - Kirigami.Units.gridUnit)
-                    }
-
-                    Badge {
-                        id: badge
-                        colorMode: singleRoot.config.badgeColorMode
-                        customColor: singleRoot.config.badgeCustomColor
-                        visible: singleRoot.config.showAppSignals && singleRoot.config.showBadges && (singleRoot.parentTask ? singleRoot.parentTask.badgeVisible : false)
-                        number: singleRoot.parentTask ? singleRoot.parentTask.badgeCount : 0
-                        isUrgent: (singleRoot.config.badgeHighlightNew && singleRoot.parentTask) ? singleRoot.parentTask.hasUnseenNotifications : false
-                        height: Math.round(Kirigami.Units.gridUnit * 0.85)
-                        maxNumber: 0
-                    }
+                    visible: toolTipDelegate.calculatedAppName.length > 0 && (!toolTipDelegate.isWin || toolTipDelegate.showThumbnails)
+                    maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
                 }
 
             PlasmaComponents3.Label {
@@ -275,25 +260,28 @@ Loader {
                 Layout.fillWidth: true
                 Layout.leftMargin: Kirigami.Units.gridUnit / 2
                 Layout.rightMargin: Kirigami.Units.gridUnit / 2
-                Layout.maximumWidth: singleRoot.tooltipInstanceMaximumWidth - Layout.leftMargin - Layout.rightMargin
+                Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth - Layout.leftMargin - Layout.rightMargin
                 horizontalAlignment: Text.AlignHCenter
                 
                 text: toolTipDelegate.generateSubText()
                 wrapMode: Text.Wrap
-                visible: text.length > 0 && (!singleRoot.isWin || singleRoot.showThumbnails)
+                visible: text.length > 0 && (!toolTipDelegate.isWin || toolTipDelegate.showThumbnails)
                 opacity: 0.6
                 textFormat: Text.PlainText
             }
 
             Loader {
                 id: singleInstanceLoader
-                visible: singleRoot.windows.length > 0
+                visible: toolTipDelegate.windows.length > 0
                 
-                property var currentWin: singleRoot.isWin ? singleRoot.windows[0] : undefined
+                property var currentWin: toolTipDelegate.isWin ? toolTipDelegate.windows[0] : undefined
                 
+                // A new window gets a fresh instance (and thumbnail), not a
+                // reused one; it's recreated on the next event loop pass. A
+                // Timer rather than Qt.callLater: it dies with the tooltip, so
+                // it never fires into a destroyed one.
                 Timer {
                     id: reloadTimer
-                    interval: 1
                     onTriggered: singleInstanceLoader.active = true
                 }
 
@@ -305,21 +293,21 @@ Loader {
                 sourceComponent: ToolTipInstance {    
                     index: 0 
                     height: implicitHeight
-                    submodelIndex: singleRoot.rootIndex
-                    windowGeometry: singleRoot.parentTask?.model?.Geometry ?? Qt.rect(0, 0, 0, 0)
+                    submodelIndex: toolTipDelegate.rootIndex
+                    windowGeometry: toolTipDelegate.parentTask?.model?.Geometry ?? Qt.rect(0, 0, 0, 0)
                     explicitWinId: singleInstanceLoader.currentWin
                     
-                    appPid: singleRoot.pidParent
-                    appId: (singleRoot.parentTask && singleRoot.parentTask.appId) ? singleRoot.parentTask.appId : ""
-                    display: singleRoot.display
-                    isMinimized: singleRoot.isMinimized
+                    appPid: toolTipDelegate.pidParent
+                    appId: (toolTipDelegate.parentTask && toolTipDelegate.parentTask.appId) ? toolTipDelegate.parentTask.appId : ""
+                    display: toolTipDelegate.display
+                    isMinimized: toolTipDelegate.isMinimized
                     
-                    isWindowActive: singleRoot.isActive
+                    isWindowActive: toolTipDelegate.isActive
                     
-                    tasksModel: singleRoot.tasksModel
+                    tasksModel: toolTipDelegate.tasksModel
                     toolTipDelegate: toolTipDelegate
 
-                    mediaRegistry: singleRoot.mediaRegistry
+                    mediaRegistry: toolTipDelegate.mediaRegistry
                 }
             }
         }
@@ -336,24 +324,6 @@ Loader {
 
             property bool isHovered: groupHover.hovered || groupDrop.containsDrag
 
-            // Cached delegate properties
-            readonly property bool showThumbnails: toolTipDelegate.showThumbnails
-            readonly property bool isWin: toolTipDelegate.isWin
-            readonly property string calculatedAppName: toolTipDelegate.calculatedAppName
-            readonly property string appId: toolTipDelegate.appId
-            readonly property var config: toolTipDelegate.config
-            readonly property var parentTask: toolTipDelegate.parentTask
-            readonly property int tooltipInstanceMaximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth
-            readonly property int tooltipThumbnailHeight: toolTipDelegate.tooltipThumbnailHeight
-            readonly property rect tooltipScreenGeometry: toolTipDelegate.tooltipScreenGeometry
-            readonly property bool hasValidTooltipScreenGeometry: toolTipDelegate.hasValidTooltipScreenGeometry
-            readonly property var windows: toolTipDelegate.windows
-            readonly property bool isVerticalPanel: toolTipDelegate.isVerticalPanel
-            
-            readonly property var rootIndex: toolTipDelegate.rootIndex
-            readonly property var tasksModel: toolTipDelegate.tasksModel
-            readonly property var mediaRegistry: toolTipDelegate.mediaRegistry
-
             // PIDs with more than one window in this group (a browser runs all
             // its windows in one process). Their single MPRIS player and their
             // streams can't be pinned to one thumbnail, so they get one shared
@@ -361,9 +331,9 @@ Loader {
             readonly property var sharedPids: {
                 const counts = {};
                 const pids = [];
-                for (let i = 0; i < groupRoot.windows.length; ++i) {
-                    const childIndex = groupRoot.tasksModel.makeModelIndex(groupRoot.rootIndex.row, i);
-                    const pid = groupRoot.tasksModel.data(childIndex, TaskManager.AbstractTasksModel.AppPid);
+                for (let i = 0; i < toolTipDelegate.windows.length; ++i) {
+                    const childIndex = toolTipDelegate.tasksModel.makeModelIndex(toolTipDelegate.rootIndex.row, i);
+                    const pid = toolTipDelegate.tasksModel.data(childIndex, TaskManager.AbstractTasksModel.AppPid);
                     if (pid > 0) {
                         counts[pid] = (counts[pid] ?? 0) + 1;
                         if (counts[pid] === 2) {
@@ -373,7 +343,7 @@ Loader {
                 }
                 return pids;
             }
-            readonly property bool showGroupMedia: groupRoot.config.showMediaControls && groupRoot.config.groupMediaControls === 0
+            readonly property bool showGroupMedia: toolTipDelegate.config.showMediaControls && toolTipDelegate.config.groupMediaControls === 0
 
             Instantiator {
                 id: groupMediaControllers
@@ -382,8 +352,8 @@ Loader {
                     required property int modelData
                     toolTipDelegate: toolTipDelegate
                     appPid: modelData
-                    appId: groupRoot.appId
-                    mediaRegistry: groupRoot.mediaRegistry
+                    appId: toolTipDelegate.appId
+                    mediaRegistry: toolTipDelegate.mediaRegistry
                     index: 0
                 }
             }
@@ -413,15 +383,15 @@ Loader {
             function activateMediaWindow(controller): void {
                 const track = controller.playerData && controller.playerData.track ? controller.playerData.track : "";
                 let target = null;
-                for (let i = 0; i < groupRoot.windows.length; ++i) {
-                    const childIndex = groupRoot.tasksModel.makeModelIndex(groupRoot.rootIndex.row, i);
-                    if (groupRoot.tasksModel.data(childIndex, TaskManager.AbstractTasksModel.AppPid) !== controller.appPid) {
+                for (let i = 0; i < toolTipDelegate.windows.length; ++i) {
+                    const childIndex = toolTipDelegate.tasksModel.makeModelIndex(toolTipDelegate.rootIndex.row, i);
+                    if (toolTipDelegate.tasksModel.data(childIndex, TaskManager.AbstractTasksModel.AppPid) !== controller.appPid) {
                         continue;
                     }
                     if (!target) {
                         target = childIndex;
                     }
-                    const display = groupRoot.tasksModel.data(childIndex, Qt.DisplayRole);
+                    const display = toolTipDelegate.tasksModel.data(childIndex, Qt.DisplayRole);
                     if (track && display && display.includes(track)) {
                         target = childIndex;
                         break;
@@ -430,9 +400,9 @@ Loader {
                 if (!target) {
                     return;
                 }
-                groupRoot.tasksModel.requestActivate(target);
-                if (groupRoot.parentTask) {
-                    groupRoot.parentTask.closeTooltip();
+                toolTipDelegate.tasksModel.requestActivate(target);
+                if (toolTipDelegate.parentTask) {
+                    toolTipDelegate.parentTask.closeTooltip();
                 }
             }
 
@@ -449,58 +419,38 @@ Loader {
                 id: groupLayout
                 spacing: Kirigami.Units.smallSpacing
                 
-                readonly property int safeCount: groupRoot.isWin ? groupRoot.windows.length : 1
-                readonly property int maxTooltipWidth: (groupRoot.hasValidTooltipScreenGeometry
-                    ? groupRoot.tooltipScreenGeometry.width
+                readonly property int safeCount: toolTipDelegate.isWin ? toolTipDelegate.windows.length : 1
+                readonly property int maxTooltipWidth: (toolTipDelegate.hasValidTooltipScreenGeometry
+                    ? toolTipDelegate.tooltipScreenGeometry.width
                     : Screen.width) - Kirigami.Units.gridUnit * 2
-                readonly property int maxTooltipHeight: (groupRoot.hasValidTooltipScreenGeometry
-                    ? groupRoot.tooltipScreenGeometry.height
+                readonly property int maxTooltipHeight: (toolTipDelegate.hasValidTooltipScreenGeometry
+                    ? toolTipDelegate.tooltipScreenGeometry.height
                     : Screen.height) - Kirigami.Units.gridUnit * 2
                 // Thumbnails can differ in width (window aspect mode), so the row
                 // is the sum of their widths - or the widest one when stacked.
                 readonly property real contentTargetWidth: {
-                    if (!groupRoot.showThumbnails) {
-                        return groupRoot.tooltipInstanceMaximumWidth;
+                    if (!toolTipDelegate.showThumbnails) {
+                        return toolTipDelegate.tooltipInstanceMaximumWidth;
                     }
                     void toolTipDelegate.geometryRevision;
                     const widths = [];
                     for (let i = 0; i < safeCount; ++i) {
-                        const childIndex = groupRoot.tasksModel.makeModelIndex(groupRoot.rootIndex.row, i);
-                        widths.push(toolTipDelegate.thumbnailWidthFor(groupRoot.tasksModel.data(childIndex, TaskManager.AbstractTasksModel.Geometry)));
+                        const childIndex = toolTipDelegate.tasksModel.makeModelIndex(toolTipDelegate.rootIndex.row, i);
+                        widths.push(toolTipDelegate.thumbnailWidthFor(toolTipDelegate.tasksModel.data(childIndex, TaskManager.AbstractTasksModel.Geometry)));
                     }
                     if (widths.length === 0) {
-                        return groupRoot.tooltipInstanceMaximumWidth;
+                        return toolTipDelegate.tooltipInstanceMaximumWidth;
                     }
-                    if (groupRoot.isVerticalPanel) {
+                    if (toolTipDelegate.isVerticalPanel) {
                         return Math.max(...widths);
                     }
                     return Math.ceil(widths.reduce((sum, width) => sum + width, 0) + (widths.length - 1) * Kirigami.Units.smallSpacing);
                 }
                 
-                Row {
+                AppTitleRow {
                     Layout.alignment: Qt.AlignHCenter
-                    visible: groupRoot.calculatedAppName.length > 0 && groupRoot.showThumbnails
-                    opacity: 0.8
-                    spacing: Kirigami.Units.smallSpacing
-
-                    PlasmaComponents3.Label {
-                        id: groupNameLabel
-                        text: groupRoot.calculatedAppName
-                        font.bold: true
-                        elide: Text.ElideRight
-                        width: Math.min(implicitWidth, groupLayout.contentTargetWidth - (groupBadge.visible ? groupBadge.width + parent.spacing : 0) - Kirigami.Units.gridUnit)
-                    }
-
-                    Badge {
-                        id: groupBadge
-                        colorMode: groupRoot.config.badgeColorMode
-                        customColor: groupRoot.config.badgeCustomColor
-                        visible: groupRoot.config.showAppSignals && groupRoot.config.showBadges && (groupRoot.parentTask ? groupRoot.parentTask.badgeVisible : false)
-                        number: groupRoot.parentTask ? groupRoot.parentTask.badgeCount : 0
-                        isUrgent: (groupRoot.config.badgeHighlightNew && groupRoot.parentTask) ? groupRoot.parentTask.hasUnseenNotifications : false
-                        height: Math.round(Kirigami.Units.gridUnit * 0.85)
-                        maxNumber: 0
-                    }
+                    visible: toolTipDelegate.calculatedAppName.length > 0 && toolTipDelegate.showThumbnails
+                    maximumWidth: groupLayout.contentTargetWidth
                 }
 
             PlasmaComponents3.Label {
@@ -514,7 +464,7 @@ Loader {
                 text: toolTipDelegate.generateSubText()
                 font: Kirigami.Theme.smallFont
                 elide: Text.ElideRight
-                visible: groupRoot.showThumbnails && text.length > 0
+                visible: toolTipDelegate.showThumbnails && text.length > 0
                 opacity: 0.6
                 textFormat: Text.PlainText
             }
@@ -524,9 +474,9 @@ Loader {
                 // hovered is now handled by groupHover on the parent ColumnLayout
                 
                 // In text mode (no thumbnails), extend to tooltip edges
-                Layout.leftMargin: groupRoot.showThumbnails ? 0 : -6
-                Layout.rightMargin: groupRoot.showThumbnails ? 0 : -6
-                Layout.bottomMargin: groupRoot.showThumbnails ? 0 : -6
+                Layout.leftMargin: toolTipDelegate.showThumbnails ? 0 : -6
+                Layout.rightMargin: toolTipDelegate.showThumbnails ? 0 : -6
+                Layout.bottomMargin: toolTipDelegate.showThumbnails ? 0 : -6
                 
                 // Remove default padding/background to prevent size mismatch
                 padding: 0
@@ -544,10 +494,10 @@ Loader {
                 
                 // Match content size strictly, but cap at screen limits
                 Layout.preferredWidth: Math.min(groupLayout.contentTargetWidth, groupLayout.maxTooltipWidth)
-                Layout.preferredHeight: Math.min(Math.max(groupToolTipListView.contentExtent, groupRoot.showThumbnails ? delegateModel.estimatedHeight : 0), groupLayout.maxTooltipHeight)
+                Layout.preferredHeight: Math.min(Math.max(groupToolTipListView.contentExtent, toolTipDelegate.showThumbnails ? delegateModel.estimatedHeight : 0), groupLayout.maxTooltipHeight)
                 Layout.fillWidth: false 
                 
-                implicitHeight: Math.min(Math.max(groupToolTipListView.contentExtent, groupRoot.showThumbnails ? delegateModel.estimatedHeight : 0), groupLayout.maxTooltipHeight)
+                implicitHeight: Math.min(Math.max(groupToolTipListView.contentExtent, toolTipDelegate.showThumbnails ? delegateModel.estimatedHeight : 0), groupLayout.maxTooltipHeight)
                 implicitWidth: Math.min(groupToolTipListView.width, groupLayout.maxTooltipWidth)
 
                 ListView {
@@ -565,7 +515,7 @@ Loader {
                     model: delegateModel
                     
                     // FORCE VERTICAL LIST if thumbnails are disabled
-                    orientation: (!groupRoot.showThumbnails || groupRoot.isVerticalPanel) ?
+                    orientation: (!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ?
                         ListView.Vertical : ListView.Horizontal
                         
                     reuseItems: true
@@ -577,11 +527,11 @@ Loader {
                 DelegateModel {
                     id: delegateModel
 
-                    readonly property int safeCount: groupRoot.isWin ? groupRoot.windows.length : count
+                    readonly property int safeCount: toolTipDelegate.isWin ? toolTipDelegate.windows.length : count
 
                     // If thumbnails disabled -> height is 0
-                    readonly property int instanceThumbHeight: groupRoot.showThumbnails ?
-                        groupRoot.tooltipThumbnailHeight : 0
+                    readonly property int instanceThumbHeight: toolTipDelegate.showThumbnails ?
+                        toolTipDelegate.tooltipThumbnailHeight : 0
                     
                     // Reduced padding for overlay style (was * 3)
                     // Fallback to 2 grid units for Text Mode items
@@ -590,12 +540,12 @@ Loader {
 
                     
                     readonly property real estimatedHeight: {
-                        const count = (!groupRoot.showThumbnails || groupRoot.isVerticalPanel) ? safeCount : 1;
+                        const count = (!toolTipDelegate.showThumbnails || toolTipDelegate.isVerticalPanel) ? safeCount : 1;
                         return count * singleItemHeight + Math.max(0, count - 1) * Kirigami.Units.smallSpacing;
                     }
 
-                    model: groupRoot.tasksModel
-                    rootIndex: groupRoot.rootIndex
+                    model: toolTipDelegate.tasksModel
+                    rootIndex: toolTipDelegate.rootIndex
                     onRootIndexChanged: groupToolTipListView.positionViewAtBeginning()
 
                     delegate: ToolTipInstance {
@@ -606,7 +556,7 @@ Loader {
                         // thumbnail is centered inside it (Layout.alignment in
                         // ToolTipInstance). Moving the delegate instead doesn't work:
                         // ListView keeps resetting x on the axis it doesn't lay out.
-                        width: !groupRoot.showThumbnails ? groupRoot.tooltipInstanceMaximumWidth
+                        width: !toolTipDelegate.showThumbnails ? toolTipDelegate.tooltipInstanceMaximumWidth
                             : groupToolTipListView.orientation === ListView.Vertical ? groupToolTipListView.width
                             : toolTipDelegate.thumbnailWidthFor(model.Geometry)
                         windowGeometry: model.Geometry ?? Qt.rect(0, 0, 0, 0)
@@ -623,11 +573,11 @@ Loader {
                         isMinimized: model.IsMinimized !== undefined ? model.IsMinimized : false
                         isWindowActive: model.IsActive !== undefined ? model.IsActive : false
 
-                        submodelIndex: groupRoot.tasksModel.makeModelIndex(groupRoot.rootIndex.row, index)
-                        tasksModel: groupRoot.tasksModel
+                        submodelIndex: toolTipDelegate.tasksModel.makeModelIndex(toolTipDelegate.rootIndex.row, index)
+                        tasksModel: toolTipDelegate.tasksModel
                         toolTipDelegate: toolTipDelegate
 
-                        mediaRegistry: groupRoot.mediaRegistry
+                        mediaRegistry: toolTipDelegate.mediaRegistry
                         // The shared panel (or nothing, if it's turned off) stands
                         // in for this window's own controls.
                         sharesProcess: groupRoot.sharedPids.indexOf(appPid) !== -1
@@ -641,8 +591,8 @@ Loader {
                 active: controller !== null
                 visible: active
                 Layout.alignment: Qt.AlignHCenter
-                Layout.preferredWidth: Math.min(groupRoot.tooltipInstanceMaximumWidth, scrollView.Layout.preferredWidth)
-                Layout.bottomMargin: groupRoot.showThumbnails ? Math.round(Kirigami.Units.smallSpacing / 2) : Kirigami.Units.smallSpacing
+                Layout.preferredWidth: Math.min(toolTipDelegate.tooltipInstanceMaximumWidth, scrollView.Layout.preferredWidth)
+                Layout.bottomMargin: toolTipDelegate.showThumbnails ? Math.round(Kirigami.Units.smallSpacing / 2) : Kirigami.Units.smallSpacing
 
                 sourceComponent: ToolTipMediaBar {
                     mediaController: groupMediaBarLoader.controller
@@ -654,14 +604,14 @@ Loader {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.preferredWidth: groupMediaBarLoader.Layout.preferredWidth
                 Layout.bottomMargin: Kirigami.Units.smallSpacing
-                mediaRegistry: groupRoot.mediaRegistry
+                mediaRegistry: toolTipDelegate.mediaRegistry
                 streams: groupRoot.groupMediaController ? groupRoot.groupMediaController.audioStreams : []
                 hasPlayer: groupRoot.groupMediaController !== null && !!groupRoot.groupMediaController.playerData
                 playerPlaying: groupRoot.groupMediaController !== null && !!groupRoot.groupMediaController.playerData
                     && groupRoot.groupMediaController.playerData.playbackStatus === Mpris.PlaybackStatus.Playing
                 onStreamActivated: {
-                    if (groupRoot.parentTask) {
-                        groupRoot.parentTask.closeTooltip();
+                    if (toolTipDelegate.parentTask) {
+                        toolTipDelegate.parentTask.closeTooltip();
                     }
                 }
             }
