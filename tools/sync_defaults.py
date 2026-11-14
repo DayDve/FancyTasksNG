@@ -7,7 +7,8 @@
 # config on first Apply). Run this after changing any <default> in main.xml.
 #
 # Usage: python3 tools/sync_defaults.py [--check]
-#   --check  exit 1 if out of sync, print report only
+#   --check  exit 1 if out of sync or a cfg_*Default has no main.xml entry,
+#            print report only
 
 import json
 import re
@@ -24,6 +25,10 @@ DEFAULT_LINE = re.compile(
 )
 
 STRINGY_TYPES = {"String", "Font", "Color", "Path", "Password"}
+
+# Keys that aren't in main.xml on purpose: plasmashell pushes them into every
+# config page (see the comment at cfg_expanding in ConfigPage.qml).
+EXTERNAL_KEYS = {"expanding", "length"}
 
 
 def unescape(text: str) -> str:
@@ -105,8 +110,8 @@ def main() -> int:
         new_line = f"{m.group('prefix')}{m.group('name')}Default{m.group('mid')}{literal}{m.group('suffix')}\n"
         out.append(new_line)
 
-    # cfg_*Default without a schema entry (kept, reported only)
-    phantom_report = sorted(k for k in seen_keys if k not in schema)
+    # cfg_*Default without a schema entry: kept, but fails --check
+    phantom_report = sorted(k for k in seen_keys if k not in schema and k not in EXTERNAL_KEYS)
 
     orphan_report = sorted(set(schema) - seen_keys)
 
@@ -118,12 +123,12 @@ def main() -> int:
         print("All cfg_*Default values match main.xml")
 
     if phantom_report:
-        print(f"\ncfg_*Default without schema entry (not touched): {', '.join(phantom_report)}")
+        print(f"\ncfg_*Default without schema entry (not touched; remove it, or add the key to main.xml): {', '.join(phantom_report)}")
     if orphan_report:
         print(f"\nschema entries without cfg_*Default pair (info): {', '.join(orphan_report)}")
 
     if check_only:
-        return 1 if changes else 0
+        return 1 if changes or phantom_report else 0
 
     if changes:
         PAGE.write_text("".join(out))
