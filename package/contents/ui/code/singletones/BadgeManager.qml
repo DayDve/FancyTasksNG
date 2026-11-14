@@ -7,11 +7,10 @@
 pragma Singleton
 import QtQuick
 import org.kde.plasma.workspace.dbus as DBus
-import org.kde.plasma.plasma5support as Plasma5Support
 
 /**
  * BadgeManager: Unified aggregator for taskbar badges.
- * Intercepts Unity-style signals via a Python helper script.
+ * Unity LauncherEntry signals are re-emitted by the Python helper.
  */
 Item {
     id: root
@@ -24,23 +23,10 @@ Item {
     property var pidProgress: ({})
     property int countVersion: 0
 
-    Component.onCompleted: bridgeStarter.start()
-
-    // Background process to sniff D-Bus signals that QML might miss
-    Plasma5Support.DataSource {
-        id: bridgeStarter
-        engine: "executable"
-        connectedSources: []
-        
-        function start() {
-            let scriptPath = Qt.resolvedUrl("../unity_bridge.py").toString().replace(/^file:\/\//, "");
-            connectSource("python3 " + scriptPath);
-        }
-        
-        onNewData: (sourceName, data) => {
-            if (data.stderr) console.log("FancyTasksNG BadgeBridge Error:", data.stderr);
-        }
-    }
+    // The counts come from the shared Python helper (desktop_actions.py),
+    // which DesktopActionsManager starts; make sure it runs even before any
+    // menu or tooltip has asked it for something.
+    Component.onCompleted: DesktopActionsManager.startHelper()
 
     // Listener for internal bridge signals
     DBus.SignalWatcher {

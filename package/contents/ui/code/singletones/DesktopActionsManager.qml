@@ -11,7 +11,8 @@ import org.kde.plasma.plasma5support as Plasma5Support
 
 /**
  * DesktopActionsManager ‒ provides desktop file jump list actions
- * and recent documents via a Python helper over DBus.
+ * and recent documents via a Python helper over DBus. The same helper
+ * process re-emits badge counts for BadgeManager.
  */
 Item {
     id: root
@@ -50,15 +51,20 @@ Item {
         });
     }
 
+    // Starts the helper once; BadgeManager calls it too, as the badge
+    // bridge lives in the same process.
+    function startHelper() {
+        if (helperStarter.connectedSources.length > 0)
+            return;
+        const scriptPath = Qt.resolvedUrl("../desktop_actions.py").toString().replace(/^file:\/\//, "");
+        helperStarter.connectSource("python3 '" + scriptPath + "'");
+    }
+
     Plasma5Support.DataSource {
-        id: dbusDaemonStarter
+        id: helperStarter
         engine: "executable"
         connectedSources: []
-        Component.onCompleted: {
-            // Start the DBus daemon ONCE
-            let scriptPath = Qt.resolvedUrl("../desktop_actions.py").toString().replace(/^file:\/\//, "");
-            connectSource("python3 '" + scriptPath + "'");
-        }
+        Component.onCompleted: root.startHelper()
     }
 
     // Single source of truth for the cache key: query/prefetch/_doQuery must

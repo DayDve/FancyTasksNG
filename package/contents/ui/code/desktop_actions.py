@@ -19,10 +19,16 @@ Interface io.github.daydve.fancytasksng.DesktopActions:
   OpenUrl(url, preferredApp)
   ParentPids(pidsCsv) -> JSON object {pid: parentPid}
   ActivateBrowserTab(browserPid, title) -> bool
+  ListApps() -> JSON array of installed apps
 
 Interface io.github.daydve.fancytasksng.Config:
   ExportConfig(path, content) -> "OK" or "ERROR: ..."
   ImportConfig(path) -> file content or "ERROR: ..."
+
+It also owns io.github.daydve.fancytasksng.Bridge and com.canonical.Unity:
+Unity LauncherEntry.Update signals (badge counts and progress) are re-emitted
+as io.github.daydve.fancytasksng.BadgeUpdate.UpdateSignal(appId, count,
+progress, senderPid) on /Bridge, with the state accumulated per sender.
 """
 
 import configparser
@@ -41,9 +47,6 @@ import xml.etree.ElementTree as ET
 import ctypes
 import signal
 
-import dbus
-import dbus.service
-from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import Gio, GLib
 from pathlib import Path
 from urllib.parse import unquote, urlparse
@@ -205,24 +208,38 @@ def _get_session_bus():
     """Return a cached session bus connection shared by all D-Bus helper calls."""
     global _session_bus
     if _session_bus is None:
-        _session_bus = dbus.SessionBus()
+        _session_bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
     return _session_bus
+
+
+def _dbus_call(name, path, iface, method, args=None, reply_type=None, timeout_ms=2000):
+    """Blocking D-Bus call with a bounded timeout; returns the unpacked reply
+    tuple. Raises GLib.Error on failure."""
+    reply = _get_session_bus().call_sync(
+        name, path, iface, method, args,
+        GLib.VariantType.new(reply_type) if reply_type else None,
+        Gio.DBusCallFlags.NONE, timeout_ms, None)
+    return reply.unpack() if reply is not None else ()
+
+
+def _connection_pid(name):
+    """PID of the process behind a bus name, 0 if unknown."""
+    try:
+        return int(_dbus_call("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus",
+                              "GetConnectionUnixProcessID", GLib.Variant("(s)", (name,)), "(u)")[0])
+    except GLib.Error:
+        return 0
 
 
 def get_current_activity():
     """Get current KDE activity ID via D-Bus."""
     try:
-        bus = _get_session_bus()
         # Bounded timeout: this runs on the service's single mainloop, so a hung
         # ActivityManager must not be able to freeze every tooltip/menu query.
-        activity = bus.call_blocking(
-            "org.kde.ActivityManager",
-            "/ActivityManager/Activities",
-            "org.kde.ActivityManager.Activities",
-            "CurrentActivity", "", [],
-            timeout=2.0,
-        )
-        return str(activity)
+        return str(_dbus_call("org.kde.ActivityManager",
+                              "/ActivityManager/Activities",
+                              "org.kde.ActivityManager.Activities",
+                              "CurrentActivity", None, "(s)")[0])
     except Exception:
         return None
 
@@ -634,15 +651,12 @@ def clear_recent_documents(desktop_path):
     if not storage_id or not activity:
         return False
     try:
-        _get_session_bus().call_blocking(
-            "org.kde.ActivityManager",
-            "/ActivityManager/Resources/Scoring",
-            "org.kde.ActivityManager.ResourcesScoring",
-            "DeleteStatsForResource", "sss", [activity, storage_id, "*"],
-            timeout=2.0,
-        )
+        _dbus_call("org.kde.ActivityManager",
+                   "/ActivityManager/Resources/Scoring",
+                   "org.kde.ActivityManager.ResourcesScoring",
+                   "DeleteStatsForResource", GLib.Variant("(sss)", (activity, storage_id, "*")))
         return True
-    except dbus.exceptions.DBusException as e:
+    except GLib.Error as e:
         log.warning(f"clear recent error: {e}")
         return False
 
@@ -742,11 +756,58 @@ def list_applications():
     return apps
 
 
-class NotAllowed(dbus.exceptions.DBusException):
-    _dbus_error_name = "io.github.daydve.fancytasksng.Error.NotAllowed"
+SERVICE_NAME = "io.github.daydve.fancytasksng.DesktopActions"
+BRIDGE_NAME = "io.github.daydve.fancytasksng.Bridge"
+
+SERVICE_XML = """
+<node>
+  <interface name="io.github.daydve.fancytasksng.DesktopActions">
+    <method name="Query">
+      <arg type="s" direction="in"/><arg type="b" direction="in"/>
+      <arg type="i" direction="in"/><arg type="i" direction="in"/>
+      <arg type="s" direction="out"/>
+    </method>
+    <method name="ClearRecent"><arg type="s" direction="in"/></method>
+    <method name="LaunchAction"><arg type="s" direction="in"/><arg type="s" direction="in"/></method>
+    <method name="ParentPids"><arg type="s" direction="in"/><arg type="s" direction="out"/></method>
+    <method name="ActivateBrowserTab">
+      <arg type="i" direction="in"/><arg type="s" direction="in"/><arg type="b" direction="out"/>
+    </method>
+    <method name="ListApps"><arg type="s" direction="out"/></method>
+    <method name="OpenUrl"><arg type="s" direction="in"/><arg type="s" direction="in"/></method>
+  </interface>
+  <interface name="io.github.daydve.fancytasksng.Config">
+    <method name="ExportConfig">
+      <arg type="s" direction="in"/><arg type="s" direction="in"/><arg type="s" direction="out"/>
+    </method>
+    <method name="ImportConfig"><arg type="s" direction="in"/><arg type="s" direction="out"/></method>
+  </interface>
+</node>
+"""
+
+BRIDGE_XML = """
+<node>
+  <interface name="io.github.daydve.fancytasksng.BadgeUpdate">
+    <signal name="UpdateSignal">
+      <arg type="s"/><arg type="i"/><arg type="d"/><arg type="u"/>
+    </signal>
+  </interface>
+</node>
+"""
 
 
-class DesktopActionsService(dbus.service.Object):
+def _request_name(name):
+    """Takes a bus name without queueing; True if this process owns it."""
+    try:
+        reply = _dbus_call("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus",
+                           "RequestName", GLib.Variant("(su)", (name, 4)), "(u)")  # 4: DO_NOT_QUEUE
+        return reply[0] == 1  # PRIMARY_OWNER
+    except GLib.Error as e:
+        log.warning(f"could not request {name}: {e}")
+        return False
+
+
+class DesktopActionsService:
     """Only the widget's own shell may call this service: it launches
     programs, reads and writes files and returns browsing history, so any
     other client of the session bus (a Flatpak app with bus access, say)
@@ -755,32 +816,39 @@ class DesktopActionsService(dbus.service.Object):
     def __init__(self):
         self.allowed_pids = _ancestor_pids()
         self.sender_allowed = {}
-        try:
-            self.bus = _get_session_bus()
-            self.bus_name = dbus.service.BusName('io.github.daydve.fancytasksng.DesktopActions', bus=self.bus,
-                                                 do_not_queue=True)
-            dbus.service.Object.__init__(self, self.bus_name, '/DesktopActions')
-            log.info("service ready")
-        except Exception as e:
-            log.error(f"service error: {e}")
+        self.bus = _get_session_bus()
+        node = Gio.DBusNodeInfo.new_for_xml(SERVICE_XML)
+        self.out_signatures = {}
+        for iface in node.interfaces:
+            for method in iface.methods:
+                self.out_signatures[method.name] = "".join(arg.signature for arg in method.out_args)
+            self.bus.register_object("/DesktopActions", iface, self._on_method_call, None, None)
+        if not _request_name(SERVICE_NAME):
+            log.error(f"{SERVICE_NAME} is already taken")
             sys.exit(1)
+        log.info("service ready")
 
-    def _check_caller(self, sender):
+    def _caller_allowed(self, sender):
         # Unique bus names are never reused, so the verdict can be cached.
         if sender not in self.sender_allowed:
-            try:
-                pid = int(self.bus.call_blocking(
-                    'org.freedesktop.DBus', '/org/freedesktop/DBus', 'org.freedesktop.DBus',
-                    'GetConnectionUnixProcessID', 's', (sender,), timeout=2.0))
-            except dbus.exceptions.DBusException:
-                pid = 0
-            self.sender_allowed[sender] = pid in self.allowed_pids
-        if not self.sender_allowed[sender]:
-            raise NotAllowed(f"{sender} is not the shell running this widget")
+            self.sender_allowed[sender] = _connection_pid(sender) in self.allowed_pids
+        return self.sender_allowed[sender]
 
-    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='sbii', out_signature='s', sender_keyword='sender')
-    def Query(self, launcher_url, show_history, limit, app_pid, sender=None):
-        self._check_caller(sender)
+    def _on_method_call(self, connection, sender, path, iface, method, params, invocation):
+        if not self._caller_allowed(sender):
+            invocation.return_dbus_error("io.github.daydve.fancytasksng.Error.NotAllowed",
+                                         f"{sender} is not the shell running this widget")
+            return
+        try:
+            result = getattr(self, method)(*params.unpack())
+        except Exception as e:
+            log.warning(f"{method} failed: {e}")
+            invocation.return_dbus_error("org.freedesktop.DBus.Error.Failed", str(e))
+            return
+        signature = self.out_signatures[method]
+        invocation.return_value(GLib.Variant(f"({signature})", (result,)) if signature else None)
+
+    def Query(self, launcher_url, show_history, limit, app_pid):
         desktop_path = resolve_launcher_url(launcher_url)
         jump_list = get_jump_list_actions(desktop_path) if desktop_path else []
         
@@ -821,17 +889,13 @@ class DesktopActionsService(dbus.service.Object):
         }
         return json.dumps(data)
 
-    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='s', out_signature='', sender_keyword='sender')
-    def ClearRecent(self, launcher_url, sender=None):
-        self._check_caller(sender)
+    def ClearRecent(self, launcher_url):
         desktop_path = resolve_launcher_url(launcher_url)
         if desktop_path:
             clear_recent_documents(desktop_path)
 
-    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='ss', out_signature='', sender_keyword='sender')
-    def LaunchAction(self, launcher_url, action_id, sender=None):
+    def LaunchAction(self, launcher_url, action_id):
         """Run one of the [Desktop Action ...] entries of an app's .desktop file."""
-        self._check_caller(sender)
         desktop_path = resolve_launcher_url(launcher_url)
         if not desktop_path:
             return
@@ -842,15 +906,13 @@ class DesktopActionsService(dbus.service.Object):
         except GLib.Error as e:
             log.warning(f"LaunchAction error: {e}")
 
-    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='s', out_signature='s', sender_keyword='sender')
-    def ParentPids(self, pids_csv, sender=None):
+    def ParentPids(self, pids_csv):
         """Map comma-separated PIDs to their parent PIDs (JSON object).
 
         QML can't read /proc itself. Chromium-family browsers play audio
         from a utility child process, so its stream PID only matches a
         window through its parent. PIDs that no longer exist are omitted.
         """
-        self._check_caller(sender)
         result = {}
         for token in pids_csv.split(","):
             token = token.strip()
@@ -866,8 +928,7 @@ class DesktopActionsService(dbus.service.Object):
                 pass
         return json.dumps(result)
 
-    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='is', out_signature='b', sender_keyword='sender')
-    def ActivateBrowserTab(self, browser_pid, title, sender=None):
+    def ActivateBrowserTab(self, browser_pid, title):
         """Switch a browser to the tab with the given title; True on success.
 
         Goes through the Plasma Browser Integration extension: each browser
@@ -877,40 +938,37 @@ class DesktopActionsService(dbus.service.Object):
         stream plays in - the one way to get to a tab that isn't the one
         the browser's single MPRIS player follows.
         """
-        self._check_caller(sender)
         if browser_pid <= 0 or not title:
             return False
         try:
-            bus = _get_session_bus()
-            bus_daemon = bus.get_object('org.freedesktop.DBus', '/org/freedesktop/DBus')
-            names = bus_daemon.ListNames(dbus_interface='org.freedesktop.DBus')
-            for name in names:
-                if not str(name).startswith('org.kde.plasma.browser_integration'):
-                    continue
-                try:
-                    host_pid = int(bus_daemon.GetConnectionUnixProcessID(name, dbus_interface='org.freedesktop.DBus'))
-                    with open(f"/proc/{host_pid}/status", encoding="utf-8") as f:
-                        parent = next((int(line.split()[1]) for line in f if line.startswith("PPid:")), 0)
-                    if parent != browser_pid:
-                        continue
-                    runner = dbus.Interface(bus.get_object(name, '/TabsRunner'), 'org.kde.krunner1')
-                    matches = runner.Match(title, timeout=2)
-                    # (id, text, icon name, type, relevance, properties)
-                    exact = [m for m in matches if str(m[1]) == title]
-                    chosen = exact[0] if exact else (matches[0] if len(matches) == 1 else None)
-                    if chosen is None:
-                        return False
-                    runner.Run(chosen[0], '', timeout=2)
-                    return True
-                except (dbus.exceptions.DBusException, OSError, ValueError, StopIteration):
-                    continue
-        except dbus.exceptions.DBusException as e:
+            names = _dbus_call("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus",
+                               "ListNames", None, "(as)")[0]
+        except GLib.Error as e:
             log.warning(f"ActivateBrowserTab error: {e}")
+            return False
+        for name in names:
+            if not name.startswith('org.kde.plasma.browser_integration'):
+                continue
+            try:
+                host_pid = _connection_pid(name)
+                with open(f"/proc/{host_pid}/status", encoding="utf-8") as f:
+                    parent = next((int(line.split()[1]) for line in f if line.startswith("PPid:")), 0)
+                if parent != browser_pid:
+                    continue
+                matches = _dbus_call(name, '/TabsRunner', 'org.kde.krunner1', 'Match',
+                                     GLib.Variant("(s)", (title,)))[0]
+                # (id, text, icon name, type, relevance, properties)
+                exact = [m for m in matches if m[1] == title]
+                chosen = exact[0] if exact else (matches[0] if len(matches) == 1 else None)
+                if chosen is None:
+                    return False
+                _dbus_call(name, '/TabsRunner', 'org.kde.krunner1', 'Run', GLib.Variant("(ss)", (chosen[0], '')))
+                return True
+            except (GLib.Error, OSError, ValueError, StopIteration):
+                continue
         return False
 
-    @dbus.service.method('io.github.daydve.fancytasksng.Config', in_signature='ss', out_signature='s', sender_keyword='sender')
-    def ExportConfig(self, path, content, sender=None):
-        self._check_caller(sender)
+    def ExportConfig(self, path, content):
         try:
             with open(path, 'w', encoding='utf-8') as f:
                 f.write(content)
@@ -918,23 +976,17 @@ class DesktopActionsService(dbus.service.Object):
         except Exception as e:
             return f"ERROR: {e}"
 
-    @dbus.service.method('io.github.daydve.fancytasksng.Config', in_signature='s', out_signature='s', sender_keyword='sender')
-    def ImportConfig(self, path, sender=None):
-        self._check_caller(sender)
+    def ImportConfig(self, path):
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 return f.read()
         except Exception as e:
             return f"ERROR: {e}"
 
-    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='', out_signature='s', sender_keyword='sender')
-    def ListApps(self, sender=None):
-        self._check_caller(sender)
+    def ListApps(self):
         return json.dumps(list_applications())
 
-    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='ss', out_signature='', sender_keyword='sender')
-    def OpenUrl(self, url, preferred_app, sender=None):
-        self._check_caller(sender)
+    def OpenUrl(self, url, preferred_app):
         try:
             desktop_path = resolve_launcher_url(preferred_app)
             app = Gio.DesktopAppInfo.new_from_filename(desktop_path) if desktop_path else None
@@ -975,15 +1027,64 @@ def expand_exec(commandline, url):
     return argv
 
 
+class BadgeBridge:
+    """Re-emits Unity LauncherEntry updates (badge counts and progress) on a
+    bus name of our own, which QML's SignalWatcher can follow."""
+
+    def __init__(self):
+        self.bus = _get_session_bus()
+        # Last known LauncherEntry properties per app and sender. An Update
+        # carries only the properties that changed (a download sends just its
+        # progress), so the rest has to come from earlier ones.
+        self.entry_state = {}
+        # Unique bus names are never reused, so a sender's PID can be cached.
+        self.sender_pids = {}
+        node = Gio.DBusNodeInfo.new_for_xml(BRIDGE_XML)
+        self.bus.register_object("/Bridge", node.interfaces[0], None, None, None)
+        if not _request_name(BRIDGE_NAME):
+            log.error(f"{BRIDGE_NAME} is already taken")
+            sys.exit(1)
+        # Apps such as KMail only send badge updates while com.canonical.Unity
+        # is on the bus. If it's taken (Plasma's own task manager), the
+        # signals are still received through the subscription below.
+        if _request_name("com.canonical.Unity"):
+            log.info("registered as com.canonical.Unity")
+        else:
+            log.info("com.canonical.Unity already owned, listening passively")
+        self.bus.signal_subscribe(None, "com.canonical.Unity.LauncherEntry", "Update", None, None,
+                                  Gio.DBusSignalFlags.NONE, self._on_update)
+
+    def _sender_pid(self, sender):
+        if not sender:
+            return 0
+        if sender not in self.sender_pids:
+            self.sender_pids[sender] = _connection_pid(sender)
+        return self.sender_pids[sender]
+
+    def _on_update(self, connection, sender, path, iface, signal_name, params):
+        app_id, properties = params.unpack()
+        state = self.entry_state.setdefault((app_id, sender), {})
+        state.update(properties)
+        count = int(state.get("count", 0)) if state.get("count-visible", True) else 0
+        progress = float(state.get("progress", 0.0)) if state.get("progress-visible", False) else -1.0
+        # The app id an app reports can differ from the one of the task it
+        # runs as (Telegram forks report their own id while started from
+        # Telegram's desktop file), so the sender's PID goes along to match
+        # the task by process.
+        self.bus.emit_signal(None, "/Bridge", "io.github.daydve.fancytasksng.BadgeUpdate", "UpdateSignal",
+                             GLib.Variant("(sidu)", (app_id, count, progress, self._sender_pid(sender))))
+
+
 def main():
     set_pdeathsig()
-    DBusGMainLoop(set_as_default=True)
-    service = DesktopActionsService()
+    DesktopActionsService()
+    BadgeBridge()
     loop = GLib.MainLoop()
     try:
         loop.run()
     except KeyboardInterrupt:
         sys.exit(0)
+
 
 if __name__ == "__main__":
     main()
