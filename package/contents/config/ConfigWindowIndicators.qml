@@ -119,7 +119,7 @@ ConfigPage {
                 }
                 SpinBox {
                     from: 0
-                    to: 999
+                    to: 32
                     value: indicatorsPage.cfg_indicatorEdgeOffset
                     onValueModified: indicatorsPage.cfg_indicatorEdgeOffset = value
                 }
@@ -179,7 +179,7 @@ ConfigPage {
                 }
                 SpinBox {
                     from: 1
-                    to: 999
+                    to: 32
                     value: indicatorsPage.cfg_indicatorSize
                     onValueModified: indicatorsPage.cfg_indicatorSize = value
                 }
@@ -192,7 +192,7 @@ ConfigPage {
                 }
                 SpinBox {
                     from: 1
-                    to: 999
+                    to: 500
                     value: indicatorsPage.cfg_indicatorLength
                     onValueModified: indicatorsPage.cfg_indicatorLength = value
                 }
@@ -212,7 +212,7 @@ ConfigPage {
                     }
                     SpinBox {
                         from: 0
-                        to: 999
+                        to: 200
                         value: indicatorsPage.cfg_indicatorShrink
                         onValueModified: indicatorsPage.cfg_indicatorShrink = value
                     }
@@ -248,7 +248,7 @@ ConfigPage {
                     }
                     SpinBox {
                         from: 1
-                        to: 999
+                        to: 32
                         value: indicatorsPage.cfg_indicatorActiveSize
                         onValueModified: indicatorsPage.cfg_indicatorActiveSize = value
                     }
@@ -261,7 +261,7 @@ ConfigPage {
                     }
                     SpinBox {
                         from: 1
-                        to: 999
+                        to: 500
                         value: indicatorsPage.cfg_indicatorActiveLength
                         onValueModified: indicatorsPage.cfg_indicatorActiveLength = value
                     }
@@ -318,7 +318,7 @@ ConfigPage {
                     }
                     SpinBox {
                         from: 1
-                        to: 999
+                        to: 32
                         value: indicatorsPage.cfg_indicatorHoverSize
                         onValueModified: indicatorsPage.cfg_indicatorHoverSize = value
                     }
@@ -331,7 +331,7 @@ ConfigPage {
                     }
                     SpinBox {
                         from: 1
-                        to: 999
+                        to: 500
                         value: indicatorsPage.cfg_indicatorHoverLength
                         onValueModified: indicatorsPage.cfg_indicatorHoverLength = value
                     }
@@ -363,7 +363,7 @@ ConfigPage {
                     }
                     SpinBox {
                         from: 1
-                        to: 999
+                        to: 32
                         value: indicatorsPage.cfg_indicatorGroupSize
                         onValueModified: indicatorsPage.cfg_indicatorGroupSize = value
                     }
@@ -376,7 +376,7 @@ ConfigPage {
                     }
                     SpinBox {
                         from: 1
-                        to: 999
+                        to: 500
                         value: indicatorsPage.cfg_indicatorGroupLength
                         onValueModified: indicatorsPage.cfg_indicatorGroupLength = value
                     }

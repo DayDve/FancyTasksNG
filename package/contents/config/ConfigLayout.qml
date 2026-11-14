@@ -168,7 +168,7 @@ ConfigPage {
                 Slider {
                     id: iconSize
                     Layout.fillWidth: true
-                    from: 0
+                    from: parent.absolute ? 8 : 10
                     to: parent.absolute ? 100 : 300
                     value: parent.absolute ? layoutPage.cfg_iconSizePx : layoutPage.cfg_iconScale
                     onMoved: {
@@ -179,7 +179,7 @@ ConfigPage {
                     }
                 }
                 SpinBox {
-                    from: 0
+                    from: parent.absolute ? 8 : 10
                     to: parent.absolute ? 100 : 300
                     editable: true
                     value: Math.round(iconSize.value)

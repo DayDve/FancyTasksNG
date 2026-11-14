@@ -97,7 +97,7 @@ ConfigPage {
                 Slider {
                     id: iconSize
                     Layout.preferredWidth: Kirigami.Units.gridUnit * 10
-                    from: 0
+                    from: parent.absolute ? 8 : 10
                     to: parent.absolute ? 100 : 300
                     value: parent.absolute ? quickPage.cfg_iconSizePx : quickPage.cfg_iconScale
                     onMoved: {
@@ -108,7 +108,7 @@ ConfigPage {
                     }
                 }
                 SpinBox {
-                    from: 0
+                    from: parent.absolute ? 8 : 10
                     to: parent.absolute ? 100 : 300
                     editable: true
                     value: Math.round(iconSize.value)
