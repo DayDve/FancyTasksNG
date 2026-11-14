@@ -111,9 +111,28 @@ PlasmaExtras.Menu {
             `, parent);
     }
 
+    // Label and icon of a recent document; archive members and the trash get
+    // a readable name instead of their raw URL.
+    function _recentDocLabel(doc: var): var {
+        if (doc.url.startsWith("trash:/"))
+            return {text: Wrappers.i18n("Trash"), icon: "user-trash-full"};
+        if (doc.url.startsWith("zip://") || doc.url.startsWith("tar://") || doc.url.startsWith("krarc://")) {
+            const protoIdx = doc.url.indexOf("://");
+            const pathWithoutProto = doc.url.substring(protoIdx + 3);
+            const match = pathWithoutProto.match(/([^\/]+\.(?:zip|tar|gz|xz|bz2|rar|7z))(?:\/|$)(.*)/i);
+            let text;
+            if (match)
+                text = match[2] ? "[" + match[1] + "] /" + match[2] : match[1];
+            else
+                text = doc.name.startsWith("zip://") ? pathWithoutProto : doc.name;
+            return {text: text, icon: "application-x-archive"};
+        }
+        return {text: doc.name, icon: doc.icon};
+    }
+
     function _insertDesktopActions(result, launcherUrl) {
-        // Find where to insert (before firstMediaItem or startNewInstanceItem)
-        let insertItem = menu.firstMediaItem || startNewInstanceItem;
+        // Before the media items, or before "Open New Window" without them.
+        const insertItem = menu.firstMediaItem || startNewInstanceItem;
 
         // Manually elide text since QMenu does not limit its width automatically
         const textMetrics = Qt.createQmlObject("import QtQuick; TextMetrics {}", menu);
@@ -127,153 +146,59 @@ PlasmaExtras.Menu {
             return textMetrics.elidedText;
         }
 
-        function setIcon(item, iconPath) {
-            if (!iconPath)
-                return;
-            if (String(iconPath).startsWith("file://")) {
-                item.icon = iconPath.replace(/^file:\/\//, "");
-            } else {
-                item.icon = iconPath;
-            }
+        function newItem(parent, text, icon, onClicked) {
+            const item = menu.newMenuItem(parent);
+            item.text = text;
+            if (icon)
+                item.icon = String(icon).replace(/^file:\/\//, "");
+            item.clicked.connect(onClicked);
+            return item;
         }
 
-        // 1. Add Jump List Actions (Desktop Actions)
-        if (result.jumpList && result.jumpList.length > 0) {
-            result.jumpList.forEach(action => {
-                let menuItem = menu.newMenuItem(menu);
-                menuItem.text = action.name;
-                setIcon(menuItem, action.icon);
-                menuItem.clicked.connect(() => DesktopActionsManager.launchAction(launcherUrl, action.actionId));
-                menu.addMenuItem(menuItem, insertItem);
-            });
+        const add = item => menu.addMenuItem(item, insertItem);
+        const addSeparator = () => add(menu.newSeparator(menu));
+        const hasEntries = list => !!list && list.length > 0;
+        const openUrlItem = (parent, entry, label) => newItem(parent, elideText(label ? label.text : entry.name), label ? label.icon : entry.icon,
+                                                              () => DesktopActionsManager.openUrl(entry.url, launcherUrl));
 
-            let sep2 = menu.newSeparator(menu);
-            menu.addMenuItem(sep2, insertItem);
+        // A section header followed by one item per entry that opens its URL.
+        function addUrlSection(title, entries, labelFor) {
+            const header = menu.newMenuItem(menu);
+            header.text = title;
+            header.section = true;
+            add(header);
+            entries.forEach(entry => add(openUrlItem(menu, entry, labelFor ? labelFor(entry) : null)));
         }
 
-        // 1.5 Add Places Submenu (for Dolphin / File Managers)
-        if (result.places && result.places.length > 0) {
-            let placesSubItem = Qt.createQmlObject('import "."; PlacesSubMenu {}', menu);
+        if (hasEntries(result.jumpList)) {
+            result.jumpList.forEach(action => add(newItem(menu, action.name, action.icon, () => DesktopActionsManager.launchAction(launcherUrl, action.actionId))));
+            addSeparator();
+        }
+
+        // Places (file managers) go into a submenu.
+        if (hasEntries(result.places)) {
+            const placesSubItem = Qt.createQmlObject('import "."; PlacesSubMenu {}', menu);
             placesSubItem.text = Wrappers.i18n("Places");
-            let placesSubMenu = placesSubItem.subMenu;
-
-            result.places.forEach(place => {
-                let menuItem = menu.newMenuItem(placesSubMenu);
-                menuItem.text = elideText(place.name);
-                setIcon(menuItem, place.icon);
-                menuItem.clicked.connect(() => {
-                    DesktopActionsManager.openUrl(place.url, launcherUrl);
-                });
-                placesSubMenu.addMenuItem(menuItem);
-            });
-
-            menu.addMenuItem(placesSubItem, insertItem);
-
-            let sep3 = menu.newSeparator(menu);
-            menu.addMenuItem(sep3, insertItem);
+            const placesSubMenu = placesSubItem.subMenu;
+            result.places.forEach(place => placesSubMenu.addMenuItem(openUrlItem(placesSubMenu, place)));
+            add(placesSubItem);
+            addSeparator();
         }
 
-        // 1.7 Add Browser History (for Firefox/Browsers)
-        if (result.browserHistory && result.browserHistory.length > 0) {
-            let title = menu.newMenuItem(menu);
-            title.text = Wrappers.i18n("Recent Pages");
-            title.section = true;
-            menu.addMenuItem(title, insertItem);
-
-            result.browserHistory.forEach(item => {
-                let menuItem = menu.newMenuItem(menu);
-                menuItem.text = elideText(item.name);
-                setIcon(menuItem, item.icon);
-                menuItem.clicked.connect(() => {
-                    DesktopActionsManager.openUrl(item.url, launcherUrl);
-                });
-                menu.addMenuItem(menuItem, insertItem);
-            });
-
-            let sep4 = menu.newSeparator(menu);
-            menu.addMenuItem(sep4, insertItem);
+        if (hasEntries(result.browserHistory)) {
+            addUrlSection(Wrappers.i18n("Recent Pages"), result.browserHistory);
+            addSeparator();
         }
 
-        // 2. Add Recent Folders
-        if (result.recentFolders && result.recentFolders.length > 0) {
-            let title = menu.newMenuItem(menu);
-            title.text = Wrappers.i18n("Recent Folders");
-            title.section = true;
-            menu.addMenuItem(title, insertItem);
-
-            result.recentFolders.forEach(folder => {
-                let menuItem = menu.newMenuItem(menu);
-                menuItem.text = elideText(folder.name);
-                setIcon(menuItem, folder.icon);
-                menuItem.clicked.connect(() => {
-                    DesktopActionsManager.openUrl(folder.url, launcherUrl);
-                });
-                menu.addMenuItem(menuItem, insertItem);
-            });
-        }
-
-        // 3. Add Recent Documents
-        if (result.recentDocs && result.recentDocs.length > 0) {
-            // First, add the section header using the native Plasma menu item
-            let title = menu.newMenuItem(menu);
-            title.text = Wrappers.i18n("Recent Documents");
-            title.section = true;
-            menu.addMenuItem(title, insertItem);
-
-            // Add the files
-            result.recentDocs.forEach(doc => {
-                let menuItem = menu.newMenuItem(menu);
-
-                // Format name visually for virtual paths using plaintext
-                if (doc.url.startsWith("trash:/")) {
-                    menuItem.text = elideText(Wrappers.i18n("Trash"));
-                    setIcon(menuItem, "user-trash-full");
-                } else if (doc.url.startsWith("zip://") || doc.url.startsWith("tar://") || doc.url.startsWith("krarc://")) {
-                    // Extract archive name safely without regex
-                    let protoIdx = doc.url.indexOf("://");
-                    let pathWithoutProto = protoIdx !== -1 ? doc.url.substring(protoIdx + 3) : doc.url;
-
-                    let insidePath = "";
-                    let archiveName = doc.name;
-
-                    let match = pathWithoutProto.match(/([^\/]+\.(?:zip|tar|gz|xz|bz2|rar|7z))(?:\/|$)(.*)/i);
-                    if (match) {
-                        archiveName = match[1];
-                        insidePath = match[2];
-                        if (insidePath) {
-                            menuItem.text = elideText("[" + archiveName + "] /" + insidePath);
-                        } else {
-                            menuItem.text = elideText(archiveName);
-                        }
-                    } else {
-                        menuItem.text = elideText(doc.name.startsWith("zip://") ? pathWithoutProto : doc.name);
-                    }
-                    setIcon(menuItem, "application-x-archive");
-                } else {
-                    menuItem.text = elideText(doc.name);
-                    setIcon(menuItem, doc.icon);
-                }
-
-                menuItem.clicked.connect(() => {
-                    DesktopActionsManager.openUrl(doc.url, launcherUrl);
-                });
-                menu.addMenuItem(menuItem, insertItem);
-            });
-        }
-
-        // 4. Add "Clear recent" button if we added folders OR documents
-        if ((result.recentDocs && result.recentDocs.length > 0) || (result.recentFolders && result.recentFolders.length > 0)) {
-            let clearItem = menu.newMenuItem(menu);
-            clearItem.text = Wrappers.i18n("Forget Recent Files");
-            setIcon(clearItem, "edit-clear-history");
-            clearItem.clicked.connect(() => {
-                DesktopActionsManager.clearRecentDocuments(launcherUrl);
-            });
-            menu.addMenuItem(clearItem, insertItem);
-
-            // Separator after recent documents
-            let sep = menu.newSeparator(menu);
-            menu.addMenuItem(sep, insertItem);
+        const hasRecentFolders = hasEntries(result.recentFolders);
+        const hasRecentDocs = hasEntries(result.recentDocs);
+        if (hasRecentFolders)
+            addUrlSection(Wrappers.i18n("Recent Folders"), result.recentFolders);
+        if (hasRecentDocs)
+            addUrlSection(Wrappers.i18n("Recent Documents"), result.recentDocs, menu._recentDocLabel);
+        if (hasRecentFolders || hasRecentDocs) {
+            add(newItem(menu, Wrappers.i18n("Forget Recent Files"), "edit-clear-history", () => DesktopActionsManager.clearRecentDocuments(launcherUrl)));
+            addSeparator();
         }
     }
 
