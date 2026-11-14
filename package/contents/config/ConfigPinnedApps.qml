@@ -11,8 +11,6 @@ import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
 
-import org.kde.plasma.plasma5support as P5Support
-
 import "../ui/code/singletones"
 
 ConfigPage {
@@ -23,7 +21,6 @@ ConfigPage {
     onPinnedLaunchersChanged: {
         refreshPinnedAppsModel();
     }
-    property bool initialLoadDone: false
     property bool isLoadingApps: false
     property var appMetadataCache: ({})
     property string currentSearchText: ""
@@ -68,46 +65,6 @@ ConfigPage {
     function isPinned(url) {
         return pinnedLaunchers.some(launcher => cleanUrl(launcher) === url);
     }
-    // Initial app loading timer
-    Timer {
-        id: initialLoadTimer
-        interval: 200
-        repeat: false
-        onTriggered: {
-            cfg_page.isLoadingApps = true;
-            cfg_page.loadInstalledApps();
-        }
-    }
-
-    // App loading data source
-    P5Support.DataSource {
-        id: appsSource
-        engine: "apps"
-        connectedSources: ["apps"]
-        interval: 0
-
-        property var requestedSources: ({})
-
-        onSourceConnected: (source) => {
-            // Data usually comes later in onNewData, but sometimes it's immediate if cached.
-            // If data is already present, process it.
-            if (source === "apps") {
-                cfg_page.startBatchProcessing();
-                return;
-            }
-            if (appsSource.data[source] !== undefined) {
-                 cfg_page.processAppSource(source, appsSource.data[source]);
-            }
-        }
-
-        onNewData: (source, data) => {
-            if (source === "apps") {
-                 cfg_page.startBatchProcessing();
-                 return;
-            }
-            cfg_page.processAppSource(source, data);
-        }
-    }
 
     ListModel {
         id: installedAppsModel
@@ -117,187 +74,42 @@ ConfigPage {
         id: filteredAppsModel
     }
 
-    function loadInstalledApps() {
-        // Add default special launchers
-        if (installedAppsModel.count === 0) {
-            cfg_page.specialLaunchers.forEach(launcher => installedAppsModel.append({
+    // Loads every installed app once, through the helper, into the app list
+    // and the metadata the pinned list shows.
+    function loadApps() {
+        isLoadingApps = true;
+        DesktopActionsManager.listApps(apps => {
+            const cache = {};
+            const items = cfg_page.specialLaunchers.map(launcher => ({
                 name: launcher.name,
                 icon: launcher.icon,
                 url: launcher.url,
-                keywords: launcher.keywords
+                keywords: launcher.keywords,
+                genericName: "",
+                comment: launcher.comment
             }));
-        }
-
-        // Start loading by connecting to "apps" list source
-        isLoadingApps = true;
-        // Connecting to "apps" source will trigger onNewData/onSourceConnected when ready
-        // which will then call startBatchProcessing()
-        appsSource.connectSource("apps");
-    }
-
-    function startBatchProcessing() {
-        // Create a prioritized list of desktop files
-        const desktopFiles = [];
-        const commonPrefixes = ["firefox", "chromium", "chrome", "brave", "dolphin", "konsole", "kate", "gnome-terminal", "org.kde"];
-        
-        // Build set of pinned sources for O(1) lookup
-        const pinnedSources = new Set();
-        for (let i = 0; i < pinnedLaunchers.length; i++) {
-            let url = cleanUrl(pinnedLaunchers[i]);
-            if (url.startsWith("applications:")) {
-                const src = url.substring(13);
-                pinnedSources.add(src); // remove "applications:" prefix
-                
-                // Explicitly add pinned apps to the processing list, even if not in appsSource.sources
-                // This ensures .local apps are requested
-                desktopFiles.push({
-                    source: src,
-                    priority: -1 // Highest priority
+            for (const app of apps) {
+                const url = "applications:" + app.id;
+                cache[url] = {name: app.name, icon: app.icon, genericName: app.genericName, comment: app.comment};
+                // Hidden apps are listed only if they're already pinned.
+                if (!app.display && !cfg_page.isPinned(url))
+                    continue;
+                items.push({
+                    name: app.name,
+                    icon: app.icon,
+                    url: url,
+                    keywords: app.keywords.join(" "),
+                    genericName: app.genericName,
+                    comment: app.comment
                 });
             }
-        }
-
-        // Add other available sources
-        for (let i = 0; i < appsSource.sources.length; i++) {
-            const source = appsSource.sources[i];
-            // Skip if already added (pinned apps are handled above)
-            // Or just check if source is valid desktop file
-            if (source !== "apps" && source.endsWith(".desktop")) {
-                if (pinnedSources.has(source)) continue; // Already added
-
-                let priority = 1000;
-                const sourceLower = source.toLowerCase();
-
-                // Check if it's a commonly used app
-                for (let j = 0; j < commonPrefixes.length; j++) {
-                    if (sourceLower.includes(commonPrefixes[j])) {
-                        priority = j;
-                        break;
-                    }
-                }
-
-                desktopFiles.push({
-                    source: source,
-                    priority: priority
-                });
-            }
-        }
-
-        // Sort by priority
-        desktopFiles.sort((a, b) => a.priority - b.priority);
-
-        // Process in batches
-        let processedCount = 0;
-        function processBatch() {
-            const batchSize = 15;
-            const end = Math.min(processedCount + batchSize, desktopFiles.length);
-
-            for (let i = processedCount; i < end; i++) {
-                const item = desktopFiles[i];
-                const source = item.source;
-                // Only connect if not already requested or pinned (pinned forces request sometimes)
-                if (!appsSource.requestedSources[source]) {
-                    appsSource.connectSource(source);
-                    appsSource.requestedSources[source] = true;
-                }
-            }
-
-            processedCount = end;
-            if (processedCount < desktopFiles.length) {
-                // Schedule next batch
-                Qt.callLater(processBatch);
-            } else {
-                // All batches scheduled
-                isLoadingApps = false;
-                // Once loaded, refresh pinned apps to ensure metadata is caught up
-                refreshPinnedAppsModel();
-            }
-        }
-
-        // Start processing
-        processBatch();
-    }
-
-    function processAppSource(source, data) {
-        if (source === "apps" || !source.endsWith(".desktop")) {
-            return;
-        }
-
-        if (!data) {
-             // Try to fetch from source if not provided
-             data = appsSource.data[source];
-        }
-        if (!data) return;
-
-        try {
-            // Keys based on user logs: name, iconName, genericName, display, keywords
-            
-            const isPinned = cfg_page.isPinned("applications:" + source);
-            
-            // Filter out hidden items unless they are already pinned
-            if (data["display"] === false && !isPinned) {
-                return;
-            }
-
-            const appName = data["name"] || source.replace(".desktop", "");
-            const appIcon = data["iconName"] || "application-x-executable";
-            const appGenericName = data["genericName"] || "";
-            const appUrl = "applications:" + source;
-            const appKeywords = data["keywords"] ? data["keywords"].join(" ") : "";
-            
-            // Cache metadata for fast lookup
-            appMetadataCache[appUrl] = {
-                name: appName,
-                icon: appIcon,
-                genericName: appGenericName,
-                comment: data["comment"] || ""
-            };
-
-            // Check for duplicates in the model
-            for (let j = 0; j < installedAppsModel.count; j++) {
-                if (installedAppsModel.get(j).url === appUrl) {
-                    return;
-                }
-            }
-
-            const appItem = {
-                name: appName,
-                icon: appIcon,
-                url: appUrl,
-                keywords: appKeywords,
-                genericName: appGenericName,
-                comment: data["comment"] || ""
-            };
-
-            installedAppsModel.append(appItem);
-
-            // Update filtered model if needed (initial populate or search match)
-            if (cfg_page.currentSearchText.length === 0 && filteredAppsModel.count < 50) {
-                 if (!cfg_page.isPinned(appUrl)) {
-                     filteredAppsModel.append(appItem);
-                 }
-            } else if (cfg_page.currentSearchText.length > 0) {
-                // update search results in real time if data comes in late
-                const searchText = cfg_page.currentSearchText.toLowerCase();
-                 if (appName.toLowerCase().includes(searchText) || 
-                     appUrl.toLowerCase().includes(searchText) || 
-                     (appItem.keywords && appItem.keywords.toLowerCase().includes(searchText)) ||
-                     (appItem.genericName && appItem.genericName.toLowerCase().includes(searchText)) ||
-                     (appItem.comment && appItem.comment.toLowerCase().includes(searchText))) {
-                     if (!cfg_page.isPinned(appUrl)) {
-                         filteredAppsModel.append(appItem);
-                     }
-                 }
-            }
-
-            // If this app is pinned, refresh the pinned list to show updated metadata
-            // Only do this periodically or check if it's actually pinned to avoid spamming
-            if (isPinned) {
-                refreshPinnedAppsModel();
-            }
-
-        } catch (e) {
-        }
+            cfg_page.appMetadataCache = cache;
+            installedAppsModel.clear();
+            installedAppsModel.append(items);
+            cfg_page.isLoadingApps = false;
+            cfg_page.refreshPinnedAppsModel();
+            cfg_page.filterAppsModel(cfg_page.currentSearchText, true);
+        });
     }
 
     function filterAppsModel(text, force) {
@@ -358,6 +170,7 @@ ConfigPage {
 
     Component.onCompleted: {
         refreshPinnedAppsModel();
+        loadApps();
     }
 
     function getGenericNameForUrl(url) {
@@ -600,10 +413,6 @@ ConfigPage {
                             cfg_page.filterAppsModel(cfg_page.currentSearchText, true);
                             
                             stackView.push(addAppsPage)
-                            if (!cfg_page.initialLoadDone) {
-                                cfg_page.initialLoadDone = true;
-                                initialLoadTimer.start();
-                            }
                         }
                         Layout.fillWidth: true
                     }

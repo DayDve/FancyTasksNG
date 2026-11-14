@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Task Tooltips Settings:** The tooltip options, the last ones left in Behavior, have their own section, Task Tooltips, in three blocks: the tooltip, window thumbnails and media controls. Turning tooltips off greys out the rest instead of hiding it. Behavior is gone.
 - **Context Menu Settings:** The context menu options moved from Advanced to their own section, Context Menu, and the browser history option is no longer marked experimental. Advanced keeps exporting and importing the settings.
 - **Setting Limits:** The icon size can no longer be set to zero, which hid the icons: it starts at 10 % (8 px for a size in pixels). Indicator sizes have realistic limits instead of 999 px: thickness up to 32 px, length up to 500 px, offset from the panel edge up to 32 px. Values saved before are kept.
+- **App List on the Pinned Applications Page:** "Add Application" lists the installed apps sorted by name, all at once, instead of filling in over a few seconds with a guessed set of popular apps first.
 
 ### Fixed
 - **Hover Highlight on a Classic Panel:** Turning off "Icon hover effects", an icons-only option hidden in the classic panel mode, also took away the highlight of the button under the cursor on a classic panel. A classic panel now ignores the option and always highlights the hovered button, as Plasma's own task manager does. The cursor glow, another hover effect, is now also icons-only.

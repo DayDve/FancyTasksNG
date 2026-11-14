@@ -197,6 +197,21 @@ Item {
               value => callback && callback(value === true));
     }
 
+    // callback receives every installed app: [{id, name, icon, genericName,
+    // comment, keywords, display}], sorted by name; empty if the helper
+    // isn't there.
+    function listApps(callback) {
+        _call("ListApps", "()", [], value => {
+            let result = [];
+            try {
+                result = value ? JSON.parse(String(value)) : [];
+            } catch (e) {
+                console.warn("DesktopActionsManager ListApps parse error:", e);
+            }
+            callback(result);
+        });
+    }
+
     function openUrl(url, launcherUrl) {
         _call("OpenUrl", "(ss)", [String(url || ""), String(launcherUrl || "")]);
     }

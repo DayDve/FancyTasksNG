@@ -700,6 +700,26 @@ def _ancestor_pids():
     return pids
 
 
+def list_applications():
+    """Every installed app (Hidden ones excluded, NoDisplay ones flagged), for
+    the Pinned Applications settings page, sorted by name."""
+    apps = []
+    for info in Gio.AppInfo.get_all():
+        if not isinstance(info, Gio.DesktopAppInfo) or not info.get_id():
+            continue
+        apps.append({
+            "id": info.get_id(),
+            "name": info.get_display_name() or info.get_id(),
+            "icon": info.get_string("Icon") or "application-x-executable",
+            "genericName": info.get_generic_name() or "",
+            "comment": info.get_description() or "",
+            "keywords": list(info.get_keywords() or []),
+            "display": bool(info.should_show()),
+        })
+    apps.sort(key=lambda app: app["name"].casefold())
+    return apps
+
+
 class NotAllowed(dbus.exceptions.DBusException):
     _dbus_error_name = "io.github.daydve.fancytasksng.Error.NotAllowed"
 
@@ -884,6 +904,11 @@ class DesktopActionsService(dbus.service.Object):
                 return f.read()
         except Exception as e:
             return f"ERROR: {e}"
+
+    @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='', out_signature='s', sender_keyword='sender')
+    def ListApps(self, sender=None):
+        self._check_caller(sender)
+        return json.dumps(list_applications())
 
     @dbus.service.method('io.github.daydve.fancytasksng.DesktopActions', in_signature='ss', out_signature='', sender_keyword='sender')
     def OpenUrl(self, url, preferred_app, sender=None):
