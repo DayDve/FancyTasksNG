@@ -11,7 +11,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
-import org.kde.kquickcontrols as KQuickAddons
 
 import "../ui/code/singletones"
 
@@ -66,16 +65,12 @@ ConfigPage {
                         currentIndex: signalsPage.cfg_badgeDotMode
                         onActivated: (index) => signalsPage.cfg_badgeDotMode = index
                     }
-                    SpinBox {
+                    PxSpinBox {
                         enabled: badgeDotMode.currentIndex === 2
                         from: 4
                         to: 64
                         value: signalsPage.cfg_badgeDotThreshold
                         onValueModified: signalsPage.cfg_badgeDotThreshold = value
-                    }
-                    Label {
-                        enabled: badgeDotMode.currentIndex === 2
-                        text: "px"
                     }
                 }
             }
@@ -141,15 +136,11 @@ ConfigPage {
                         currentIndex: signalsPage.cfg_badgeColorMode
                         onActivated: (index) => signalsPage.cfg_badgeColorMode = index
                     }
-                    KQuickAddons.ColorButton {
+                    ConfigColorButton {
                         enabled: badgeColorMode.currentIndex === 3
-                        showAlphaChannel: true
                         Layout.maximumHeight: badgeColorMode.height
-                        color: signalsPage.cfg_badgeCustomColor
-                        onColorChanged: {
-                            if (!Qt.colorEqual(color, signalsPage.cfg_badgeCustomColor))
-                                signalsPage.cfg_badgeCustomColor = color;
-                        }
+                        value: signalsPage.cfg_badgeCustomColor
+                        onEdited: (picked) => signalsPage.cfg_badgeCustomColor = picked
                     }
                 }
             }
@@ -191,13 +182,9 @@ ConfigPage {
                     Label {
                         text: Wrappers.i18n("Progress color:")
                     }
-                    KQuickAddons.ColorButton {
-                        showAlphaChannel: true
-                        color: signalsPage.cfg_indicatorProgressColor
-                        onColorChanged: {
-                            if (!Qt.colorEqual(color, signalsPage.cfg_indicatorProgressColor))
-                                signalsPage.cfg_indicatorProgressColor = color;
-                        }
+                    ConfigColorButton {
+                        value: signalsPage.cfg_indicatorProgressColor
+                        onEdited: (picked) => signalsPage.cfg_indicatorProgressColor = picked
                     }
                 }
             }
@@ -284,15 +271,11 @@ ConfigPage {
                     checked: signalsPage.cfg_attentionCustomColorEnabled
                     onToggled: signalsPage.cfg_attentionCustomColorEnabled = checked
                 }
-                KQuickAddons.ColorButton {
+                ConfigColorButton {
                     enabled: attentionCustomColorEnabled.checked
-                    showAlphaChannel: true
                     Layout.maximumHeight: attentionCustomColorEnabled.height
-                    color: signalsPage.cfg_attentionCustomColor
-                    onColorChanged: {
-                        if (!Qt.colorEqual(color, signalsPage.cfg_attentionCustomColor))
-                            signalsPage.cfg_attentionCustomColor = color;
-                    }
+                    value: signalsPage.cfg_attentionCustomColor
+                    onEdited: (picked) => signalsPage.cfg_attentionCustomColor = picked
                 }
             }
         }

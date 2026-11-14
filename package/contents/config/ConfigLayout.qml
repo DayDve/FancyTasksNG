@@ -157,61 +157,10 @@ ConfigPage {
                 onActivated: (index) => layoutPage.cfg_iconSizeOverride = (index === 1)
             }
 
-            // One row for both units, so the form doesn't shift when they
-            // change.
-            RowLayout {
+            IconSizeControl {
                 Layout.fillWidth: true
-                spacing: Kirigami.Units.smallSpacing
-                readonly property bool absolute: layoutPage.cfg_iconSizeOverride
-
-                // No stepSize: with it the style draws a tick per step.
-                Slider {
-                    id: iconSize
-                    Layout.fillWidth: true
-                    from: parent.absolute ? 8 : 10
-                    to: parent.absolute ? 100 : 300
-                    value: parent.absolute ? layoutPage.cfg_iconSizePx : layoutPage.cfg_iconScale
-                    onMoved: {
-                        if (parent.absolute)
-                            layoutPage.cfg_iconSizePx = Math.round(value);
-                        else
-                            layoutPage.cfg_iconScale = Math.round(value);
-                    }
-                }
-                SpinBox {
-                    from: parent.absolute ? 8 : 10
-                    to: parent.absolute ? 100 : 300
-                    editable: true
-                    value: Math.round(iconSize.value)
-                    onValueModified: {
-                        if (parent.absolute)
-                            layoutPage.cfg_iconSizePx = value;
-                        else
-                            layoutPage.cfg_iconScale = value;
-                    }
-                }
-                Label {
-                    // Both units take the same room.
-                    Layout.minimumWidth: unitMetrics.advanceWidth
-                    text: parent.absolute ? "px" : "%"
-                    TextMetrics {
-                        id: unitMetrics
-                        text: "px"
-                    }
-                }
-                Button {
-                    icon.name: "edit-reset"
-                    flat: true
-                    onClicked: {
-                        if (parent.absolute)
-                            layoutPage.cfg_iconSizePx = 32;
-                        else
-                            layoutPage.cfg_iconScale = 100;
-                    }
-                    ToolTip.text: Wrappers.i18n("Reset to default")
-                    ToolTip.visible: hovered
-                    ToolTip.delay: 1000
-                }
+                page: layoutPage
+                showReset: true
             }
 
             RowLayout {

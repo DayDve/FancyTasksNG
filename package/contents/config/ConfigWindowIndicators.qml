@@ -11,7 +11,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
-import org.kde.kquickcontrols as KQuickAddons
 
 import "../ui/code/singletones"
 
@@ -117,14 +116,11 @@ ConfigPage {
                 Label {
                     text: Wrappers.i18n("Edge offset:")
                 }
-                SpinBox {
+                PxSpinBox {
                     from: 0
                     to: 32
                     value: indicatorsPage.cfg_indicatorEdgeOffset
                     onValueModified: indicatorsPage.cfg_indicatorEdgeOffset = value
-                }
-                Label {
-                    text: "px"
                 }
             }
 
@@ -177,27 +173,21 @@ ConfigPage {
                 Label {
                     text: Wrappers.i18n("Thickness:")
                 }
-                SpinBox {
+                PxSpinBox {
                     from: 1
                     to: 32
                     value: indicatorsPage.cfg_indicatorSize
                     onValueModified: indicatorsPage.cfg_indicatorSize = value
                 }
-                Label {
-                    text: "px"
-                }
                 Item { implicitWidth: Kirigami.Units.largeSpacing }
                 Label {
                     text: Wrappers.i18n("Segment length:")
                 }
-                SpinBox {
+                PxSpinBox {
                     from: 1
                     to: 500
                     value: indicatorsPage.cfg_indicatorLength
                     onValueModified: indicatorsPage.cfg_indicatorLength = value
-                }
-                Label {
-                    text: "px"
                 }
             }
 
@@ -210,14 +200,11 @@ ConfigPage {
                     Label {
                         text: Wrappers.i18n("Side padding:")
                     }
-                    SpinBox {
+                    PxSpinBox {
                         from: 0
                         to: 200
                         value: indicatorsPage.cfg_indicatorShrink
                         onValueModified: indicatorsPage.cfg_indicatorShrink = value
-                    }
-                    Label {
-                        text: "px"
                     }
                 }
                 ConfigHint {
@@ -246,27 +233,21 @@ ConfigPage {
                     Label {
                         text: Wrappers.i18n("Thickness:")
                     }
-                    SpinBox {
+                    PxSpinBox {
                         from: 1
                         to: 32
                         value: indicatorsPage.cfg_indicatorActiveSize
                         onValueModified: indicatorsPage.cfg_indicatorActiveSize = value
                     }
-                    Label {
-                        text: "px"
-                    }
                     Item { implicitWidth: Kirigami.Units.largeSpacing }
                     Label {
                         text: Wrappers.i18n("Length:")
                     }
-                    SpinBox {
+                    PxSpinBox {
                         from: 1
                         to: 500
                         value: indicatorsPage.cfg_indicatorActiveLength
                         onValueModified: indicatorsPage.cfg_indicatorActiveLength = value
-                    }
-                    Label {
-                        text: "px"
                     }
                 }
             }
@@ -316,27 +297,21 @@ ConfigPage {
                     Label {
                         text: Wrappers.i18n("Thickness:")
                     }
-                    SpinBox {
+                    PxSpinBox {
                         from: 1
                         to: 32
                         value: indicatorsPage.cfg_indicatorHoverSize
                         onValueModified: indicatorsPage.cfg_indicatorHoverSize = value
                     }
-                    Label {
-                        text: "px"
-                    }
                     Item { implicitWidth: Kirigami.Units.largeSpacing }
                     Label {
                         text: Wrappers.i18n("Length:")
                     }
-                    SpinBox {
+                    PxSpinBox {
                         from: 1
                         to: 500
                         value: indicatorsPage.cfg_indicatorHoverLength
                         onValueModified: indicatorsPage.cfg_indicatorHoverLength = value
-                    }
-                    Label {
-                        text: "px"
                     }
                 }
             }
@@ -361,27 +336,21 @@ ConfigPage {
                     Label {
                         text: Wrappers.i18n("Thickness:")
                     }
-                    SpinBox {
+                    PxSpinBox {
                         from: 1
                         to: 32
                         value: indicatorsPage.cfg_indicatorGroupSize
                         onValueModified: indicatorsPage.cfg_indicatorGroupSize = value
                     }
-                    Label {
-                        text: "px"
-                    }
                     Item { implicitWidth: Kirigami.Units.largeSpacing }
                     Label {
                         text: Wrappers.i18n("Length:")
                     }
-                    SpinBox {
+                    PxSpinBox {
                         from: 1
                         to: 500
                         value: indicatorsPage.cfg_indicatorGroupLength
                         onValueModified: indicatorsPage.cfg_indicatorGroupLength = value
-                    }
-                    Label {
-                        text: "px"
                     }
                 }
             }
@@ -415,15 +384,11 @@ ConfigPage {
                         indicatorsPage.cfg_indicatorDominantColor = index === 1;
                     }
                 }
-                KQuickAddons.ColorButton {
+                ConfigColorButton {
                     enabled: indicatorColorCombo.currentIndex === 2
-                    showAlphaChannel: true
                     Layout.maximumHeight: indicatorColorCombo.height
-                    color: indicatorsPage.cfg_indicatorCustomColor
-                    onColorChanged: {
-                        if (!Qt.colorEqual(color, indicatorsPage.cfg_indicatorCustomColor))
-                            indicatorsPage.cfg_indicatorCustomColor = color;
-                    }
+                    value: indicatorsPage.cfg_indicatorCustomColor
+                    onEdited: (picked) => indicatorsPage.cfg_indicatorCustomColor = picked
                 }
             }
 

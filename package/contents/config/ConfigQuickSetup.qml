@@ -84,48 +84,15 @@ ConfigPage {
 
             Item { height: Kirigami.Units.smallSpacing }
 
-            // The size in the unit chosen under Task Layout › Buttons. A
-            // short slider: it's one option among many here.
             RowLayout {
                 spacing: Kirigami.Units.smallSpacing
-                readonly property bool absolute: quickPage.cfg_iconSizeOverride
-
                 Label {
                     text: Wrappers.i18n("Icon size:")
                 }
-                // No stepSize: with it the style draws a tick per step.
-                Slider {
-                    id: iconSize
-                    Layout.preferredWidth: Kirigami.Units.gridUnit * 10
-                    from: parent.absolute ? 8 : 10
-                    to: parent.absolute ? 100 : 300
-                    value: parent.absolute ? quickPage.cfg_iconSizePx : quickPage.cfg_iconScale
-                    onMoved: {
-                        if (parent.absolute)
-                            quickPage.cfg_iconSizePx = Math.round(value);
-                        else
-                            quickPage.cfg_iconScale = Math.round(value);
-                    }
-                }
-                SpinBox {
-                    from: parent.absolute ? 8 : 10
-                    to: parent.absolute ? 100 : 300
-                    editable: true
-                    value: Math.round(iconSize.value)
-                    onValueModified: {
-                        if (parent.absolute)
-                            quickPage.cfg_iconSizePx = value;
-                        else
-                            quickPage.cfg_iconScale = value;
-                    }
-                }
-                Label {
-                    Layout.minimumWidth: unitMetrics.advanceWidth
-                    text: parent.absolute ? "px" : "%"
-                    TextMetrics {
-                        id: unitMetrics
-                        text: "px"
-                    }
+                // A short slider: it's one option among many here.
+                IconSizeControl {
+                    page: quickPage
+                    sliderWidth: Kirigami.Units.gridUnit * 10
                 }
             }
             RowLayout {

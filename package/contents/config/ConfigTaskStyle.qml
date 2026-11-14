@@ -9,7 +9,6 @@ import QtQuick
 import org.kde.kirigami as Kirigami
 import QtQuick.Controls
 import QtQuick.Layouts
-import org.kde.kquickcontrols as KQuickAddons
 
 import "../ui/code/singletones"
 
@@ -106,15 +105,11 @@ ConfigPage {
                     currentIndex: stylePage.cfg_clipIconBackgroundColorMode
                     onActivated: (index) => stylePage.cfg_clipIconBackgroundColorMode = index
                 }
-                KQuickAddons.ColorButton {
+                ConfigColorButton {
                     enabled: stylePage.cfg_clipIconBackgroundColorMode === 0
-                    showAlphaChannel: true
                     Layout.maximumHeight: clipIconBackgroundColorMode.height
-                    color: stylePage.cfg_clipIconBackgroundColor
-                    onColorChanged: {
-                        if (!Qt.colorEqual(color, stylePage.cfg_clipIconBackgroundColor))
-                            stylePage.cfg_clipIconBackgroundColor = color;
-                    }
+                    value: stylePage.cfg_clipIconBackgroundColor
+                    onEdited: (picked) => stylePage.cfg_clipIconBackgroundColor = picked
                 }
             }
             RowLayout {
@@ -206,15 +201,11 @@ ConfigPage {
                         stylePage.cfg_buttonColorizeDominant = index === 1;
                     }
                 }
-                KQuickAddons.ColorButton {
-                    showAlphaChannel: true
+                ConfigColorButton {
                     enabled: stylePage.cfg_buttonColorize && !stylePage.cfg_buttonColorizeDominant
                     Layout.maximumHeight: buttonColorCombo.height
-                    color: stylePage.cfg_buttonColorizeCustom
-                    onColorChanged: {
-                        if (!Qt.colorEqual(color, stylePage.cfg_buttonColorizeCustom))
-                            stylePage.cfg_buttonColorizeCustom = color;
-                    }
+                    value: stylePage.cfg_buttonColorizeCustom
+                    onEdited: (picked) => stylePage.cfg_buttonColorizeCustom = picked
                 }
             }
             RowLayout {

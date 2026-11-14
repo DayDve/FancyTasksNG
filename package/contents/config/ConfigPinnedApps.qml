@@ -28,6 +28,19 @@ ConfigPage {
     property var appMetadataCache: ({})
     property string currentSearchText: ""
 
+    // The "preferred://" launchers: whichever app is set as the default one.
+    readonly property var specialLaunchers: [
+        {url: "preferred://browser", name: Wrappers.i18n("Default Web Browser"), comment: Wrappers.i18n("Browse the Web"),
+         icon: "internet-web-browser", keywords: "web browser internet"},
+        {url: "preferred://filemanager", name: Wrappers.i18n("Default File Manager"), comment: Wrappers.i18n("Manage Files"),
+         icon: "system-file-manager", keywords: "files folder"},
+        {url: "preferred://mail", name: Wrappers.i18n("Default Mail Client"), comment: Wrappers.i18n("Send and Receive Email"),
+         icon: "internet-mail", keywords: "email mail"}
+    ]
+    function specialLauncher(url: string): var {
+        return specialLaunchers.find(launcher => launcher.url === url);
+    }
+
     // ---------------------------------------
     // Unified Style Configuration
     // ---------------------------------------
@@ -107,24 +120,12 @@ ConfigPage {
     function loadInstalledApps() {
         // Add default special launchers
         if (installedAppsModel.count === 0) {
-            installedAppsModel.append({
-                name: Wrappers.i18n("Default Web Browser"),
-                icon: "internet-web-browser",
-                url: "preferred://browser",
-                keywords: "web browser internet"
-            });
-            installedAppsModel.append({
-                name: Wrappers.i18n("Default File Manager"),
-                icon: "system-file-manager",
-                url: "preferred://filemanager",
-                keywords: "files folder"
-            });
-            installedAppsModel.append({
-                name: Wrappers.i18n("Default Mail Client"),
-                icon: "internet-mail",
-                url: "preferred://mail",
-                keywords: "email mail"
-            });
+            cfg_page.specialLaunchers.forEach(launcher => installedAppsModel.append({
+                name: launcher.name,
+                icon: launcher.icon,
+                url: launcher.url,
+                keywords: launcher.keywords
+            }));
         }
 
         // Start loading by connecting to "apps" list source
@@ -385,10 +386,7 @@ ConfigPage {
 
     function getCommentForUrl(url) {
         if (url.startsWith("preferred://")) {
-            if (url === "preferred://browser") return Wrappers.i18n("Browse the Web");
-            if (url === "preferred://filemanager") return Wrappers.i18n("Manage Files");
-            if (url === "preferred://mail") return Wrappers.i18n("Send and Receive Email");
-            return "";
+            return cfg_page.specialLauncher(url)?.comment ?? "";
         }
 
         if (appMetadataCache[url]) {
@@ -399,10 +397,7 @@ ConfigPage {
 
     function getNameForUrl(url) {
         if (url.startsWith("preferred://")) {
-            if (url === "preferred://browser") return Wrappers.i18n("Default Web Browser");
-            if (url === "preferred://filemanager") return Wrappers.i18n("Default File Manager");
-            if (url === "preferred://mail") return Wrappers.i18n("Default Mail Client");
-            return Wrappers.i18n("Default Application");
+            return cfg_page.specialLauncher(url)?.name ?? Wrappers.i18n("Default Application");
         }
 
         if (appMetadataCache[url]) {
@@ -426,10 +421,7 @@ ConfigPage {
 
     function getIconForUrl(url) {
         if (url.startsWith("preferred://")) {
-            if (url === "preferred://browser") return "internet-web-browser";
-            if (url === "preferred://filemanager") return "system-file-manager";
-            if (url === "preferred://mail") return "internet-mail";
-            return "preferences-desktop-default-applications";
+            return cfg_page.specialLauncher(url)?.icon ?? "preferences-desktop-default-applications";
         }
 
         if (appMetadataCache[url]) {
@@ -625,28 +617,16 @@ ConfigPage {
                         Menu {
                             id: specialLauncherMenu
 
-                            MenuItem {
-                                text: Wrappers.i18n("Default Web Browser")
-                                icon.name: "internet-web-browser"
-                                onTriggered: {
-                                    cfg_page.addLauncher("preferred://browser");
+                            Instantiator {
+                                model: cfg_page.specialLaunchers
+                                delegate: MenuItem {
+                                    required property var modelData
+                                    text: modelData.name
+                                    icon.name: modelData.icon
+                                    onTriggered: cfg_page.addLauncher(modelData.url)
                                 }
-                            }
-
-                            MenuItem {
-                                text: Wrappers.i18n("Default File Manager")
-                                icon.name: "system-file-manager"
-                                onTriggered: {
-                                    cfg_page.addLauncher("preferred://filemanager");
-                                }
-                            }
-
-                            MenuItem {
-                                text: Wrappers.i18n("Default Mail Client")
-                                icon.name: "internet-mail"
-                                onTriggered: {
-                                    cfg_page.addLauncher("preferred://mail");
-                                }
+                                onObjectAdded: (index, object) => specialLauncherMenu.insertItem(index, object)
+                                onObjectRemoved: (index, object) => specialLauncherMenu.removeItem(object)
                             }
                         }
                     }
