@@ -716,12 +716,28 @@ Item {
         visible: (!task.model || task.model.IsLauncher || task.model.IsDemandingAttention || task.model.IsActive || backgroundFrame.isHovered) ?
             true : !task.config.disableButtonInactiveSvg
 
-        layer.enabled: (!task.model || task.model.IsLauncher) ? false :
-                       (task.model.IsDemandingAttention && task.config.attentionCustomColorEnabled) ? true :
-                       (!task.config.buttonColorize) ? false :
-                       (task.model.IsDemandingAttention && !backgroundFrame.isHovered) ? false :
-                       (task.model.IsActive || backgroundFrame.isHovered) ? true :
-                       (!task.config.disableButtonInactiveSvg && task.config.buttonColorizeInactive)
+        // Whether the button background is tinted: always for attention with
+        // its own color; otherwise only with "colorize" on, for the active or
+        // hovered button, and for inactive ones if that's enabled too.
+        function colorized(): bool {
+            if (!task.model || task.model.IsLauncher) {
+                return false;
+            }
+            if (task.model.IsDemandingAttention && task.config.attentionCustomColorEnabled) {
+                return true;
+            }
+            if (!task.config.buttonColorize) {
+                return false;
+            }
+            if (task.model.IsDemandingAttention) {
+                return backgroundFrame.isHovered;
+            }
+            if (task.model.IsActive || backgroundFrame.isHovered) {
+                return true;
+            }
+            return !task.config.disableButtonInactiveSvg && task.config.buttonColorizeInactive;
+        }
+        layer.enabled: colorized()
 
         layer.effect: MultiEffect {
             brightness: 1.0
@@ -797,14 +813,13 @@ Item {
         asynchronous: true
         active: !!(task.model && task.model.IsWindow) && task.taskProgress >= 0 && task.config.showAppSignals && task.config.indicatorProgressStyle > 0
 
-        source: "TaskProgressOverlay.qml"
-        onLoaded: {
-            item.pStyle = Qt.binding(() => task.config.indicatorProgressStyle);
-            item.pColor = Qt.binding(() => task.config.indicatorProgressColor);
-            item.pOpacity = Qt.binding(() => task.config.indicatorProgressOpacity / 100.0);
-            item.pThick = Qt.binding(() => task.config.indicatorProgressThickness);
-            item.pPosition = Qt.binding(() => task.taskProgress);
-            item.panelLocation = Qt.binding(() => task.location);
+        sourceComponent: TaskProgressOverlay {
+            pStyle: task.config.indicatorProgressStyle
+            pColor: task.config.indicatorProgressColor
+            pOpacity: task.config.indicatorProgressOpacity / 100.0
+            pThick: task.config.indicatorProgressThickness
+            pPosition: task.taskProgress
+            panelLocation: task.location
         }
     }
 

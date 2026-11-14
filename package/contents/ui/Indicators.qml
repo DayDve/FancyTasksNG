@@ -92,103 +92,67 @@ Flow {
                 return false;
             }
 
-            readonly property var computedVar: {
-                var colorCalc;
-                var colorEval;
-                var parentSize = !isVertical ? indicatorsFlow.frameSvgItem.width : indicatorsFlow.frameSvgItem.height;
-                var indicatorComputedSize;
-                var adjustment = isFirst ? adjust : 0
-                var parentSpacingAdjust = indicatorsFlow.taskCount >= 1 && maxStates >= 2 ? (spacing * 2.5) : 0
+            readonly property bool hovered: indicatorsFlow.taskItem.containsMouse || indicatorsFlow.taskItem.isHovered
+            // The last segment turns into a "+" when there are more windows than segments.
+            readonly property bool showsPlus: indicatorsFlow.config.indicatorShowPlus && index === maxStates - 1 && indicatorsFlow.taskCount > maxStates
 
-                colorEval = TaskTools.resolveIndicatorBaseColor(
-                    indicatorsFlow.config.indicatorAccentColor,
-                    indicatorsFlow.config.indicatorDominantColor,
-                    Kirigami.Theme.highlightColor,
-                    decoColor,
-                    indicatorsFlow.config.indicatorCustomColor
-                );
+            // [length, thickness] of a segment in its state: the hover size if
+            // it has its own, else the group or active size, else the base one.
+            readonly property var segmentSize: {
+                const cfg = indicatorsFlow.config;
+                let size = [indicatorLength, cfg.indicatorSize];
+                if (cfg.indicatorResize && (isActiveWindow || hovered)) {
+                    if (hovered && cfg.indicatorHoverSeparate) {
+                        size = [cfg.indicatorHoverLength, cfg.indicatorHoverSize];
+                    } else if (indicatorsFlow.taskCount > 1 && cfg.indicatorGroupSeparate) {
+                        size = [cfg.indicatorGroupLength, cfg.indicatorGroupSize];
+                    } else {
+                        size = [cfg.indicatorActiveLength, cfg.indicatorActiveSize];
+                    }
+                }
+                // The "+" sits in a square.
+                if (showsPlus) {
+                    size[0] = size[1];
+                }
+                return size;
+            }
+            readonly property real thickness: segmentSize[1]
 
-                let segLength = indicatorLength;
-                let segSize = indicatorsFlow.config.indicatorSize;
+            // In the line style the first segment takes up what the others leave.
+            readonly property real segmentLength: {
+                const length = segmentSize[0];
+                if (!isFirst || indicatorsFlow.config.indicatorStyle !== 0) {
+                    return length;
+                }
+                const parentSize = !isVertical ? indicatorsFlow.frameSvgItem.width : indicatorsFlow.frameSvgItem.height;
+                const parentSpacingAdjust = indicatorsFlow.taskCount >= 1 && maxStates >= 2 ? (spacing * 2.5) : 0;
+                return parentSize + parentSpacingAdjust - (Math.min(indicatorsFlow.taskCount, maxStates === 1 ? 0 : maxStates) * (spacing + length)) - adjust;
+            }
 
-                // 1. Active styling
+            readonly property color segmentColor: {
+                const cfg = indicatorsFlow.config;
+                let color = TaskTools.resolveIndicatorBaseColor(cfg.indicatorAccentColor, cfg.indicatorDominantColor,
+                                                                Kirigami.Theme.highlightColor, decoColor, cfg.indicatorCustomColor);
+                if (cfg.indicatorDesaturate && indicatorsFlow.taskItem.taskState === "minimized") {
+                    color = Qt.hsla(color.hslHue, 0.0, color.hslLightness, color.a * 0.5);
+                }
                 if (isActiveWindow) {
-                    if (indicatorsFlow.config.indicatorResize) {
-                        if (indicatorsFlow.taskCount > 1 && indicatorsFlow.config.indicatorGroupSeparate) {
-                            segLength = indicatorsFlow.config.indicatorGroupLength;
-                            segSize = indicatorsFlow.config.indicatorGroupSize;
-                        } else {
-                            segLength = indicatorsFlow.config.indicatorActiveLength;
-                            segSize = indicatorsFlow.config.indicatorActiveSize;
-                        }
-                    }
+                    return color;
                 }
-
-                // 2. Hover styling
-                if (indicatorsFlow.taskItem.containsMouse || indicatorsFlow.taskItem.isHovered) {
-                    if (indicatorsFlow.config.indicatorResize) {
-                        if (indicatorsFlow.config.indicatorHoverSeparate) {
-                            segLength = indicatorsFlow.config.indicatorHoverLength;
-                            segSize = indicatorsFlow.config.indicatorHoverSize;
-                        } else {
-                            if (indicatorsFlow.taskCount > 1 && indicatorsFlow.config.indicatorGroupSeparate) {
-                                segLength = indicatorsFlow.config.indicatorGroupLength;
-                                segSize = indicatorsFlow.config.indicatorGroupSize;
-                            } else {
-                                segLength = indicatorsFlow.config.indicatorActiveLength;
-                                segSize = indicatorsFlow.config.indicatorActiveSize;
-                            }
-                        }
-                    }
+                // Inactive windows of a group are dimmed with "highlight active"
+                // on, and every inactive indicator with "dim inactive" on.
+                let opacity = 1;
+                if (indicatorsFlow.taskCount > 1 && cfg.indicatorHighlightActive) {
+                    opacity = cfg.indicatorDimInactive ? (cfg.indicatorInactiveOpacity / 100.0) : 0.4;
+                } else if (cfg.indicatorDimInactive) {
+                    opacity = cfg.indicatorInactiveOpacity / 100.0;
                 }
-
-                // If overflow '+' icon is shown, make the last segment a perfect square of size segSize
-                if (indicatorsFlow.config.indicatorShowPlus && index === (maxStates - 1) && indicatorsFlow.taskCount > maxStates) {
-                    segLength = segSize;
-                }
-
-                if(isFirst){
-                    let mainSize = (parentSize + parentSpacingAdjust);
-                    switch(indicatorsFlow.config.indicatorStyle){
-                        case 0: // Line
-                        indicatorComputedSize = mainSize - (Math.min(indicatorsFlow.taskCount, maxStates === 1 ? 0 : maxStates)  * (spacing + segLength)) - adjust
-                        break
-                        case 1: // Dashes
-                        indicatorComputedSize = segLength
-                        break
-                        default:
-                        break
-                    }
-                }
-                else {
-                    indicatorComputedSize = segLength
-                }
-
-                var baseColor = colorEval;
-
-                if(indicatorsFlow.config.indicatorDesaturate && indicatorsFlow.taskItem.taskState === "minimized") {
-                    colorCalc = Qt.hsla(baseColor.hslHue, 0.0, baseColor.hslLightness, baseColor.a * 0.5)
-                } else {
-                    colorCalc = baseColor
-                }
-
-                // 1) Highlight active window in group (applies strictly to grouped tasks)
-                if (indicatorsFlow.taskCount > 1 && indicatorsFlow.config.indicatorHighlightActive && !isActiveWindow) {
-                    let groupOpacity = indicatorsFlow.config.indicatorDimInactive ? (indicatorsFlow.config.indicatorInactiveOpacity / 100.0) : 0.4;
-                    colorCalc = Qt.rgba(colorCalc.r, colorCalc.g, colorCalc.b, colorCalc.a * groupOpacity);
-                }
-                // 2) Global dimming of inactive indicators
-                else if (indicatorsFlow.config.indicatorDimInactive && !isActiveWindow) {
-                    let inactiveOpacity = indicatorsFlow.config.indicatorInactiveOpacity / 100.0;
-                    colorCalc = Qt.rgba(colorCalc.r, colorCalc.g, colorCalc.b, colorCalc.a * inactiveOpacity);
-                }
-
-                return {length: indicatorComputedSize, thickness: segSize, colorCalc: colorCalc}
+                return Qt.rgba(color.r, color.g, color.b, color.a * opacity);
             }
 
             // Wrapper = base indicatorSize; visual rect overflows when active/hovered
-            width: isVertical ? indicatorsFlow.config.indicatorSize : computedVar.length
-            height: isVertical ? computedVar.length : indicatorsFlow.config.indicatorSize
+            width: isVertical ? indicatorsFlow.config.indicatorSize : segmentLength
+            height: isVertical ? segmentLength : indicatorsFlow.config.indicatorSize
             clip: false
 
             Behavior on height { PropertyAnimation {duration: indicatorsFlow.config.indicatorsAnimated ? 250 : 0} }
@@ -197,8 +161,8 @@ Flow {
             Rectangle {
                 id: stateRect
 
-                width: segmentWrapper.isVertical ? segmentWrapper.computedVar.thickness : parent.width
-                height: segmentWrapper.isVertical ? parent.height : segmentWrapper.computedVar.thickness
+                width: segmentWrapper.isVertical ? segmentWrapper.thickness : parent.width
+                height: segmentWrapper.isVertical ? parent.height : segmentWrapper.thickness
 
                 Behavior on width {
                     enabled: segmentWrapper.isVertical && indicatorsFlow.config.indicatorsAnimated
@@ -233,20 +197,20 @@ Flow {
                     return a === 0 ? 0 : a === 1 ? diff / 2 : diff;
                 }
 
-                color: (indicatorsFlow.config.indicatorShowPlus && (segmentWrapper.index === (segmentWrapper.maxStates - 1)) && (indicatorsFlow.taskCount > segmentWrapper.maxStates)) ? "transparent" : segmentWrapper.computedVar.colorCalc
+                color: segmentWrapper.showsPlus ? "transparent" : segmentWrapper.segmentColor
                 radius: Math.min(width, height) * (indicatorsFlow.config.indicatorRadius / 200)
 
                 Item {
                     id: plusIcon
                     anchors.fill: parent
-                    visible: indicatorsFlow.config.indicatorShowPlus && (segmentWrapper.index === (segmentWrapper.maxStates - 1)) && (indicatorsFlow.taskCount > segmentWrapper.maxStates)
+                    visible: segmentWrapper.showsPlus
 
                     // Horizontal bar of the plus sign
                     Rectangle {
                         anchors.centerIn: parent
                         width: parent.width
                         height: Math.max(1, Math.round(parent.height * 0.25))
-                        color: segmentWrapper.computedVar.colorCalc
+                        color: segmentWrapper.segmentColor
                         radius: height / 2
                     }
 
@@ -255,7 +219,7 @@ Flow {
                         anchors.centerIn: parent
                         width: Math.max(1, Math.round(parent.width * 0.25))
                         height: parent.height
-                        color: segmentWrapper.computedVar.colorCalc
+                        color: segmentWrapper.segmentColor
                         radius: width / 2
                     }
                 }
