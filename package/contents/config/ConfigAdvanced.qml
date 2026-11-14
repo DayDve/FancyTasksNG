@@ -8,7 +8,7 @@ import QtQuick
 import org.kde.kirigami as Kirigami
 import QtQuick.Controls
 import QtQuick.Layouts
-import Qt.labs.platform as Labs
+import QtQuick.Dialogs
 
 import "../ui/code/singletones"
 
@@ -48,21 +48,21 @@ ConfigPage {
                 property bool configIoIsError: false
             }
 
-            Labs.FileDialog {
+            FileDialog {
                 id: exportFileDialog
                 title: Wrappers.i18n("Export Fancy Tasks NG Configuration")
-                fileMode: Labs.FileDialog.SaveFile
+                fileMode: FileDialog.SaveFile
                 nameFilters: [Wrappers.i18n("JSON files (*.json)")]
                 defaultSuffix: "json"
-                onAccepted: advancedPage.exportConfig(exportFileDialog.file)
+                onAccepted: advancedPage.exportConfig(exportFileDialog.selectedFile)
             }
 
-            Labs.FileDialog {
+            FileDialog {
                 id: importFileDialog
                 title: Wrappers.i18n("Import Fancy Tasks NG Configuration")
-                fileMode: Labs.FileDialog.OpenFile
+                fileMode: FileDialog.OpenFile
                 nameFilters: [Wrappers.i18n("JSON files (*.json)")]
-                onAccepted: advancedPage.importConfig(importFileDialog.file)
+                onAccepted: advancedPage.importConfig(importFileDialog.selectedFile)
             }
         }
     }
