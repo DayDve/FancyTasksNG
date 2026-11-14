@@ -71,6 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Stream List Flashing on Pause:** Pausing a player such as mpv or VLC from its tooltip briefly showed the list of audio streams.
 - **No Audio Indicator on a Player's First Launch:** The first time a player such as mpv or VLC was started, its button showed no audio indicator and its tooltip no volume controls; starting it again worked.
 - **Button Direction on the Desktop:** With the widget on the desktop and its button direction overridden, the button background, the side zoomed icons grow from, the volume overlay and the way into the tooltip still followed the widget's real placement instead of the chosen direction.
+- **Meta+Number Shortcuts on Plasma 6.8:** "Activate Task Manager Entry 1–10" (Meta+1 to Meta+9) did nothing on Plasma 6.8 and later. Since 6.8 plasmashell no longer registers these shortcuts or calls the widget for them; the stock task manager registers them itself, so with only this widget on the panels nothing did. The widget now registers them under the same names, keeping any keys changed in System Settings, and with several instances a press goes to one of them in the stock task manager's order. Plasma 6.7 and older keep using plasmashell's own handling (#54).
 
 ## [2.3.0] - 2026-11-05
 
