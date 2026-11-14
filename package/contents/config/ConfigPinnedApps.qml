@@ -574,7 +574,7 @@ ConfigPage {
                     spacing: Kirigami.Units.smallSpacing
 
                     CheckBox {
-                        id: cfg_unpinByDrag
+                        id: unpinByDragCheck
                         text: Wrappers.i18n("Unpin app by dragging its icon off the panel")
                         checked: cfg_page.cfg_unpinByDrag
                         onToggled: cfg_page.cfg_unpinByDrag = checked
@@ -583,14 +583,14 @@ ConfigPage {
                     RowLayout {
                         Item { implicitWidth: Kirigami.Units.gridUnit }
                         CheckBox {
-                            id: cfg_unpinByDragExplosion
-                            enabled: cfg_unpinByDrag.checked && cfg_page.cfg_iconOnly === 1
+                            id: unpinByDragExplosionCheck
+                            enabled: unpinByDragCheck.checked && cfg_page.cfg_iconOnly === 1
                             text: Wrappers.i18n("Animate unpinning by dragging")
                             checked: cfg_page.cfg_unpinByDragExplosion
                             onToggled: cfg_page.cfg_unpinByDragExplosion = checked
                         }
                         ConfigHint {
-                            target: cfg_unpinByDragExplosion
+                            target: unpinByDragExplosionCheck
                             reason: cfg_page.cfg_iconOnly !== 1 ? Wrappers.i18n("Only in the icons-only mode.") : ""
                         }
                     }
