@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Setting Limits:** The icon size can no longer be set to zero, which hid the icons: it starts at 10 % (8 px for a size in pixels). Indicator sizes have realistic limits instead of 999 px: thickness up to 32 px, length up to 500 px, offset from the panel edge up to 32 px. Values saved before are kept.
 - **App List on the Pinned Applications Page:** "Add Application" lists the installed apps sorted by name, all at once, instead of filling in over a few seconds with a guessed set of popular apps first.
 - **One Background Helper:** The badge bridge and the context menu helper now run as one Python process, and it no longer needs dbus-python (python3-dbus); PyGObject is enough.
+- **Task Order After a Plasma Restart:** The saved order of tasks is put back as soon as all of them are on the panel again, instead of a fixed 1.5 s after the start. If some never come back (apps not reopened after a login), it's put back for the rest after the same 1.5 s as before.
 
 ### Fixed
 - **Hover Highlight on a Classic Panel:** Turning off "Icon hover effects", an icons-only option hidden in the classic panel mode, also took away the highlight of the button under the cursor on a classic panel. A classic panel now ignores the option and always highlights the hovered button, as Plasma's own task manager does. The cursor glow, another hover effect, is now also icons-only.

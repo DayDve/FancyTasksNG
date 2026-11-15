@@ -79,22 +79,41 @@ PlasmoidItem {
 
     property bool _isApplyingConfig: false
     property bool _initialStartup: true
+    property bool _taskOrderRestored: false
 
+    // TasksModel fills in asynchronously at startup (on Wayland the windows
+    // arrive after the shell is up) and has no "ready" signal. The saved
+    // order is restored as soon as every task in it is back
+    // (checkStartupTasks()), or after this timeout when some never come back,
+    // e.g. apps that weren't reopened after a login.
     Timer {
         id: startupTimer
         interval: 1500
         repeat: false
-        onTriggered: {
-            tasks.applyModelConfiguration();
-            if (tasks.config.sortingStrategy <= 1)
-                tasks.restoreTaskOrder();
-            // Deferred: restoreTaskOrder()'s move() calls pass through several
-            // chained proxy models, so their rowsMoved signals aren't
-            // guaranteed to arrive in this same tick. Qt.callLater() only
-            // runs once those are drained, so the Connections guard below
-            // stays active until they have.
-            Qt.callLater(() => { tasks._initialStartup = false; });
+        onTriggered: tasks.finishStartup()
+    }
+
+    function checkStartupTasks(): void {
+        if (!tasks._taskOrderRestored && tasks.savedTasksPresent())
+            tasks.finishStartup();
+    }
+
+    function finishStartup(): void {
+        if (tasks._taskOrderRestored)
+            return;
+        tasks._taskOrderRestored = true;
+        startupTimer.stop();
+        if (tasks.config.sortingStrategy <= 1) {
+            tasks.restoreTaskOrder();
+            // Writes the restored order of pinned apps to the launcher list.
+            tasks.tasksModel.syncLaunchers();
         }
+        // Deferred: restoreTaskOrder()'s move() calls pass through several
+        // chained proxy models, so their rowsMoved signals aren't
+        // guaranteed to arrive in this same tick. Qt.callLater() only
+        // runs once those are drained, so the Connections guard below
+        // stays active until they have.
+        Qt.callLater(() => { tasks._initialStartup = false; });
     }
 
     // Snapshot of the visible task order, restored after a plasmashell
@@ -122,7 +141,13 @@ PlasmoidItem {
         // Ignored during the startup settling window: row churn while the
         // model is still populating isn't a real change, and saving it would
         // overwrite the snapshot restoreTaskOrder() is about to read.
-        function onRowsInserted() { if (!tasks._initialStartup) taskOrderSaveTimer.restart(); }
+        function onRowsInserted() {
+            if (!tasks._initialStartup)
+                taskOrderSaveTimer.restart();
+            else
+                // Not from inside the model's signal: restoring moves rows.
+                Qt.callLater(tasks.checkStartupTasks);
+        }
         function onRowsRemoved() { if (!tasks._initialStartup) taskOrderSaveTimer.restart(); }
         function onRowsMoved() { if (!tasks._initialStartup) taskOrderSaveTimer.restart(); }
     }
@@ -149,6 +174,31 @@ PlasmoidItem {
             order.push(tasks.taskOrderIdentifierAt(i));
         }
         taskOrderSettings.savedOrder = JSON.stringify(order);
+    }
+
+    // Whether every task in the saved order is in the model, counting
+    // several windows of one app separately. False with no saved order:
+    // then startup waits for the timeout, so an empty model doesn't shrink
+    // the panel before the windows arrive (see shouldShrinkToZero).
+    function savedTasksPresent(): bool {
+        let savedOrder;
+        try {
+            savedOrder = JSON.parse(taskOrderSettings.savedOrder);
+        } catch (e) {
+            return false;
+        }
+        if (!Array.isArray(savedOrder) || savedOrder.length === 0)
+            return false;
+
+        const missing = {};
+        for (const id of savedOrder)
+            missing[id] = (missing[id] ?? 0) + 1;
+        for (let i = 0; i < tasks.tasksModel.count; i++) {
+            const id = tasks.taskOrderIdentifierAt(i);
+            if (missing[id])
+                missing[id]--;
+        }
+        return Object.values(missing).every(n => n === 0);
     }
 
     function restoreTaskOrder() {
@@ -505,6 +555,8 @@ PlasmoidItem {
             groupingAppIdBlacklist = tasks.config.groupingAppIdBlacklist;
             groupingLauncherUrlBlacklist = tasks.config.groupingLauncherUrlBlacklist;
             startupTimer.start();
+            // The launchers alone may be the whole saved order.
+            Qt.callLater(tasks.checkStartupTasks);
         }
     }
 
@@ -809,17 +861,6 @@ PlasmoidItem {
             interval: 500
             repeat: false
             onTriggered: tasks.publishIconGeometries(taskListView.children)
-        }
-
-        Timer {
-            id: startupSortFixTimer
-            interval: 2000
-            running: true
-            repeat: false
-            onTriggered: {
-                tasks.tasksModel.launcherList = tasks.config.launchers;
-                tasks.tasksModel.syncLaunchers();
-            }
         }
 
         Binding {
