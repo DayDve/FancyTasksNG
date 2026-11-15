@@ -243,7 +243,7 @@ Item {
                             }
                         }
 
-                        // Custom handle to make it elegant and prevent clunky look
+                        // Round handle that grows while hovered or dragged.
                         handle: Rectangle {
                             id: handleRect
                             x: volumeSlider.leftPadding + (volumeSlider.availableWidth - width) / 2
@@ -313,7 +313,7 @@ Item {
 
     Timer {
         id: hoverTimer
-        interval: 250 // highly responsive and smooth fade-out delay
+        interval: 250 // delay before the controls fade out
         repeat: false
     }
 

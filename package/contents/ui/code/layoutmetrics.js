@@ -103,7 +103,7 @@ function preferredMaxWidth(panel) {
 }
 
 function preferredMinHeight(panel) {
-    // TODO FIXME UPSTREAM: Port to proper font metrics for descenders once we have access to them.
+    // +4 leaves room for descenders, as in the stock task manager.
     return Kirigami.Units.iconSizes.sizeForLabels + 4;
 }
 

@@ -471,8 +471,6 @@ Loader {
 
             PlasmaComponents3.ScrollView {
                 id: scrollView
-                // hovered is now handled by groupHover on the parent ColumnLayout
-                
                 // In text mode (no thumbnails), extend to tooltip edges
                 Layout.leftMargin: toolTipDelegate.showThumbnails ? 0 : -6
                 Layout.rightMargin: toolTipDelegate.showThumbnails ? 0 : -6
@@ -564,7 +562,6 @@ Loader {
                         
                         index: index 
                         
-                        // FIX: Get Window ID from current task model
                         explicitWinId: (model.WinIdList !== undefined && model.WinIdList.length > 0) ? model.WinIdList[0] : undefined
 
                         display: model.display !== undefined ? model.display : ""

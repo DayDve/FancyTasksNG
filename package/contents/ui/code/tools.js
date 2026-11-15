@@ -236,18 +236,19 @@ function activateTask(index, model, modifiers, task, plasmoid, tasks, windowView
         }
 
         // Option 3: show Window View for all child tasks
-        // ==================================================
-        // Make sure the Window View effect is  are actually enabled though;
-        // if not, fall through to the next option.
+        // ==============================================
+        // Only when the Window View effect is enabled; if not, fall through
+        // to the next option.
         else if (plasmoid.configuration.groupedTaskVisualization === 2 && windowViewAvailable) {
             task.closeTooltip();
             tasks.activateWindowView(model.WinIdList);
         }
 
-        // Option 4: show textual list (now using text tooltips instead of GroupDialog)
-        // ========================================
-        // This is also the final fallback option if Window View
-        // is chosen but not actually available
+        // Option 4: show a textual list
+        // =============================
+        // The stock task manager opens a GroupDialog here; this one opens the
+        // group tooltip, as option 2 does. Also the fallback when Window View
+        // is chosen but not available.
         else {
             if (tasks.toolTipOpenedByClick) {
                 tasks.toolTipOpenedByClick.closeTooltip();
@@ -384,7 +385,7 @@ function harmonizeIconColor(iconColor, dominantColor, themeBgColor, isAverageMod
     
     // Cap/adjust lightness based on whether the theme is dark or light
     if (isDark) {
-        // Dark theme: cap lightness so the card forms a deep, elegant dark tint.
+        // Dark theme: cap lightness so the card stays a dark tint.
         // Warm colors (red, orange, yellow, magenta/pink) need a slightly higher lightness
         // limit (up to 30%) to prevent them from becoming an ugly muddy brown/olive.
         let maxLight = 0.22;
