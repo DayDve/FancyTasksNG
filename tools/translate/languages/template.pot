@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-16 19:54+0200\n"
+"POT-Creation-Date: 2026-11-16 21:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -139,6 +139,39 @@ msgstr ""
 
 #: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigWindowIndicators.qml
 msgid "Custom color"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Audio"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Applications playing audio aren't marked."
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Size:"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgctxt "Percent"
+msgid "%1%"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Relative to the notification count."
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Color:"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigTaskStyle.qml
+msgid "Background"
+msgstr ""
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "A round background, like the notification count's. Without it, the mark has a soft shadow."
 msgstr ""
 
 #: package/contents/config/ConfigAppSignals.qml
@@ -951,10 +984,6 @@ msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Background opacity:"
-msgstr ""
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Background"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml

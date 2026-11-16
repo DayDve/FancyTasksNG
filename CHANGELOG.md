@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Task Numbers While Meta Is Held:** Holding Meta shows on the first nine task buttons the number of the Meta+number shortcut that activates them; they hide when Meta is released. On by default; the option is under Task Actions.
 - **Choosing What a Task's Menu Shows:** Under Context Menu, each optional part of a task's menu can be turned off: the app's own actions, Places, recent files and folders, browsing history, media controls and Mute. All but the browsing history are on by default.
 - **Progress Ring:** A new progress style under App Signals › Progress: a ring around the notification count that follows its shape, a circle or a pill for longer numbers. Without a count the ring is drawn alone where the count would be. While badges are shown as dots, the progress is a small pie in place of the dot instead.
+- **Audio Mark Appearance:** The audio mark has its own tab under App Signals: its size relative to the notification count, its color (the theme's, the accent or a custom one) and an optional round background like the count's.
 
 ### Changed
 - **Tooltip Distance:** Tooltips open close to the panel instead of well away from it. When hover zoom makes an icon stick out of the panel, the tooltip keeps the same small distance from the zoomed icon.

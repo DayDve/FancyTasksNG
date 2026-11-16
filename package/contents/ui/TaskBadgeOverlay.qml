@@ -40,6 +40,9 @@ Item {
 
     property bool audioVisible: false
     property bool muted: false
+    property real audioSize: 1         // relative to the count
+    property color audioColor: Kirigami.Theme.textColor
+    property bool audioBackground: false
     property bool countVisible: false
     property int count: 0
     property bool urgent: false
@@ -123,7 +126,7 @@ Item {
     // ── Audio ──────────────────────────────────────────────────────
     Item {
         id: audioBadge
-        width: root.layoutDiameter
+        width: root.layoutDiameter * root.audioSize
         height: width
         x: root.anchorX(false) - (root.growsLeft(false) ? width : 0)
         y: root.anchorY(false) - (root.growsUp(false) ? height : 0)
@@ -134,18 +137,35 @@ Item {
         Rectangle {
             anchors.fill: parent
             radius: width / 2
-            color: root.muted ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.textColor
+            color: root.muted ? Kirigami.Theme.negativeTextColor : root.audioColor
             opacity: root.showContent ? 0 : 1
+            Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
+        }
+
+        // The optional background: a disc like the count's, with its ring.
+        Rectangle {
+            anchors.fill: parent
+            visible: root.audioBackground
+            radius: width / 2
+            color: Kirigami.Theme.backgroundColor
+            border.color: Kirigami.Theme.highlightColor
+            // A ring scaled with the badge goes blurry; keep it one pixel thick.
+            border.width: 1 / Math.max(0.01, root.badgeScale)
+            opacity: root.showContent ? 0.85 : 0
             Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
         }
 
         SpeakerGlyph {
             anchors.fill: parent
+            // On the background the glyph keeps clear of its edge.
+            anchors.margins: root.audioBackground ? parent.width * 0.2 : 0
             muted: root.muted
+            color: root.audioColor
             opacity: root.showContent ? 1 : 0
             Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
-            // A soft halo keeps the glyph readable on any icon.
-            layer.enabled: true
+            // A soft halo keeps the glyph readable on any icon; the
+            // background does that itself.
+            layer.enabled: !root.audioBackground
             layer.effect: MultiEffect {
                 shadowEnabled: true
                 shadowBlur: 0.4

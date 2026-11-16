@@ -925,6 +925,10 @@ Item {
             customColor: task.config.badgeCustomColor
             audioVisible: task.audioIndicatorsEnabled && (task.playingAudio || task.muted)
             muted: task.muted
+            audioSize: task.config.audioBadgeSize / 100
+            audioColor: task.config.audioBadgeColorMode === 1 ? Kirigami.Theme.highlightColor
+                : task.config.audioBadgeColorMode === 2 ? task.config.audioBadgeCustomColor : Kirigami.Theme.textColor
+            audioBackground: task.config.audioBadgeBackground
             countVisible: task.countEnabled && task.badgeVisible
             count: task.badgeCount
             progressVisible: task.progressRingVisible

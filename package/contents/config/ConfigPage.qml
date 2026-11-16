@@ -292,6 +292,14 @@ Kirigami.Page {
     property bool cfg_menuMediaControlsDefault: true
     property bool cfg_menuMute: true
     property bool cfg_menuMuteDefault: true
+    property int cfg_audioBadgeSize: 100
+    property int cfg_audioBadgeSizeDefault: 100
+    property int cfg_audioBadgeColorMode: 0
+    property int cfg_audioBadgeColorModeDefault: 0
+    property string cfg_audioBadgeCustomColor: "#ffffff"
+    property string cfg_audioBadgeCustomColorDefault: "#ffffff"
+    property bool cfg_audioBadgeBackground: false
+    property bool cfg_audioBadgeBackgroundDefault: false
     property bool cfg_showBrowserHistory: false
     property bool cfg_showBrowserHistoryDefault: false
     property int cfg_browserHistoryLimit: 10

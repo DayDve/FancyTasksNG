@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-16 19:54+0200\n"
+"POT-Creation-Date: 2026-11-16 21:08+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -137,6 +137,39 @@ msgstr "Акцентный цвет системы"
 #: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigWindowIndicators.qml
 msgid "Custom color"
 msgstr "Пользовательский цвет"
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Audio"
+msgstr "Звук"
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Applications playing audio aren't marked."
+msgstr "Приложения, воспроизводящие звук, не отмечаются."
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Size:"
+msgstr "Размер:"
+
+#: package/contents/config/ConfigAppSignals.qml
+msgctxt "Percent"
+msgid "%1%"
+msgstr "%1%"
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Relative to the notification count."
+msgstr "Относительно счётчика уведомлений."
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "Color:"
+msgstr "Цвет:"
+
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigTaskStyle.qml
+msgid "Background"
+msgstr "Фон"
+
+#: package/contents/config/ConfigAppSignals.qml
+msgid "A round background, like the notification count's. Without it, the mark has a soft shadow."
+msgstr "Круглый фон, как у счётчика уведомлений. Без него у индикатора звука мягкая тень."
 
 #: package/contents/config/ConfigAppSignals.qml
 msgid "Progress"
@@ -952,10 +985,6 @@ msgstr "Акцентный цвет Plasma"
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Background opacity:"
 msgstr "Непрозрачность подложки:"
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Background"
-msgstr "Фон"
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Button background:"

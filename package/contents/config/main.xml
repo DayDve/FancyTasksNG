@@ -528,6 +528,24 @@
       <label>Custom background color for notification badges.</label>
       <default>#ff3b30</default>
     </entry>
+    <entry name="audioBadgeSize" type="Int">
+      <label>Size of the audio mark, in percent of the notification count's.</label>
+      <default>100</default>
+      <min>50</min>
+      <max>150</max>
+    </entry>
+    <entry name="audioBadgeColorMode" type="Int">
+      <label>Color of the audio mark: 0 = the theme's text color, 1 = the accent color, 2 = audioBadgeCustomColor.</label>
+      <default>0</default>
+    </entry>
+    <entry name="audioBadgeCustomColor" type="Color">
+      <label>Custom color of the audio mark.</label>
+      <default>#ffffff</default>
+    </entry>
+    <entry name="audioBadgeBackground" type="Bool">
+      <label>Whether the audio mark sits on a round background, like the notification count.</label>
+      <default>false</default>
+    </entry>
     <entry name="menuAppActions" type="Bool">
       <label>Whether a task's context menu shows the app's own actions from its .desktop file (New Window and the like).</label>
       <default>true</default>

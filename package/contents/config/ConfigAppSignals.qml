@@ -147,6 +147,67 @@ ConfigPage {
         }
 
         ConfigTab {
+            id: audioTab
+            title: Wrappers.i18n("Audio")
+            iconName: "audio-volume-high"
+            available: signalsPage.cfg_showAppSignals && signalsPage.cfg_indicateAudioStreams
+            unavailableReason: signalsPage.cfg_showAppSignals ? Wrappers.i18n("Applications playing audio aren't marked.") : signalsPage.offReason
+
+            RowLayout {
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Size:")
+                }
+                Slider {
+                    id: audioSize
+                    from: 50
+                    to: 150
+                    stepSize: 10
+                    value: signalsPage.cfg_audioBadgeSize
+                    onMoved: signalsPage.cfg_audioBadgeSize = value
+                }
+                Label {
+                    text: Wrappers.i18nc("Percent", "%1%", audioSize.value)
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("Relative to the notification count.")
+                }
+            }
+            RowLayout {
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Color:")
+                }
+                ComboBox {
+                    id: audioColorMode
+                    model: [
+                        Wrappers.i18n("Adaptive (theme color)"),
+                        Wrappers.i18n("System accent color"),
+                        Wrappers.i18n("Custom color")
+                    ]
+                    currentIndex: signalsPage.cfg_audioBadgeColorMode
+                    onActivated: (index) => signalsPage.cfg_audioBadgeColorMode = index
+                }
+                ConfigColorButton {
+                    enabled: audioColorMode.currentIndex === 2
+                    Layout.maximumHeight: audioColorMode.height
+                    value: signalsPage.cfg_audioBadgeCustomColor
+                    onEdited: (picked) => signalsPage.cfg_audioBadgeCustomColor = picked
+                }
+            }
+            RowLayout {
+                CheckBox {
+                    text: Wrappers.i18n("Background")
+                    checked: signalsPage.cfg_audioBadgeBackground
+                    onToggled: signalsPage.cfg_audioBadgeBackground = checked
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("A round background, like the notification count's. Without it, the mark has a soft shadow.")
+                }
+            }
+        }
+
+        ConfigTab {
             id: progressTab
             title: Wrappers.i18n("Progress")
             iconName: "chronometer"
