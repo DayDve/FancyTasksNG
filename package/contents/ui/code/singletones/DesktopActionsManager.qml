@@ -26,6 +26,7 @@ Item {
     // bus names: the installed widget's helper answers only its own shell.
     readonly property string _nameSuffix: /\/plasma\/plasmoids\/[^/]+\/contents\//.test(Qt.resolvedUrl("..").toString()) ? "" : ".Dev"
     readonly property string _service: _iface + _nameSuffix
+    readonly property string service: _service
     readonly property string bridgeService: "io.github.daydve.fancytasksng.Bridge" + _nameSuffix
 
     // Calls a helper method; onReply (optional) gets the reply value, or
@@ -226,5 +227,12 @@ Item {
 
     function openUrl(url, launcherUrl) {
         _call("OpenUrl", "(ss)", [String(url || ""), String(launcherUrl || "")]);
+    }
+
+    // Registers Meta+1..10 under component; callback receives the object
+    // path that emits the presses, "" if the call failed.
+    function registerTaskEntryShortcuts(component, callback) {
+        _call("RegisterTaskEntryShortcuts", "(s)", [String(component)],
+              value => callback(value ? value.toString() : ""));
     }
 }

@@ -20,6 +20,9 @@ Interface io.github.daydve.fancytasksng.DesktopActions:
   ParentPids(pidsCsv) -> JSON object {pid: parentPid}
   ActivateBrowserTab(browserPid, title) -> bool
   ListApps() -> JSON array of installed apps
+  RegisterTaskEntryShortcuts(component) -> the component's object path
+      registers the "Activate Task Manager Entry 1-10" global shortcuts
+      (Meta+1 to Meta+9) under component; the shell listens to the presses
 
 Interface io.github.daydve.fancytasksng.Config:
   ExportConfig(path, content) -> "OK" or "ERROR: ..."
@@ -36,6 +39,7 @@ instead of talking to the installed widget's one, which wouldn't answer it.
 """
 
 import configparser
+import gettext
 import hashlib
 import json
 import logging
@@ -799,6 +803,7 @@ SERVICE_XML = """
     </method>
     <method name="ListApps"><arg type="s" direction="out"/></method>
     <method name="OpenUrl"><arg type="s" direction="in"/><arg type="s" direction="in"/></method>
+    <method name="RegisterTaskEntryShortcuts"><arg type="s" direction="in"/><arg type="o" direction="out"/></method>
   </interface>
   <interface name="io.github.daydve.fancytasksng.Config">
     <method name="ExportConfig">
@@ -831,6 +836,48 @@ def _request_name(name):
         return False
 
 
+KGLOBALACCEL = ("org.kde.kglobalaccel", "/kglobalaccel", "org.kde.KGlobalAccel")
+
+
+class GlobalShortcuts:
+    """Registers global shortcuts with kglobalaccel, as KGlobalAccel::
+    setGlobalShortcut() does, and registers them again whenever kglobalaccel
+    comes back: it loses them when it restarts (with KWin on Wayland). The
+    shell listens to the presses itself."""
+
+    SET_PRESENT = 2  # keep the keys already on record (System Settings)
+    IS_DEFAULT = 8
+
+    def __init__(self, bus):
+        self.actions = {}  # (component, action) -> (friendly name, default keys)
+        self.watch_id = Gio.bus_watch_name_on_connection(
+            bus, KGLOBALACCEL[0], Gio.BusNameWatcherFlags.NONE, self._on_appeared, None)
+
+    def register(self, component, actions):
+        """actions: (action name, friendly name, default key combinations).
+        Returns the component's object path, which emits the presses."""
+        for name, friendly, keys in actions:
+            self.actions[(component, name)] = (friendly, keys)
+            self._register(component, name, friendly, keys)
+        return _dbus_call(*KGLOBALACCEL, "getComponent", GLib.Variant("(s)", (component,)), "(o)")[0]
+
+    def _register(self, component, name, friendly, keys):
+        # An empty component friendly name keeps the one already on record.
+        action_id = [component, name, "", friendly]
+        _dbus_call(*KGLOBALACCEL, "doRegister", GLib.Variant("(as)", (action_id,)))
+        sequences = [([key],) for key in keys]
+        for flags in (self.SET_PRESENT, self.IS_DEFAULT):
+            _dbus_call(*KGLOBALACCEL, "setShortcutKeys",
+                       GLib.Variant("(asa(ai)u)", (action_id, sequences, flags)), "(a(ai))")
+
+    def _on_appeared(self, connection, name, owner):
+        for (component, action), (friendly, keys) in self.actions.items():
+            try:
+                self._register(component, action, friendly, keys)
+            except GLib.Error as e:
+                log.warning(f"could not register {action}: {e}")
+
+
 class DesktopActionsService:
     """Only the widget's own shell may call this service: it launches
     programs, reads and writes files and returns browsing history, so any
@@ -841,6 +888,7 @@ class DesktopActionsService:
         self.allowed_pids = _ancestor_pids()
         self.sender_allowed = {}
         self.bus = _get_session_bus()
+        self.shortcuts = GlobalShortcuts(self.bus)
         node = Gio.DBusNodeInfo.new_for_xml(SERVICE_XML)
         self.out_signatures = {}
         for iface in node.interfaces:
@@ -1006,6 +1054,20 @@ class DesktopActionsService:
                 return f.read()
         except Exception as e:
             return f"ERROR: {e}"
+
+    def RegisterTaskEntryShortcuts(self, component):
+        """The actions plasmashell registered up to Plasma 6.7 and the stock
+        task manager's backend registers since 6.8, under the same names, so
+        a key changed in System Settings applies whichever registered it."""
+        meta, key_0 = 0x10000000, 0x30  # Qt::MetaModifier, Qt::Key_0
+        actions = []
+        for entry in range(1, 11):
+            # The stock task manager's wording and translation.
+            friendly = gettext.dgettext("plasma_applet_org.kde.plasma.taskmanager",
+                                        "Activate Task Manager Entry %1").replace("%1", str(entry))
+            keys = [meta | (key_0 + entry)] if entry < 10 else []
+            actions.append((f"activate task manager entry {entry}", friendly, keys))
+        return self.shortcuts.register(component, actions)
 
     def ListApps(self):
         return json.dumps(list_applications())
