@@ -29,6 +29,10 @@ It also owns io.github.daydve.fancytasksng.Bridge and com.canonical.Unity:
 Unity LauncherEntry.Update signals (badge counts and progress) are re-emitted
 as io.github.daydve.fancytasksng.BadgeUpdate.UpdateSignal(appId, count,
 progress, senderPid) on /Bridge, with the state accumulated per sender.
+
+--name-suffix SUFFIX appends SUFFIX to both bus names (not to the interface
+names): a copy of the widget run from source (make test) uses its own helper
+instead of talking to the installed widget's one, which wouldn't answer it.
 """
 
 import configparser
@@ -759,6 +763,14 @@ def list_applications():
 SERVICE_NAME = "io.github.daydve.fancytasksng.DesktopActions"
 BRIDGE_NAME = "io.github.daydve.fancytasksng.Bridge"
 
+
+def _apply_name_suffix(argv):
+    global SERVICE_NAME, BRIDGE_NAME
+    if "--name-suffix" in argv:
+        suffix = argv[argv.index("--name-suffix") + 1]
+        SERVICE_NAME += suffix
+        BRIDGE_NAME += suffix
+
 SERVICE_XML = """
 <node>
   <interface name="io.github.daydve.fancytasksng.DesktopActions">
@@ -1076,6 +1088,7 @@ class BadgeBridge:
 
 
 def main():
+    _apply_name_suffix(sys.argv)
     set_pdeathsig()
     DesktopActionsService()
     BadgeBridge()

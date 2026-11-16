@@ -21,7 +21,12 @@ Item {
     // Bumped whenever a result is cached, so bindings over the cache update.
     property int revision: 0
 
-    readonly property string _service: "io.github.daydve.fancytasksng.DesktopActions"
+    readonly property string _iface: "io.github.daydve.fancytasksng.DesktopActions"
+    // A copy run from source (make test) gets its own helper under suffixed
+    // bus names: the installed widget's helper answers only its own shell.
+    readonly property string _nameSuffix: /\/plasma\/plasmoids\/[^/]+\/contents\//.test(Qt.resolvedUrl("..").toString()) ? "" : ".Dev"
+    readonly property string _service: _iface + _nameSuffix
+    readonly property string bridgeService: "io.github.daydve.fancytasksng.Bridge" + _nameSuffix
 
     // Calls a helper method; onReply (optional) gets the reply value, or
     // undefined when the call failed. Right after plasmashell starts the
@@ -30,7 +35,7 @@ Item {
         const pendingReply = DBus.SessionBus.asyncCall({
             "service": root._service,
             "path": "/DesktopActions",
-            "iface": iface || root._service,
+            "iface": iface || root._iface,
             "member": member,
             "arguments": args,
             "signature": signature
@@ -57,7 +62,8 @@ Item {
         if (helperStarter.connectedSources.length > 0)
             return;
         const scriptPath = Qt.resolvedUrl("../desktop_actions.py").toString().replace(/^file:\/\//, "");
-        helperStarter.connectSource("python3 '" + scriptPath + "'");
+        const suffix = root._nameSuffix ? " --name-suffix " + root._nameSuffix : "";
+        helperStarter.connectSource("python3 '" + scriptPath + "'" + suffix);
     }
 
     Plasma5Support.DataSource {

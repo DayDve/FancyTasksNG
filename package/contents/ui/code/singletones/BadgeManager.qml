@@ -31,7 +31,7 @@ Item {
     // Listener for internal bridge signals
     DBus.SignalWatcher {
         id: bridgeWatcher
-        service: "io.github.daydve.fancytasksng.Bridge"
+        service: DesktopActionsManager.bridgeService
         path: "/Bridge"
         iface: "io.github.daydve.fancytasksng.BadgeUpdate"
         
