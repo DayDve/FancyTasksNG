@@ -561,7 +561,9 @@ Loader {
                         windowGeometry: model.Geometry ?? Qt.rect(0, 0, 0, 0)
                         height: implicitHeight
                         
-                        index: index 
+                        // model.index: a bare "index" here is this
+                        // instance's own property, bound to itself.
+                        index: model.index
                         
                         explicitWinId: (model.WinIdList !== undefined && model.WinIdList.length > 0) ? model.WinIdList[0] : undefined
 
