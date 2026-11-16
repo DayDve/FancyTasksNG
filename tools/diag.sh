@@ -64,6 +64,19 @@ kconfig_groups() {
     ' "$1"
 }
 
+# Prints the keys of one KConfig group (exact header) whose names match the
+# regex $3 as a whole, prefixed with the group.
+# Usage: kconfig_keys <file> <group> <key_regex>
+kconfig_keys() {
+    awk -v group="$2" -v keys="^(${3})$" '
+        /^\[/ { inGroup = ($0 == group); next }
+        inGroup && index($0, "=") {
+            key = substr($0, 1, index($0, "=") - 1)
+            if (key ~ keys) print "  " group " " $0
+        }
+    ' "$1"
+}
+
 # Fingerprint of a package's code, comparable between a reporter's install
 # and a release .plasmoid: compiled translations and Python bytecode differ
 # per machine and are excluded, as is metadata.json (version-stamped on build).
@@ -196,6 +209,37 @@ if have kreadconfig6; then
     SUM[theme]="$(kreadconfig6 --file plasmarc --group Theme --key name --default default) / $(kreadconfig6 --file kdeglobals --group General --key ColorScheme)"
 else
     emit "(kreadconfig6 not available)"
+fi
+
+# --- KWin and fonts ----------------------------------------------------------
+# Effects, scaling and fonts often explain visual bugs. Read straight from the
+# files, which hold only non-default values, through a whitelist of keys.
+section "KWin and fonts (non-default values only)"
+KWINRC="${CONFIG_HOME}/kwinrc"
+KDEGLOBALS="${CONFIG_HOME}/kdeglobals"
+if [ -f "${KWINRC}" ]; then
+    emit "kwinrc:"
+    {
+        kconfig_keys "${KWINRC}" "[Plugins]" '.*Enabled'
+        kconfig_keys "${KWINRC}" "[Compositing]" '.*'
+        kconfig_keys "${KWINRC}" "[Wayland]" '.*'
+        kconfig_keys "${KWINRC}" "[Xwayland]" 'Scale'
+        kconfig_keys "${KWINRC}" "[Tiling]" 'enabled'
+    } >> "${BUF}"
+else
+    emit "(kwinrc not found)"
+fi
+if [ -f "${KDEGLOBALS}" ]; then
+    emit "kdeglobals:"
+    {
+        kconfig_keys "${KDEGLOBALS}" "[General]" 'font|fixed|smallestReadableFont|toolBarFont|menuFont|Xft.*'
+        kconfig_keys "${KDEGLOBALS}" "[WM]" 'activeFont'
+        kconfig_keys "${KDEGLOBALS}" "[KDE]" 'AnimationDurationFactor'
+    } >> "${BUF}"
+fi
+if [ -f "${CONFIG_HOME}/kcmfonts" ]; then
+    emit "kcmfonts:"
+    kconfig_keys "${CONFIG_HOME}/kcmfonts" "[General]" 'forceFontDPI' >> "${BUF}"
 fi
 
 # --- QML module dependencies -------------------------------------------------
