@@ -52,10 +52,7 @@ Item {
     anchors.bottomMargin: iconBox._iconsOnly ? 0 : adjustMargin(false, parent.height, LayoutMetrics.bottomMargin(iconBox.tasksRoot))
     anchors.leftMargin: iconBox._iconsOnly ? 0 : adjustMargin(true, parent.height, LayoutMetrics.leftMargin(iconBox.tasksRoot))
 
-    // Classic mode: a small icon next to the title, as on classic taskbars,
-    // unless the icon size is set in pixels.
-    width: iconBox._iconsOnly ? (parent.width - 2 * Math.max(LayoutMetrics.leftMargin(iconBox.tasksRoot), LayoutMetrics.rightMargin(iconBox.tasksRoot)))
-        : Math.min(height, iconBox.config.iconSizeOverride ? iconBox.config.iconSizePx : Kirigami.Units.iconSizes.small)
+    width: iconBox._iconsOnly ? (parent.width - 2 * Math.max(LayoutMetrics.leftMargin(iconBox.tasksRoot), LayoutMetrics.rightMargin(iconBox.tasksRoot))) : height
     height: iconBox._iconsOnly ? (parent.height - 2 * Math.max(LayoutMetrics.topMargin(iconBox.tasksRoot), LayoutMetrics.bottomMargin(iconBox.tasksRoot))) : undefined
 
     readonly property int hoveredIndex: iconBox.tasksRoot ? iconBox.tasksRoot.instantHoveredIndex : -1
@@ -182,8 +179,7 @@ Item {
         property bool sizeOverride: iconBox.config.iconSizeOverride
         property int fixedSize: iconBox.config.iconSizePx
         property real iconScale: iconBox.config.iconScale / 100
-        // Classic mode centers the icon next to the title.
-        property bool scaleFromEdge: iconBox._iconsOnly && iconBox.config.iconScaleFromEdge
+        property bool scaleFromEdge: iconBox.config.iconScaleFromEdge
         property int edgeOffset: iconBox.config.iconEdgeOffset
 
         readonly property int baseWidth: (sizeOverride ? fixedSize : (parent.width * iconScale))
