@@ -29,6 +29,7 @@ import org.kde.plasma.extras as PlasmaExtras
 import org.kde.plasma.components as PlasmaComponents3
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.plasmoid
+import org.kde.plasma.core as PlasmaCore
 import QtQuick.Effects
 
 import "code/layoutmetrics.js" as LayoutMetrics
@@ -920,14 +921,32 @@ Item {
         }
     }
 
-    // While Meta is held: the N of the Meta+N that activates this task.
+    // While Meta is held: the N of the Meta+N that activates this task, as
+    // big as a count badge at rest, centered on the icon at the panel edge
+    // (the count badges are on the far side).
     Loader {
+        id: numberLoader
         active: task.config.showTaskNumbers && TaskEntryShortcuts.numbersTarget === task.tasksRoot && task.index < 9
-        anchors.centerIn: taskIconBox
         z: 1000
+        readonly property rect box: taskIconBox.boxRect
+        readonly property real size: Math.max(Math.round(Math.min(box.width, box.height) / 3), Math.round(Kirigami.Units.gridUnit * 0.7))
+        // How far it pokes past the icon's edge.
+        readonly property real lift: Math.round(size * 0.1)
+        readonly property int edge: task.tasksRoot.effectiveLocation
+        x: {
+            if (edge === PlasmaCore.Types.LeftEdge) return box.x - lift;
+            if (edge === PlasmaCore.Types.RightEdge) return box.x + box.width - width + lift;
+            return Math.round(box.x + (box.width - width) / 2);
+        }
+        y: {
+            if (edge === PlasmaCore.Types.TopEdge) return box.y - lift;
+            if (edge === PlasmaCore.Types.LeftEdge || edge === PlasmaCore.Types.RightEdge)
+                return Math.round(box.y + (box.height - height) / 2);
+            return box.y + box.height - height + lift;
+        }
         sourceComponent: Badge {
-            height: Math.round(Math.max(Kirigami.Units.iconSizes.small, Math.min(taskIconBox.width, taskIconBox.height) * 0.6))
-            colorMode: 2
+            height: numberLoader.size
+            colorMode: 4
             number: task.index + 1
         }
     }

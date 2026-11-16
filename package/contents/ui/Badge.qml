@@ -21,7 +21,8 @@ Rectangle {
     // Above this the count is shortened ("1.2k"); 0 shows it in full.
     property int maxNumber: 999
 
-    // 0 = Theme background, 1 = Fixed red, 2 = System accent, 3 = Custom color
+    // 0 = Theme background, 1 = Fixed red, 2 = System accent, 3 = Custom color,
+    // 4 = Inverted (the theme's text color, for the Meta+number hints)
     property int colorMode: 0
     property color customColor: "transparent"
     readonly property bool highlightMode: colorMode !== 0 || isUrgent
@@ -35,6 +36,7 @@ Rectangle {
         if (isUrgent || colorMode === 1) return Kirigami.Theme.negativeTextColor;
         if (colorMode === 2) return Kirigami.Theme.highlightColor;
         if (colorMode === 3) return badgeRect.customColor;
+        if (colorMode === 4) return Kirigami.Theme.textColor;
         return showNumber ? Kirigami.Theme.backgroundColor : Kirigami.Theme.highlightColor;
     }
     // A thin highlight ring only on the theme-colored badge, to set it off the icon.
@@ -67,7 +69,8 @@ Rectangle {
         visible: badgeRect.showNumber
         font.pixelSize: Math.max(1, Math.round(parent.height * 0.7))
         renderType: Text.QtRendering
-        color: badgeRect.highlightMode ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
+        color: badgeRect.colorMode === 4 ? Kirigami.Theme.backgroundColor
+            : badgeRect.highlightMode ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
         text: {
             const n = badgeRect.number;
             if (badgeRect.maxNumber > 0 && n > badgeRect.maxNumber && n >= 1000) {
