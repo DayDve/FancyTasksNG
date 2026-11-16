@@ -12,6 +12,8 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import org.kde.kirigami as Kirigami
+import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.extras as PlasmaExtras
 
 MouseArea {
@@ -22,6 +24,7 @@ MouseArea {
     required property var tasksModel
 
     property bool globalHovered: false
+    readonly property bool dragHovered: thumbnailDrop.containsDrag
 
     acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
     hoverEnabled: true
@@ -81,36 +84,73 @@ MouseArea {
     onContainsMouseChanged: updateHoverState()
     onGlobalHoveredChanged: updateHoverState()
 
-    Timer {
-        id: dragActivationTimer
-        interval: 750
-        repeat: false
-        onTriggered: {
-            rootMouseArea.tasksModel.requestActivate(rootMouseArea.modelIndex);
+    // A file dragged over a thumbnail highlights its window; leaving the
+    // thumbnail on any side but the panel's, not onto another thumbnail,
+    // activates the window, so the file can be dropped into it wherever it
+    // is. Not on a dwell over the thumbnail: the thumbnail over the button
+    // is crossed on the way to the others, and once a window is activated
+    // the drag goes to it.
+    function leftAwayFromPanel(x: real, y: real): bool {
+        const edges = [y, height - y, x, width - x]; // top, bottom, left, right
+        const distance = Math.min(...edges);
+        // A drag cancelled or dropped mid-thumbnail isn't leaving it.
+        if (distance > Kirigami.Units.gridUnit * 2) {
+            return false;
+        }
+        const nearest = edges.indexOf(distance);
+        switch (rootTask.tasksRoot?.effectiveLocation) {
+        case PlasmaCore.Types.TopEdge:
+            return nearest !== 0;
+        case PlasmaCore.Types.LeftEdge:
+            return nearest !== 2;
+        case PlasmaCore.Types.RightEdge:
+            return nearest !== 3;
+        default:
+            return nearest !== 1;
         }
     }
 
     DropArea {
+        id: thumbnailDrop
         anchors.fill: parent
-        
-        onEntered: {
-            dragActivationTimer.restart();
+
+        property point lastPosition
+        property bool dropped: false
+
+        onEntered: (drag) => {
+            dropped = false;
+            lastPosition = Qt.point(drag.x, drag.y);
+            rootMouseArea.rootTask.tasksRoot?.windowsHovered([rootMouseArea.winId], true);
             if (rootMouseArea.toolTipDelegate) {
                 rootMouseArea.toolTipDelegate.innerDragCount += 1;
             }
         }
-        onPositionChanged: {
-            if (!dragActivationTimer.running) {
-                dragActivationTimer.restart();
-            }
+        onPositionChanged: (drag) => {
+            lastPosition = Qt.point(drag.x, drag.y);
         }
         onExited: {
-            dragActivationTimer.stop();
+            const tasksRoot = rootMouseArea.rootTask.tasksRoot;
+            tasksRoot?.windowsHovered([rootMouseArea.winId], false);
             if (rootMouseArea.toolTipDelegate) {
                 rootMouseArea.toolTipDelegate.innerDragCount = Math.max(0, rootMouseArea.toolTipDelegate.innerDragCount - 1);
             }
+            if (dropped || !rootMouseArea.leftAwayFromPanel(lastPosition.x, lastPosition.y)) {
+                return;
+            }
+            // Not when it went on to another thumbnail or list entry (one
+            // above this in a vertical list): that one's enter comes with
+            // this exit.
+            const delegate = rootMouseArea.toolTipDelegate;
+            const index = rootMouseArea.modelIndex;
+            const model = rootMouseArea.tasksModel;
+            Qt.callLater(() => {
+                if (!delegate || delegate.innerDragCount === 0) {
+                    model.requestActivate(index);
+                }
+            });
         }
         onDropped: (drop) => {
+            dropped = true;
             if (drop.hasUrls) {
                 rootMouseArea.tasksModel.requestOpenUrls(rootMouseArea.modelIndex, drop.urls);
                 drop.accept();

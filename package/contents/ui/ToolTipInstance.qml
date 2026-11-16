@@ -296,7 +296,8 @@ Item {
         
         visible: root.isWin && root.config.showToolTips && root.showThumbnails
 
-        readonly property bool thumbnailAreaHovered: thumbnailHoverHandler.hovered
+        // Or a file dragged over it.
+        readonly property bool thumbnailAreaHovered: thumbnailHoverHandler.hovered || ((hoverHandler.item as ToolTipWindowMouseArea)?.dragHovered ?? false)
         // Gap between the window image and the thumbnail's edge, just enough
         // for the hover highlight to show around the image.
         readonly property int imageInset: Math.round(Kirigami.Units.smallSpacing / 2)
