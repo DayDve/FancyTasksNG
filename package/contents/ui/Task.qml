@@ -920,6 +920,18 @@ Item {
         }
     }
 
+    // While Meta is held: the N of the Meta+N that activates this task.
+    Loader {
+        active: task.config.showTaskNumbers && TaskEntryShortcuts.numbersTarget === task.tasksRoot && task.index < 9
+        anchors.centerIn: taskIconBox
+        z: 1000
+        sourceComponent: Badge {
+            height: Math.round(Math.max(Kirigami.Units.iconSizes.small, Math.min(taskIconBox.width, taskIconBox.height) * 0.6))
+            colorMode: 2
+            number: task.index + 1
+        }
+    }
+
     PlasmaComponents3.Label {
         id: label
 

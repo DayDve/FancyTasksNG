@@ -208,6 +208,20 @@ ConfigPage {
                     reason: Wrappers.i18n("Only when the wheel or Ctrl+wheel adjusts the volume.")
                 }
             }
+
+            Item { height: Kirigami.Units.largeSpacing }
+
+            RowLayout {
+                KeyCheckBox {
+                    key: "Meta"
+                    text: Wrappers.i18n("held: show task numbers")
+                    checked: actionsPage.cfg_showTaskNumbers
+                    onToggled: actionsPage.cfg_showTaskNumbers = checked
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("Meta+1 to Meta+9 activate the task with that number.")
+                }
+            }
         }
     }
 }

@@ -43,6 +43,23 @@ Item {
     property string componentPath: ""
 
     property var targets: []
+    property int targetCount: 0
+
+    // Task numbers for Meta+N: shown on the instance a press would go to
+    // while Meta is held, after a short delay so Meta+E and other
+    // combinations don't flash them. Before 6.8 plasmashell picks the
+    // instance itself, so with several it may be another one.
+    // Set by MetaKeyState.qml, which this loads.
+    property bool metaHeld: false
+    property var numbersTarget: null
+    onMetaHeldChanged: {
+        if (metaHeld) {
+            numbersDelay.restart();
+        } else {
+            numbersDelay.stop();
+            numbersTarget = null;
+        }
+    }
 
     function versionBelow(version, minimum) {
         const parts = String(version).split(".").map(part => parseInt(part, 10) || 0);
@@ -57,9 +74,10 @@ Item {
     // The actions stay registered once the last instance is gone, as the stock
     // backend's do: they may be the stock widget's as well by then.
     function addTarget(target) {
-        if (!shortcutsHandled || targets.indexOf(target) !== -1)
+        if (targets.indexOf(target) !== -1)
             return;
         targets.push(target);
+        targetCount = targets.length;
         if (targets.length === 1)
             registerTimer.restart();
     }
@@ -68,6 +86,9 @@ Item {
         const i = targets.indexOf(target);
         if (i !== -1)
             targets.splice(i, 1);
+        targetCount = targets.length;
+        if (numbersTarget === target)
+            numbersTarget = null;
     }
 
     // In the order the stock task manager uses: an instance with the active
@@ -110,6 +131,19 @@ Item {
             if (path)
                 root.componentPath = path;
         });
+    }
+
+    Timer {
+        id: numbersDelay
+        interval: 500
+        onTriggered: root.numbersTarget = root.dispatchTarget()
+    }
+
+    Loader {
+        id: metaKeyState
+        active: root.targetCount > 0
+        source: Qt.resolvedUrl("../../MetaKeyState.qml")
+        onActiveChanged: if (!active) root.metaHeld = false
     }
 
     // Coalesces the requests to register into one round of calls.

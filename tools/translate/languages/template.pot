@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-16 17:55+0200\n"
+"POT-Creation-Date: 2026-11-16 18:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -740,6 +740,14 @@ msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Only when the wheel or Ctrl+wheel adjusts the volume."
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "held: show task numbers"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Meta+1 to Meta+9 activate the task with that number."
 msgstr ""
 
 #: package/contents/config/ConfigTaskList.qml

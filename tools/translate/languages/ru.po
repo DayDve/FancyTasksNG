@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-16 17:55+0200\n"
+"POT-Creation-Date: 2026-11-16 18:49+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -740,6 +740,14 @@ msgstr "Там, где колесо регулирует громкость ок
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Only when the wheel or Ctrl+wheel adjusts the volume."
 msgstr "Только когда колесо или Ctrl+колесо регулирует громкость."
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "held: show task numbers"
+msgstr "зажата ‒ показывать номера задач"
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Meta+1 to Meta+9 activate the task with that number."
+msgstr "Meta+1…Meta+9 активируют задачу с этим номером."
 
 #: package/contents/config/ConfigTaskList.qml
 msgid "Filters"

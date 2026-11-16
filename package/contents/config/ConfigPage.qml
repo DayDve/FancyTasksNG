@@ -108,6 +108,8 @@ Kirigami.Page {
     property int cfg_maxTextLinesDefault: 0
     property string cfg_labelFont: ""
     property string cfg_labelFontDefault: ""
+    property bool cfg_showTaskNumbers: true
+    property bool cfg_showTaskNumbersDefault: true
     property bool cfg_minimizeActiveTaskOnClick: true
     property bool cfg_minimizeActiveTaskOnClickDefault: true
     property bool cfg_reverseMode: false
