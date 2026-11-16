@@ -107,6 +107,28 @@ Item {
     readonly property real maxZoom: iconBox._iconsOnly && iconBox.config.taskHoverEffect
                                     ? 1 + iconBox.config.iconZoomFactor / Math.max(1, iconBox.height) : 1
 
+    // How far the fully zoomed icon reaches past its task button on the
+    // side away from the panel edge (negative while it stays inside); the
+    // tooltip keeps its distance from whichever is further out.
+    readonly property real zoomedOverflow: {
+        const vertical = iconBox.location === PlasmaCore.Types.LeftEdge || iconBox.location === PlasmaCore.Types.RightEdge
+            || (iconBox.location === PlasmaCore.Types.Floating && iconBox.tasksRoot && iconBox.tasksRoot.vertical);
+        const s = iconBox.maxZoom;
+        const button = iconBox.parent;
+        if (!button)
+            return 0;
+        if (vertical) {
+            const ox = zoomScale.origin.x;
+            if (iconBox.location === PlasmaCore.Types.RightEdge)
+                return -(iconBox.x + ox + (iconWrapper.x - ox) * s);
+            return iconBox.x + ox + (iconWrapper.x + iconWrapper.width - ox) * s - button.width;
+        }
+        const oy = zoomScale.origin.y;
+        if (iconBox.location === PlasmaCore.Types.TopEdge)
+            return iconBox.y + oy + (iconWrapper.y + iconWrapper.height - oy) * s - button.height;
+        return -(iconBox.y + oy + (iconWrapper.y - oy) * s);
+    }
+
     transform: [
         Translate {
             id: attentionTranslate

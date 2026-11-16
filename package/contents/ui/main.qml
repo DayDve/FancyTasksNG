@@ -48,6 +48,11 @@ PlasmoidItem {
 
     readonly property var config: Plasmoid.configuration
     readonly property int location: Plasmoid.location
+    // The tooltip window's transparent band on the panel side, for its
+    // shadow, and how far its visible frame stays from the panel, or from a
+    // hover-zoomed icon sticking out of it (Task.tooltipAnchor).
+    readonly property int tooltipShadowBand: 8
+    readonly property int tooltipDistance: 2
     readonly property var containment: Plasmoid.containment
 
     rotation: tasks.config.reverseMode && tasks.vertical ? 180 : 0
@@ -1163,7 +1168,7 @@ PlasmoidItem {
             // winBgFrame's shadow.size plus its offset.
             readonly property int shadowPadding: 9
             // 8px gap allows an 8px radius shadow to render fully on the panel side
-            readonly property int gapSize: 8
+            readonly property int gapSize: tasks.tooltipShadowBand
 
             readonly property int marginTop: isTop ? gapSize : shadowPadding
             readonly property int marginBottom: isBottom ? gapSize : shadowPadding

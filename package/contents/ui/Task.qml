@@ -62,11 +62,19 @@ Item {
     readonly property bool iconOverflows: tasksRoot.vertical ? 
         (taskIcon.width > tasksRoot.width) : (taskIcon.height > tasksRoot.height)
 
+    // What the tooltip is placed against. Its far side (away from the panel
+    // edge) is the button's, or the zoomed icon's when that sticks out
+    // further, pulled in so the tooltip, which keeps a transparent band on
+    // that side for its shadow, ends up tooltipDistance away from it.
     Item {
         id: tooltipAnchor
-        anchors.centerIn: parent
-        width: task.tasksRoot.vertical ? (Math.max(task.tasksRoot.width, task._maxIconSize) + Kirigami.Units.smallSpacing * 2) : parent.width
-        height: !task.tasksRoot.vertical ? (Math.max(task.tasksRoot.height, task._maxIconSize) + Kirigami.Units.smallSpacing * 2) : parent.height
+        readonly property real reach: Math.max(0, taskIconBox.zoomedOverflow)
+            + task.tasksRoot.tooltipDistance - task.tasksRoot.tooltipShadowBand
+        readonly property int edge: task.location
+        x: edge === PlasmaCore.Types.RightEdge ? -reach : 0
+        y: (edge === PlasmaCore.Types.TopEdge || edge === PlasmaCore.Types.LeftEdge || edge === PlasmaCore.Types.RightEdge) ? 0 : -reach
+        width: task.tasksRoot.vertical ? parent.width + reach : parent.width
+        height: task.tasksRoot.vertical ? parent.height : parent.height + reach
         visible: false
     }
     property alias tooltipAnchor: tooltipAnchor

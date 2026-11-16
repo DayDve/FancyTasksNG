@@ -48,6 +48,9 @@ KSvg.FrameSvgItem {
     })
     readonly property bool vertical: location === PlasmaCore.Types.LeftEdge || location === PlasmaCore.Types.RightEdge
     readonly property bool iconsOnly: config.iconOnly === 1
+    // Read by Task.tooltipAnchor, as in main.qml.
+    readonly property int tooltipShadowBand: 8
+    readonly property int tooltipDistance: 2
     readonly property int effectiveLocation: location
     readonly property alias taskFrame: taskFrame
     readonly property alias taskList: taskList
