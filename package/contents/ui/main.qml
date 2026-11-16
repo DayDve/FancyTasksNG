@@ -67,7 +67,7 @@ PlasmoidItem {
         }
         return Plasmoid.formFactor === PlasmaCore.Types.Vertical;
     }
-    readonly property bool iconsOnly: tasks.config.iconOnly
+    readonly property bool iconsOnly: tasks.config.iconOnly === 1
 
     property alias globalVolumeOverlay: globalVolumeOverlayLoader
     property Item dropIndicator: dropIndicatorRect
@@ -690,7 +690,6 @@ PlasmoidItem {
 
         tasks.tasksModel.groupMode = tasks.groupModeEnumValue(tasks.config.groupingStrategy);
         tasks.tasksModel.groupInline = !tasks.config.groupPopups;
-        tasks.tasksModel.groupingWindowTasksThreshold = 0;
 
         internalFilteredTasksModel.invalidateFilter();
 

@@ -75,36 +75,38 @@ Item {
     rotation: (tasksRoot && task.config.reverseMode && tasksRoot.vertical) ?
         180 : 0
 
+    // Rows on a horizontal panel, columns on a vertical one: the ones the
+    // task list actually uses, which can be fewer than "at most" allows.
+    readonly property int stripes: {
+        const list = tasksRoot?.taskList;
+        const count = list ? (tasksRoot.vertical ? list.columns : list.rows) : 0;
+        return count > 0 ? count : (task.config.maxStripes || 1);
+    }
+
     implicitHeight: {
         if (!tasksRoot) return 0;
         if (tasksRoot.vertical) {
             if (task.isIcon) {
-                let cols = (tasksRoot.taskList && tasksRoot.taskList.columns > 0) ? tasksRoot.taskList.columns : (task.config.maxStripes || 1);
-                return (tasksRoot.width / cols) + LayoutMetrics.verticalMargins(task.tasksRoot);
+                return (tasksRoot.width / task.stripes) + LayoutMetrics.verticalMargins(task.tasksRoot);
             }
             return LayoutMetrics.preferredMaxHeight(task.tasksRoot);
         } else {
-            let stripes = task.config.maxStripes || 1;
             if (task.isIcon) {
-                let rws = (tasksRoot.taskList && tasksRoot.taskList.rows > 0) ? tasksRoot.taskList.rows : stripes;
-                return (tasksRoot.height / rws) + LayoutMetrics.verticalMargins(task.tasksRoot);
+                return (tasksRoot.height / task.stripes) + LayoutMetrics.verticalMargins(task.tasksRoot);
             }
-            return Math.max(tasksRoot.height / stripes, LayoutMetrics.preferredMinHeight(task.tasksRoot));
+            return Math.max(tasksRoot.height / task.stripes, LayoutMetrics.preferredMinHeight(task.tasksRoot));
         }
     }
     implicitWidth: {
         if (!tasksRoot) return 0;
         if (tasksRoot.vertical) {
-            let stripes = task.config.maxStripes || 1;
             if (task.isIcon) {
-                let cols = (tasksRoot.taskList && tasksRoot.taskList.columns > 0) ? tasksRoot.taskList.columns : stripes;
-                return (tasksRoot.width / cols) + LayoutMetrics.horizontalMargins(task.tasksRoot);
+                return (tasksRoot.width / task.stripes) + LayoutMetrics.horizontalMargins(task.tasksRoot);
             }
-            return Math.max(LayoutMetrics.preferredMinWidth(task.tasksRoot), Math.min(LayoutMetrics.preferredMaxWidth(task.tasksRoot), tasksRoot.width / stripes));
+            return Math.max(LayoutMetrics.preferredMinWidth(task.tasksRoot), Math.min(LayoutMetrics.preferredMaxWidth(task.tasksRoot), tasksRoot.width / task.stripes));
         } else {
             if (task.isIcon) {
-                let rws = (tasksRoot.taskList && tasksRoot.taskList.rows > 0) ? tasksRoot.taskList.rows : (task.config.maxStripes || 1);
-                return (tasksRoot.height / rws) + LayoutMetrics.horizontalMargins(task.tasksRoot);
+                return (tasksRoot.height / task.stripes) + LayoutMetrics.horizontalMargins(task.tasksRoot);
             }
             return task.classicButtonWidth;
         }
@@ -180,7 +182,7 @@ Item {
     Layout.fillWidth: true
     Layout.fillHeight: true
     Layout.maximumWidth: (!tasksRoot || tasksRoot.vertical) ?
-        -1 : ((task.model?.IsLauncher && !tasksRoot.iconsOnly) ? (tasksRoot.height / tasksRoot.taskList.rows) + LayoutMetrics.horizontalMargins(task.tasksRoot) : (tasksRoot.iconsOnly ? LayoutMetrics.preferredMaxWidth(task.tasksRoot) : task.classicButtonWidth))
+        -1 : ((task.model?.IsLauncher && !tasksRoot.iconsOnly) ? (tasksRoot.height / task.stripes) + LayoutMetrics.horizontalMargins(task.tasksRoot) : (tasksRoot.iconsOnly ? LayoutMetrics.preferredMaxWidth(task.tasksRoot) : task.classicButtonWidth))
     Layout.maximumHeight: (!tasksRoot || !tasksRoot.vertical) ?
         -1 : ((task.model?.IsLauncher && !tasksRoot.iconsOnly) ? (tasksRoot.width / tasksRoot.taskList.columns) + LayoutMetrics.verticalMargins(task.tasksRoot) : LayoutMetrics.preferredMaxHeight(task.tasksRoot))
 
