@@ -9,6 +9,7 @@
 
 import QtQuick
 import QtQuick.Effects
+import QtQuick.Shapes
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
 
@@ -42,6 +43,12 @@ Item {
     property bool countVisible: false
     property int count: 0
     property bool urgent: false
+    // Progress as a ring around the count; without a count, a ring alone
+    // where it would be.
+    property bool progressVisible: false
+    property real progress: 0
+    property color progressColor: Kirigami.Theme.highlightColor
+    property real progressOpacity: 1
 
     // Badges stick out of the task over its neighbours; pointing at them must
     // keep their own task hovered, or the icon unzooms under the cursor.
@@ -186,6 +193,77 @@ Item {
             id: countHover
             enabled: root.countVisible
             blocking: true
+        }
+    }
+
+    // ── Progress ring ──────────────────────────────────────────────
+    // Follows the count's outline, a circle or a pill, at a small gap, and
+    // scales with it. The drawn part is a dash as long as the progress share
+    // of the outline, starting at the top center and going clockwise.
+    Item {
+        id: progressRing
+        width: root.countVisible ? notificationBadge.width : root.layoutDiameter
+        height: root.layoutDiameter
+        x: root.anchorX(true) - (root.growsLeft(true) ? width : 0)
+        y: root.anchorY(true) - (root.growsUp(true) ? height : 0)
+        transformOrigin: root.origin(true)
+        scale: root.badgeScale
+        visible: root.progressVisible
+        opacity: root.progressOpacity
+
+        readonly property real gap: Math.max(1, height * 0.08)
+        readonly property real stroke: Math.max(1.5, height * 0.14)
+        // The outline the stroke runs along, around the badge.
+        readonly property real outerW: width + 2 * gap + stroke
+        readonly property real outerH: height + 2 * gap + stroke
+        readonly property real arcRadius: outerH / 2
+        readonly property real perimeter: 2 * (outerW - outerH) + Math.PI * outerH
+        readonly property real dashUnits: perimeter / stroke
+        // The outline's corners, in the Shape's coordinates.
+        readonly property real topY: stroke / 2
+        readonly property real bottomY: topY + outerH
+        readonly property real midX: stroke / 2 + outerW / 2
+        readonly property real leftArcX: stroke / 2 + arcRadius
+        readonly property real rightArcX: stroke / 2 + outerW - arcRadius
+
+        Shape {
+            id: ringShape
+            anchors.fill: parent
+            anchors.margins: -(progressRing.gap + progressRing.stroke)
+            antialiasing: true
+            layer.enabled: true
+            layer.samples: 4
+
+            // The whole outline, faint, as the track.
+            ShapePath {
+                fillColor: "transparent"
+                strokeColor: Qt.alpha(root.progressColor, 0.3)
+                strokeWidth: progressRing.stroke
+                startX: progressRing.midX
+                startY: progressRing.topY
+                PathLine { x: progressRing.rightArcX; y: progressRing.topY }
+                PathArc { x: progressRing.rightArcX; y: progressRing.bottomY; radiusX: progressRing.arcRadius; radiusY: progressRing.arcRadius }
+                PathLine { x: progressRing.leftArcX; y: progressRing.bottomY }
+                PathArc { x: progressRing.leftArcX; y: progressRing.topY; radiusX: progressRing.arcRadius; radiusY: progressRing.arcRadius }
+                PathLine { x: progressRing.midX; y: progressRing.topY }
+            }
+            ShapePath {
+                fillColor: "transparent"
+                strokeColor: root.progressColor
+                strokeWidth: progressRing.stroke
+                capStyle: ShapePath.FlatCap
+                strokeStyle: ShapePath.DashLine
+                // In stroke widths: the done part, then a gap longer than
+                // the rest of the outline.
+                dashPattern: [Math.max(0.001, progressRing.dashUnits * Math.min(1, root.progress)), progressRing.dashUnits + 1]
+                startX: progressRing.midX
+                startY: progressRing.topY
+                PathLine { x: progressRing.rightArcX; y: progressRing.topY }
+                PathArc { x: progressRing.rightArcX; y: progressRing.bottomY; radiusX: progressRing.arcRadius; radiusY: progressRing.arcRadius }
+                PathLine { x: progressRing.leftArcX; y: progressRing.bottomY }
+                PathArc { x: progressRing.leftArcX; y: progressRing.topY; radiusX: progressRing.arcRadius; radiusY: progressRing.arcRadius }
+                PathLine { x: progressRing.midX; y: progressRing.topY }
+            }
         }
     }
 }

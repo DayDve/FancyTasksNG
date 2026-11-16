@@ -165,7 +165,8 @@ ConfigPage {
                     Wrappers.i18n("Strip (Top)"),
                     Wrappers.i18n("Strip (Bottom)"),
                     Wrappers.i18n("Strip (Left)"),
-                    Wrappers.i18n("Strip (Right)")
+                    Wrappers.i18n("Strip (Right)"),
+                    Wrappers.i18n("Ring around the count")
                 ]
                 currentIndex: signalsPage.cfg_indicatorProgressStyle
                 onActivated: (index) => signalsPage.cfg_indicatorProgressStyle = index

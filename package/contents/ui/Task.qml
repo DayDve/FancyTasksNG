@@ -295,6 +295,8 @@ Item {
     // The audio mark, the count and progress all hide with "Show app signals".
     readonly property bool audioIndicatorsEnabled: task.config.showAppSignals && task.config.indicateAudioStreams
     readonly property bool countEnabled: task.config.showAppSignals && task.config.showBadges
+    readonly property bool progressRingVisible: !!(task.model && task.model.IsWindow) && task.taskProgress >= 0
+        && task.config.showAppSignals && task.config.indicatorProgressStyle === 7
     property var winIdList: {
         if (!task.model || !task.model.WinIdList) return [];
         // Deep copy without slice() just in case
@@ -844,7 +846,8 @@ Item {
 
         anchors.fill: backgroundFrame
         asynchronous: true
-        active: !!(task.model && task.model.IsWindow) && task.taskProgress >= 0 && task.config.showAppSignals && task.config.indicatorProgressStyle > 0
+        // The ring style (7) is drawn by the badge overlay, around the count.
+        active: !!(task.model && task.model.IsWindow) && task.taskProgress >= 0 && task.config.showAppSignals && task.config.indicatorProgressStyle > 0 && task.config.indicatorProgressStyle !== 7
 
         sourceComponent: TaskProgressOverlay {
             pStyle: task.config.indicatorProgressStyle
@@ -899,7 +902,7 @@ Item {
         id: badgeLoader
         anchors.fill: parent
         asynchronous: true
-        active: (task.countEnabled && task.badgeVisible) || (task.audioIndicatorsEnabled && (task.playingAudio || task.muted))
+        active: (task.countEnabled && task.badgeVisible) || (task.audioIndicatorsEnabled && (task.playingAudio || task.muted)) || task.progressRingVisible
         z: 999
         sourceComponent: TaskBadgeOverlay {
             button: taskIconBox.boxRect
@@ -916,6 +919,10 @@ Item {
             muted: task.muted
             countVisible: task.countEnabled && task.badgeVisible
             count: task.badgeCount
+            progressVisible: task.progressRingVisible
+            progress: task.taskProgress
+            progressColor: task.config.indicatorProgressColor
+            progressOpacity: task.config.indicatorProgressOpacity / 100.0
             urgent: (task.config.badgeHighlightNew && task.hasUnseenNotifications) || !!task.model?.IsDemandingAttention
             onMuteToggled: task.toggleMuted()
         }
