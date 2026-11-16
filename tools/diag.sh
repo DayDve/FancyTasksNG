@@ -191,7 +191,7 @@ fi
 section "Displays"
 if have kscreen-doctor; then
     kscreen-doctor --outputs 2> /dev/null | sed 's/\x1b\[[0-9;]*m//g' \
-        | grep -E '^Output|enabled|disabled|Geometry|Scale|Modes' \
+        | grep -E '^Output|enabled|disabled|priority|Geometry|Scale|Modes' \
         | sed -E 's/(Modes: ).*/\1(omitted)/' >> "${BUF}"
     SUM[scale]="$(kscreen-doctor --outputs 2> /dev/null | sed 's/\x1b\[[0-9;]*m//g' | sed -n 's/.*Scale: *//p' | paste -sd' ')"
 else

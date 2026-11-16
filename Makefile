@@ -21,12 +21,13 @@ update:
 test:
 	@./tools/testing.sh window
 
-# Nested KWin + plasmashell; SCREEN=WIDTHxHEIGHT for a window instead of full screen.
+# Nested KWin + plasmashell; SCREEN=WIDTHxHEIGHT for a window instead of full screen,
+# CONFIG=<make diag report> (and INSTANCE=N) for a reporter's setup.
 test-panel:
-	@SCREEN="$(SCREEN)" ./tools/testing.sh panel
+	@SCREEN="$(SCREEN)" CONFIG="$(CONFIG)" INSTANCE="$(INSTANCE)" ./tools/testing.sh panel
 
 test-desktop:
-	@SCREEN="$(SCREEN)" ./tools/testing.sh desktop
+	@SCREEN="$(SCREEN)" CONFIG="$(CONFIG)" INSTANCE="$(INSTANCE)" ./tools/testing.sh desktop
 
 translate:
 	@./tools/extract_messages.sh

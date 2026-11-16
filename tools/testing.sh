@@ -31,6 +31,9 @@ ln -s "${PACKAGE_DIR}/contents/locale" "${TEMP_SHARE}/locale"
 # nested screen is as large as that window in this monitor's logical pixels,
 # so a screen bigger than the monitor is modelled by its proportions:
 # 5120x1440 -> SCREEN=2560x720.
+# CONFIG=<make diag report> sets the session up as the reporter has it: the
+# widget's settings, the panel, and SCREEN from their screen when not given
+# (INSTANCE=N picks a widget when the report has several).
 MODE="${1:-window}"
 
 # Point XDG_DATA_DIRS to our fake share directory.
@@ -50,6 +53,19 @@ if [[ "${MODE}" != "panel" && "${MODE}" != "desktop" ]]; then
     exit 1
 fi
 
+NEST_DIR="$(dirname "${TEMP_SHARE}")"
+if [[ -n "${CONFIG:-}" ]]; then
+    if [[ ! -f "${CONFIG}" ]]; then
+        log_error "CONFIG: no such report '${CONFIG}'"
+        exit 1
+    fi
+    log_info "2b. Taking the setup from ${CONFIG}..."
+    python3 "${SCRIPT_DIR}/diag_setup.py" "${CONFIG}" "${NEST_DIR}" --instance "${INSTANCE:-0}" || exit 1
+    if [[ -z "${SCREEN:-}" ]]; then
+        SCREEN="$(cat "${NEST_DIR}/screen.txt")"
+    fi
+fi
+
 KWIN_SIZE=(--fullscreen true)
 if [[ -n "${SCREEN:-}" ]]; then
     if [[ ! "${SCREEN}" =~ ^([0-9]+)x([0-9]+)$ ]]; then
@@ -62,7 +78,6 @@ fi
 log_info "3. Starting a nested KWin + plasmashell (${MODE}, screen ${SCREEN:-full screen})..."
 log_info "   Right Ctrl in the nested window grabs or releases the pointer."
 
-NEST_DIR="$(dirname "${TEMP_SHARE}")"
 mkdir -p "${NEST_DIR}/config" "${TEMP_SHARE}/plasma/plasmoids" "${NEST_DIR}/dbus-services"
 # The widget straight from the source tree; the real data dir stays behind it
 # for themes and icons.
@@ -122,6 +137,10 @@ else
     TASKS_IN_PANEL=''
     TASKS_ON_DESKTOP='desktops()[0].addWidget("io.github.daydve.fancytasksng", 100, 260, 900, 120);'
 fi
+APPLY_SETUP=''
+if [[ -n "${CONFIG:-}" ]]; then
+    APPLY_SETUP="eval_js \"\$(cat '${NEST_DIR}/setup.js')\""
+fi
 
 # kwin_wayland starts a single program, so the session is a script. It waits
 # for plasmashell to lay out its default panel, then replaces the layout.
@@ -153,6 +172,7 @@ desktops().forEach(function (d) {
     d.writeConfig("Color", "#1d2a36");
 });
 '
+${APPLY_SETUP}
 # A couple of windows, so tasks and tooltips have something to show.
 konsole --separate &
 kcalc &
