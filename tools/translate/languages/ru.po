@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-16 19:38+0200\n"
+"POT-Creation-Date: 2026-11-16 19:44+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -224,18 +224,66 @@ msgid "Task Menu"
 msgstr "Меню задачи"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Hide 'Move to Desktop' if only one virtual desktop is used"
-msgstr ""
-"Скрывать «Переместить на рабочий стол», если рабочий стол одинСкрывать «Переместить на рабочий стол»,\n"
-"если используется только один рабочий стол"
+msgid "Show in a task's menu:"
+msgstr "Показывать в меню задачи:"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Show browsing history in the context menu of web browsers"
-msgstr "Показывать историю браузеров в контекстном меню"
+msgid "App actions"
+msgstr "Действия приложения"
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Actions the app itself offers, such as New Private Window or Compose Message."
+msgstr "Действия, которые предлагает само приложение, например «Новое приватное окно» или «Написать письмо»."
+
+# --- ContextMenu.qml ---
+#: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
+msgid "Places"
+msgstr "Точки входа"
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "In the menu of file managers."
+msgstr "В меню файловых менеджеров."
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Recent files and folders"
+msgstr "Недавние файлы и папки"
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Files and folders recently opened with the app."
+msgstr "Файлы и папки, недавно открытые в этом приложении."
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Browsing history"
+msgstr "История браузера"
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "In the menu of web browsers."
+msgstr "В меню веб-браузеров."
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "Number of browser history items:"
 msgstr "Количество элементов истории:"
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Media controls"
+msgstr "Элементы управления медиа"
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Previous, play/pause, next and stop, for media players."
+msgstr "Предыдущий, воспроизведение/пауза, следующий и стоп ‒ у медиаплееров."
+
+#: package/contents/config/ConfigContextMenu.qml
+msgctxt "Context menu item to show"
+msgid "Mute"
+msgstr "Выключение звука"
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "For apps that play audio."
+msgstr "У приложений, которые воспроизводят звук."
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Hide 'Move to Desktop' if only one virtual desktop is used"
+msgstr "Скрывать «Переместить на рабочий стол», если рабочий стол один"
 
 #: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
 msgid "Task Layout"
@@ -1271,11 +1319,6 @@ msgstr "Закрепы"
 msgid "Trash"
 msgstr "Корзина"
 
-# --- ContextMenu.qml ---
-#: package/contents/ui/ContextMenu.qml
-msgid "Places"
-msgstr "Точки входа"
-
 #: package/contents/ui/ContextMenu.qml
 msgid "Recent Pages"
 msgstr "Недавние страницы"
@@ -1522,6 +1565,9 @@ msgstr "Аудиопоток"
 msgctxt "Stream name and its number among streams with the same name"
 msgid "%1 %2"
 msgstr "%1 %2"
+
+#~ msgid "Show browsing history in the context menu of web browsers"
+#~ msgstr "Показывать историю браузеров в контекстном меню"
 
 #~ msgid "Pinned apps always come first and stay in place when launched. Pinned apps can be dragged among themselves, other tasks among themselves."
 #~ msgstr "Закреплённые приложения всегда в начале и при запуске остаются на своих местах. Перетаскивать можно закреплённые между собой и остальные между собой."

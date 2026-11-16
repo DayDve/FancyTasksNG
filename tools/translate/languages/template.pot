@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-16 19:38+0200\n"
+"POT-Creation-Date: 2026-11-16 19:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -228,15 +228,64 @@ msgid "Task Menu"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Hide 'Move to Desktop' if only one virtual desktop is used"
+msgid "Show in a task's menu:"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Show browsing history in the context menu of web browsers"
+msgid "App actions"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Actions the app itself offers, such as New Private Window or Compose Message."
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
+msgid "Places"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "In the menu of file managers."
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Recent files and folders"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Files and folders recently opened with the app."
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Browsing history"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "In the menu of web browsers."
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "Number of browser history items:"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Media controls"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Previous, play/pause, next and stop, for media players."
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgctxt "Context menu item to show"
+msgid "Mute"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "For apps that play audio."
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Hide 'Move to Desktop' if only one virtual desktop is used"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
@@ -1268,10 +1317,6 @@ msgstr ""
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Trash"
-msgstr ""
-
-#: package/contents/ui/ContextMenu.qml
-msgid "Places"
 msgstr ""
 
 #: package/contents/ui/ContextMenu.qml

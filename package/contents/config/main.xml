@@ -528,6 +528,26 @@
       <label>Custom background color for notification badges.</label>
       <default>#ff3b30</default>
     </entry>
+    <entry name="menuAppActions" type="Bool">
+      <label>Whether a task's context menu shows the app's own actions from its .desktop file (New Window and the like).</label>
+      <default>true</default>
+    </entry>
+    <entry name="menuPlaces" type="Bool">
+      <label>Whether a task's context menu shows Places, in the menu of file managers.</label>
+      <default>true</default>
+    </entry>
+    <entry name="menuRecentFiles" type="Bool">
+      <label>Whether a task's context menu shows recent documents and folders, with Forget Recent Files.</label>
+      <default>true</default>
+    </entry>
+    <entry name="menuMediaControls" type="Bool">
+      <label>Whether a task's context menu shows the media player controls (previous, play/pause, next, stop).</label>
+      <default>true</default>
+    </entry>
+    <entry name="menuMute" type="Bool">
+      <label>Whether a task's context menu shows Mute/Unmute, for apps playing audio.</label>
+      <default>true</default>
+    </entry>
     <entry name="showBrowserHistory" type="Bool">
       <label>Show browsing history in the context menu of web browsers.</label>
       <default>false</default>

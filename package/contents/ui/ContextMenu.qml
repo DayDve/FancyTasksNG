@@ -170,13 +170,13 @@ PlasmaExtras.Menu {
             entries.forEach(entry => add(openUrlItem(menu, entry, labelFor ? labelFor(entry) : null)));
         }
 
-        if (hasEntries(result.jumpList)) {
+        if (config.menuAppActions && hasEntries(result.jumpList)) {
             result.jumpList.forEach(action => add(newItem(menu, action.name, action.icon, () => DesktopActionsManager.launchAction(launcherUrl, action.actionId))));
             addSeparator();
         }
 
         // Places (file managers) go into a submenu.
-        if (hasEntries(result.places)) {
+        if (config.menuPlaces && hasEntries(result.places)) {
             const placesSubItem = Qt.createQmlObject('import "."; PlacesSubMenu {}', menu);
             placesSubItem.text = Wrappers.i18n("Places");
             const placesSubMenu = placesSubItem.subMenu;
@@ -190,8 +190,8 @@ PlasmaExtras.Menu {
             addSeparator();
         }
 
-        const hasRecentFolders = hasEntries(result.recentFolders);
-        const hasRecentDocs = hasEntries(result.recentDocs);
+        const hasRecentFolders = config.menuRecentFiles && hasEntries(result.recentFolders);
+        const hasRecentDocs = config.menuRecentFiles && hasEntries(result.recentDocs);
         if (hasRecentFolders)
             addUrlSection(Wrappers.i18n("Recent Folders"), result.recentFolders);
         if (hasRecentDocs)
@@ -221,65 +221,70 @@ PlasmaExtras.Menu {
             // A function, not a constant: the bindings and the click handler
             // below must see the playback state as it is now.
             const playing = () => playerData.playbackStatus === Mpris.PlaybackStatus.Playing;
-            let menuItem = menu.newMenuItem(menu);
-            menu.firstMediaItem = menuItem;
-            menuItem.text = Wrappers.i18nc("Play previous track", "Previous Track");
-            menuItem.icon = "media-skip-backward";
-            menuItem.enabled = Qt.binding(() => {
-                return playerData.canGoPrevious;
-            });
-            menuItem.clicked.connect(() => {
-                playerData.Previous();
-            });
-            menu.addMenuItem(menuItem, startNewInstanceItem);
+            let menuItem;
+            // The playback items can be turned off; Quit and Restore below
+            // stand in for Close and Open New Window, so they stay.
+            if (config.menuMediaControls) {
+                menuItem = menu.newMenuItem(menu);
+                menu.firstMediaItem = menuItem;
+                menuItem.text = Wrappers.i18nc("Play previous track", "Previous Track");
+                menuItem.icon = "media-skip-backward";
+                menuItem.enabled = Qt.binding(() => {
+                    return playerData.canGoPrevious;
+                });
+                menuItem.clicked.connect(() => {
+                    playerData.Previous();
+                });
+                menu.addMenuItem(menuItem, startNewInstanceItem);
 
-            menuItem = menu.newMenuItem(menu);
-            // PlasmaCore Menu doesn't actually handle icons or labels changing at runtime...
-            menuItem.text = Qt.binding(() => {
-                // if CanPause, toggle the menu entry between Play & Pause, otherwise always use Play
-                return playing() && playerData.canPause ? Wrappers.i18nc("Pause playback", "Pause") : Wrappers.i18nc("Start playback", "Play");
-            });
-            menuItem.icon = Qt.binding(() => {
-                return playing() && playerData.canPause ? "media-playback-pause" : "media-playback-start";
-            });
-            menuItem.enabled = Qt.binding(() => {
-                return playing() ? playerData.canPause : menu.tasksRoot.mediaRegistry.canPlay(playerData);
-            });
-            menuItem.clicked.connect(() => {
-                if (playing()) {
-                    playerData.Pause();
-                } else {
-                    menu.tasksRoot.mediaRegistry.play(playerData);
+                menuItem = menu.newMenuItem(menu);
+                // PlasmaCore Menu doesn't actually handle icons or labels changing at runtime...
+                menuItem.text = Qt.binding(() => {
+                    // if CanPause, toggle the menu entry between Play & Pause, otherwise always use Play
+                    return playing() && playerData.canPause ? Wrappers.i18nc("Pause playback", "Pause") : Wrappers.i18nc("Start playback", "Play");
+                });
+                menuItem.icon = Qt.binding(() => {
+                    return playing() && playerData.canPause ? "media-playback-pause" : "media-playback-start";
+                });
+                menuItem.enabled = Qt.binding(() => {
+                    return playing() ? playerData.canPause : menu.tasksRoot.mediaRegistry.canPlay(playerData);
+                });
+                menuItem.clicked.connect(() => {
+                    if (playing()) {
+                        playerData.Pause();
+                    } else {
+                        menu.tasksRoot.mediaRegistry.play(playerData);
+                    }
+                });
+                menu.addMenuItem(menuItem, startNewInstanceItem);
+
+                menuItem = menu.newMenuItem(menu);
+                menuItem.text = Wrappers.i18nc("Play next track", "Next Track");
+                menuItem.icon = "media-skip-forward";
+                menuItem.enabled = Qt.binding(() => {
+                    return playerData.canGoNext;
+                });
+                menuItem.clicked.connect(() => {
+                    playerData.Next();
+                });
+                menu.addMenuItem(menuItem, startNewInstanceItem);
+
+                menuItem = menu.newMenuItem(menu);
+                menuItem.text = Wrappers.i18nc("Stop playback", "Stop");
+                menuItem.icon = "media-playback-stop";
+                menuItem.enabled = Qt.binding(() => {
+                    return playerData.canStop;
+                });
+                menuItem.clicked.connect(() => {
+                    playerData.Stop();
+                });
+                menu.addMenuItem(menuItem, startNewInstanceItem);
+
+                // Technically media controls and audio streams are separate but for the user they're
+                // semantically related, don't add a separator inbetween.
+                if (!config.menuMute || menu.muteStreams.length === 0) {
+                    menu.addMenuItem(newSeparator(menu), startNewInstanceItem);
                 }
-            });
-            menu.addMenuItem(menuItem, startNewInstanceItem);
-
-            menuItem = menu.newMenuItem(menu);
-            menuItem.text = Wrappers.i18nc("Play next track", "Next Track");
-            menuItem.icon = "media-skip-forward";
-            menuItem.enabled = Qt.binding(() => {
-                return playerData.canGoNext;
-            });
-            menuItem.clicked.connect(() => {
-                playerData.Next();
-            });
-            menu.addMenuItem(menuItem, startNewInstanceItem);
-
-            menuItem = menu.newMenuItem(menu);
-            menuItem.text = Wrappers.i18nc("Stop playback", "Stop");
-            menuItem.icon = "media-playback-stop";
-            menuItem.enabled = Qt.binding(() => {
-                return playerData.canStop;
-            });
-            menuItem.clicked.connect(() => {
-                playerData.Stop();
-            });
-            menu.addMenuItem(menuItem, startNewInstanceItem);
-
-            // Technically media controls and audio streams are separate but for the user they're
-            // semantically related, don't add a separator inbetween.
-            if (menu.muteStreams.length === 0) {
-                menu.addMenuItem(newSeparator(menu), startNewInstanceItem);
             }
 
             // If we don't have a window associated with the player but we can quit
@@ -317,7 +322,7 @@ PlasmaExtras.Menu {
         // is actually playing sound.
         // This way you can unmute, e.g. a telephony app, even after the conversation has ended,
         // so you still have it ringing later on.
-        if (menu.muteStreams.length > 0) {
+        if (config.menuMute && menu.muteStreams.length > 0) {
             const streams = menu.muteStreams;
             const isMuted = () => streams.every(stream => stream.muted);
             const muteItem = menu.newMenuItem(menu);

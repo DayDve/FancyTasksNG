@@ -282,6 +282,16 @@ Kirigami.Page {
     property int cfg_badgeColorModeDefault: 0
     property string cfg_badgeCustomColor: "#ff3b30"
     property string cfg_badgeCustomColorDefault: "#ff3b30"
+    property bool cfg_menuAppActions: true
+    property bool cfg_menuAppActionsDefault: true
+    property bool cfg_menuPlaces: true
+    property bool cfg_menuPlacesDefault: true
+    property bool cfg_menuRecentFiles: true
+    property bool cfg_menuRecentFilesDefault: true
+    property bool cfg_menuMediaControls: true
+    property bool cfg_menuMediaControlsDefault: true
+    property bool cfg_menuMute: true
+    property bool cfg_menuMuteDefault: true
     property bool cfg_showBrowserHistory: false
     property bool cfg_showBrowserHistoryDefault: false
     property int cfg_browserHistoryLimit: 10

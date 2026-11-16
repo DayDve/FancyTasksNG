@@ -24,16 +24,49 @@ ConfigPage {
             title: Wrappers.i18n("Task Menu")
             iconName: "application-menu"
 
-            CheckBox {
-                text: Wrappers.i18n("Hide 'Move to Desktop' if only one virtual desktop is used")
-                checked: menuPage.cfg_hideMoveToDesktopMenuWithOneDesktop
-                onToggled: menuPage.cfg_hideMoveToDesktopMenuWithOneDesktop = checked
+            Label {
+                text: Wrappers.i18n("Show in a task's menu:")
             }
-            CheckBox {
-                id: showBrowserHistory
-                text: Wrappers.i18n("Show browsing history in the context menu of web browsers")
-                checked: menuPage.cfg_showBrowserHistory
-                onToggled: menuPage.cfg_showBrowserHistory = checked
+            RowLayout {
+                CheckBox {
+                    text: Wrappers.i18n("App actions")
+                    checked: menuPage.cfg_menuAppActions
+                    onToggled: menuPage.cfg_menuAppActions = checked
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("Actions the app itself offers, such as New Private Window or Compose Message.")
+                }
+            }
+            RowLayout {
+                CheckBox {
+                    text: Wrappers.i18n("Places")
+                    checked: menuPage.cfg_menuPlaces
+                    onToggled: menuPage.cfg_menuPlaces = checked
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("In the menu of file managers.")
+                }
+            }
+            RowLayout {
+                CheckBox {
+                    text: Wrappers.i18n("Recent files and folders")
+                    checked: menuPage.cfg_menuRecentFiles
+                    onToggled: menuPage.cfg_menuRecentFiles = checked
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("Files and folders recently opened with the app.")
+                }
+            }
+            RowLayout {
+                CheckBox {
+                    id: showBrowserHistory
+                    text: Wrappers.i18n("Browsing history")
+                    checked: menuPage.cfg_showBrowserHistory
+                    onToggled: menuPage.cfg_showBrowserHistory = checked
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("In the menu of web browsers.")
+                }
             }
             RowLayout {
                 spacing: Kirigami.Units.smallSpacing
@@ -52,6 +85,34 @@ ConfigPage {
                         onValueModified: menuPage.cfg_browserHistoryLimit = value
                     }
                 }
+            }
+            RowLayout {
+                CheckBox {
+                    text: Wrappers.i18n("Media controls")
+                    checked: menuPage.cfg_menuMediaControls
+                    onToggled: menuPage.cfg_menuMediaControls = checked
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("Previous, play/pause, next and stop, for media players.")
+                }
+            }
+            RowLayout {
+                CheckBox {
+                    text: Wrappers.i18nc("Context menu item to show", "Mute")
+                    checked: menuPage.cfg_menuMute
+                    onToggled: menuPage.cfg_menuMute = checked
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("For apps that play audio.")
+                }
+            }
+
+            Item { height: Kirigami.Units.largeSpacing }
+
+            CheckBox {
+                text: Wrappers.i18n("Hide 'Move to Desktop' if only one virtual desktop is used")
+                checked: menuPage.cfg_hideMoveToDesktopMenuWithOneDesktop
+                onToggled: menuPage.cfg_hideMoveToDesktopMenuWithOneDesktop = checked
             }
         }
     }
