@@ -91,14 +91,6 @@ CACHE_HOME = xdg_dir("XDG_CACHE_HOME", ".cache")
 CONFIG_HOME = xdg_dir("XDG_CONFIG_HOME", ".config")
 
 KACTIVITIES_DB = DATA_HOME / "kactivitymanagerd/resources/database"
-DESKTOP_DIRS = [
-    "/usr/share/applications",
-    "/usr/local/share/applications",
-    str(DATA_HOME / "applications"),
-    # Flatpak
-    "/var/lib/flatpak/exports/share/applications",
-    str(DATA_HOME / "flatpak/exports/share/applications"),
-]
 MAX_RECENT = 5
 
 # KDE icon names for common mime type groups
@@ -116,108 +108,81 @@ MIME_ICON_MAP = {
 }
 
 
-def resolve_launcher_url(url_str):
-    """Convert a launcher URL to a local .desktop file path."""
+def app_for_launcher(url_str):
+    """The installed app a launcher URL points to, or None. "file://" takes a
+    .desktop file path; "applications:" (or a bare id) a desktop file id,
+    looked up in $XDG_DATA_HOME and $XDG_DATA_DIRS (Flatpak exports included)
+    the way every other desktop app finds it."""
     if not url_str:
         return None
-
     parsed = urlparse(url_str)
-
-    if parsed.scheme == "file":
-        path = unquote(parsed.path)
-        if os.path.isfile(path):
-            return path
-
-    if parsed.scheme == "applications" or parsed.scheme == "":
-        name = parsed.path.lstrip("/")
-        if not name.endswith(".desktop"):
-            name += ".desktop"
-        for d in DESKTOP_DIRS:
-            candidate = os.path.join(d, name)
-            if os.path.isfile(candidate):
-                return candidate
-
+    try:
+        if parsed.scheme == "file":
+            return Gio.DesktopAppInfo.new_from_filename(unquote(parsed.path))
+        if parsed.scheme in ("applications", ""):
+            desktop_id = parsed.path.lstrip("/")
+            if not desktop_id.endswith(".desktop"):
+                desktop_id += ".desktop"
+            return Gio.DesktopAppInfo.new(desktop_id)
+    except (GLib.Error, TypeError):
+        pass
     return None
 
 
-def get_categories(desktop_path):
-    """The Categories list of a .desktop file."""
-    cp = configparser.RawConfigParser(interpolation=None)
-    cp.optionxform = str
-    try:
-        cp.read(desktop_path, encoding="utf-8")
-    except Exception:
-        return []
-    value = cp.get("Desktop Entry", "Categories", fallback="")
-    return [c.strip() for c in value.split(";") if c.strip()]
+def get_categories(app):
+    """The app's Categories list."""
+    return [c for c in (app.get_categories() or "").split(";") if c]
 
 
-def get_jump_list_actions(desktop_path):
-    """Parse [Desktop Action ...] sections from a .desktop file."""
+def _languages():
+    """Languages to look translations up in, best first: GLib's (from
+    $LANGUAGE) and the session locale's with and without its region. GLib's
+    alone misses a "Name[ru_RU]" with LANGUAGE=ru, which Plasma, going by
+    LANG, does show."""
+    langs = [lang for lang in GLib.get_language_names() if lang != "C"]
+    for var in ("LC_ALL", "LC_MESSAGES", "LANG"):
+        locale_name = os.environ.get(var, "").split(".")[0].split("@")[0]
+        if locale_name and locale_name not in ("C", "POSIX"):
+            for lang in (locale_name, locale_name.split("_")[0]):
+                if lang not in langs:
+                    langs.append(lang)
+            break
+    return langs
+
+
+def get_jump_list_actions(app):
+    """The app's [Desktop Action ...] entries, with their names in the
+    session's language. GDesktopAppInfo lists them; their names and icons are
+    read from the file, as it has no getter for an action's icon and picks
+    translations by $LANGUAGE alone."""
     actions = []
-    if not desktop_path or not os.path.isfile(desktop_path):
-        return actions
-
-    cp = configparser.RawConfigParser()
-    cp.optionxform = str  # preserve case
+    keyfile = GLib.KeyFile()
     try:
-        cp.read(desktop_path, encoding="utf-8")
-    except Exception:
+        keyfile.load_from_file(app.get_filename(), GLib.KeyFileFlags.KEEP_TRANSLATIONS)
+    except (GLib.Error, TypeError):
         return actions
+    langs = _languages()
 
-    action_ids = cp.get("Desktop Entry", "Actions", fallback="").strip(";").split(";")
-    action_ids = [a.strip() for a in action_ids if a.strip()]
+    def value(section, key):
+        try:
+            return keyfile.get_string(section, key)
+        except GLib.Error:
+            return ""
 
-    # Determine system languages (e.g. from LANGUAGE, LC_ALL, LC_MESSAGES, or LANG)
-    lang_envs = [
-        os.environ.get("LANGUAGE", ""),
-        os.environ.get("LC_ALL", ""),
-        os.environ.get("LC_MESSAGES", ""),
-        os.environ.get("LANG", "")
-    ]
-    lang_env = ":".join(filter(None, lang_envs))
-    langs = []
-    for l in lang_env.split(":"):
-        l = l.split(".")[0].strip() # e.g. ru_RU.UTF-8 -> ru_RU
-        if l and l not in langs:
-            langs.append(l)
-            short = l.split("_")[0]
-            if short not in langs:
-                langs.append(short)
-
-    for aid in action_ids:
-        section = f"Desktop Action {aid}"
-        if not cp.has_section(section):
-            continue
-
-        name = None
-        # Try localized names
-        for l in langs:
-            name = cp.get(section, f"Name[{l}]", fallback=None)
-            if name is not None:
-                break
-        
-        if name is None:
-            name = cp.get(section, "Name", fallback="")
-            
-        icon = cp.get(section, "Icon", fallback="")
+    for action_id in app.list_actions():
+        section = f"Desktop Action {action_id}"
+        name = next((n for n in (value(section, f"Name[{lang}]") for lang in langs) if n), "") or value(section, "Name")
         if not name:
             continue
-
-        actions.append({"name": name, "icon": icon, "actionId": aid})
-
+        actions.append({"name": name, "icon": value(section, "Icon"), "actionId": action_id})
     return actions
 
 
-def get_storage_id(desktop_path):
-    """Extract the storage ID (agent name) from a .desktop file path.
-    KActivities uses the desktop file basename without .desktop as the agent."""
-    if not desktop_path:
-        return None
-    basename = os.path.basename(desktop_path)
-    if basename.endswith(".desktop"):
-        return basename[:-8]
-    return basename
+def get_storage_id(app):
+    """The app's desktop file id without ".desktop": the agent kactivitymanagerd
+    files its recent documents under."""
+    desktop_id = app.get_id() or os.path.basename(app.get_filename() or "")
+    return desktop_id[:-8] if desktop_id.endswith(".desktop") else desktop_id
 
 
 _session_bus = None
@@ -274,13 +239,13 @@ def guess_icon_for_mime(mime_type):
     return mime_type.replace("/", "-")
 
 
-def get_recent_documents(desktop_path):
+def get_recent_documents(app):
     """Query KActivities database for recent documents opened by this app."""
     docs = []
     if not KACTIVITIES_DB.is_file():
         return docs
 
-    storage_id = get_storage_id(desktop_path)
+    storage_id = get_storage_id(app)
     if not storage_id:
         return docs
 
@@ -660,13 +625,13 @@ def fetch_sqlite_history(db_path, query, temp_name, limit=10):
     return docs
 
 
-def clear_recent_documents(desktop_path):
+def clear_recent_documents(app):
     """Forget this app's recent documents in the current activity.
 
     Goes through kactivitymanagerd, which owns the database: writing to it
     behind the daemon's back can race with its own writes and leaves its
     caches stale."""
-    storage_id = get_storage_id(desktop_path)
+    storage_id = get_storage_id(app)
     activity = get_current_activity()
     if not storage_id or not activity:
         return False
@@ -921,16 +886,17 @@ class DesktopActionsService:
         invocation.return_value(GLib.Variant(f"({signature})", (result,)) if signature else None)
 
     def Query(self, launcher_url, show_history, limit, app_pid):
-        desktop_path = resolve_launcher_url(launcher_url)
-        jump_list = get_jump_list_actions(desktop_path) if desktop_path else []
-        
+        app = app_for_launcher(launcher_url)
+        desktop_path = app.get_filename() if app else None
+        jump_list = get_jump_list_actions(app) if app else []
+
         browser_history = []
         if desktop_path and show_history:
             browser = detect_browser(desktop_path)
             if browser:
                 browser_history = get_browser_recent(browser, limit, app_pid)
 
-        raw_recent = get_recent_documents(desktop_path) if desktop_path else []
+        raw_recent = get_recent_documents(app) if app else []
         
         # Filter/Split recent items
         recent_docs = []
@@ -957,23 +923,22 @@ class DesktopActionsService:
             "browserHistory": browser_history,
             "places": places,
             "desktopPath": desktop_path or "",
-            "categories": get_categories(desktop_path) if desktop_path else [],
+            "categories": get_categories(app) if app else [],
         }
         return json.dumps(data)
 
     def ClearRecent(self, launcher_url):
-        desktop_path = resolve_launcher_url(launcher_url)
-        if desktop_path:
-            clear_recent_documents(desktop_path)
+        app = app_for_launcher(launcher_url)
+        if app:
+            clear_recent_documents(app)
 
     def LaunchAction(self, launcher_url, action_id):
         """Run one of the [Desktop Action ...] entries of an app's .desktop file."""
-        desktop_path = resolve_launcher_url(launcher_url)
-        if not desktop_path:
+        app = app_for_launcher(launcher_url)
+        if not app:
             return
         try:
-            app = Gio.DesktopAppInfo.new_from_filename(desktop_path)
-            if app and action_id in app.list_actions():
+            if action_id in app.list_actions():
                 app.launch_action(action_id, None)
         except GLib.Error as e:
             log.warning(f"LaunchAction error: {e}")
@@ -1074,8 +1039,7 @@ class DesktopActionsService:
 
     def OpenUrl(self, url, preferred_app):
         try:
-            desktop_path = resolve_launcher_url(preferred_app)
-            app = Gio.DesktopAppInfo.new_from_filename(desktop_path) if desktop_path else None
+            app = app_for_launcher(preferred_app)
             if app:
                 commandline = app.get_commandline() or ""
                 # Firefox PWAs (FFPWA) take links through --protocol, which
