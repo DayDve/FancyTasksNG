@@ -75,14 +75,25 @@ def _make_logger(name):
 log = _make_logger("desktop_actions")
 
 
-KACTIVITIES_DB = Path.home() / ".local/share/kactivitymanagerd/resources/database"
+def xdg_dir(var, default):
+    """An XDG base directory: $var when set to an absolute path, else
+    ~/default, as the XDG Base Directory spec says."""
+    value = os.environ.get(var, "")
+    return Path(value) if os.path.isabs(value) else Path.home() / default
+
+
+DATA_HOME = xdg_dir("XDG_DATA_HOME", ".local/share")
+CACHE_HOME = xdg_dir("XDG_CACHE_HOME", ".cache")
+CONFIG_HOME = xdg_dir("XDG_CONFIG_HOME", ".config")
+
+KACTIVITIES_DB = DATA_HOME / "kactivitymanagerd/resources/database"
 DESKTOP_DIRS = [
     "/usr/share/applications",
     "/usr/local/share/applications",
-    str(Path.home() / ".local/share/applications"),
+    str(DATA_HOME / "applications"),
     # Flatpak
     "/var/lib/flatpak/exports/share/applications",
-    str(Path.home() / ".local/share/flatpak/exports/share/applications"),
+    str(DATA_HOME / "flatpak/exports/share/applications"),
 ]
 MAX_RECENT = 5
 
@@ -412,7 +423,7 @@ def extract_favicons(history_items, favicons_db_path, engine):
     if not history_items or not favicons_db_path or not os.path.exists(favicons_db_path):
         return history_items
 
-    cache_dir = Path.home() / ".cache" / "fancytasksng" / "favicons"
+    cache_dir = CACHE_HOME / "fancytasksng" / "favicons"
     cache_dir.mkdir(parents=True, exist_ok=True)
 
     urls_to_query = []
@@ -510,38 +521,39 @@ ENGINE_FILES = {
 }
 
 _HOME = Path.home()
-
 # Browser -> (engine, profile base directories: native, Flatpak, Snap).
+# Native profiles under ~/.config follow $XDG_CONFIG_HOME, as the browsers
+# do; Firefox's legacy ~/.mozilla and Flatpak/Snap dirs stay home-based.
 BROWSERS = {
     "firefox": ("firefox", [
         _HOME / ".mozilla" / "firefox",
-        _HOME / ".config" / "mozilla" / "firefox",
+        CONFIG_HOME / "mozilla" / "firefox",
         _HOME / ".var" / "app" / "org.mozilla.firefox" / ".mozilla" / "firefox",
         _HOME / ".var" / "app" / "org.mozilla.firefox-trunk" / ".mozilla" / "firefox",
         _HOME / "snap" / "firefox" / "common" / ".mozilla" / "firefox",
     ]),
     "chrome": ("chromium", [
-        _HOME / ".config" / "google-chrome",
+        CONFIG_HOME / "google-chrome",
         _HOME / ".var" / "app" / "com.google.Chrome" / "config" / "google-chrome",
     ]),
     "chromium": ("chromium", [
-        _HOME / ".config" / "chromium",
+        CONFIG_HOME / "chromium",
         _HOME / ".var" / "app" / "org.chromium.Chromium" / "config" / "chromium",
     ]),
     "brave": ("chromium", [
-        _HOME / ".config" / "BraveSoftware" / "Brave-Browser",
+        CONFIG_HOME / "BraveSoftware" / "Brave-Browser",
         _HOME / ".var" / "app" / "com.brave.Browser" / "config" / "BraveSoftware" / "Brave-Browser",
     ]),
     "vivaldi": ("chromium", [
-        _HOME / ".config" / "vivaldi",
+        CONFIG_HOME / "vivaldi",
         _HOME / ".var" / "app" / "com.vivaldi.Vivaldi" / "config" / "vivaldi",
     ]),
     "edge": ("chromium", [
-        _HOME / ".config" / "microsoft-edge",
+        CONFIG_HOME / "microsoft-edge",
         _HOME / ".var" / "app" / "com.microsoft.Edge" / "config" / "microsoft-edge",
     ]),
     "opera": ("chromium", [
-        _HOME / ".config" / "opera",
+        CONFIG_HOME / "opera",
         _HOME / ".var" / "app" / "com.opera.Opera" / "config" / "opera",
     ]),
 }
@@ -666,9 +678,9 @@ def clear_recent_documents(desktop_path):
 
 
 def get_kde_places():
-    """Parse ~/.local/share/user-places.xbel to get KDE Places."""
+    """Parse $XDG_DATA_HOME/user-places.xbel to get KDE Places."""
     places = []
-    xbel_path = Path.home() / ".local/share/user-places.xbel"
+    xbel_path = DATA_HOME / "user-places.xbel"
     if not xbel_path.exists():
         return places
 
