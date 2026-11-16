@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-16 17:42+0200\n"
+"POT-Creation-Date: 2026-11-16 17:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,8 +75,7 @@ msgid "Show app signals"
 msgstr ""
 
 #: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigQuickSetup.qml
-msgid ""
-"Some apps send signals about audio playback, notification count and operation progress. When on, Fancy Tasks NG receives these signals and shows the matching indicators on the buttons of such apps."
+msgid "Some apps send signals about audio playback, notification count and operation progress. When on, Fancy Tasks NG shows the matching indicators on the buttons of such apps."
 msgstr ""
 
 #: package/contents/config/ConfigAppSignals.qml

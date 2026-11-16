@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-16 17:42+0200\n"
+"POT-Creation-Date: 2026-11-16 17:55+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -65,15 +65,15 @@ msgstr "Сигналы приложений"
 
 #: package/contents/config/ConfigAppSignals.qml
 msgid "App signals are turned off."
-msgstr "Сигналы приложений не принимаются."
+msgstr "Показ сигналов приложений выключен."
 
 #: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigQuickSetup.qml
 msgid "Show app signals"
-msgstr "Принимать сигналы приложений"
+msgstr "Показывать сигналы приложений"
 
 #: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigQuickSetup.qml
-msgid "Some apps send signals about audio playback, notification count and operation progress. When on, Fancy Tasks NG receives these signals and shows the matching indicators on the buttons of such apps."
-msgstr "Некоторые приложения передают сигналы о воспроизводимом звуке, числе уведомлений и ходе выполнения операций. Если включено, Fancy Tasks NG принимает эти сигналы и показывает соответствующие индикаторы на кнопках таких приложений."
+msgid "Some apps send signals about audio playback, notification count and operation progress. When on, Fancy Tasks NG shows the matching indicators on the buttons of such apps."
+msgstr "Некоторые приложения передают сигналы о воспроизводимом звуке, числе уведомлений и ходе выполнения операций. Если включено, Fancy Tasks NG показывает соответствующие индикаторы на кнопках таких приложений."
 
 #: package/contents/config/ConfigAppSignals.qml
 msgid "Mark applications playing audio"
@@ -1514,6 +1514,9 @@ msgstr "Аудиопоток"
 msgctxt "Stream name and its number among streams with the same name"
 msgid "%1 %2"
 msgstr "%1 %2"
+
+#~ msgid "Some apps send signals about audio playback, notification count and operation progress. When on, Fancy Tasks NG receives these signals and shows the matching indicators on the buttons of such apps."
+#~ msgstr "Некоторые приложения передают сигналы о воспроизводимом звуке, числе уведомлений и ходе выполнения операций. Если включено, Fancy Tasks NG принимает эти сигналы и показывает соответствующие индикаторы на кнопках таких приложений."
 
 #~ msgid "Play removal animation"
 #~ msgstr "Анимация удаления"
