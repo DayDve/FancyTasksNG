@@ -1139,6 +1139,29 @@ PlasmoidItem {
         TaskEntryShortcuts.removeTarget(tasks);
     }
 
+    // The window tooltips are shown in sits against this strip: along the
+    // whole widget, and across the panel up to the hovered button's
+    // tooltipAnchor. The window is as long as the screen along the panel, so
+    // it stays put while the cursor goes from button to button and the frame
+    // moves inside it. A window that moved and resized on every animation
+    // step wobbled: the compositor places it a frame after its content is
+    // drawn.
+    Item {
+        id: tooltipStrip
+        visible: false
+        readonly property Item anchorItem: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : tasks.lastTooltipParent
+        readonly property rect anchorRect: anchorItem
+            ? anchorItem.mapToItem(tasks, 0, 0, anchorItem.width, anchorItem.height)
+            : Qt.rect(0, 0, tasks.width, tasks.height)
+        x: tasks.vertical ? anchorRect.x : 0
+        y: tasks.vertical ? 0 : anchorRect.y
+        width: tasks.vertical ? anchorRect.width : tasks.width
+        height: tasks.vertical ? tasks.height : anchorRect.height
+    }
+    readonly property int screenLength: tasks.vertical ? Screen.height : Screen.width
+    // How long the tooltip frame takes to move and resize to another task.
+    readonly property int tooltipMorphDuration: 300
+
     PlasmaCore.Dialog {
         id: windowTooltipDialog
 
@@ -1151,13 +1174,15 @@ PlasmoidItem {
 
         readonly property bool shouldShow: tasks.config.enableToolTips && tasks.currentHoveredTask !== null
         visible: (shouldShow && toolTipInstance.implicitWidth > 0) || winContainer.opacity > 0
-        visualParent: tasks.currentHoveredTask ? tasks.currentHoveredTask.tooltipAnchor : tasks.lastTooltipParent
+        visualParent: tooltipStrip
 
         mainItem: Item {
             id: winContainer
 
-            readonly property real targetWidth: toolTipInstance.implicitWidth + winBgFrame.margins.left + winBgFrame.margins.right
-            readonly property real targetHeight: toolTipInstance.implicitHeight + winBgFrame.margins.top + winBgFrame.margins.bottom
+            // While it fades out, the frame keeps the size it had: the content
+            // has no task any more and would shrink it.
+            readonly property real targetWidth: (windowTooltipDialog.shouldShow && toolTipInstance.implicitWidth > 0 ? toolTipInstance.implicitWidth + winBgFrame.margins.left + winBgFrame.margins.right : lastWidth)
+            readonly property real targetHeight: (windowTooltipDialog.shouldShow && toolTipInstance.implicitHeight > 0 ? toolTipInstance.implicitHeight + winBgFrame.margins.top + winBgFrame.margins.bottom : lastHeight)
 
             readonly property bool isTop: tasks.effectiveLocation === PlasmaCore.Types.TopEdge
             readonly property bool isLeft: tasks.effectiveLocation === PlasmaCore.Types.LeftEdge
@@ -1177,41 +1202,56 @@ PlasmoidItem {
 
             // Cache the last valid dimensions when the tooltip was loaded.
             // When toolTipInstance.implicitWidth drops to 0 during closure or reload,
-            // we use the cached dimensions to prevent the dialog window from
+            // we use the cached dimensions to prevent the frame from
             // instantly shrinking to borders (margins) size.
             property real lastWidth: 0
             property real lastHeight: 0
+            Binding on lastWidth {
+                when: windowTooltipDialog.shouldShow && toolTipInstance.implicitWidth > 0
+                value: toolTipInstance.implicitWidth + winBgFrame.margins.left + winBgFrame.margins.right
+                restoreMode: Binding.RestoreNone
+            }
+            Binding on lastHeight {
+                when: windowTooltipDialog.shouldShow && toolTipInstance.implicitHeight > 0
+                value: toolTipInstance.implicitHeight + winBgFrame.margins.top + winBgFrame.margins.bottom
+                restoreMode: Binding.RestoreNone
+            }
 
-            onTargetWidthChanged: {
-                if (toolTipInstance.implicitWidth > 0) {
-                    lastWidth = targetWidth;
+            // Across the panel the window is as deep as the biggest tooltip
+            // since it was shown: it grows when it has to, and never shrinks
+            // while it's up, so the frame shrinks inside it instead.
+            property real depth: 0
+            readonly property real targetDepth: tasks.vertical ? targetWidth : targetHeight
+            onTargetDepthChanged: depth = Math.max(depth, targetDepth)
+            Connections {
+                target: windowTooltipDialog
+                function onVisibleChanged(): void {
+                    if (!windowTooltipDialog.visible) {
+                        winContainer.depth = winContainer.targetDepth;
+                    }
                 }
             }
-            onTargetHeightChanged: {
-                if (toolTipInstance.implicitHeight > 0) {
-                    lastHeight = targetHeight;
-                }
-            }
 
-            implicitWidth: (toolTipInstance.implicitWidth > 0 ? targetWidth : lastWidth) + marginLeft + marginRight
-            implicitHeight: (toolTipInstance.implicitHeight > 0 ? targetHeight : lastHeight) + marginTop + marginBottom
+            implicitWidth: tasks.vertical ? depth + marginLeft + marginRight : tasks.screenLength
+            implicitHeight: tasks.vertical ? tasks.screenLength : depth + marginTop + marginBottom
             width: implicitWidth
             height: implicitHeight
 
-            Behavior on implicitWidth {
-                enabled: tasks.tooltipAnimationEnabled && windowTooltipDialog.shouldShow
-                NumberAnimation {
-                    duration: 150
-                    easing.type: Easing.OutCubic
+            // The frame moves and resizes only once the tooltip is fully up:
+            // when it appears, it does so in place.
+            readonly property bool morph: tasks.tooltipAnimationEnabled && windowTooltipDialog.shouldShow && opacity > 0.99
+
+            // The hovered button's center along the panel, in this window.
+            readonly property real buttonCenter: {
+                const task = tasks.currentHoveredTask;
+                if (!task) {
+                    return lastButtonCenter;
                 }
+                const center = task.mapToGlobal(task.width / 2, task.height / 2);
+                return tasks.vertical ? center.y - windowTooltipDialog.y : center.x - windowTooltipDialog.x;
             }
-            Behavior on implicitHeight {
-                enabled: tasks.tooltipAnimationEnabled && windowTooltipDialog.shouldShow
-                NumberAnimation {
-                    duration: 150
-                    easing.type: Easing.OutCubic
-                }
-            }
+            property real lastButtonCenter: 0
+            onButtonCenterChanged: lastButtonCenter = buttonCenter
 
             opacity: windowTooltipDialog.shouldShow ? 1 : 0
             Behavior on opacity {
@@ -1230,6 +1270,32 @@ PlasmoidItem {
 
                 width: winContainer.targetWidth
                 height: winContainer.targetHeight
+                Behavior on width {
+                    enabled: winContainer.morph
+                    NumberAnimation { duration: tasks.tooltipMorphDuration; easing.type: Easing.InOutCubic }
+                }
+                Behavior on height {
+                    enabled: winContainer.morph
+                    NumberAnimation { duration: tasks.tooltipMorphDuration; easing.type: Easing.InOutCubic }
+                }
+
+                // What moves is the middle of the frame's side facing the
+                // panel: centered on the button, kept on screen for the
+                // target size. The corner follows from it and the animated
+                // size, so the frame grows and shrinks around that point.
+                readonly property real targetAlong: tasks.vertical ? winContainer.targetHeight : winContainer.targetWidth
+                property real center: Math.max(winContainer.shadowPadding + targetAlong / 2,
+                    Math.min(winContainer.buttonCenter, tasks.screenLength - winContainer.shadowPadding - targetAlong / 2))
+                Behavior on center {
+                    enabled: winContainer.morph
+                    NumberAnimation { duration: tasks.tooltipMorphDuration; easing.type: Easing.InOutCubic }
+                }
+                x: tasks.vertical ? (winContainer.isRight ? winContainer.width - winContainer.marginRight - width : winContainer.marginLeft) : center - width / 2
+                y: tasks.vertical ? center - height / 2 : (winContainer.isTop ? winContainer.marginTop : winContainer.height - winContainer.marginBottom - height)
+
+                // The content keeps its own size and is cut by the frame while
+                // the frame catches up with it.
+                clip: true
 
                 color: Kirigami.Theme.backgroundColor
                 radius: Kirigami.Units.cornerRadius
@@ -1248,12 +1314,6 @@ PlasmoidItem {
                 shadow.xOffset: 1
                 shadow.yOffset: 1
 
-                anchors.fill: parent
-                anchors.topMargin: winContainer.marginTop
-                anchors.bottomMargin: winContainer.marginBottom
-                anchors.leftMargin: winContainer.marginLeft
-                anchors.rightMargin: winContainer.marginRight
-
                 // Thumbnails get a thinner frame: they already sit in their own
                 // highlight box, and a wider edge only shrinks the window image.
                 readonly property int tooltipFramePadding: toolTipInstance.showThumbnails ? 2 : 4
@@ -1267,8 +1327,22 @@ PlasmoidItem {
                 ToolTipDelegate {
                     id: toolTipInstance
                     clip: true
-                    anchors.fill: parent
-                    anchors.margins: winBgFrame.tooltipFramePadding
+                    anchors.centerIn: parent
+                    width: Math.max(0, winContainer.targetWidth - 2 * winBgFrame.tooltipFramePadding)
+                    height: Math.max(0, winContainer.targetHeight - 2 * winBgFrame.tooltipFramePadding)
+
+                    // A new task's content comes in with a short fade while
+                    // the frame moves to it.
+                    onParentTaskChanged: if (winContainer.morph) contentFade.restart()
+                    NumberAnimation {
+                        id: contentFade
+                        target: toolTipInstance
+                        property: "opacity"
+                        from: 0
+                        to: 1
+                        duration: tasks.tooltipMorphDuration
+                        easing.type: Easing.InCubic
+                    }
 
                     onContainsMouseChanged: tasks.isTooltipHovered = containsMouse
 
