@@ -184,7 +184,8 @@ Item {
         scale: root.badgeScale
         // A ring scaled with the badge goes blurry; keep it one pixel thick.
         border.width: 1 / Math.max(0.01, root.badgeScale)
-        visible: root.countVisible
+        // A progress pie stands in for the dot.
+        visible: root.countVisible && !progressPie.visible
         number: root.count
         showNumber: root.showContent
         isUrgent: root.urgent
@@ -208,7 +209,8 @@ Item {
         y: root.anchorY(true) - (root.growsUp(true) ? height : 0)
         transformOrigin: root.origin(true)
         scale: root.badgeScale
-        visible: root.progressVisible
+        // A dot is too small for a ring around it; it's drawn as a pie instead.
+        visible: root.progressVisible && root.showContent
         opacity: root.progressOpacity
 
         readonly property real gap: Math.max(1, height * 0.08)
@@ -263,6 +265,55 @@ Item {
                 PathLine { x: progressRing.leftArcX; y: progressRing.bottomY }
                 PathArc { x: progressRing.leftArcX; y: progressRing.topY; radiusX: progressRing.arcRadius; radiusY: progressRing.arcRadius }
                 PathLine { x: progressRing.midX; y: progressRing.topY }
+            }
+        }
+    }
+
+    // While the count is a dot (or would be): the dot itself as a pie, a
+    // faint disc with the done share filled from twelve o'clock clockwise.
+    Item {
+        id: progressPie
+        width: root.layoutDiameter
+        height: width
+        x: root.anchorX(true) - (root.growsLeft(true) ? width : 0)
+        y: root.anchorY(true) - (root.growsUp(true) ? height : 0)
+        transformOrigin: root.origin(true)
+        // Bigger than the dot, which is too small to read a pie on: as big
+        // as the badge would be at rest, and growing with the icon on hover.
+        // (grown() would lift it to the readable size a dot expands to.)
+        scale: root.restDiameter * (1 + (root.zoom - 1) * 0.8) / root.layoutDiameter
+        visible: root.progressVisible && !root.showContent
+        opacity: root.progressOpacity
+
+        Rectangle {
+            anchors.fill: parent
+            radius: width / 2
+            // Opaque, so the count's dot under it doesn't show through.
+            color: Qt.tint(Kirigami.Theme.backgroundColor, Qt.alpha(root.progressColor, 0.35))
+        }
+
+        Shape {
+            anchors.fill: parent
+            antialiasing: true
+            layer.enabled: true
+            layer.samples: 4
+
+            ShapePath {
+                readonly property real r: progressPie.width / 2
+                fillColor: root.progressColor
+                strokeColor: "transparent"
+                strokeWidth: 0
+                startX: r
+                startY: r
+                PathAngleArc {
+                    centerX: progressPie.width / 2
+                    centerY: progressPie.height / 2
+                    radiusX: progressPie.width / 2
+                    radiusY: progressPie.height / 2
+                    startAngle: -90
+                    sweepAngle: 360 * Math.max(0, Math.min(1, root.progress))
+                }
+                PathLine { x: progressPie.width / 2; y: progressPie.height / 2 }
             }
         }
     }
