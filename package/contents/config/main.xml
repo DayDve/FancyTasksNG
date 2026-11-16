@@ -66,6 +66,10 @@
             >Whether groups are to be reduced to a single task button and expand into a popup or task buttons are grouped on the widget itself.</label>
       <default>true</default>
     </entry>
+    <entry name="groupWindowCount" type="Bool">
+      <label>Classic mode: show the number of windows on a combined group's button, after its title.</label>
+      <default>true</default>
+    </entry>
 
     <entry name="groupingAppIdBlacklist" type="StringList">
       <label

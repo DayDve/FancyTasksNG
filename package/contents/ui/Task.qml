@@ -110,12 +110,11 @@ Item {
         }
     }
 
-    // A combined group shows its window count before the app name, as on
-    // classic taskbars.
-    readonly property string title: !task.model ? ""
-        : task.model.IsGroupParent && task.childCount > 1
-        ? Wrappers.i18nc("Window count, then the app name, on a group button", "%1 %2", task.childCount, task.model.display)
-        : (task.model.display || "")
+    // Classic mode: a combined group's window count, at the button's right
+    // edge after its title. The title is elided before it, the count isn't.
+    readonly property bool showsWindowCount: !task.tasksRoot.iconsOnly && task.config.groupWindowCount
+        && !!task.model && task.model.IsGroupParent && task.childCount > 1
+    readonly property real windowCountWidth: task.showsWindowCount ? windowCount.implicitWidth + LayoutMetrics.labelMargin : 0
 
     // Every button gets the full max width, like the classic taskbar, unless
     // "fit to title" is on: then icon + title, kept within [min, max].
@@ -135,7 +134,7 @@ Item {
     // just added to the width, so it survives the clamp to the max width.
     readonly property real trailingLabelGap: task.config.fitButtonToText ? LayoutMetrics.labelMargin
         : Math.max(0, LayoutMetrics.labelMargin - LayoutMetrics.rightMargin(task.tasksRoot))
-    readonly property real labelChromeWidth: LayoutMetrics.leftMargin(task.tasksRoot) + taskIconBox.width + LayoutMetrics.labelMargin + LayoutMetrics.rightMargin(task.tasksRoot) + task.trailingLabelGap
+    readonly property real labelChromeWidth: LayoutMetrics.leftMargin(task.tasksRoot) + taskIconBox.width + LayoutMetrics.labelMargin + LayoutMetrics.rightMargin(task.tasksRoot) + task.trailingLabelGap + task.windowCountWidth
 
     // Lays the title out exactly like the label would at the max width
     // (same wrapping, line limit and height), so contentWidth is the widest
@@ -153,7 +152,7 @@ Item {
         font.family: label.font.family
         font.pointSize: label.font.pointSize
         font.bold: true
-        text: task.config.fitButtonToText ? task.title : ""
+        text: task.config.fitButtonToText && task.model ? (task.model.display || "") : ""
         textFormat: Text.PlainText
         wrapMode: label.wrapMode
         maximumLineCount: label.maximumLineCount
@@ -910,7 +909,7 @@ Item {
             fill: parent
             leftMargin: LayoutMetrics.leftMargin(task.tasksRoot) + taskIconBox.width + LayoutMetrics.labelMargin
             topMargin: LayoutMetrics.topMargin(task.tasksRoot)
-            rightMargin: LayoutMetrics.rightMargin(task.tasksRoot) + task.trailingLabelGap
+            rightMargin: LayoutMetrics.rightMargin(task.tasksRoot) + task.trailingLabelGap + task.windowCountWidth
             bottomMargin: LayoutMetrics.bottomMargin(task.tasksRoot)
         }
 
@@ -934,9 +933,24 @@ Item {
             when: label.visible
 
             PropertyChanges {
-                label.text: task.title
+                label.text: task.model.display
             }
         }
+    }
+
+    PlasmaComponents3.Label {
+        id: windowCount
+        visible: label.visible && task.showsWindowCount
+        anchors {
+            right: parent.right
+            rightMargin: LayoutMetrics.rightMargin(task.tasksRoot) + task.trailingLabelGap
+            verticalCenter: label.verticalCenter
+        }
+        text: Wrappers.i18nc("Window count on a group button", "(%1)", task.childCount)
+        textFormat: Text.PlainText
+        font.bold: label.font.bold
+        color: label.color
+        Accessible.ignored: true
     }
 
     Component.onCompleted: {

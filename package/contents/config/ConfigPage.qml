@@ -142,6 +142,8 @@ Kirigami.Page {
 
     property bool cfg_groupPopups: true
     property bool cfg_groupPopupsDefault: true
+    property bool cfg_groupWindowCount: true
+    property bool cfg_groupWindowCountDefault: true
 
     property var cfg_groupingAppIdBlacklist: []
     property var cfg_groupingAppIdBlacklistDefault: []

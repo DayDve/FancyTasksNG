@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-13 18:36+0200\n"
+"POT-Creation-Date: 2026-11-16 11:55+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -342,10 +342,6 @@ msgid "Absolute"
 msgstr "Абсолютный"
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Reset to default"
-msgstr "Сбросить"
-
-#: package/contents/config/ConfigLayout.qml
 msgid "Scale icons from panel edge"
 msgstr "Масштабировать значки от края панели"
 
@@ -467,20 +463,20 @@ msgid "Default Web Browser"
 msgstr "Браузер по умолчанию"
 
 #: package/contents/config/ConfigPinnedApps.qml
-msgid "Default File Manager"
-msgstr "Файловый менеджер"
-
-#: package/contents/config/ConfigPinnedApps.qml
-msgid "Default Mail Client"
-msgstr "Почтовый клиент"
-
-#: package/contents/config/ConfigPinnedApps.qml
 msgid "Browse the Web"
 msgstr "Просмотр веб-страниц"
 
 #: package/contents/config/ConfigPinnedApps.qml
+msgid "Default File Manager"
+msgstr "Файловый менеджер"
+
+#: package/contents/config/ConfigPinnedApps.qml
 msgid "Manage Files"
 msgstr "Управление файлами"
+
+#: package/contents/config/ConfigPinnedApps.qml
+msgid "Default Mail Client"
+msgstr "Почтовый клиент"
 
 #: package/contents/config/ConfigPinnedApps.qml
 msgid "Send and Receive Email"
@@ -779,6 +775,18 @@ msgstr "Размещать окна одного приложения рядом
 #: package/contents/config/ConfigTaskList.qml
 msgid "Combine into one button by application name"
 msgstr "Объединять в одну кнопку по имени приложения"
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Show window count"
+msgstr "Показывать число окон"
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "The number of windows in brackets at the right edge of a group's button. The title is shortened before it."
+msgstr "Число окон в скобках у правого края кнопки группы. Заголовок сокращается перед ним."
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Only in the classic mode, with windows combined into one button."
+msgstr "Только в режиме «Классическая панель», когда окна объединяются в одну кнопку."
 
 #: package/contents/config/ConfigTaskList.qml
 msgid "Sorting"
@@ -1148,6 +1156,10 @@ msgstr "Непрозрачность неактивных индикаторов
 msgid "Desaturate when minimized"
 msgstr "Обесцвечивать при сворачивании"
 
+#: package/contents/config/IconSizeControl.qml
+msgid "Reset to default"
+msgstr "Сбросить"
+
 #: package/contents/config/LivePreview.qml
 msgid "Preview"
 msgstr "Предпросмотр"
@@ -1226,6 +1238,10 @@ msgctxt "Short section name in the settings sidebar"
 msgid "Pinned Applications"
 msgstr "Закрепы"
 
+#: package/contents/ui/ContextMenu.qml
+msgid "Trash"
+msgstr "Корзина"
+
 # --- ContextMenu.qml ---
 #: package/contents/ui/ContextMenu.qml
 msgid "Places"
@@ -1242,10 +1258,6 @@ msgstr "Недавние папки"
 #: package/contents/ui/ContextMenu.qml
 msgid "Recent Documents"
 msgstr "Недавние документы"
-
-#: package/contents/ui/ContextMenu.qml
-msgid "Trash"
-msgstr "Корзина"
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Forget Recent Files"
@@ -1438,6 +1450,11 @@ msgstr "Показать окна рядом для %1"
 msgctxt "@info:usagetip %1 task name"
 msgid "Open textual list of windows for %1"
 msgstr "Открыть список окон для %1"
+
+#: package/contents/ui/Task.qml
+msgctxt "Window count on a group button"
+msgid "(%1)"
+msgstr "(%1)"
 
 #: package/contents/ui/ToolTipDelegate.qml
 msgctxt "Comma-separated list of desktops"

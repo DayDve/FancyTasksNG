@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-13 18:36+0200\n"
+"POT-Creation-Date: 2026-11-16 11:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -345,10 +345,6 @@ msgid "Absolute"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Reset to default"
-msgstr ""
-
-#: package/contents/config/ConfigLayout.qml
 msgid "Scale icons from panel edge"
 msgstr ""
 
@@ -470,19 +466,19 @@ msgid "Default Web Browser"
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
-msgid "Default File Manager"
-msgstr ""
-
-#: package/contents/config/ConfigPinnedApps.qml
-msgid "Default Mail Client"
-msgstr ""
-
-#: package/contents/config/ConfigPinnedApps.qml
 msgid "Browse the Web"
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
+msgid "Default File Manager"
+msgstr ""
+
+#: package/contents/config/ConfigPinnedApps.qml
 msgid "Manage Files"
+msgstr ""
+
+#: package/contents/config/ConfigPinnedApps.qml
+msgid "Default Mail Client"
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
@@ -780,6 +776,18 @@ msgstr ""
 
 #: package/contents/config/ConfigTaskList.qml
 msgid "Combine into one button by application name"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Show window count"
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "The number of windows in brackets at the right edge of a group's button. The title is shortened before it."
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
+msgid "Only in the classic mode, with windows combined into one button."
 msgstr ""
 
 #: package/contents/config/ConfigTaskList.qml
@@ -1150,6 +1158,10 @@ msgstr ""
 msgid "Desaturate when minimized"
 msgstr ""
 
+#: package/contents/config/IconSizeControl.qml
+msgid "Reset to default"
+msgstr ""
+
 #: package/contents/config/LivePreview.qml
 msgid "Preview"
 msgstr ""
@@ -1229,6 +1241,10 @@ msgid "Pinned Applications"
 msgstr ""
 
 #: package/contents/ui/ContextMenu.qml
+msgid "Trash"
+msgstr ""
+
+#: package/contents/ui/ContextMenu.qml
 msgid "Places"
 msgstr ""
 
@@ -1242,10 +1258,6 @@ msgstr ""
 
 #: package/contents/ui/ContextMenu.qml
 msgid "Recent Documents"
-msgstr ""
-
-#: package/contents/ui/ContextMenu.qml
-msgid "Trash"
 msgstr ""
 
 #: package/contents/ui/ContextMenu.qml
@@ -1437,6 +1449,11 @@ msgstr ""
 #: package/contents/ui/Task.qml
 msgctxt "@info:usagetip %1 task name"
 msgid "Open textual list of windows for %1"
+msgstr ""
+
+#: package/contents/ui/Task.qml
+msgctxt "Window count on a group button"
+msgid "(%1)"
 msgstr ""
 
 #: package/contents/ui/ToolTipDelegate.qml

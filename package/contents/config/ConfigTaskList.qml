@@ -117,6 +117,21 @@ ConfigPage {
                     }
                 }
             }
+            RowLayout {
+                CheckBox {
+                    id: groupWindowCount
+                    Layout.leftMargin: Kirigami.Units.gridUnit
+                    enabled: listPage.cfg_iconOnly === 0 && listPage.cfg_groupingStrategy === 1 && listPage.cfg_groupPopups
+                    text: Wrappers.i18n("Show window count")
+                    checked: listPage.cfg_groupWindowCount
+                    onToggled: listPage.cfg_groupWindowCount = checked
+                }
+                ConfigHint {
+                    target: groupWindowCount
+                    info: Wrappers.i18n("The number of windows in brackets at the right edge of a group's button. The title is shortened before it.")
+                    reason: Wrappers.i18n("Only in the classic mode, with windows combined into one button.")
+                }
+            }
         }
 
         ConfigTab {
