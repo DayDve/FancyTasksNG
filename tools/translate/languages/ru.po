@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-16 11:55+0200\n"
+"POT-Creation-Date: 2026-11-16 17:42+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -242,6 +242,10 @@ msgid "Task Layout"
 msgstr "Расстановка задач"
 
 #: package/contents/config/ConfigLayout.qml
+msgid "Title Font"
+msgstr "Шрифт названия"
+
+#: package/contents/config/ConfigLayout.qml
 msgid "Only in the classic panel mode."
 msgstr "Только в режиме классической панели."
 
@@ -290,6 +294,23 @@ msgstr "Строк в названии:"
 #: package/contents/config/ConfigLayout.qml
 msgid "As many as fit"
 msgstr "Сколько поместится"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Title font:"
+msgstr "Шрифт названия:"
+
+#: package/contents/config/ConfigLayout.qml
+msgctxt "Font size and family"
+msgid "%1 pt %2"
+msgstr "%1 пт %2"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "System font"
+msgstr "Системный шрифт"
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Use the system font"
+msgstr "Использовать системный шрифт"
 
 #: package/contents/config/ConfigLayout.qml
 msgid "Margins:"

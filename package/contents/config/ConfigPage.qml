@@ -106,6 +106,8 @@ Kirigami.Page {
     property int cfg_taskHoverEffectStyleDefault: 0
     property int cfg_maxTextLines: 1
     property int cfg_maxTextLinesDefault: 0
+    property string cfg_labelFont: ""
+    property string cfg_labelFontDefault: ""
     property bool cfg_minimizeActiveTaskOnClick: true
     property bool cfg_minimizeActiveTaskOnClickDefault: true
     property bool cfg_reverseMode: false

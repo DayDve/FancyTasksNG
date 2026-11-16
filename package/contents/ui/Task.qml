@@ -136,6 +136,23 @@ Item {
         : Math.max(0, LayoutMetrics.labelMargin - LayoutMetrics.rightMargin(task.tasksRoot))
     readonly property real labelChromeWidth: LayoutMetrics.leftMargin(task.tasksRoot) + taskIconBox.width + LayoutMetrics.labelMargin + LayoutMetrics.rightMargin(task.tasksRoot) + task.trailingLabelGap + task.windowCountWidth
 
+    // The title font: the one chosen in the settings, or the system font.
+    readonly property var labelFont: {
+        const font = Kirigami.Theme.defaultFont;
+        let custom = {};
+        try {
+            custom = JSON.parse(task.config.labelFont || "{}") || {};
+        } catch (e) {
+            // A hand-edited value that isn't JSON: keep the system font.
+        }
+        return {
+            family: custom.family || font.family,
+            pointSize: custom.pointSize > 0 ? custom.pointSize : font.pointSize,
+            weight: custom.weight > 0 ? custom.weight : font.weight,
+            italic: !!custom.italic
+        };
+    }
+
     // Lays the title out exactly like the label would at the max width
     // (same wrapping, line limit and height), so contentWidth is the widest
     // line after wrapping - a two-line title fits to its longer line, not to
@@ -151,6 +168,7 @@ Item {
         // window is activated.
         font.family: label.font.family
         font.pointSize: label.font.pointSize
+        font.italic: label.font.italic
         font.bold: true
         text: task.config.fitButtonToText && task.model ? (task.model.display || "") : ""
         textFormat: Text.PlainText
@@ -920,9 +938,12 @@ Item {
         verticalAlignment: Text.AlignVCenter
         maximumLineCount: task.config.maxTextLines ||
             undefined
+        font.family: task.labelFont.family
+        font.pointSize: task.labelFont.pointSize
+        font.italic: task.labelFont.italic
         // As on classic taskbars: the active window's title is bold, a
         // minimized window's is dimmed.
-        font.bold: !!task.model.IsActive
+        font.weight: task.model.IsActive ? Font.Bold : task.labelFont.weight
         color: task.model.IsMinimized ? Kirigami.Theme.disabledTextColor : Kirigami.Theme.textColor
 
         Accessible.ignored: true
@@ -948,7 +969,7 @@ Item {
         }
         text: Wrappers.i18nc("Window count on a group button", "(%1)", task.childCount)
         textFormat: Text.PlainText
-        font.bold: label.font.bold
+        font: label.font
         color: label.color
         Accessible.ignored: true
     }

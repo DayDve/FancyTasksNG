@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-16 11:55+0200\n"
+"POT-Creation-Date: 2026-11-16 17:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -245,6 +245,10 @@ msgid "Task Layout"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
+msgid "Title Font"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
 msgid "Only in the classic panel mode."
 msgstr ""
 
@@ -292,6 +296,23 @@ msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
 msgid "As many as fit"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Title font:"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgctxt "Font size and family"
+msgid "%1 pt %2"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "System font"
+msgstr ""
+
+#: package/contents/config/ConfigLayout.qml
+msgid "Use the system font"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml

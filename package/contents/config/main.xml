@@ -257,6 +257,10 @@
             >The maximum number of text lines to show in a task button. 0 means no limit.</label>
       <default>0</default>
     </entry>
+    <entry name="labelFont" type="String">
+      <label>The font of task button titles as JSON (family, pointSize, weight, italic; styleName only to reopen the font dialog on it). Empty means the system font.</label>
+      <default></default>
+    </entry>
     <entry name="minimizeActiveTaskOnClick" type="Bool">
       <label
             >Whether to minimize the currently-active task when clicked. If false, clicking on the currently-active task will do nothing.</label>

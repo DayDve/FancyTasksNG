@@ -10,6 +10,7 @@ import org.kde.kirigami as Kirigami
 import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.plasma.core as PlasmaCore
+import Qt.labs.platform as Platform
 
 import "../ui/code/singletones"
 
@@ -18,6 +19,31 @@ import "../ui/code/singletones"
 ConfigPage {
     id: layoutPage
     fullTitle: Wrappers.i18n("Task Layout")
+
+    // cfg_labelFont parsed; null for the system font.
+    readonly property var labelFont: {
+        try {
+            const f = JSON.parse(layoutPage.cfg_labelFont || "null");
+            return f && f.family ? f : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    // The platform (KDE) dialog, as in the stock digital clock.
+    Platform.FontDialog {
+        id: fontDialog
+        title: Wrappers.i18n("Title Font")
+        modality: Qt.WindowModal
+        parentWindow: layoutPage.Window.window
+        onAccepted: layoutPage.cfg_labelFont = JSON.stringify({
+            family: font.family,
+            pointSize: font.pointSize,
+            weight: font.weight,
+            italic: font.italic,
+            styleName: font.styleName
+        })
+    }
 
     readonly property bool plasmoidVertical: layoutPage.plasmoidFormFactor === PlasmaCore.Types.Vertical
     readonly property bool onPanel: layoutPage.plasmoidLocation !== PlasmaCore.Types.Floating
@@ -109,6 +135,44 @@ ConfigPage {
                 onValueModified: layoutPage.cfg_maxTextLines = value
                 textFromValue: (value, locale) => value === 0 ? Wrappers.i18n("As many as fit") : Number(value).toLocaleString(locale, "f", 0)
                 valueFromText: (text, locale) => text === Wrappers.i18n("As many as fit") ? 0 : Number.fromLocaleString(locale, text)
+            }
+
+            RowLayout {
+                Label {
+                    id: labelFontLabel
+                    enabled: layoutPage.cfg_iconOnly === 0
+                    text: Wrappers.i18n("Title font:")
+                }
+                ConfigHint {
+                    target: labelFontLabel
+                    reason: Wrappers.i18n("Only in the classic panel mode.")
+                }
+            }
+            RowLayout {
+                enabled: layoutPage.cfg_iconOnly === 0
+                Button {
+                    icon.name: "preferences-desktop-font"
+                    text: layoutPage.labelFont
+                        ? Wrappers.i18nc("Font size and family", "%1 pt %2", layoutPage.labelFont.pointSize, layoutPage.labelFont.family)
+                        : Wrappers.i18n("System font")
+                    onClicked: {
+                        const f = layoutPage.labelFont;
+                        // After open(): the dialog behind it is created
+                        // there, and a font set before that is lost.
+                        fontDialog.open();
+                        fontDialog.currentFont = f ? Qt.font(f) : Kirigami.Theme.defaultFont;
+                    }
+                }
+                ToolButton {
+                    visible: !!layoutPage.labelFont
+                    icon.name: "edit-reset"
+                    display: AbstractButton.IconOnly
+                    text: Wrappers.i18n("Use the system font")
+                    ToolTip.text: text
+                    ToolTip.visible: hovered
+                    ToolTip.delay: Kirigami.Units.toolTipDelay
+                    onClicked: layoutPage.cfg_labelFont = ""
+                }
             }
 
             Item { height: Kirigami.Units.largeSpacing }
