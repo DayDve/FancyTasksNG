@@ -282,6 +282,7 @@ Loader {
                 // it never fires into a destroyed one.
                 Timer {
                     id: reloadTimer
+                    interval: 1 // the default is 1000 ms
                     onTriggered: singleInstanceLoader.active = true
                 }
 
