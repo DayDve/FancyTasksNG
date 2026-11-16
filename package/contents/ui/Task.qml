@@ -948,6 +948,15 @@ Item {
             height: numberLoader.size
             colorMode: 4
             number: task.index + 1
+            // A soft shadow, as on the audio badge, keeps it apart from any icon.
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                shadowEnabled: true
+                shadowBlur: 0.4
+                shadowColor: Qt.rgba(0, 0, 0, 0.6)
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 0
+            }
         }
     }
 

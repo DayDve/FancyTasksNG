@@ -40,7 +40,10 @@ Rectangle {
         return showNumber ? Kirigami.Theme.backgroundColor : Kirigami.Theme.highlightColor;
     }
     // A thin highlight ring only on the theme-colored badge, to set it off the icon.
-    border.color: (colorMode === 0 && !isUrgent && showNumber) ? Kirigami.Theme.highlightColor : "transparent"
+    // The inverted one gets a ring in the background color, to set it off a
+    // light icon.
+    border.color: colorMode === 4 ? Kirigami.Theme.backgroundColor
+        : (colorMode === 0 && !isUrgent && showNumber) ? Kirigami.Theme.highlightColor : "transparent"
     border.width: 1
     opacity: highlightMode ? 1.0 : 0.85
 

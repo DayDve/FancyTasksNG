@@ -135,7 +135,7 @@ Item {
 
     Timer {
         id: numbersDelay
-        interval: 500
+        interval: 200
         onTriggered: root.numbersTarget = root.dispatchTarget()
     }
 
