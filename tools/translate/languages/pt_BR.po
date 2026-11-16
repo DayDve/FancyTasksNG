@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-16 18:49+0200\n"
+"POT-Creation-Date: 2026-11-16 19:38+0200\n"
 "PO-Revision-Date: 2023-09-21 16:18-0300\n"
 "Last-Translator:  Douglas Guimarães <<dg2003gh@gmail.com>>\n"
 "Language-Team: \n"
@@ -849,15 +849,13 @@ msgid "Keep launchers separate"
 msgstr ""
 
 #: package/contents/config/ConfigTaskList.qml
+msgid ""
+"On: pinned apps always come first and stay in place when launched; pinned apps are dragged among themselves, other tasks among themselves.\n"
+"Off: any task can be dragged anywhere; a new window of a pinned app goes to the end of the list."
+msgstr ""
+
+#: package/contents/config/ConfigTaskList.qml
 msgid "Only for manual sorting."
-msgstr ""
-
-#: package/contents/config/ConfigTaskList.qml
-msgid "Pinned apps always come first and stay in place when launched. Pinned apps can be dragged among themselves, other tasks among themselves."
-msgstr ""
-
-#: package/contents/config/ConfigTaskList.qml
-msgid "Drag any task anywhere. A newly opened window of a pinned app goes to the end of the list."
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml

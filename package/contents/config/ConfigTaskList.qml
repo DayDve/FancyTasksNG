@@ -163,21 +163,9 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: keepLaunchersSeparate
+                    info: Wrappers.i18n("On: pinned apps always come first and stay in place when launched; pinned apps are dragged among themselves, other tasks among themselves.\nOff: any task can be dragged anywhere; a new window of a pinned app goes to the end of the list.")
                     reason: Wrappers.i18n("Only for manual sorting.")
                 }
-            }
-            Label {
-                enabled: keepLaunchersSeparate.enabled
-                Layout.fillWidth: true
-                // A wrapping label still reports its unwrapped text width as
-                // implicit width, which would stretch the whole form column.
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 14
-                wrapMode: Text.WordWrap
-                font: Kirigami.Theme.smallFont
-                opacity: 0.7
-                text: keepLaunchersSeparate.checked
-                    ? Wrappers.i18n("Pinned apps always come first and stay in place when launched. Pinned apps can be dragged among themselves, other tasks among themselves.")
-                    : Wrappers.i18n("Drag any task anywhere. A newly opened window of a pinned app goes to the end of the list.")
             }
         }
     }

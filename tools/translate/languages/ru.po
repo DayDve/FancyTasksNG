@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-16 18:49+0200\n"
+"POT-Creation-Date: 2026-11-16 19:38+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -850,16 +850,16 @@ msgid "Keep launchers separate"
 msgstr "Держать закреплённые приложения отдельно"
 
 #: package/contents/config/ConfigTaskList.qml
+msgid ""
+"On: pinned apps always come first and stay in place when launched; pinned apps are dragged among themselves, other tasks among themselves.\n"
+"Off: any task can be dragged anywhere; a new window of a pinned app goes to the end of the list."
+msgstr ""
+"Включено: закреплённые приложения всегда в начале и при запуске остаются на своих местах; закреплённые перетаскиваются между собой, остальные задачи между собой.\n"
+"Выключено: любую задачу можно перетащить куда угодно; новое окно закреплённого приложения добавляется в конец списка."
+
+#: package/contents/config/ConfigTaskList.qml
 msgid "Only for manual sorting."
 msgstr "Только при ручной сортировке."
-
-#: package/contents/config/ConfigTaskList.qml
-msgid "Pinned apps always come first and stay in place when launched. Pinned apps can be dragged among themselves, other tasks among themselves."
-msgstr "Закреплённые приложения всегда в начале и при запуске остаются на своих местах. Перетаскивать можно закреплённые между собой и остальные между собой."
-
-#: package/contents/config/ConfigTaskList.qml
-msgid "Drag any task anywhere. A newly opened window of a pinned app goes to the end of the list."
-msgstr "Любую задачу можно перетащить куда угодно. Новое окно закреплённого приложения добавляется в конец списка."
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Icons"
@@ -1522,6 +1522,12 @@ msgstr "Аудиопоток"
 msgctxt "Stream name and its number among streams with the same name"
 msgid "%1 %2"
 msgstr "%1 %2"
+
+#~ msgid "Pinned apps always come first and stay in place when launched. Pinned apps can be dragged among themselves, other tasks among themselves."
+#~ msgstr "Закреплённые приложения всегда в начале и при запуске остаются на своих местах. Перетаскивать можно закреплённые между собой и остальные между собой."
+
+#~ msgid "Drag any task anywhere. A newly opened window of a pinned app goes to the end of the list."
+#~ msgstr "Любую задачу можно перетащить куда угодно. Новое окно закреплённого приложения добавляется в конец списка."
 
 #~ msgid "Some apps send signals about audio playback, notification count and operation progress. When on, Fancy Tasks NG receives these signals and shows the matching indicators on the buttons of such apps."
 #~ msgstr "Некоторые приложения передают сигналы о воспроизводимом звуке, числе уведомлений и ходе выполнения операций. Если включено, Fancy Tasks NG принимает эти сигналы и показывает соответствующие индикаторы на кнопках таких приложений."
