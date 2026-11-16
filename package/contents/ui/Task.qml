@@ -141,7 +141,11 @@ Item {
         visible: false
         width: Math.max(0, LayoutMetrics.preferredMaxWidth(task.tasksRoot) - task.labelChromeWidth)
         height: label.height
-        font: label.font
+        // Measured bold, so a fitted button doesn't change width when its
+        // window is activated.
+        font.family: label.font.family
+        font.pointSize: label.font.pointSize
+        font.bold: true
         text: task.config.fitButtonToText && task.model ? (task.model.display || "") : ""
         textFormat: Text.PlainText
         wrapMode: label.wrapMode
@@ -910,6 +914,10 @@ Item {
         verticalAlignment: Text.AlignVCenter
         maximumLineCount: task.config.maxTextLines ||
             undefined
+        // As on classic taskbars: the active window's title is bold, a
+        // minimized window's is dimmed.
+        font.bold: !!task.model.IsActive
+        color: task.model.IsMinimized ? Kirigami.Theme.disabledTextColor : Kirigami.Theme.textColor
 
         Accessible.ignored: true
 
