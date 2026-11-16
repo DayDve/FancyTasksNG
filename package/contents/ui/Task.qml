@@ -121,11 +121,13 @@ Item {
         const contentWidth = task.labelChromeWidth + Math.ceil(titleMeasure.contentWidth);
         return Math.min(maxWidth, Math.max(task.config.minFitButtonLength, contentWidth));
     }
-    // Mirrors the icon-to-title gap after a fitted title: the frame's right
-    // margin scales with iconSpacing and is 0 when that's 0, which would leave
-    // the title touching the button's edge. Reserved in the label itself, not
+    // The frame's right margin scales with iconSpacing and is 0 when that's
+    // 0, which would leave the title touching the button's edge. A fitted
+    // title gets the icon-to-title gap after it as well; otherwise the title
+    // keeps at least that gap from the edge. Reserved in the label itself, not
     // just added to the width, so it survives the clamp to the max width.
-    readonly property real trailingLabelGap: task.config.fitButtonToText ? LayoutMetrics.labelMargin : 0
+    readonly property real trailingLabelGap: task.config.fitButtonToText ? LayoutMetrics.labelMargin
+        : Math.max(0, LayoutMetrics.labelMargin - LayoutMetrics.rightMargin(task.tasksRoot))
     readonly property real labelChromeWidth: LayoutMetrics.leftMargin(task.tasksRoot) + taskIconBox.height + LayoutMetrics.labelMargin + LayoutMetrics.rightMargin(task.tasksRoot) + task.trailingLabelGap
 
     // Lays the title out exactly like the label would at the max width
