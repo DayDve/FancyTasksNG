@@ -229,10 +229,12 @@ DropArea {
                 }
             } else if (action === 5) { // Adjust Volume
                 const isShift = (event.modifiers & Qt.ShiftModifier) && dropArea.config.wheelShiftSystemVolumeEnabled;
+                // Undo natural-scrolling inversion: wheel up always raises volume.
+                const volIncrement = event.inverted ? -increment : increment;
                 if (anchor && anchor.adjustVolume) {
-                    anchor.adjustVolume(increment, isShift);
+                    anchor.adjustVolume(volIncrement, isShift);
                 } else if (isShift && dropArea.tasks.adjustGlobalVolume) {
-                    dropArea.tasks.adjustGlobalVolume(increment);
+                    dropArea.tasks.adjustGlobalVolume(volIncrement);
                 }
             }
         }

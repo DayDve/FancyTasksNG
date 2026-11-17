@@ -569,7 +569,7 @@ Item {
                     hoverEnabled: true
                     onClicked: root.mediaRegistry.toggleMuted(root.windowStreams)
                     onWheel: wheel => {
-                        const steps = Math.round(wheel.angleDelta.y / 120);
+                        const steps = Math.round((wheel.inverted ? -wheel.angleDelta.y : wheel.angleDelta.y) / 120);
                         if (steps !== 0) {
                             root.mediaRegistry.adjustVolume(root.windowStreams, steps);
                         }

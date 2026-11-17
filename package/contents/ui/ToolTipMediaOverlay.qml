@@ -66,7 +66,7 @@ Item {
         acceptedButtons: Qt.NoButton
         onWheel: (wheel) => {
             if (overlayRoot.mediaController && overlayRoot.mediaController.showVolumeControls) {
-                overlayRoot.mediaController.wheelVolume(wheel.angleDelta.y);
+                overlayRoot.mediaController.wheelVolume(wheel.inverted ? -wheel.angleDelta.y : wheel.angleDelta.y);
                 wheel.accepted = true;
             }
         }
