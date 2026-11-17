@@ -13,7 +13,7 @@ import QtQuick.Layouts
 import "../ui/code/singletones"
 import "../ui/code/tools.js" as TaskTools
 
-// Task actions: what clicks and the mouse wheel do on a task.
+// Task actions: what clicks, the mouse wheel and the keyboard do on a task.
 ConfigPage {
     id: actionsPage
     fullTitle: Wrappers.i18n("Task Actions")
@@ -69,6 +69,9 @@ ConfigPage {
         cfg_page: actionsPage
 
         ConfigTab {
+            title: Wrappers.i18n("Mouse")
+            iconName: "input-mouse"
+
             // Turned off, a click activates the window again: nothing happens.
             Label {
                 text: Wrappers.i18n("Clicking the active window's button:")
@@ -208,18 +211,32 @@ ConfigPage {
                     reason: Wrappers.i18n("Only when the wheel or Ctrl+wheel adjusts the volume.")
                 }
             }
+        }
 
-            Item { height: Kirigami.Units.largeSpacing }
+        ConfigTab {
+            title: Wrappers.i18n("Keyboard")
+            iconName: "input-keyboard"
 
             RowLayout {
                 KeyCheckBox {
-                    key: "Meta"
-                    text: Wrappers.i18n("held: show task numbers")
-                    checked: actionsPage.cfg_showTaskNumbers
-                    onToggled: actionsPage.cfg_showTaskNumbers = checked
+                    id: taskEntryShortcuts
+                    keys: ["Meta", "1", "9"]
+                    text: Wrappers.i18nc("%1 is Meta, %2 and %3 are 1 and 9, drawn as keys", "%1+%2…%3: activate a task")
+                    checked: actionsPage.cfg_taskEntryShortcuts
+                    onToggled: actionsPage.cfg_taskEntryShortcuts = checked
                 }
                 ConfigHint {
-                    info: Wrappers.i18n("Meta+1 to Meta+9 activate the task with that number.")
+                    info: Wrappers.i18n("As in Plasma's task manager.")
+                }
+            }
+            RowLayout {
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+                KeyCheckBox {
+                    enabled: taskEntryShortcuts.checked
+                    keys: ["Meta"]
+                    text: Wrappers.i18nc("%1 is Meta, drawn as a key", "Show task numbers while %1 is held")
+                    checked: actionsPage.cfg_showTaskNumbers
+                    onToggled: actionsPage.cfg_showTaskNumbers = checked
                 }
             }
         }

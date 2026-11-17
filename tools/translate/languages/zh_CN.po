@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-16 21:08+0200\n"
+"POT-Creation-Date: 2026-11-17 11:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -739,6 +739,10 @@ msgid "Adjusts the group's volume"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
+msgid "Mouse"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
 msgid "Clicking the active window's button:"
 msgstr ""
 
@@ -827,11 +831,21 @@ msgid "Only when the wheel or Ctrl+wheel adjusts the volume."
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
-msgid "held: show task numbers"
+msgid "Keyboard"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
-msgid "Meta+1 to Meta+9 activate the task with that number."
+msgctxt "%1 is Meta, %2 and %3 are 1 and 9, drawn as keys"
+msgid "%1+%2…%3: activate a task"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "As in Plasma's task manager."
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgctxt "%1 is Meta, drawn as a key"
+msgid "Show task numbers while %1 is held"
 msgstr ""
 
 #: package/contents/config/ConfigTaskList.qml

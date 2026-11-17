@@ -82,6 +82,15 @@ Item {
             registerTimer.restart();
     }
 
+    // Instances that take the shortcuts: those with them turned on.
+    function activeTargets() {
+        return targets.filter(target => target.config.taskEntryShortcuts);
+    }
+
+    function refresh() {
+        registerTimer.restart();
+    }
+
     function removeTarget(target) {
         const i = targets.indexOf(target);
         if (i !== -1)
@@ -96,8 +105,9 @@ Item {
     // active task anywhere (to launch a pinned app), one showing every
     // screen, then any.
     function dispatchTarget() {
+        const candidates = activeTargets();
         let fallback = null;
-        for (const target of targets) {
+        for (const target of candidates) {
             if (!target.hasActiveTask)
                 continue;
             if (!target.showsOnlyCurrentScreen)
@@ -106,11 +116,11 @@ Item {
         }
         if (fallback)
             return fallback;
-        for (const target of targets) {
+        for (const target of candidates) {
             if (!target.showsOnlyCurrentScreen)
                 return target;
         }
-        return targets.length > 0 ? targets[0] : null;
+        return candidates.length > 0 ? candidates[0] : null;
     }
 
     function handlePress(component, action) {
@@ -125,7 +135,7 @@ Item {
     }
 
     function registerShortcuts() {
-        if (!shortcutsHandled || targets.length === 0 || !helperWatcher.registered)
+        if (!shortcutsHandled || activeTargets().length === 0 || !helperWatcher.registered)
             return;
         DesktopActionsManager.registerTaskEntryShortcuts(componentName, path => {
             if (path)

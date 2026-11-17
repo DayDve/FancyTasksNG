@@ -237,6 +237,10 @@ PlasmoidItem {
 
     Connections {
         target: tasks.config
+        // Turned on later, the shortcuts may still have to be registered.
+        function onTaskEntryShortcutsChanged() {
+            TaskEntryShortcuts.refresh();
+        }
         function onShowOnlyCurrentDesktopChanged() {
             modelUpdateTimer.restart();
             tasks.filteredTasksModel.invalidateFilter();
@@ -802,7 +806,9 @@ PlasmoidItem {
     // it by name from C++, as activateTaskAtIndex(QVariant), so keep the name
     // and the untyped argument; on 6.8 and later TaskEntryShortcuts calls it.
     function activateTaskAtIndex(index: var): void {
-        if (typeof index !== "number")
+        // Turned off, a press does nothing here, also when plasmashell (up to
+        // 6.7) is the one calling.
+        if (typeof index !== "number" || !tasks.config.taskEntryShortcuts)
             return;
         const task = internalTaskRepeater.itemAt(index) as Task;
         if (task)

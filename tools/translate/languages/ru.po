@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-16 21:08+0200\n"
+"POT-Creation-Date: 2026-11-17 11:06+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -739,6 +739,10 @@ msgid "Adjusts the group's volume"
 msgstr "Регулирует громкость группы"
 
 #: package/contents/config/ConfigTaskActions.qml
+msgid "Mouse"
+msgstr "Мышь"
+
+#: package/contents/config/ConfigTaskActions.qml
 msgid "Clicking the active window's button:"
 msgstr "Нажатие на кнопку активного окна:"
 
@@ -827,12 +831,22 @@ msgid "Only when the wheel or Ctrl+wheel adjusts the volume."
 msgstr "Только когда колесо или Ctrl+колесо регулирует громкость."
 
 #: package/contents/config/ConfigTaskActions.qml
-msgid "held: show task numbers"
-msgstr "зажата ‒ показывать номера задач"
+msgid "Keyboard"
+msgstr "Клавиатура"
 
 #: package/contents/config/ConfigTaskActions.qml
-msgid "Meta+1 to Meta+9 activate the task with that number."
-msgstr "Meta+1…Meta+9 активируют задачу с этим номером."
+msgctxt "%1 is Meta, %2 and %3 are 1 and 9, drawn as keys"
+msgid "%1+%2…%3: activate a task"
+msgstr "%1+%2…%3: активировать задачу"
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "As in Plasma's task manager."
+msgstr "Как в штатном диспетчере задач Plasma."
+
+#: package/contents/config/ConfigTaskActions.qml
+msgctxt "%1 is Meta, drawn as a key"
+msgid "Show task numbers while %1 is held"
+msgstr "Показывать номера задач при удержании %1"
 
 #: package/contents/config/ConfigTaskList.qml
 msgid "Filters"
@@ -1598,6 +1612,12 @@ msgstr "Аудиопоток"
 msgctxt "Stream name and its number among streams with the same name"
 msgid "%1 %2"
 msgstr "%1 %2"
+
+#~ msgid "Meta+1 to Meta+9 activate the task with that number."
+#~ msgstr "Meta+1…Meta+9 активируют задачу с этим номером."
+
+#~ msgid "held: show task numbers"
+#~ msgstr "зажата ‒ показывать номера задач"
 
 #~ msgid "Show browsing history in the context menu of web browsers"
 #~ msgstr "Показывать историю браузеров в контекстном меню"
