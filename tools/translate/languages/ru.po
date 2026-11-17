@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-17 11:38+0200\n"
+"POT-Creation-Date: 2026-11-17 15:59+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -269,8 +269,8 @@ msgid "App actions"
 msgstr "Действия приложения"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Actions the app itself offers, such as New Private Window or Compose Message."
-msgstr "Действия, которые предлагает само приложение, например «Новое приватное окно» или «Написать письмо»."
+msgid "Actions listed in the app's .desktop file, such as New Private Window in a browser or Compose Message in a mail client."
+msgstr "Действия из .desktop-файла приложения, например «Новое приватное окно» в браузере или «Написать письмо» в почтовом клиенте."
 
 # --- ContextMenu.qml ---
 #: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
@@ -278,24 +278,24 @@ msgid "Places"
 msgstr "Точки входа"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "In the menu of file managers."
-msgstr "В меню файловых менеджеров."
+msgid "A Places submenu with the places from Dolphin's Places panel: Home, Downloads, Trash, added folders. Only in Dolphin's menu."
+msgstr "Подменю «Точки входа» с пунктами из панели «Точки входа» Dolphin: домашняя папка, загрузки, корзина, добавленные папки. Только в меню Dolphin."
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "Recent files and folders"
 msgstr "Недавние файлы и папки"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Files and folders recently opened with the app."
-msgstr "Файлы и папки, недавно открытые в этом приложении."
+msgid "Recent Documents and Recent Folders: what was opened with the app in the current activity, as Plasma records it. Forget Recent Files clears the list."
+msgstr "«Недавние документы» и «Недавние папки»: что открывалось в приложении в текущей комнате, по данным Plasma. «Очистить недавние» очищает список."
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "Browsing history"
 msgstr "История браузера"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "In the menu of web browsers."
-msgstr "В меню веб-браузеров."
+msgid "Recent Pages: the latest pages from the browser's history, with their icons. Firefox, Chrome, Chromium, Brave, Vivaldi, Edge and Opera, including Flatpak and Snap versions."
+msgstr "«Недавние страницы»: последние страницы из истории браузера, со значками. Firefox, Chrome, Chromium, Brave, Vivaldi, Edge и Opera, включая версии Flatpak и Snap."
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "Number of browser history items:"
@@ -306,8 +306,8 @@ msgid "Media controls"
 msgstr "Элементы управления медиа"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Previous, play/pause, next and stop, for media players."
-msgstr "Предыдущий, воспроизведение/пауза, следующий и стоп ‒ у медиаплееров."
+msgid "Previous Track, Play/Pause, Next Track and Stop, for media players (MPRIS). Quit and Restore of such players stay in the menu."
+msgstr "«Предыдущий трек», «Воспроизвести»/«Пауза», «Следующий трек» и «Стоп» у медиаплееров (MPRIS). «Выйти» и «Восстановить» у таких плееров остаются в меню."
 
 #: package/contents/config/ConfigContextMenu.qml
 msgctxt "Context menu item to show"
@@ -315,8 +315,8 @@ msgid "Mute"
 msgstr "Выключение звука"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "For apps that play audio."
-msgstr "У приложений, которые воспроизводят звук."
+msgid "Mute/Unmute all the app's sound. For apps with an audio stream open, even a silent one."
+msgstr "«Выключить звук»/«Включить звук» для всего звука приложения. У приложений с открытым аудиопотоком, даже беззвучным."
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "Hide 'Move to Desktop' if only one virtual desktop is used"
@@ -670,6 +670,18 @@ msgstr "Кнопки задач рисуются с рамкой из темы P
 msgid "Buttons have no background (Task Styling › Background)."
 msgstr "У кнопок нет фона («Оформление задач › Фон»)."
 
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Group overlay from the Plasma theme"
+msgstr "Оверлей группы из темы Plasma"
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "A \"+\" sign from the Plasma theme on a group button, as in the standard task manager."
+msgstr "Знак «+» из темы Plasma на кнопке группы, как в стандартной панели задач."
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Only when the windows of an application are combined into one button."
+msgstr "Только когда окна приложения объединяются в одну кнопку."
+
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
 msgid "Keyboard"
 msgstr "Клавиатура"
@@ -827,10 +839,6 @@ msgstr "Колесо мыши:"
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Over a group button"
 msgstr "Над кнопкой группы"
-
-#: package/contents/config/ConfigTaskActions.qml package/contents/config/ConfigWindowIndicators.qml
-msgid "Only when the windows of an application are combined into one button."
-msgstr "Только когда окна приложения объединяются в одну кнопку."
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Elsewhere"
@@ -1159,14 +1167,6 @@ msgstr "Индикаторы Fancy Tasks NG выключены."
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Fancy Tasks NG indicators"
 msgstr "Индикаторы Fancy Tasks NG"
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Group overlay from the Plasma theme"
-msgstr "Оверлей группы из темы Plasma"
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "A \"+\" sign from the Plasma theme on a group button, as in the standard task manager."
-msgstr "Знак «+» из темы Plasma на кнопке группы, как в стандартной панели задач."
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Look"

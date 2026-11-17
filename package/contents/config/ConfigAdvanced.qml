@@ -16,6 +16,8 @@ ConfigPage {
     id: advancedPage
     ConfigTabbedPage {
         cfg_page: advancedPage
+        // Nothing here changes the task buttons.
+        showPreview: false
 
         ConfigTab {
             Label {

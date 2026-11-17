@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-17 11:38+0200\n"
+"POT-Creation-Date: 2026-11-17 15:59+0200\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -271,7 +271,7 @@ msgid "App actions"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Actions the app itself offers, such as New Private Window or Compose Message."
+msgid "Actions listed in the app's .desktop file, such as New Private Window in a browser or Compose Message in a mail client."
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
@@ -279,7 +279,7 @@ msgid "Places"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "In the menu of file managers."
+msgid "A Places submenu with the places from Dolphin's Places panel: Home, Downloads, Trash, added folders. Only in Dolphin's menu."
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
@@ -287,7 +287,7 @@ msgid "Recent files and folders"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Files and folders recently opened with the app."
+msgid "Recent Documents and Recent Folders: what was opened with the app in the current activity, as Plasma records it. Forget Recent Files clears the list."
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
@@ -295,7 +295,7 @@ msgid "Browsing history"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "In the menu of web browsers."
+msgid "Recent Pages: the latest pages from the browser's history, with their icons. Firefox, Chrome, Chromium, Brave, Vivaldi, Edge and Opera, including Flatpak and Snap versions."
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
@@ -307,7 +307,7 @@ msgid "Media controls"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Previous, play/pause, next and stop, for media players."
+msgid "Previous Track, Play/Pause, Next Track and Stop, for media players (MPRIS). Quit and Restore of such players stay in the menu."
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
@@ -316,7 +316,7 @@ msgid "Mute"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "For apps that play audio."
+msgid "Mute/Unmute all the app's sound. For apps with an audio stream open, even a silent one."
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
@@ -670,6 +670,18 @@ msgstr ""
 msgid "Buttons have no background (Task Styling › Background)."
 msgstr ""
 
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Group overlay from the Plasma theme"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "A \"+\" sign from the Plasma theme on a group button, as in the standard task manager."
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml package/contents/config/ConfigWindowIndicators.qml
+msgid "Only when the windows of an application are combined into one button."
+msgstr ""
+
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
 msgid "Keyboard"
 msgstr ""
@@ -826,10 +838,6 @@ msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Over a group button"
-msgstr ""
-
-#: package/contents/config/ConfigTaskActions.qml package/contents/config/ConfigWindowIndicators.qml
-msgid "Only when the windows of an application are combined into one button."
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
@@ -1156,14 +1164,6 @@ msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Fancy Tasks NG indicators"
-msgstr ""
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "Group overlay from the Plasma theme"
-msgstr ""
-
-#: package/contents/config/ConfigWindowIndicators.qml
-msgid "A \"+\" sign from the Plasma theme on a group button, as in the standard task manager."
 msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml

@@ -67,6 +67,8 @@ ConfigPage {
 
     ConfigTabbedPage {
         cfg_page: actionsPage
+        // Nothing here changes the task buttons.
+        showPreview: false
 
         ConfigTab {
             title: Wrappers.i18n("Mouse")
