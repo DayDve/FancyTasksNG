@@ -62,6 +62,8 @@ Item {
         id: scrollView
         anchors.fill: parent
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        // As wide as the view, whatever the content's own width.
+        contentWidth: availableWidth
     }
 
     // Top edge shadow (visor style)

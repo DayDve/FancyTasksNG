@@ -21,6 +21,9 @@ ColumnLayout {
 
     required property var cfg_page
     property bool showPreview: true
+    // The tab's options on a panel. Off for pages that lay out panels of
+    // their own.
+    property bool framed: true
     // A form above the tab bar, for the options of the whole section.
     property Component header: null
     default property alias tabs: tabColumn.data
@@ -54,16 +57,24 @@ ColumnLayout {
         cfg_page: tabbedPage.cfg_page
         location: tabbedPage.cfg_page.plasmoidLocation
         Layout.fillWidth: true
+        Layout.leftMargin: Kirigami.Units.gridUnit
+        Layout.rightMargin: Kirigami.Units.gridUnit
         visible: tabbedPage.showPreview && tabbedPage.cfg_page.plasmoidLocation !== PlasmaCore.Types.Floating
     }
 
-    Loader {
-        Layout.fillWidth: true
+    // The options of the whole section, on their own panel.
+    ConfigPanel {
         Layout.leftMargin: Kirigami.Units.gridUnit
         Layout.rightMargin: Kirigami.Units.gridUnit
-        active: tabbedPage.header !== null
-        visible: active
-        sourceComponent: tabbedPage.header
+        visible: tabbedPage.header !== null
+
+        Loader {
+            id: headerLoader
+            Layout.preferredWidth: (item as Item)?.implicitWidth ?? 0
+            Layout.maximumWidth: parent.width
+            active: tabbedPage.header !== null
+            sourceComponent: tabbedPage.header
+        }
     }
 
     Instantiator {
@@ -112,23 +123,28 @@ ColumnLayout {
         id: scrollView
         cfg_page: tabbedPage.cfg_page
 
-        // The tabs are stacked; the stack is as tall as the current one.
-        Item {
-            id: tabColumn
-            width: parent.width - Kirigami.Units.gridUnit * 2
-            implicitHeight: {
-                const tab = children[tabbedPage.currentTab];
-                return tab ? tab.implicitHeight : 0;
-            }
-            // A form as wide as the page centers its rows, and the margins
-            // on both sides shrink with the window.
-            onWidthChanged: {
-                for (const tab of children)
-                    tab.width = width;
-            }
-            onChildrenChanged: {
-                for (const tab of children)
-                    tab.width = width;
+        // The tabs sit on a panel. They're stacked; the stack is as tall
+        // as the current one.
+        ConfigPanel {
+            id: panel
+            framed: tabbedPage.framed
+            width: Math.min(parent.width - Kirigami.Units.gridUnit * 2, maxWidth)
+            x: Math.round((parent.width - width) / 2)
+
+            Item {
+                id: tabColumn
+                Layout.fillWidth: true
+                implicitHeight: {
+                    const tab = children[tabbedPage.currentTab];
+                    return tab ? tab.implicitHeight : 0;
+                }
+                // A form centers its rows in its width; as wide as its rows,
+                // it stays at the left edge. Unframed, it takes the width.
+                function fit(): void {
+                    for (const tab of children)
+                        tab.width = Qt.binding(() => tabbedPage.framed ? Math.min(tabColumn.width, tab.implicitWidth) : tabColumn.width);
+                }
+                onChildrenChanged: fit()
             }
         }
     }

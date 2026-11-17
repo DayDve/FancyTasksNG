@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-17 15:59+0200\n"
+"POT-Creation-Date: 2026-11-17 16:20+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -67,7 +67,7 @@ msgstr "Сигналы приложений"
 msgid "App signals are turned off."
 msgstr "Показ сигналов приложений выключен."
 
-#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigQuickSetup.qml
+#: package/contents/config/ConfigAppSignals.qml
 msgid "Show app signals"
 msgstr "Показывать сигналы приложений"
 
@@ -705,6 +705,11 @@ msgid "Task Actions"
 msgstr "Действия с задачами"
 
 #: package/contents/config/ConfigQuickSetup.qml
+msgctxt "App signals"
+msgid "Show"
+msgstr "Показывать"
+
+#: package/contents/config/ConfigQuickSetup.qml
 msgid "Grouping of tasks"
 msgstr "Группировка задач"
 
@@ -720,9 +725,10 @@ msgstr "В одну кнопку"
 msgid "Task List"
 msgstr "Список задач"
 
-#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTooltips.qml
-msgid "Task Tooltips"
-msgstr "Всплывающие подсказки задач"
+#: package/contents/config/ConfigQuickSetup.qml
+msgctxt "Quick Setup group"
+msgid "Tooltips"
+msgstr "Всплывающие подсказки"
 
 #: package/contents/config/ConfigQuickSetup.qml
 msgid "Off"
@@ -1079,6 +1085,10 @@ msgstr "Длительность анимации (мс):"
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Glow following the cursor over task buttons"
 msgstr "Подсвечивать панель под курсором"
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Task Tooltips"
+msgstr "Всплывающие подсказки задач"
 
 #: package/contents/config/ConfigTooltips.qml
 msgid "Show tooltips when hovering over task buttons"

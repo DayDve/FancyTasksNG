@@ -20,8 +20,9 @@ import org.kde.plasma.core as PlasmaCore
 Item {
     id: previewRoot
     Layout.fillWidth: true
-    Layout.maximumWidth: 650
-    Layout.alignment: Qt.AlignLeft
+    // As wide as the option panels under it (ConfigPanel), and centered.
+    Layout.maximumWidth: Kirigami.Units.gridUnit * 40
+    Layout.alignment: Qt.AlignHCenter
     implicitHeight: previewSettings.showLivePreview ? 290 : titleLayout.height
     clip: false
 

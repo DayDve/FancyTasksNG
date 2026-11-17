@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-17 15:59+0200\n"
+"POT-Creation-Date: 2026-11-17 16:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,7 +69,7 @@ msgstr ""
 msgid "App signals are turned off."
 msgstr ""
 
-#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigQuickSetup.qml
+#: package/contents/config/ConfigAppSignals.qml
 msgid "Show app signals"
 msgstr ""
 
@@ -705,6 +705,11 @@ msgid "Task Actions"
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml
+msgctxt "App signals"
+msgid "Show"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml
 msgid "Grouping of tasks"
 msgstr ""
 
@@ -720,8 +725,9 @@ msgstr ""
 msgid "Task List"
 msgstr ""
 
-#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTooltips.qml
-msgid "Task Tooltips"
+#: package/contents/config/ConfigQuickSetup.qml
+msgctxt "Quick Setup group"
+msgid "Tooltips"
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml
@@ -1076,6 +1082,10 @@ msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Glow following the cursor over task buttons"
+msgstr ""
+
+#: package/contents/config/ConfigTooltips.qml
+msgid "Task Tooltips"
 msgstr ""
 
 #: package/contents/config/ConfigTooltips.qml
