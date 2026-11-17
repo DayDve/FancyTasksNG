@@ -55,6 +55,14 @@ PlasmoidItem {
     readonly property int tooltipDistance: 2
     // The Meta+N numbers shown without Meta held (settings previews only).
     readonly property bool forceTaskNumbers: false
+    // Shift held, for the task menu's Force Quit (ShiftKeyState.qml).
+    readonly property bool shiftHeld: _shiftKeyState ? _shiftKeyState.pressed === true : false
+    // A var: KeyState isn't an Item, and its type is in a private module.
+    readonly property var _shiftKeyState: shiftKeyState.item
+    Loader {
+        id: shiftKeyState
+        source: Qt.resolvedUrl("ShiftKeyState.qml")
+    }
     readonly property var containment: Plasmoid.containment
 
     rotation: tasks.config.reverseMode && tasks.vertical ? 180 : 0

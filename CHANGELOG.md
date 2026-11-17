@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Force Quit:** Holding Shift while opening a task's menu adds "Force Quit", which kills the app's process (every window's process for a group), for an app that no longer responds to Close.
 - **Quick Setup:** A new first settings page with the most used options, laid out like System Settings' Quick Settings: the display mode and the window indicator style picked from small panels drawn with the widget's own task buttons (the indicator ones set a matching look, such as rounded dashes), icon size, the group overlay, app signals, Meta+1 to Meta+9 with a picture of the task numbers, grouping and tooltips. Buttons under each group open the section with the rest of its options.
 - **Mouse Wheel Over Group Buttons:** The wheel over a group button has its own action, with and without Ctrl: cycle through the group's windows, adjust the group's volume, or the same as elsewhere. "Cycles through tasks of the current group" only ever worked over a group button and did nothing elsewhere; it's now the group action, and existing settings keep working as before.
 - **Volume Controls in Tooltips Option:** The volume controls in tooltips have their own option, "Show volume controls", under the tooltips' media controls. They used to come and go with "Mark applications playing audio"; until the new option is changed, it follows that one as before.

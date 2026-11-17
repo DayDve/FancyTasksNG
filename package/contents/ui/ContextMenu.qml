@@ -49,6 +49,9 @@ PlasmaExtras.Menu {
     // items then have to act on the window's process, not the whole group.
     readonly property bool forGroupMember: !!modelIndex && !!modelIndex.parent && modelIndex.parent.valid
 
+    // Opened with Shift held: offer Force Quit.
+    property bool forceQuit: false
+
     // Streams the mute item acts on, taken once when the menu is built.
     property var muteStreams: []
 
@@ -884,6 +887,27 @@ PlasmaExtras.Menu {
 
         onClicked: {
             menu.tasksModel.requestClose(menu.modelIndex);
+        }
+    }
+
+    // For an app that no longer responds to Close: kills the process of
+    // each of its windows here. Not for the shell's own windows (this
+    // widget's settings, say); the helper won't kill the shell either.
+    PlasmaExtras.MenuItem {
+        visible: menu.forceQuit && closeWindowItem.visible
+            && !["org.kde.plasmashell", "org.kde.plasmawindowed"].includes(menu.get(menu.atm.AppId))
+        text: Wrappers.i18n("Force Quit")
+        icon: "process-stop"
+        onClicked: {
+            const pids = [];
+            const rows = menu.tasksModel.rowCount(menu.modelIndex);
+            if (rows > 0) {
+                for (let i = 0; i < rows; ++i)
+                    pids.push(menu.tasksModel.data(menu.tasksModel.index(i, 0, menu.modelIndex), menu.atm.AppPid));
+            } else {
+                pids.push(menu.get(menu.atm.AppPid));
+            }
+            DesktopActionsManager.forceQuit(pids.map(pid => Number(pid) || 0));
         }
     }
 }

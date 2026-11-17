@@ -38,6 +38,7 @@ KSvg.FrameSvgItem {
     property int activeChildRow: 0
     // Show the Meta+N numbers, as while Meta is held.
     property bool forceTaskNumbers: false
+    readonly property bool shiftHeld: false
 
     imagePath: "widgets/panel-background"
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary

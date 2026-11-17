@@ -229,6 +229,11 @@ Item {
         _call("OpenUrl", "(ss)", [String(url || ""), String(launcherUrl || "")]);
     }
 
+    // SIGKILL to the given processes (the helper skips the shell's own).
+    function forceQuit(pids) {
+        _call("ForceQuit", "(s)", [pids.filter(pid => pid > 0).join(",")]);
+    }
+
     // Registers Meta+1..10 under component; callback receives the object
     // path that emits the presses, "" if the call failed.
     function registerTaskEntryShortcuts(component, callback) {

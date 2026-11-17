@@ -17,6 +17,8 @@ Interface io.github.daydve.fancytasksng.DesktopActions:
   ClearRecent(launcherUrl)
   LaunchAction(launcherUrl, actionId)
   OpenUrl(url, preferredApp)
+  ForceQuit(pidsCsv) -> how many were killed
+      SIGKILL to processes of this user, never the shell itself
   ParentPids(pidsCsv) -> JSON object {pid: parentPid}
   ActivateBrowserTab(browserPid, title) -> bool
   ListApps() -> JSON array of installed apps
@@ -768,6 +770,7 @@ SERVICE_XML = """
     </method>
     <method name="ListApps"><arg type="s" direction="out"/></method>
     <method name="OpenUrl"><arg type="s" direction="in"/><arg type="s" direction="in"/></method>
+    <method name="ForceQuit"><arg type="s" direction="in"/><arg type="i" direction="out"/></method>
     <method name="RegisterTaskEntryShortcuts"><arg type="s" direction="in"/><arg type="o" direction="out"/></method>
   </interface>
   <interface name="io.github.daydve.fancytasksng.Config">
@@ -1053,6 +1056,26 @@ class DesktopActionsService:
             Gio.AppInfo.launch_default_for_uri(url, None)
         except (GLib.Error, ValueError) as e:
             log.warning(f"OpenUrl error: {e}")
+
+    def ForceQuit(self, pids_csv):
+        """Kill the processes of windows that no longer respond. Only this
+        user's processes, and never the shell (or this helper): a window of
+        plasmashell itself, such as this widget's settings, is a task too."""
+        protected = self.allowed_pids | {os.getpid()}
+        killed = 0
+        pids = {int(p) for p in pids_csv.split(",") if p.strip().isdigit()}
+        for pid in pids:
+            if pid <= 1 or pid in protected:
+                continue
+            try:
+                if os.stat(f"/proc/{pid}").st_uid != os.getuid():
+                    continue
+                os.kill(pid, signal.SIGKILL)
+                killed += 1
+                log.info(f"force quit pid {pid}")
+            except OSError as e:
+                log.warning(f"ForceQuit {pid}: {e}")
+        return killed
 
 
 def expand_exec(commandline, url):

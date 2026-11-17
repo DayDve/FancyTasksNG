@@ -535,7 +535,10 @@ Item {
     }
 
 
-    Keys.onMenuPressed: event => contextMenuTimer.start()
+    Keys.onMenuPressed: event => {
+        task.menuWithShift = (event.modifiers & Qt.ShiftModifier) !== 0 || task.tasksRoot.shiftHeld;
+        contextMenuTimer.start();
+    }
     Keys.onReturnPressed: event => {
         TaskTools.activateTask(task.modelIndex(), task.model, event.modifiers, task, Plasmoid, tasksRoot, tasksRoot.effectWatcher.registered);
     }
@@ -598,6 +601,9 @@ Item {
         task.tasksRoot.dismissTooltip();
     }
 
+    // Shift was held when the menu was asked for: it offers Force Quit.
+    property bool menuWithShift: false
+
     function showContextMenu(args: var): void {
         task.closeTooltip();
         contextMenu = tasksRoot.createContextMenu(task, task.modelIndex(), args);
@@ -635,7 +641,10 @@ Item {
         acceptedDevices: PointerDevice.TouchScreen |
             PointerDevice.Stylus
         gesturePolicy: TapHandler.ReleaseWithinBounds
-        onLongPressed: task.showContextMenu()
+        onLongPressed: {
+            task.showContextMenu({ forceQuit: task.menuWithShift });
+            task.menuWithShift = false;
+        }
     }
 
     TapHandler {
@@ -644,8 +653,12 @@ Item {
         acceptedDevices: PointerDevice.Mouse |
             PointerDevice.TouchPad | PointerDevice.Stylus
         gesturePolicy: TapHandler.WithinBounds // Release grab when menu appears
-        onPressedChanged: if (pressed)
-            contextMenuTimer.start()
+        onPressedChanged: {
+            if (pressed) {
+                task.menuWithShift = (point.modifiers & Qt.ShiftModifier) !== 0 || task.tasksRoot.shiftHeld;
+                contextMenuTimer.start();
+            }
+        }
     }
 
     Timer {

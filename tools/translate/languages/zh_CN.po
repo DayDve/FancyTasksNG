@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-17 16:20+0200\n"
+"POT-Creation-Date: 2026-11-17 17:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1545,6 +1545,10 @@ msgstr ""
 #: package/contents/ui/ContextMenu.qml
 msgid "&Close"
 msgstr "关闭"
+
+#: package/contents/ui/ContextMenu.qml
+msgid "Force Quit"
+msgstr ""
 
 #: package/contents/ui/Task.qml
 msgctxt "@info:usagetip %1 application name"
