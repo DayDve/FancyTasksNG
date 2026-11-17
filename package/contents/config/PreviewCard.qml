@@ -30,7 +30,7 @@ AbstractButton {
 
     readonly property real panelThickness: Kirigami.Units.gridUnit * 2
     implicitWidth: Kirigami.Units.gridUnit * 9
-    implicitHeight: frame.height + label.implicitHeight + Kirigami.Units.smallSpacing
+    implicitHeight: frame.height + (card.text !== "" ? label.implicitHeight + Kirigami.Units.smallSpacing : 0)
 
     // The page's cfg_ values, with this card's overrides on top.
     // A classic button is far wider than a card by default; there they're
@@ -57,6 +57,8 @@ AbstractButton {
     property int classicTasks: 2
     // Draw the buttons without their background, to show what's under it.
     property bool buttonBackground: true
+    // Show the Meta+N numbers, as while Meta is held.
+    property bool taskNumbers: false
     readonly property int maxTasks: card.classic ? card.classicTasks : card.iconTasks
     // A classic button's width here: its share of the card. Worked out
     // from the card's own width, not the panel's, which reads as 0 through
@@ -98,6 +100,7 @@ AbstractButton {
             location: PlasmaCore.Types.BottomEdge
             previewModel: taskModel
             activeRow: card.maxTasks === 1 ? 0 : 1
+            forceTaskNumbers: card.taskNumbers
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter

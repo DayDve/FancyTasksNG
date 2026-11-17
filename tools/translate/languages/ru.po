@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-17 11:06+0200\n"
+"POT-Creation-Date: 2026-11-17 11:38+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -670,6 +670,28 @@ msgstr "Кнопки задач рисуются с рамкой из темы P
 msgid "Buttons have no background (Task Styling › Background)."
 msgstr "У кнопок нет фона («Оформление задач › Фон»)."
 
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
+msgid "Keyboard"
+msgstr "Клавиатура"
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
+msgctxt "%1 is Meta, %2 and %3 are 1 and 9, drawn as keys"
+msgid "%1+%2…%3: activate a task"
+msgstr "%1+%2…%3: активировать задачу"
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
+msgid "As in Plasma's task manager."
+msgstr "Как в штатном диспетчере задач Plasma."
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
+msgctxt "%1 is Meta, drawn as a key"
+msgid "Show task numbers while %1 is held"
+msgstr "Показывать номера задач при удержании %1"
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
+msgid "Task Actions"
+msgstr "Действия с задачами"
+
 #: package/contents/config/ConfigQuickSetup.qml
 msgid "Grouping of tasks"
 msgstr "Группировка задач"
@@ -701,10 +723,6 @@ msgstr "Без миниатюр окон"
 #: package/contents/config/ConfigQuickSetup.qml
 msgid "With window thumbnails"
 msgstr "С миниатюрами окон"
-
-#: package/contents/config/ConfigTaskActions.qml
-msgid "Task Actions"
-msgstr "Действия с задачами"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Does nothing"
@@ -829,24 +847,6 @@ msgstr "Там, где колесо регулирует громкость ок
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Only when the wheel or Ctrl+wheel adjusts the volume."
 msgstr "Только когда колесо или Ctrl+колесо регулирует громкость."
-
-#: package/contents/config/ConfigTaskActions.qml
-msgid "Keyboard"
-msgstr "Клавиатура"
-
-#: package/contents/config/ConfigTaskActions.qml
-msgctxt "%1 is Meta, %2 and %3 are 1 and 9, drawn as keys"
-msgid "%1+%2…%3: activate a task"
-msgstr "%1+%2…%3: активировать задачу"
-
-#: package/contents/config/ConfigTaskActions.qml
-msgid "As in Plasma's task manager."
-msgstr "Как в штатном диспетчере задач Plasma."
-
-#: package/contents/config/ConfigTaskActions.qml
-msgctxt "%1 is Meta, drawn as a key"
-msgid "Show task numbers while %1 is held"
-msgstr "Показывать номера задач при удержании %1"
 
 #: package/contents/config/ConfigTaskList.qml
 msgid "Filters"

@@ -36,6 +36,8 @@ KSvg.FrameSvgItem {
     // Row of the active task, and its child row when it's a group.
     property int activeRow: -1
     property int activeChildRow: 0
+    // Show the Meta+N numbers, as while Meta is held.
+    property bool forceTaskNumbers: false
 
     imagePath: "widgets/panel-background"
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary

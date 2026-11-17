@@ -53,6 +53,8 @@ PlasmoidItem {
     // hover-zoomed icon sticking out of it (Task.tooltipAnchor).
     readonly property int tooltipShadowBand: 8
     readonly property int tooltipDistance: 2
+    // The Meta+N numbers shown without Meta held (settings previews only).
+    readonly property bool forceTaskNumbers: false
     readonly property var containment: Plasmoid.containment
 
     rotation: tasks.config.reverseMode && tasks.vertical ? 180 : 0

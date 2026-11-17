@@ -945,7 +945,7 @@ Item {
     // (the count badges are on the far side).
     Loader {
         id: numberLoader
-        active: task.config.taskEntryShortcuts && task.config.showTaskNumbers && TaskEntryShortcuts.numbersTarget === task.tasksRoot && task.index < 9
+        active: task.config.taskEntryShortcuts && task.config.showTaskNumbers && (TaskEntryShortcuts.numbersTarget === task.tasksRoot || task.tasksRoot.forceTaskNumbers) && task.index < 9
         z: 1000
         readonly property rect box: taskIconBox.boxRect
         readonly property real size: Math.max(Math.round(Math.min(box.width, box.height) / 3), Math.round(Kirigami.Units.gridUnit * 0.7))

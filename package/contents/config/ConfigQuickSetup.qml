@@ -182,17 +182,34 @@ ConfigPage {
                 }
             }
             RowLayout {
-                CheckBox {
-                    id: useBorders
-                    enabled: !quickPage.cfg_disableButtonSvg
-                    text: Wrappers.i18n("Use Plasma borders")
-                    checked: quickPage.cfg_useBorders
-                    onToggled: quickPage.cfg_useBorders = checked
+                spacing: Kirigami.Units.gridUnit
+                RowLayout {
+                    CheckBox {
+                        id: useBorders
+                        enabled: !quickPage.cfg_disableButtonSvg
+                        text: Wrappers.i18n("Use Plasma borders")
+                        checked: quickPage.cfg_useBorders
+                        onToggled: quickPage.cfg_useBorders = checked
+                    }
+                    ConfigHint {
+                        target: useBorders
+                        info: Wrappers.i18n("Task buttons are drawn with the borders from the Plasma theme. In Breeze it's a stripe along the panel edge; in other themes it may look different.")
+                        reason: Wrappers.i18n("Buttons have no background (Task Styling › Background).")
+                    }
                 }
-                ConfigHint {
-                    target: useBorders
-                    info: Wrappers.i18n("Task buttons are drawn with the borders from the Plasma theme. In Breeze it's a stripe along the panel edge; in other themes it may look different.")
-                    reason: Wrappers.i18n("Buttons have no background (Task Styling › Background).")
+                RowLayout {
+                    CheckBox {
+                        id: groupIconEnabled
+                        enabled: quickPage.cfg_groupingStrategy === 1 && quickPage.cfg_groupPopups
+                        text: Wrappers.i18n("Group overlay from the Plasma theme")
+                        checked: quickPage.cfg_groupIconEnabled
+                        onToggled: quickPage.cfg_groupIconEnabled = checked
+                    }
+                    ConfigHint {
+                        target: groupIconEnabled
+                        info: Wrappers.i18n("A \"+\" sign from the Plasma theme on a group button, as in the standard task manager.")
+                        reason: Wrappers.i18n("Only when the windows of an application are combined into one button.")
+                    }
                 }
             }
             SectionLink {
@@ -223,6 +240,58 @@ ConfigPage {
                 section: "ConfigAppSignals.qml"
                 icon.name: "preferences-desktop-notification-bell"
                 text: Wrappers.i18n("App Signals")
+            }
+
+            Kirigami.Separator {
+                Layout.fillWidth: true
+            }
+
+            // --- Keyboard ---
+            Kirigami.Heading {
+                level: 4
+                text: Wrappers.i18n("Keyboard")
+            }
+            // The picture follows the switches; it isn't a choice itself.
+            RowLayout {
+                spacing: Kirigami.Units.largeSpacing
+                PreviewCard {
+                    implicitWidth: Kirigami.Units.gridUnit * 13
+                    cfgPage: quickPage
+                    taskNumbers: quickPage.cfg_taskEntryShortcuts && quickPage.cfg_showTaskNumbers
+                    hoverEnabled: false
+                    focusPolicy: Qt.NoFocus
+                    Accessible.ignored: true
+                }
+                ColumnLayout {
+                    RowLayout {
+                        KeyCheckBox {
+                            id: quickTaskEntryShortcuts
+                            keys: ["Meta", "1", "9"]
+                            text: Wrappers.i18nc("%1 is Meta, %2 and %3 are 1 and 9, drawn as keys", "%1+%2…%3: activate a task")
+                            checked: quickPage.cfg_taskEntryShortcuts
+                            onToggled: quickPage.cfg_taskEntryShortcuts = checked
+                        }
+                        ConfigHint {
+                            info: Wrappers.i18n("As in Plasma's task manager.")
+                        }
+                    }
+                    RowLayout {
+                        Item { implicitWidth: Kirigami.Units.gridUnit }
+                        KeyCheckBox {
+                            enabled: quickTaskEntryShortcuts.checked
+                            keys: ["Meta"]
+                            text: Wrappers.i18nc("%1 is Meta, drawn as a key", "Show task numbers while %1 is held")
+                            checked: quickPage.cfg_showTaskNumbers
+                            onToggled: quickPage.cfg_showTaskNumbers = checked
+                        }
+                    }
+                }
+            }
+            SectionLink {
+                cfgPage: quickPage
+                section: "ConfigTaskActions.qml"
+                icon.name: "input-keyboard"
+                text: Wrappers.i18n("Task Actions")
             }
 
             Kirigami.Separator {

@@ -70,9 +70,12 @@ RowLayout {
     }
 
     // Clicking the key or the label toggles the box, as with a plain
-    // CheckBox's text.
+    // CheckBox's text. A tap on the box itself reaches this handler too
+    // (it only holds a passive grab); the box has toggled already.
     TapHandler {
-        onTapped: {
+        onTapped: (eventPoint) => {
+            if (box.contains(box.mapFromItem(keyCheckBox, eventPoint.position)))
+                return;
             box.toggle();
             box.toggled();
         }
