@@ -198,8 +198,8 @@ DropArea {
 
         property bool handleWheelEvents: true
 
-        enabled: handleWheelEvents && (dropArea.config.wheelAction !== 0 || dropArea.config.wheelGroupAction > 0
-            || (dropArea.config.wheelCtrlActionEnabled && (dropArea.config.wheelCtrlAction !== 0 || dropArea.config.wheelCtrlGroupAction > 0)))
+        enabled: handleWheelEvents && (dropArea.config.wheelAction !== 0 || dropArea.config.wheelGroupAction > 0 || dropArea.config.wheelEmptyAction > 0
+            || (dropArea.config.wheelCtrlActionEnabled && (dropArea.config.wheelCtrlAction !== 0 || dropArea.config.wheelCtrlGroupAction > 0 || dropArea.config.wheelCtrlEmptyAction > 0)))
 
         onWheel: event => {
             dropArea._rotationAccumulator += (event.angleDelta.y / 8.0);
@@ -217,8 +217,11 @@ DropArea {
 
             const anchor = dropArea.target.childAt(event.x, event.y);
             const isCtrl = (event.modifiers & Qt.ControlModifier) && dropArea.config.wheelCtrlActionEnabled;
-            const overGroup = !!anchor && !!anchor.model && anchor.model.IsGroupParent;
-            const action = TaskTools.wheelActionFor(dropArea.config, isCtrl, overGroup);
+            const offButtons = !anchor || !anchor.model;
+            const overGroup = !offButtons && anchor.model.IsGroupParent;
+            // Shift makes a volume the system volume.
+            const isShift = (event.modifiers & Qt.ShiftModifier) && dropArea.config.wheelShiftSystemVolumeEnabled;
+            const action = TaskTools.wheelActionFor(dropArea.config, isCtrl, overGroup, offButtons);
 
             if (action >= 1 && action <= 4) { // Cycle Tasks
                 const skipMinimized = (action === 2 || action === 4);
@@ -228,13 +231,18 @@ DropArea {
                     increment += (increment < 0) ? 1 : -1;
                 }
             } else if (action === 5) { // Adjust Volume
-                const isShift = (event.modifiers & Qt.ShiftModifier) && dropArea.config.wheelShiftSystemVolumeEnabled;
                 // Undo natural-scrolling inversion: wheel up always raises volume.
                 const volIncrement = event.inverted ? -increment : increment;
-                if (anchor && anchor.adjustVolume) {
-                    anchor.adjustVolume(volIncrement, isShift);
-                } else if (isShift && dropArea.tasks.adjustGlobalVolume) {
-                    dropArea.tasks.adjustGlobalVolume(volIncrement);
+                if (isShift) {
+                    if (dropArea.tasks.adjustGlobalVolume)
+                        dropArea.tasks.adjustGlobalVolume(volIncrement);
+                } else {
+                    // Off the buttons: the active window's button.
+                    const owner = offButtons
+                        ? dropArea.target.children.find(item => item.model && item.model.IsActive)
+                        : anchor;
+                    if (owner && owner.adjustVolume)
+                        owner.adjustVolume(volIncrement, false);
                 }
             }
         }

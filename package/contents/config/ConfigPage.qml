@@ -78,6 +78,10 @@ Kirigami.Page {
     property int cfg_wheelCtrlGroupActionDefault: -1
     property bool cfg_wheelShiftSystemVolumeEnabled: true
     property bool cfg_wheelShiftSystemVolumeEnabledDefault: true
+    property int cfg_wheelEmptyAction: -1
+    property int cfg_wheelEmptyActionDefault: -1
+    property int cfg_wheelCtrlEmptyAction: -1
+    property int cfg_wheelCtrlEmptyActionDefault: -1
     property bool cfg_showMediaControls: true
     property bool cfg_showMediaControlsDefault: true
     property int cfg_tooltipVolumeControls: -1

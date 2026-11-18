@@ -826,10 +826,6 @@ msgid "Adjusts volume of the window"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
-msgid "Same as elsewhere"
-msgstr ""
-
-#: package/contents/config/ConfigTaskActions.qml
 msgid "Cycles through the group's windows"
 msgstr ""
 
@@ -842,11 +838,21 @@ msgid "Adjusts the group's volume"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
+msgid "Adjusts volume of the active window"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
 msgid "Mouse"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
-msgid "Clicking the active window's button:"
+msgctxt "Mouse button clicks on tasks"
+msgid "Mouse click"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgctxt "A click, under the Mouse click heading"
+msgid "On the active window's button"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
@@ -854,7 +860,8 @@ msgid "Minimizes the window"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
-msgid "Clicking group button:"
+msgctxt "A click, under the Mouse click heading"
+msgid "On a group button"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
@@ -874,8 +881,9 @@ msgid "Shows textual list"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
-msgid "Middle-clicking any task:"
-msgstr "鼠标中键点击活动任务时："
+msgctxt "A click, under the Mouse click heading"
+msgid "With the middle button"
+msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Closes window or group"
@@ -898,31 +906,36 @@ msgid "Brings it to the current virtual desktop"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
-msgid "Closing animation:"
+msgid "Closing animation"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
-msgid "Mouse wheel:"
+msgid "Mouse wheel"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
+msgctxt "Mouse wheel with a key held, %1 is the Ctrl key"
+msgid "With %1"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgctxt "Mouse wheel"
+msgid "Over a task button"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgctxt "Mouse wheel"
 msgid "Over a group button"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
-msgid "Elsewhere"
+msgctxt "Mouse wheel"
+msgid "Off the buttons"
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
-msgid "+ wheel: the system volume instead of the window's"
-msgstr ""
-
-#: package/contents/config/ConfigTaskActions.qml
-msgid "Wherever the wheel adjusts the volume of a window or a group, it adjusts the system volume while Shift is held."
-msgstr ""
-
-#: package/contents/config/ConfigTaskActions.qml
-msgid "Only when the wheel or Ctrl+wheel adjusts the volume."
+msgctxt "%1 is the Shift key"
+msgid "With %1 ‒ the system volume instead of a window's or group's"
 msgstr ""
 
 #: package/contents/config/ConfigTaskList.qml

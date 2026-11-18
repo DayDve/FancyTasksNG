@@ -166,11 +166,19 @@
       <default>5</default>
     </entry>
     <entry name="wheelGroupAction" type="Int">
-      <label>Mouse wheel over a group button: -1 = as before this option existed (wheelAction, whose CycleGroupTasks values only work over a group), 0 = as wheelAction elsewhere, 3 = CycleGroupTasks, 4 = CycleGroupTasksSkipMinimized, 5 = AdjustVolume.</label>
+      <label>Mouse wheel over a group button: -1 = as before this option existed (wheelAction, whose CycleGroupTasks values only work over a group), 0 = as wheelAction elsewhere, 1 = CycleTasks, 2 = CycleTasksSkipMinimized, 3 = CycleGroupTasks, 4 = CycleGroupTasksSkipMinimized, 5 = AdjustVolume, 6 = None.</label>
       <default>-1</default>
     </entry>
     <entry name="wheelCtrlGroupAction" type="Int">
       <label>Ctrl+wheel over a group button, as wheelGroupAction but against wheelCtrlAction.</label>
+      <default>-1</default>
+    </entry>
+    <entry name="wheelEmptyAction" type="Int">
+      <label>Mouse wheel off the task buttons: -1 = as wheelAction (before this option existed), 0 = None, 1 = CycleTasks, 2 = CycleTasksSkipMinimized, 5 = AdjustVolume (of the active window).</label>
+      <default>-1</default>
+    </entry>
+    <entry name="wheelCtrlEmptyAction" type="Int">
+      <label>Ctrl+wheel off the task buttons, as wheelEmptyAction but against wheelCtrlAction.</label>
       <default>-1</default>
     </entry>
     <entry name="wheelCtrlActionEnabled" type="Bool">

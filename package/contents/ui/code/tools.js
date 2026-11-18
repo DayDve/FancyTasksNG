@@ -72,6 +72,8 @@ const WheelNone = 0;
 const WheelCycleGroup = 3;
 const WheelCycleGroupSkipMinimized = 4;
 const WheelVolume = 5;
+// Over a group button only: nothing, whatever the wheel does elsewhere.
+const WheelGroupNone = 6;
 
 function isGroupWheelAction(action) {
     return action === WheelCycleGroup || action === WheelCycleGroupSkipMinimized;
@@ -93,12 +95,33 @@ function wheelGroupChoice(group, elsewhere) {
     return group;
 }
 
+// What the wheel does over a group button, never "as elsewhere": the
+// settings name it. Volume elsewhere is the group's volume here.
+function wheelGroupResolved(group, elsewhere) {
+    const choice = wheelGroupChoice(group, elsewhere);
+    if (choice !== WheelNone)
+        return choice;
+    const action = wheelElsewhereAction(elsewhere);
+    return action === WheelNone ? WheelGroupNone : action;
+}
+
+// What the wheel does off the task buttons, as the settings name it. -1
+// (never set) follows the task buttons; there the volume is the active
+// window's.
+function wheelEmptyResolved(empty, elsewhere) {
+    return empty !== -1 ? empty : wheelElsewhereAction(elsewhere);
+}
+
 // The action to run for a wheel event, with or without Ctrl, over a group
-// button or elsewhere.
-function wheelActionFor(config, ctrl, overGroup) {
+// button, another task button or off the buttons.
+function wheelActionFor(config, ctrl, overGroup, offButtons) {
     const elsewhere = ctrl ? config.wheelCtrlAction : config.wheelAction;
+    if (offButtons)
+        return wheelEmptyResolved(ctrl ? config.wheelCtrlEmptyAction : config.wheelEmptyAction, elsewhere);
     if (overGroup) {
         const group = wheelGroupChoice(ctrl ? config.wheelCtrlGroupAction : config.wheelGroupAction, elsewhere);
+        if (group === WheelGroupNone)
+            return WheelNone;
         if (group !== WheelNone)
             return group;
     }
