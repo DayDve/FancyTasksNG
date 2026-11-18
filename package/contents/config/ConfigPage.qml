@@ -268,12 +268,16 @@ Kirigami.Page {
     property bool cfg_badgeHighlightNewDefault: true
     property bool cfg_smokeExplosionOnClose: false
     property bool cfg_smokeExplosionOnCloseDefault: false
+    property int cfg_closeAnimation: 0
+    property int cfg_closeAnimationDefault: 0
     property bool cfg_cursorGlow: false
     property bool cfg_cursorGlowDefault: false
     property bool cfg_unpinByDrag: false
     property bool cfg_unpinByDragDefault: false
     property bool cfg_unpinByDragExplosion: false
     property bool cfg_unpinByDragExplosionDefault: false
+    property int cfg_unpinAnimation: 0
+    property int cfg_unpinAnimationDefault: 0
     property bool cfg_showBadgesOnLaunchers: true
     property bool cfg_showBadgesOnLaunchersDefault: true
     property int cfg_badgeDotMode: 2
@@ -302,8 +306,8 @@ Kirigami.Page {
     property bool cfg_menuShiftRestartDefault: true
     property bool cfg_menuShiftCopy: true
     property bool cfg_menuShiftCopyDefault: true
-    property bool cfg_forceQuitBurn: true
-    property bool cfg_forceQuitBurnDefault: true
+    property int cfg_forceQuitAnimation: 1
+    property int cfg_forceQuitAnimationDefault: 1
     property int cfg_audioBadgeSize: 100
     property int cfg_audioBadgeSizeDefault: 100
     property int cfg_audioBadgeColorMode: 0

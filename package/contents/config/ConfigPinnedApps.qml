@@ -387,15 +387,19 @@ ConfigPage {
 
                     RowLayout {
                         Item { implicitWidth: Kirigami.Units.gridUnit }
-                        CheckBox {
-                            id: unpinByDragExplosionCheck
+                        Label {
+                            enabled: unpinAnimationBox.enabled
+                            text: Wrappers.i18n("Unpinning animation:")
+                        }
+                        ComboBox {
+                            id: unpinAnimationBox
                             enabled: unpinByDragCheck.checked && cfg_page.cfg_iconOnly === 1
-                            text: Wrappers.i18n("Animate unpinning by dragging")
-                            checked: cfg_page.cfg_unpinByDragExplosion
-                            onToggled: cfg_page.cfg_unpinByDragExplosion = checked
+                            model: [Wrappers.i18nc("No animation", "None"), Wrappers.i18nc("Animation", "Smoke"), Wrappers.i18nc("Animation", "Shatter")]
+                            currentIndex: cfg_page.cfg_unpinAnimation
+                            onActivated: (index) => cfg_page.cfg_unpinAnimation = index
                         }
                         ConfigHint {
-                            target: unpinByDragExplosionCheck
+                            target: unpinAnimationBox
                             reason: cfg_page.cfg_iconOnly !== 1 ? Wrappers.i18n("Only in the icons-only mode.") : ""
                         }
                     }

@@ -913,8 +913,8 @@ PlasmaExtras.Menu {
         text: Wrappers.i18n("Force Quit")
         icon: "process-stop"
         onClicked: {
-            // A whole button's processes: it burns when it goes.
-            if (menu.tasksRoot.config.forceQuitBurn && !menu.forGroupMember
+            // A whole button's processes: its icon is animated when it goes.
+            if (menu.tasksRoot.config.forceQuitAnimation > 0 && !menu.forGroupMember
                     && menu.visualParentItem && "forceQuitAt" in menu.visualParentItem)
                 menu.visualParentItem.forceQuitAt = Date.now();
             DesktopActionsManager.forceQuit(menu.windowPids());

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-18 13:58+0200\n"
+"POT-Creation-Date: 2026-11-18 22:34+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -334,14 +334,24 @@ msgstr "Пункты меню задачи и меню окна в подска�
 msgid "Force Quit"
 msgstr "Завершить принудительно"
 
-#: package/contents/config/ConfigContextMenu.qml
-msgid "Kills the app's process, for an app that no longer responds to Close."
-msgstr "Убивает процесс приложения, которое больше не отвечает на «Закрыть»."
+#: package/contents/config/ConfigContextMenu.qml package/contents/config/ConfigPinnedApps.qml package/contents/config/ConfigTaskActions.qml
+msgctxt "No animation"
+msgid "None"
+msgstr "Нет"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgctxt "Force Quit option"
-msgid "Animate"
-msgstr "Анимировать"
+msgctxt "Animation"
+msgid "Burn"
+msgstr "Сгорание"
+
+#: package/contents/config/ConfigContextMenu.qml
+msgctxt "Animation"
+msgid "Blaze"
+msgstr "Пламя"
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Kills the app's process, for an app that no longer responds to Close. The list: how its icon goes away on the panel."
+msgstr "Убивает процесс приложения, которое больше не отвечает на «Закрыть». Список: как исчезает его значок на панели."
 
 #: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
 msgid "Restart"
@@ -639,8 +649,18 @@ msgid "Unpin app by dragging its icon off the panel"
 msgstr "Откреплять, перетащив значок с панели"
 
 #: package/contents/config/ConfigPinnedApps.qml
-msgid "Animate unpinning by dragging"
-msgstr "Анимировать открепление перетаскиванием"
+msgid "Unpinning animation:"
+msgstr "Анимация открепления:"
+
+#: package/contents/config/ConfigPinnedApps.qml package/contents/config/ConfigTaskActions.qml
+msgctxt "Animation"
+msgid "Smoke"
+msgstr "Дым"
+
+#: package/contents/config/ConfigPinnedApps.qml package/contents/config/ConfigTaskActions.qml
+msgctxt "Animation"
+msgid "Shatter"
+msgstr "Осколки"
 
 #: package/contents/config/ConfigPinnedApps.qml
 msgid "Add Application..."
@@ -872,12 +892,8 @@ msgid "Brings it to the current virtual desktop"
 msgstr "Переносит на текущий рабочий стол"
 
 #: package/contents/config/ConfigTaskActions.qml
-msgid "Animate closing"
-msgstr "Анимировать закрытие"
-
-#: package/contents/config/ConfigTaskActions.qml
-msgid "Only when middle-clicking closes the window."
-msgstr "Только когда щелчок средней кнопкой закрывает окно."
+msgid "Closing animation:"
+msgstr "Анимация закрытия:"
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Mouse wheel:"

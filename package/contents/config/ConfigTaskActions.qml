@@ -114,18 +114,24 @@ ConfigPage {
                 currentIndex: actionsPage.cfg_middleClickAction
                 onActivated: (index) => actionsPage.cfg_middleClickAction = index
             }
+            // Only for "Closes window or group": nothing else closes with it.
             RowLayout {
-                CheckBox {
-                    id: smokeExplosionOnClose
-                    enabled: actionsPage.cfg_iconOnly === 1 && middleClickAction.currentIndex === 1
-                    text: Wrappers.i18n("Animate closing")
-                    checked: actionsPage.cfg_smokeExplosionOnClose
-                    onToggled: actionsPage.cfg_smokeExplosionOnClose = checked
+                visible: middleClickAction.currentIndex === 1
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+                Label {
+                    enabled: closeAnimation.enabled
+                    text: Wrappers.i18n("Closing animation:")
+                }
+                ComboBox {
+                    id: closeAnimation
+                    enabled: actionsPage.cfg_iconOnly === 1
+                    model: [Wrappers.i18nc("No animation", "None"), Wrappers.i18nc("Animation", "Smoke"), Wrappers.i18nc("Animation", "Shatter")]
+                    currentIndex: actionsPage.cfg_closeAnimation
+                    onActivated: (index) => actionsPage.cfg_closeAnimation = index
                 }
                 ConfigHint {
-                    target: smokeExplosionOnClose
-                    reason: actionsPage.cfg_iconOnly !== 1 ? Wrappers.i18n("Only in the icons-only mode.")
-                        : Wrappers.i18n("Only when middle-clicking closes the window.")
+                    target: closeAnimation
+                    reason: Wrappers.i18n("Only in the icons-only mode.")
                 }
             }
 

@@ -144,15 +144,15 @@ ConfigPage {
                     checked: menuPage.cfg_menuShiftForceQuit
                     onToggled: menuPage.cfg_menuShiftForceQuit = checked
                 }
-                ConfigHint {
-                    info: Wrappers.i18n("Kills the app's process, for an app that no longer responds to Close.")
-                }
-                CheckBox {
+                ComboBox {
                     Layout.leftMargin: Kirigami.Units.largeSpacing
                     enabled: shiftItems.checked && shiftForceQuit.checked
-                    text: Wrappers.i18nc("Force Quit option", "Animate")
-                    checked: menuPage.cfg_forceQuitBurn
-                    onToggled: menuPage.cfg_forceQuitBurn = checked
+                    model: [Wrappers.i18nc("No animation", "None"), Wrappers.i18nc("Animation", "Burn"), Wrappers.i18nc("Animation", "Blaze")]
+                    currentIndex: menuPage.cfg_forceQuitAnimation
+                    onActivated: (index) => menuPage.cfg_forceQuitAnimation = index
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("Kills the app's process, for an app that no longer responds to Close. The list: how its icon goes away on the panel.")
                 }
             }
             RowLayout {

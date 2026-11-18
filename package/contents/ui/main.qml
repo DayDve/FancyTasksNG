@@ -788,15 +788,24 @@ PlasmoidItem {
             return;
 
         if (taskItem.forceQuitAt > 0 && Date.now() - taskItem.forceQuitAt < 5000) {
-            spawnBurn(taskItem);
+            // The neighbors move in once the icon has mostly gone.
+            if (tasks.config.forceQuitAnimation === 1)
+                spawnIconEffect(burnComponent, taskItem, 575);
+            else if (tasks.config.forceQuitAnimation === 2)
+                spawnIconEffect(blazeComponent, taskItem, 500);
             return;
         }
 
-        if (tasks.config.smokeExplosionOnClose && tasks.config.iconOnly === 1) {
-            if (taskItem.wasMiddleClicked) {
-                explosionManager.spawn(tasks, taskItem, true);
-            }
-        }
+        if (tasks.config.iconOnly === 1 && taskItem.wasMiddleClicked)
+            spawnCloseEffect(tasks.config.closeAnimation, taskItem);
+    }
+
+    // A close or unpin effect: 1 = Smoke, 2 = Shatter (closeAnimation).
+    function spawnCloseEffect(kind: int, taskItem: Item): void {
+        if (kind === 1)
+            explosionManager.spawn(tasks, taskItem, true);
+        else if (kind === 2)
+            spawnIconEffect(shatterComponent, taskItem, 0);
     }
 
     // QML has no clipboard API; a hidden text field's copy() reaches it.
@@ -823,8 +832,17 @@ PlasmoidItem {
         id: burnComponent
         BurnEffect {}
     }
-    // The icon of a task that was force quit burns in its place.
-    function spawnBurn(taskItem): void {
+    Component {
+        id: blazeComponent
+        BlazeEffect {}
+    }
+    Component {
+        id: shatterComponent
+        ShatterEffect {}
+    }
+    // Plays an effect over a task's icon, in its place; the neighbors moving
+    // into its place wait `hold` ms.
+    function spawnIconEffect(component: Component, taskItem: Item, hold: int): void {
         const icon = taskItem.taskIcon as Item;
         if (!icon)
             return;
@@ -845,13 +863,17 @@ PlasmoidItem {
             room = top.width - inWindow.x - icon.width;
         else if (edge === PlasmaCore.Types.RightEdge)
             room = inWindow.x;
-        burnComponent.createObject(tasks, {
+        const props = {
             x: pos.x, y: pos.y, width: icon.width, height: icon.height,
-            iconSource: taskItem.model.decoration, edge, room: Math.max(0, room)
-        });
-        // The neighbors move in once it has mostly burnt.
-        tasks.moveHold = 575;
-        moveHoldReset.restart();
+            iconSource: taskItem.model.decoration, edge
+        };
+        if (component !== blazeComponent)
+            props.room = Math.max(0, room);
+        component.createObject(tasks, props);
+        if (hold > 0) {
+            tasks.moveHold = hold;
+            moveHoldReset.restart();
+        }
     }
 
     function addLauncher(url: url): void {
@@ -987,8 +1009,10 @@ PlasmoidItem {
                 let pModel = "model";
                 let pWinIdList = "winIdList";
                 if (tasks.config.unpinByDrag && !tasks.dragOverApplet && source && source[pModel] && source[pModel].IsLauncher && source[pWinIdList].length === 0) {
-                    if (tasks.config.unpinByDragExplosion && tasks.config.iconOnly === 1) {
-                        explosionManager.spawn(tasks, source, true);
+                    if (tasks.config.unpinAnimation > 0 && tasks.config.iconOnly === 1) {
+                        tasks.spawnCloseEffect(tasks.config.unpinAnimation, source);
+                        // The effect draws the icon itself from here on.
+                        source.taskIcon.opacity = 0;
                         // Delay removal so the explosion animation plays before the item disappears.
                         dragHelper.pendingUnpinUrl = source[pModel].LauncherUrlWithoutIcon.toString();
                         unpinDelayTimer.start();
@@ -1206,6 +1230,15 @@ PlasmoidItem {
     }
 
     Component.onCompleted: {
+        // The close and unpin animations were checkboxes before 3.0.0.
+        if (Plasmoid.configuration.smokeExplosionOnClose) {
+            Plasmoid.configuration.closeAnimation = 1;
+            Plasmoid.configuration.smokeExplosionOnClose = false;
+        }
+        if (Plasmoid.configuration.unpinByDragExplosion) {
+            Plasmoid.configuration.unpinAnimation = 1;
+            Plasmoid.configuration.unpinByDragExplosion = false;
+        }
         TaskTools.taskManagerInstanceCount += 1;
         requestLayout.connect(iconGeometryTimer.restart);
         TaskEntryShortcuts.addTarget(tasks);

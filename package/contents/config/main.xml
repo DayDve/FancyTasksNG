@@ -505,8 +505,14 @@
       <default>true</default>
     </entry>
     <entry name="smokeExplosionOnClose" type="Bool">
-      <label>Enable smoke explosion animation when closing a task via middle-click (Icons Only mode only).</label>
+      <label>Replaced by closeAnimation: read once at startup to carry the old setting over.</label>
       <default>false</default>
+    </entry>
+    <entry name="closeAnimation" type="Int">
+      <label>Animation when closing a task via middle-click (Icons Only mode only): 0 = None, 1 = Smoke, 2 = Shatter.</label>
+      <default>0</default>
+      <min>0</min>
+      <max>2</max>
     </entry>
     <entry name="badgeHighlightNew" type="Bool">
       <label>Highlight the badge color when the notification count increases.</label>
@@ -586,9 +592,11 @@
       <label>Whether the Shift menu has Copy (PID, app ID, .desktop file path).</label>
       <default>true</default>
     </entry>
-    <entry name="forceQuitBurn" type="Bool">
-      <label>Whether a task's icon burns away after Force Quit.</label>
-      <default>true</default>
+    <entry name="forceQuitAnimation" type="Int">
+      <label>Animation of a task's icon after Force Quit: 0 = None, 1 = Burn, 2 = Blaze.</label>
+      <default>1</default>
+      <min>0</min>
+      <max>2</max>
     </entry>
     <entry name="showBrowserHistory" type="Bool">
       <label>Show browsing history in the context menu of web browsers.</label>
@@ -605,8 +613,14 @@
       <default>false</default>
     </entry>
     <entry name="unpinByDragExplosion" type="Bool">
-      <label>Play removal animation when unpinning by drag (icons-only mode).</label>
+      <label>Replaced by unpinAnimation: read once at startup to carry the old setting over.</label>
       <default>false</default>
+    </entry>
+    <entry name="unpinAnimation" type="Int">
+      <label>Animation when unpinning by drag (icons-only mode): 0 = None, 1 = Smoke, 2 = Shatter.</label>
+      <default>0</default>
+      <min>0</min>
+      <max>2</max>
     </entry>
     <entry name="cursorGlow" type="Bool">
       <label>Draw a glow on the panel that follows the cursor over task buttons.</label>

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Extra Items with Shift:** Holding Shift while opening a task's menu, or a window's menu in its tooltip, adds:
-  - "Force Quit", which kills the app's process (every window's process for a group), for an app that no longer responds to Close. Its icon then burns away on the panel, from the panel edge on; the buttons next to it move in once it has mostly burnt.
+  - "Force Quit", which kills the app's process (every window's process for a group), for an app that no longer responds to Close. Its icon then goes away on the panel with an animation picked from a list: "Burn", where it burns away from the panel edge on, or "Blaze", where cartoon flames engulf it and turn into puffs of smoke. The buttons next to it move in once the icon has mostly gone.
   - "Restart": closes the app and starts it again once it has quit.
   - "Copy": the PID, the app ID or the path of the app's .desktop file.
 
@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Audio Mark Appearance:** The audio mark has its own tab under App Signals: its size relative to the notification count, its color (the theme's, the accent or a custom one) and an optional round background like the count's.
 
 ### Changed
+- **Closing and Unpinning Animations:** The animations for closing a task by middle-click and for unpinning an app by dragging it off the panel are picked from a list instead of turned on with a checkbox: "Smoke", the animation from before, or "Shatter", where the icon breaks into pieces that fly off with a flash, sparks and a puff of smoke. Settings turned on before keep "Smoke".
 - **Settings Look:** Options sit on panels of a fixed width in the middle of the window, aligned to the left, with the preview above them as wide; Quick Setup has a panel for each group, with app signals, grouping and tooltips side by side.
 - **Tooltip Transitions:** Moving the cursor from one task to another no longer makes the tooltip wobble. The tooltip glides to the new button and grows or shrinks around the middle of its side facing the panel; a group's thumbnails show in place right away while the tooltip widens over them.
 - **Tooltip Distance:** Tooltips open close to the panel instead of well away from it. When hover zoom makes an icon stick out of the panel, the tooltip keeps the same small distance from the zoomed icon.
@@ -53,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Dragging Files Into a Window From a Group's Tooltip:** A file dragged over a thumbnail in a group's tooltip highlights the thumbnail and its window. Moving the file off the thumbnail on any side but the panel's activates that window, so the file can be dropped into it. Before, holding the file over a thumbnail activated its window after a moment, and the thumbnail over the button, crossed on the way to the others, often got there first. Dropping the file on a thumbnail opens it in that window, as before.
 
 ### Fixed
+- **Smoke Animation Ending:** The smoke at the end of the closing animation no longer flashes back for a moment as it disappears.
 - **Smoke Animation Ending:** The smoke at the end of the closing animation no longer flashes back for a moment as it disappears.
 - **Context Menu of Some Apps:** Apps whose launcher is in a subfolder of the applications folder (Wine, q4wine) got no actions or recent documents in their menu, and a copy of an app's launcher in your own applications folder was ignored in favour of the system one.
 - **Relocated User Folders:** With `XDG_DATA_HOME`, `XDG_CONFIG_HOME` or `XDG_CACHE_HOME` set, the context menu finds the places, recent documents, browser history and the user's own apps in those folders instead of the default ones under the home folder.

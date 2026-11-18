@@ -453,7 +453,7 @@ Item {
         }
         PauseAnimation {
             // Neighbors wait for a close effect to play out in their way.
-            duration: Math.max((task.tasksRoot.iconsOnly && task.config.smokeExplosionOnClose) ? 250 : 0, task.tasksRoot.moveHold)
+            duration: Math.max((task.tasksRoot.iconsOnly && task.config.closeAnimation > 0) ? 250 : 0, task.tasksRoot.moveHold)
         }
         ParallelAnimation {
             NumberAnimation {
