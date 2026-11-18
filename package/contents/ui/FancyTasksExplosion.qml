@@ -92,20 +92,38 @@ Item {
                 }
 
                 interpolate: false
-                running: effectRoot.shouldExplode
+                // Frames are stepped by hand: an AnimatedSprite that runs out
+                // of loops shows its first frame again for a moment before it
+                // reports finished.
+                running: true
+                paused: true
+                currentFrame: Math.min(frameCount - 1, Math.floor(effectRoot.frame))
                 source: "assets/smoke_explosion.png"
                 frameCount: 24
                 frameWidth: 312
                 frameHeight: 256
-                frameDuration: 30 
-                loops: 1
-                onFinished: if (ghost.opacity === 0) effectRoot.destroy();
+                frameDuration: 30
+            }
+            property real frame: 0
+            NumberAnimation {
+                id: frameAnim
+                target: effectRoot
+                property: "frame"
+                from: 0
+                to: sprite.frameCount
+                duration: sprite.frameCount * sprite.frameDuration
+                running: effectRoot.shouldExplode
+                onFinished: {
+                    sprite.visible = false;
+                    if (ghost.opacity === 0)
+                        effectRoot.destroy();
+                }
             }
 
             Timer {
                 interval: 450
                 running: true
-                onTriggered: if (!sprite.running) effectRoot.destroy();
+                onTriggered: if (!frameAnim.running) effectRoot.destroy();
             }
         }
     }
