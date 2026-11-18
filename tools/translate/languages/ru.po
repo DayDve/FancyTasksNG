@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-17 17:02+0200\n"
+"POT-Creation-Date: 2026-11-18 10:56+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -687,18 +687,21 @@ msgid "Keyboard"
 msgstr "Клавиатура"
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
-msgctxt "%1 is Meta, %2 and %3 are 1 and 9, drawn as keys"
-msgid "%1+%2…%3: activate a task"
-msgstr "%1+%2…%3: активировать задачу"
+msgid "Activate tasks by global shortcuts"
+msgstr "Активировать задачи глобальными сочетаниями клавиш"
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
 msgid "As in Plasma's task manager."
 msgstr "Как в штатном диспетчере задач Plasma."
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
-msgctxt "%1 is Meta, drawn as a key"
-msgid "Show task numbers while %1 is held"
-msgstr "Показывать номера задач при удержании %1"
+msgctxt "@action:button opens the global shortcuts in System Settings"
+msgid "Shortcuts…"
+msgstr "Сочетания клавиш…"
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
+msgid "Show the keys on tasks while a modifier is held"
+msgstr "Показывать клавиши на задачах при удержании модификатора"
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
 msgid "Task Actions"
@@ -1626,6 +1629,27 @@ msgstr "Аудиопоток"
 msgctxt "Stream name and its number among streams with the same name"
 msgid "%1 %2"
 msgstr "%1 %2"
+
+#~ msgid "The shortcuts have no modifier key in common to hold."
+#~ msgstr "У сочетаний нет общей клавиши-модификатора, которую можно удерживать."
+
+#~ msgid "Activate tasks by shortcuts (no keys assigned)"
+#~ msgstr "Активировать задачи сочетаниями клавиш (клавиши не назначены)"
+
+#~ msgctxt "%1 is Meta, %2 and %3 are 1 and 9, drawn as keys"
+#~ msgid "%1+%2…%3: activate a task"
+#~ msgstr "%1+%2…%3: активировать задачу"
+
+#~ msgctxt "%1 and %2 are the shortcuts of the first and the last task, drawn as keys"
+#~ msgid "%1…%2: activate a task"
+#~ msgstr "%1…%2: активировать задачу"
+
+#~ msgctxt "%1 is Meta, drawn as a key"
+#~ msgid "Show task numbers while %1 is held"
+#~ msgstr "Показывать номера задач при удержании %1"
+
+#~ msgid "Show task numbers"
+#~ msgstr "Показывать номера задач"
 
 #~ msgid "Meta+1 to Meta+9 activate the task with that number."
 #~ msgstr "Meta+1…Meta+9 активируют задачу с этим номером."

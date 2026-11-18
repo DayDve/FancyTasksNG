@@ -10,6 +10,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
+import org.kde.kcmutils as KCM
 import org.kde.plasma.core as PlasmaCore
 
 import "../ui/code/singletones"
@@ -240,10 +241,9 @@ ConfigPage {
                     }
                     ColumnLayout {
                         RowLayout {
-                            KeyCheckBox {
+                            CheckBox {
                                 id: quickTaskEntryShortcuts
-                                keys: ["Meta", "1", "9"]
-                                text: Wrappers.i18nc("%1 is Meta, %2 and %3 are 1 and 9, drawn as keys", "%1+%2…%3: activate a task")
+                                text: Wrappers.i18n("Activate tasks by global shortcuts")
                                 checked: quickPage.cfg_taskEntryShortcuts
                                 onToggled: quickPage.cfg_taskEntryShortcuts = checked
                             }
@@ -253,21 +253,28 @@ ConfigPage {
                         }
                         RowLayout {
                             Item { implicitWidth: Kirigami.Units.gridUnit }
-                            KeyCheckBox {
+                            CheckBox {
                                 enabled: quickTaskEntryShortcuts.checked
-                                keys: ["Meta"]
-                                text: Wrappers.i18nc("%1 is Meta, drawn as a key", "Show task numbers while %1 is held")
+                                text: Wrappers.i18n("Show the keys on tasks while a modifier is held")
                                 checked: quickPage.cfg_showTaskNumbers
                                 onToggled: quickPage.cfg_showTaskNumbers = checked
                             }
                         }
                     }
                 }
-                SectionLink {
-                    cfgPage: quickPage
-                    section: "ConfigTaskActions.qml"
-                    icon.name: "input-keyboard"
-                    text: Wrappers.i18n("Task Actions")
+                RowLayout {
+                    SectionLink {
+                        cfgPage: quickPage
+                        section: "ConfigTaskActions.qml"
+                        icon.name: "input-keyboard"
+                        text: Wrappers.i18n("Task Actions")
+                    }
+                    // The keys are set there, one shortcut per task.
+                    Button {
+                        icon.name: "configure-shortcuts"
+                        text: Wrappers.i18nc("@action:button opens the global shortcuts in System Settings", "Shortcuts…")
+                        onClicked: KCM.KCMLauncher.openSystemSettings("kcm_keys", TaskEntryShortcuts.componentName)
+                    }
                 }
             }
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-17 17:02+0200\n"
+"POT-Creation-Date: 2026-11-18 10:56+0200\n"
 "PO-Revision-Date: 2023-09-21 16:18-0300\n"
 "Last-Translator:  Douglas Guimarães <<dg2003gh@gmail.com>>\n"
 "Language-Team: \n"
@@ -687,8 +687,7 @@ msgid "Keyboard"
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
-msgctxt "%1 is Meta, %2 and %3 are 1 and 9, drawn as keys"
-msgid "%1+%2…%3: activate a task"
+msgid "Activate tasks by global shortcuts"
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
@@ -696,8 +695,12 @@ msgid "As in Plasma's task manager."
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
-msgctxt "%1 is Meta, drawn as a key"
-msgid "Show task numbers while %1 is held"
+msgctxt "@action:button opens the global shortcuts in System Settings"
+msgid "Shortcuts…"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
+msgid "Show the keys on tasks while a modifier is held"
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml

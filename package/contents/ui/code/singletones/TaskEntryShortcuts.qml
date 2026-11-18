@@ -45,15 +45,86 @@ Item {
     property var targets: []
     property int targetCount: 0
 
-    // Task numbers for Meta+N: shown on the instance a press would go to
-    // while Meta is held, after a short delay so Meta+E and other
+    // The keys of the actions as kglobalaccel has them (they can be changed
+    // in System Settings): the first key combination of entry 1 to 10, as
+    // Qt's combined key and modifier bits, 0 for none. Empty until read.
+    property var entryKeys: []
+    readonly property int modifierBits: Qt.ShiftModifier | Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier
+
+    // Entry `index` (0-based): its key, the default Meta+N until read.
+    function keyOf(index) {
+        if (entryKeys.length === 0)
+            return Qt.MetaModifier | (Qt.Key_1 + index);
+        return entryKeys[index] || 0;
+    }
+    function keyName(combined) {
+        const key = combined & ~modifierBits & ~Qt.KeypadModifier;
+        if (key >= Qt.Key_F1 && key <= Qt.Key_F35)
+            return "F" + (key - Qt.Key_F1 + 1);
+        if (key > 0x20 && key < 0x7f)
+            return String.fromCharCode(key).toUpperCase();
+        return "?";
+    }
+    // What a task's badge shows for entry `index`: its key without the
+    // modifiers, or "" when the entry has no key.
+    function badgeText(index) {
+        const key = keyOf(index);
+        return key === 0 ? "" : keyName(key);
+    }
+    // Each entry is a shortcut of its own: its badge shows while exactly
+    // its modifiers are held.
+    function shownWhileHeld(index) {
+        const key = keyOf(index);
+        return key !== 0 && heldModifiers !== 0 && (key & modifierBits) === heldModifiers;
+    }
+
+    function readKeys() {
+        const keys = [];
+        let pending = entryCount;
+        for (let i = 0; i < entryCount; ++i) {
+            const reply = DBus.SessionBus.asyncCall({
+                "service": "org.kde.kglobalaccel",
+                "path": "/kglobalaccel",
+                "iface": "org.kde.KGlobalAccel",
+                "member": "shortcutKeys",
+                "arguments": [[componentName, actionPrefix + (i + 1), "", ""]],
+                "signature": "(as)"
+            });
+            reply.finished.connect(() => {
+                // a(ai): key sequences of up to four keys, each wrapped as
+                // {value}. A single-key sequence's first key is the one.
+                let key = 0;
+                if (!reply.isError) {
+                    const first = (reply.value || [])[0];
+                    const sequence = first ? (first[0] ?? first) : null;
+                    const k = sequence ? sequence[0] : null;
+                    key = Number(k && typeof k === "object" ? k.value : k) || 0;
+                }
+                keys[i] = key;
+                reply.destroy();
+                if (--pending === 0)
+                    root.entryKeys = keys;
+            });
+        }
+    }
+    Component.onCompleted: readKeys()
+
+    // Task keys: shown on the instance a press would go to while the
+    // modifiers of one of the shortcuts are held, after a short delay so Meta+E and other
     // combinations don't flash them. Before 6.8 plasmashell picks the
     // instance itself, so with several it may be another one.
-    // Set by MetaKeyState.qml, which this loads.
-    property bool metaHeld: false
+    // Set by ModifierKeyState.qml, which this loads.
+    property int heldModifiers: 0
+    readonly property bool numbersHeld: {
+        for (let i = 0; i < 9; ++i) {
+            if (shownWhileHeld(i))
+                return true;
+        }
+        return false;
+    }
     property var numbersTarget: null
-    onMetaHeldChanged: {
-        if (metaHeld) {
+    onNumbersHeldChanged: {
+        if (numbersHeld) {
             numbersDelay.restart();
         } else {
             numbersDelay.stop();
@@ -140,6 +211,7 @@ Item {
         DesktopActionsManager.registerTaskEntryShortcuts(componentName, path => {
             if (path)
                 root.componentPath = path;
+            root.readKeys();
         });
     }
 
@@ -150,10 +222,10 @@ Item {
     }
 
     Loader {
-        id: metaKeyState
+        id: modifierKeyState
         active: root.targetCount > 0
-        source: Qt.resolvedUrl("../../MetaKeyState.qml")
-        onActiveChanged: if (!active) root.metaHeld = false
+        source: Qt.resolvedUrl("../../ModifierKeyState.qml")
+        onActiveChanged: if (!active) root.heldModifiers = 0
     }
 
     // Coalesces the requests to register into one round of calls.
@@ -191,5 +263,26 @@ Item {
         }
         function dbusglobalShortcutReleased() {
         }
+    }
+
+    // A key changed in System Settings.
+    DBus.SignalWatcher {
+        service: "org.kde.kglobalaccel"
+        path: "/kglobalaccel"
+        iface: "org.kde.KGlobalAccel"
+
+        function dbusyourShortcutsChanged(actionId, keys) {
+            const id = Array.from(actionId, String);
+            if (id[0] === root.componentName && String(id[1]).startsWith(root.actionPrefix))
+                readKeysTimer.restart();
+        }
+        function dbusyourShortcutGotChanged() {
+        }
+    }
+    // All ten change at once when a scheme is applied.
+    Timer {
+        id: readKeysTimer
+        interval: 100
+        onTriggered: root.readKeys()
     }
 }

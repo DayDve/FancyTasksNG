@@ -7,6 +7,7 @@
 
 import QtQuick
 import org.kde.kirigami as Kirigami
+import org.kde.kcmutils as KCM
 import QtQuick.Controls
 import QtQuick.Layouts
 
@@ -220,23 +221,27 @@ ConfigPage {
             iconName: "input-keyboard"
 
             RowLayout {
-                KeyCheckBox {
+                CheckBox {
                     id: taskEntryShortcuts
-                    keys: ["Meta", "1", "9"]
-                    text: Wrappers.i18nc("%1 is Meta, %2 and %3 are 1 and 9, drawn as keys", "%1+%2…%3: activate a task")
+                    text: Wrappers.i18n("Activate tasks by global shortcuts")
                     checked: actionsPage.cfg_taskEntryShortcuts
                     onToggled: actionsPage.cfg_taskEntryShortcuts = checked
                 }
                 ConfigHint {
                     info: Wrappers.i18n("As in Plasma's task manager.")
                 }
+                // The keys are set there, one shortcut per task.
+                Button {
+                    icon.name: "configure-shortcuts"
+                    text: Wrappers.i18nc("@action:button opens the global shortcuts in System Settings", "Shortcuts…")
+                    onClicked: KCM.KCMLauncher.openSystemSettings("kcm_keys", TaskEntryShortcuts.componentName)
+                }
             }
             RowLayout {
                 Item { implicitWidth: Kirigami.Units.gridUnit }
-                KeyCheckBox {
+                CheckBox {
                     enabled: taskEntryShortcuts.checked
-                    keys: ["Meta"]
-                    text: Wrappers.i18nc("%1 is Meta, drawn as a key", "Show task numbers while %1 is held")
+                    text: Wrappers.i18n("Show the keys on tasks while a modifier is held")
                     checked: actionsPage.cfg_showTaskNumbers
                     onToggled: actionsPage.cfg_showTaskNumbers = checked
                 }

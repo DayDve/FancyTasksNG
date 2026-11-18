@@ -16,6 +16,8 @@ Rectangle {
     id: badgeRect
 
     property int number: 0
+    // Shown instead of the number when set (a key name, say).
+    property string textOverride: ""
     property bool isUrgent: false
     property bool showNumber: true
     // Above this the count is shortened ("1.2k"); 0 shows it in full.
@@ -75,6 +77,8 @@ Rectangle {
         color: badgeRect.colorMode === 4 ? Kirigami.Theme.backgroundColor
             : badgeRect.highlightMode ? Kirigami.Theme.highlightedTextColor : Kirigami.Theme.textColor
         text: {
+            if (badgeRect.textOverride !== "")
+                return badgeRect.textOverride;
             const n = badgeRect.number;
             if (badgeRect.maxNumber > 0 && n > badgeRect.maxNumber && n >= 1000) {
                 // Floor, not round: 9999 must not read "10k".

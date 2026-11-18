@@ -953,12 +953,12 @@ Item {
         }
     }
 
-    // While Meta is held: the N of the Meta+N that activates this task, as
+    // While the modifiers of this task's shortcut are held: its key, as
     // big as a count badge at rest, centered on the icon at the panel edge
     // (the count badges are on the far side).
     Loader {
         id: numberLoader
-        active: task.config.taskEntryShortcuts && task.config.showTaskNumbers && (TaskEntryShortcuts.numbersTarget === task.tasksRoot || task.tasksRoot.forceTaskNumbers) && task.index < 9
+        active: task.config.taskEntryShortcuts && task.config.showTaskNumbers && task.index < 9 && (task.tasksRoot.forceTaskNumbers ? TaskEntryShortcuts.badgeText(task.index) !== "" : TaskEntryShortcuts.numbersTarget === task.tasksRoot && TaskEntryShortcuts.shownWhileHeld(task.index))
         z: 1000
         readonly property rect box: taskIconBox.boxRect
         readonly property real size: Math.max(Math.round(Math.min(box.width, box.height) / 3), Math.round(Kirigami.Units.gridUnit * 0.7))
@@ -980,6 +980,7 @@ Item {
             height: numberLoader.size
             colorMode: 4
             number: task.index + 1
+            textOverride: TaskEntryShortcuts.badgeText(task.index)
             // A soft shadow, as on the audio badge, keeps it apart from any icon.
             layer.enabled: true
             layer.effect: MultiEffect {
