@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-18 22:34+0200\n"
+"POT-Creation-Date: 2026-11-18 22:35+0200\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -753,7 +753,13 @@ msgid "As in Plasma's task manager."
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
-msgid "Show the keys on tasks while a modifier is held"
+msgctxt "Shortcut keys shown on tasks"
+msgid "Show hints"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
+msgctxt "%1 is the held keys, such as Meta or Ctrl+Alt"
+msgid "While %1 is held, tasks show the keys that switch to them."
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml

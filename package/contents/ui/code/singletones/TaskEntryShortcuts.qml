@@ -71,6 +71,23 @@ Item {
         const key = keyOf(index);
         return key === 0 ? "" : keyName(key);
     }
+    // The modifiers to hold for the task keys, as "Meta" or "Ctrl+Alt":
+    // those of the first entry that has a key.
+    readonly property string heldModifiersName: {
+        let key = 0;
+        for (let i = 0; i < entryCount && key === 0; ++i)
+            key = keyOf(i);
+        const names = [];
+        if (key & Qt.MetaModifier)
+            names.push("Meta");
+        if (key & Qt.ControlModifier)
+            names.push("Ctrl");
+        if (key & Qt.AltModifier)
+            names.push("Alt");
+        if (key & Qt.ShiftModifier)
+            names.push("Shift");
+        return names.length > 0 ? names.join("+") : "Meta";
+    }
     // Each entry is a shortcut of its own: its badge shows while exactly
     // its modifiers are held.
     function shownWhileHeld(index) {

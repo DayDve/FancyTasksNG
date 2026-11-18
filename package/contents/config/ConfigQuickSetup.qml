@@ -255,9 +255,12 @@ ConfigPage {
                             Item { implicitWidth: Kirigami.Units.gridUnit }
                             CheckBox {
                                 enabled: quickTaskEntryShortcuts.checked
-                                text: Wrappers.i18n("Show the keys on tasks while a modifier is held")
+                                text: Wrappers.i18nc("Shortcut keys shown on tasks", "Show hints")
                                 checked: quickPage.cfg_showTaskNumbers
                                 onToggled: quickPage.cfg_showTaskNumbers = checked
+                            }
+                            ConfigHint {
+                                info: Wrappers.i18nc("%1 is the held keys, such as Meta or Ctrl+Alt", "While %1 is held, tasks show the keys that switch to them.", TaskEntryShortcuts.heldModifiersName)
                             }
                         }
                     }
