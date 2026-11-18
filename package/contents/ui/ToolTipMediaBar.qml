@@ -145,7 +145,7 @@ Item {
                 acceptedButtons: Qt.NoButton
                 onWheel: (wheel) => {
                     if (barRoot.mediaController) {
-                        barRoot.mediaController.wheelVolume(wheel.angleDelta.y);
+                        barRoot.mediaController.wheelVolume(wheel.inverted ? -wheel.angleDelta.y : wheel.angleDelta.y);
                         wheel.accepted = true;
                     }
                 }
@@ -179,7 +179,7 @@ Item {
                     acceptedButtons: Qt.NoButton
                     onWheel: (wheel) => {
                         if (barRoot.mediaController) {
-                            barRoot.mediaController.wheelVolume(wheel.angleDelta.y);
+                            barRoot.mediaController.wheelVolume(wheel.inverted ? -wheel.angleDelta.y : wheel.angleDelta.y);
                             wheel.accepted = true;
                         }
                     }

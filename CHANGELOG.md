@@ -92,6 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **No Audio Indicator on a Player's First Launch:** The first time a player such as mpv or VLC was started, its button showed no audio indicator and its tooltip no volume controls; starting it again worked.
 - **Button Direction on the Desktop:** With the widget on the desktop and its button direction overridden, the button background, the side zoomed icons grow from, the volume overlay and the way into the tooltip still followed the widget's real placement instead of the chosen direction.
 - **Meta+Number Shortcuts on Plasma 6.8:** Meta+1 to Meta+9 ("Activate Task Manager Entry 1–10") did nothing on Plasma 6.8 and later with only Fancy Tasks NG on the panels. They work again, keeping any keys changed in System Settings; with several Fancy Tasks NG widgets, a press goes to one of them, as with the stock task manager (#54).
+- **Mouse Wheel Volume and Natural Scrolling:** The wheel over a task, its tooltip's speaker badge and its volume controls turned the volume down on wheel up when natural scrolling was on. Wheel up now always raises the volume and wheel down lowers it, consistent with stock Plasma Audio Volume applet; cycling through tasks still follows the natural scrolling setting.
 
 ## [2.3.0] - 2026-11-05
 

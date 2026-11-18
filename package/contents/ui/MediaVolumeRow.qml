@@ -89,7 +89,7 @@ Item {
         acceptedButtons: Qt.NoButton
         onWheel: wheel => {
             if (volumeRow.mediaController) {
-                volumeRow.mediaController.wheelVolume(wheel.angleDelta.y);
+                volumeRow.mediaController.wheelVolume(wheel.inverted ? -wheel.angleDelta.y : wheel.angleDelta.y);
                 wheel.accepted = true;
             }
         }
