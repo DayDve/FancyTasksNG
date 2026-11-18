@@ -907,6 +907,9 @@ PlasmaExtras.Menu {
             } else {
                 pids.push(menu.get(menu.atm.AppPid));
             }
+            // A whole button's processes: it burns when it goes.
+            if (!menu.forGroupMember && menu.visualParentItem && "forceQuitAt" in menu.visualParentItem)
+                menu.visualParentItem.forceQuitAt = Date.now();
             DesktopActionsManager.forceQuit(pids.map(pid => Number(pid) || 0));
         }
     }

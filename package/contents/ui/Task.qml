@@ -316,6 +316,9 @@ Item {
         return list;
     }
     property bool wasMiddleClicked: false
+    // When Force Quit was last chosen for this button (ms): its icon burns
+    // if the button goes away soon after.
+    property real forceQuitAt: 0
 
     // Media Controller Proxy Properties
     readonly property var mediaController: mediaControllerLoader.item
@@ -449,7 +452,8 @@ Item {
             }
         }
         PauseAnimation {
-            duration: (task.tasksRoot.iconsOnly && task.config.smokeExplosionOnClose) ? 250 : 0
+            // Neighbors wait for a close effect to play out in their way.
+            duration: Math.max((task.tasksRoot.iconsOnly && task.config.smokeExplosionOnClose) ? 250 : 0, task.tasksRoot.moveHold)
         }
         ParallelAnimation {
             NumberAnimation {

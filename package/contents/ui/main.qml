@@ -787,11 +787,58 @@ PlasmoidItem {
         if (taskItem.model.IsLauncher || taskItem.model.IsStartup)
             return;
 
+        if (taskItem.forceQuitAt > 0 && Date.now() - taskItem.forceQuitAt < 5000) {
+            spawnBurn(taskItem);
+            return;
+        }
+
         if (tasks.config.smokeExplosionOnClose && tasks.config.iconOnly === 1) {
             if (taskItem.wasMiddleClicked) {
                 explosionManager.spawn(tasks, taskItem, true);
             }
         }
+    }
+
+    // How long the buttons moving into a closed one's place wait (ms).
+    property int moveHold: 0
+    Timer {
+        id: moveHoldReset
+        interval: 100
+        onTriggered: tasks.moveHold = 0
+    }
+    Component {
+        id: burnComponent
+        BurnEffect {}
+    }
+    // The icon of a task that was force quit burns in its place.
+    function spawnBurn(taskItem): void {
+        const icon = taskItem.taskIcon as Item;
+        if (!icon)
+            return;
+        // Where the icon sits at rest: mapping the icon itself would take
+        // in the hover zoom, still on while the menu was open.
+        const box = icon.parent;
+        const pos = taskItem.mapToItem(tasks, box.x + icon.x, box.y + icon.y);
+        // The room the window has past the icon, away from the panel edge.
+        const inWindow = taskItem.mapToItem(null, box.x + icon.x, box.y + icon.y);
+        let top = icon;
+        while (top.parent)
+            top = top.parent;
+        const edge = tasks.effectiveLocation;
+        let room = inWindow.y;
+        if (edge === PlasmaCore.Types.TopEdge)
+            room = top.height - inWindow.y - icon.height;
+        else if (edge === PlasmaCore.Types.LeftEdge)
+            room = top.width - inWindow.x - icon.width;
+        else if (edge === PlasmaCore.Types.RightEdge)
+            room = inWindow.x;
+        burnComponent.createObject(tasks, {
+            x: pos.x, y: pos.y, width: icon.width, height: icon.height,
+            iconSource: taskItem.model.decoration, edge, room: Math.max(0, room)
+        });
+        // The neighbors move in once it has mostly burnt.
+        tasks.moveHold = 575;
+        moveHoldReset.restart();
     }
 
     function addLauncher(url: url): void {
