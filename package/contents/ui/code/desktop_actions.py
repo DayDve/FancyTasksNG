@@ -771,6 +771,8 @@ SERVICE_XML = """
     <method name="ListApps"><arg type="s" direction="out"/></method>
     <method name="OpenUrl"><arg type="s" direction="in"/><arg type="s" direction="in"/></method>
     <method name="ForceQuit"><arg type="s" direction="in"/><arg type="i" direction="out"/></method>
+    <method name="Restart"><arg type="s" direction="in"/><arg type="s" direction="in"/></method>
+    <method name="DesktopFile"><arg type="s" direction="in"/><arg type="s" direction="out"/></method>
     <method name="RegisterTaskEntryShortcuts"><arg type="s" direction="in"/><arg type="o" direction="out"/></method>
   </interface>
   <interface name="io.github.daydve.fancytasksng.Config">
@@ -1076,6 +1078,36 @@ class DesktopActionsService:
             except OSError as e:
                 log.warning(f"ForceQuit {pid}: {e}")
         return killed
+
+    def Restart(self, pids_csv, launcher_url):
+        """Launch the app again once its processes are gone. The shell asks
+        the windows to close first; an app that keeps running (say, waiting
+        on a "save changes?" dialog) isn't launched a second time."""
+        app = app_for_launcher(launcher_url)
+        if not app:
+            return
+        pids = {int(p) for p in pids_csv.split(",") if p.strip().isdigit() and int(p) > 1}
+        waited = [0]
+
+        def check():
+            if any(os.path.exists(f"/proc/{pid}") for pid in pids):
+                waited[0] += 1
+                if waited[0] * 200 >= 30000:
+                    log.info(f"restart of {launcher_url} given up: still running")
+                    return False
+                return True
+            try:
+                app.launch([], None)
+                log.info(f"restarted {launcher_url}")
+            except GLib.Error as e:
+                log.warning(f"Restart error: {e}")
+            return False
+        GLib.timeout_add(200, check)
+
+    def DesktopFile(self, launcher_url):
+        """The path of the app's .desktop file, "" if there's none."""
+        app = app_for_launcher(launcher_url)
+        return (app.get_filename() or "") if app else ""
 
 
 def expand_exec(commandline, url):

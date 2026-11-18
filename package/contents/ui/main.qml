@@ -799,6 +799,19 @@ PlasmoidItem {
         }
     }
 
+    // QML has no clipboard API; a hidden text field's copy() reaches it.
+    function copyToClipboard(text: string): void {
+        clipboardHelper.text = text;
+        clipboardHelper.selectAll();
+        clipboardHelper.copy();
+        clipboardHelper.text = "";
+    }
+    TextEdit {
+        id: clipboardHelper
+        visible: false
+        textFormat: TextEdit.PlainText
+    }
+
     // How long the buttons moving into a closed one's place wait (ms).
     property int moveHold: 0
     Timer {

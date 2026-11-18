@@ -49,8 +49,24 @@ PlasmaExtras.Menu {
     // items then have to act on the window's process, not the whole group.
     readonly property bool forGroupMember: !!modelIndex && !!modelIndex.parent && modelIndex.parent.valid
 
-    // Opened with Shift held: offer Force Quit.
-    property bool forceQuit: false
+    // Opened with Shift held (and allowed): the extra items, Force Quit,
+    // Restart and Copy.
+    property bool shiftItems: false
+    // Not for the shell's own windows (this widget's settings, say).
+    readonly property bool _shellWindow: ["org.kde.plasmashell", "org.kde.plasmawindowed"].includes(String(get(atm.AppId)))
+
+    // The process of each window: the group's for a group button.
+    function windowPids(): var {
+        const pids = [];
+        const rows = menu.tasksModel.rowCount(menu.modelIndex);
+        if (rows > 0) {
+            for (let i = 0; i < rows; ++i)
+                pids.push(Number(menu.tasksModel.data(menu.tasksModel.index(i, 0, menu.modelIndex), menu.atm.AppPid)) || 0);
+        } else {
+            pids.push(Number(menu.get(menu.atm.AppPid)) || 0);
+        }
+        return pids.filter((pid, i) => pid > 0 && pids.indexOf(pid) === i);
+    }
 
     // Streams the mute item acts on, taken once when the menu is built.
     property var muteStreams: []
@@ -891,26 +907,73 @@ PlasmaExtras.Menu {
     }
 
     // For an app that no longer responds to Close: kills the process of
-    // each of its windows here. Not for the shell's own windows (this
-    // widget's settings, say); the helper won't kill the shell either.
+    // each of its windows here. The helper won't kill the shell either.
     PlasmaExtras.MenuItem {
-        visible: menu.forceQuit && closeWindowItem.visible
-            && !["org.kde.plasmashell", "org.kde.plasmawindowed"].includes(menu.get(menu.atm.AppId))
+        visible: menu.shiftItems && menu.tasksRoot.config.menuShiftForceQuit && closeWindowItem.visible && !menu._shellWindow
         text: Wrappers.i18n("Force Quit")
         icon: "process-stop"
         onClicked: {
-            const pids = [];
-            const rows = menu.tasksModel.rowCount(menu.modelIndex);
-            if (rows > 0) {
-                for (let i = 0; i < rows; ++i)
-                    pids.push(menu.tasksModel.data(menu.tasksModel.index(i, 0, menu.modelIndex), menu.atm.AppPid));
-            } else {
-                pids.push(menu.get(menu.atm.AppPid));
-            }
             // A whole button's processes: it burns when it goes.
-            if (!menu.forGroupMember && menu.visualParentItem && "forceQuitAt" in menu.visualParentItem)
+            if (menu.tasksRoot.config.forceQuitBurn && !menu.forGroupMember
+                    && menu.visualParentItem && "forceQuitAt" in menu.visualParentItem)
                 menu.visualParentItem.forceQuitAt = Date.now();
-            DesktopActionsManager.forceQuit(pids.map(pid => Number(pid) || 0));
+            DesktopActionsManager.forceQuit(menu.windowPids());
+        }
+    }
+
+    // Close, then launch again once the processes are gone. Not for one
+    // window of a group: its process may well serve the others too.
+    PlasmaExtras.MenuItem {
+        visible: menu.shiftItems && menu.tasksRoot.config.menuShiftRestart && closeWindowItem.visible
+            && !menu._shellWindow && !menu.forGroupMember
+            && menu.get(menu.atm.LauncherUrlWithoutIcon).toString() !== ""
+        enabled: closeWindowItem.enabled
+        text: Wrappers.i18n("Restart")
+        icon: "view-refresh"
+        onClicked: {
+            const pids = menu.windowPids();
+            const launcherUrl = menu.get(menu.atm.LauncherUrlWithoutIcon).toString();
+            menu.tasksModel.requestClose(menu.modelIndex);
+            DesktopActionsManager.restart(pids, launcherUrl);
+        }
+    }
+
+    // Details for a bug report, each copied on a click.
+    PlasmaExtras.MenuItem {
+        id: copyMenuItem
+        visible: menu.shiftItems && menu.tasksRoot.config.menuShiftCopy && closeWindowItem.visible
+        text: Wrappers.i18nc("@item:inmenu submenu of details to copy", "Copy")
+        icon: "edit-copy"
+
+        readonly property string pids: menu.windowPids().join(", ")
+        readonly property string appId: String(menu.get(menu.atm.AppId) || "")
+        readonly property string launcherUrl: menu.get(menu.atm.LauncherUrlWithoutIcon).toString()
+        // Asked for up front: on Wayland the clipboard takes text only
+        // while the menu still has focus, not once a reply comes later.
+        property string desktopFilePath: ""
+        Component.onCompleted: {
+            if (visible && launcherUrl !== "")
+                DesktopActionsManager.desktopFile(launcherUrl, path => copyMenuItem.desktopFilePath = path);
+        }
+
+        readonly property PlasmaExtras.Menu copyMenu: PlasmaExtras.Menu {
+            visualParent: copyMenuItem.action
+
+            PlasmaExtras.MenuItem {
+                visible: copyMenuItem.pids !== ""
+                text: Wrappers.i18nc("@item:inmenu %1 is a process id or a list of them", "PID: %1", copyMenuItem.pids)
+                onClicked: menu.tasksRoot.copyToClipboard(copyMenuItem.pids)
+            }
+            PlasmaExtras.MenuItem {
+                visible: copyMenuItem.appId !== ""
+                text: Wrappers.i18nc("@item:inmenu %1 is an app id", "App ID: %1", copyMenuItem.appId)
+                onClicked: menu.tasksRoot.copyToClipboard(copyMenuItem.appId)
+            }
+            PlasmaExtras.MenuItem {
+                visible: copyMenuItem.desktopFilePath !== ""
+                text: Wrappers.i18n(".desktop File Path")
+                onClicked: menu.tasksRoot.copyToClipboard(copyMenuItem.desktopFilePath)
+            }
         }
     }
 }

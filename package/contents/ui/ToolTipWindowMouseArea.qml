@@ -47,7 +47,11 @@ MouseArea {
         case Qt.RightButton:
             if (rootTask.tasksRoot) {
                 const tasksRoot = rootTask.tasksRoot;
-                const menu = tasksRoot.createContextMenu(rootTask, targetIndex);
+                // Shift adds the extra items here too, as on the button.
+                const withShift = (mouse.modifiers & Qt.ShiftModifier) || tasksRoot.shiftHeld;
+                const menu = tasksRoot.createContextMenu(rootTask, targetIndex, {
+                    shiftItems: !!withShift && tasksRoot.config.menuShiftItems
+                });
                 // The cursor leaves the tooltip for the menu; the tooltip has
                 // to know the menu is open to stay up (see main.qml).
                 menu.statusChanged.connect(() => {

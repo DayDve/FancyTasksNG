@@ -646,7 +646,7 @@ Item {
             PointerDevice.Stylus
         gesturePolicy: TapHandler.ReleaseWithinBounds
         onLongPressed: {
-            task.showContextMenu({ forceQuit: task.menuWithShift });
+            task.showContextMenu({ shiftItems: task.menuWithShift && task.config.menuShiftItems });
             task.menuWithShift = false;
         }
     }

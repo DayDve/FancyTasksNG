@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-18 10:56+0200\n"
+"POT-Creation-Date: 2026-11-18 13:58+0200\n"
 "PO-Revision-Date: 2023-09-21 16:18-0300\n"
 "Last-Translator:  Douglas Guimarães <<dg2003gh@gmail.com>>\n"
 "Language-Team: \n"
@@ -321,6 +321,44 @@ msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "Hide 'Move to Desktop' if only one virtual desktop is used"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Extra items with Shift"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Items for a task's menu, and a window's menu in its tooltip, opened with Shift held."
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
+msgid "Force Quit"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Kills the app's process, for an app that no longer responds to Close."
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgctxt "Force Quit option"
+msgid "Animate"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
+msgid "Restart"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Closes the app and starts it again once it has quit."
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgctxt "Context menu item to show"
+msgid "Copy"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "The PID, app ID or .desktop file path, for a bug report."
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
@@ -695,16 +733,16 @@ msgid "As in Plasma's task manager."
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
-msgctxt "@action:button opens the global shortcuts in System Settings"
-msgid "Shortcuts…"
-msgstr ""
-
-#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
 msgid "Show the keys on tasks while a modifier is held"
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
 msgid "Task Actions"
+msgstr ""
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
+msgctxt "@action:button opens the global shortcuts in System Settings"
+msgid "Shortcuts…"
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml
@@ -1550,7 +1588,22 @@ msgid "&Close"
 msgstr "&Fechar"
 
 #: package/contents/ui/ContextMenu.qml
-msgid "Force Quit"
+msgctxt "@item:inmenu submenu of details to copy"
+msgid "Copy"
+msgstr ""
+
+#: package/contents/ui/ContextMenu.qml
+msgctxt "@item:inmenu %1 is a process id or a list of them"
+msgid "PID: %1"
+msgstr ""
+
+#: package/contents/ui/ContextMenu.qml
+msgctxt "@item:inmenu %1 is an app id"
+msgid "App ID: %1"
+msgstr ""
+
+#: package/contents/ui/ContextMenu.qml
+msgid ".desktop File Path"
 msgstr ""
 
 #: package/contents/ui/Task.qml

@@ -122,6 +122,63 @@ ConfigPage {
                 checked: menuPage.cfg_hideMoveToDesktopMenuWithOneDesktop
                 onToggled: menuPage.cfg_hideMoveToDesktopMenuWithOneDesktop = checked
             }
+
+            Item { height: Kirigami.Units.largeSpacing }
+            RowLayout {
+                CheckBox {
+                    id: shiftItems
+                    text: Wrappers.i18n("Extra items with Shift")
+                    checked: menuPage.cfg_menuShiftItems
+                    onToggled: menuPage.cfg_menuShiftItems = checked
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("Items for a task's menu, and a window's menu in its tooltip, opened with Shift held.")
+                }
+            }
+            RowLayout {
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+                CheckBox {
+                    id: shiftForceQuit
+                    enabled: shiftItems.checked
+                    text: Wrappers.i18n("Force Quit")
+                    checked: menuPage.cfg_menuShiftForceQuit
+                    onToggled: menuPage.cfg_menuShiftForceQuit = checked
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("Kills the app's process, for an app that no longer responds to Close.")
+                }
+                CheckBox {
+                    Layout.leftMargin: Kirigami.Units.largeSpacing
+                    enabled: shiftItems.checked && shiftForceQuit.checked
+                    text: Wrappers.i18nc("Force Quit option", "Animate")
+                    checked: menuPage.cfg_forceQuitBurn
+                    onToggled: menuPage.cfg_forceQuitBurn = checked
+                }
+            }
+            RowLayout {
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+                CheckBox {
+                    enabled: shiftItems.checked
+                    text: Wrappers.i18n("Restart")
+                    checked: menuPage.cfg_menuShiftRestart
+                    onToggled: menuPage.cfg_menuShiftRestart = checked
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("Closes the app and starts it again once it has quit.")
+                }
+            }
+            RowLayout {
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+                CheckBox {
+                    enabled: shiftItems.checked
+                    text: Wrappers.i18nc("Context menu item to show", "Copy")
+                    checked: menuPage.cfg_menuShiftCopy
+                    onToggled: menuPage.cfg_menuShiftCopy = checked
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("The PID, app ID or .desktop file path, for a bug report.")
+                }
+            }
         }
     }
 }

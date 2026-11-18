@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-18 10:56+0200\n"
+"POT-Creation-Date: 2026-11-18 13:58+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -321,6 +321,44 @@ msgstr "«Выключить звук»/«Включить звук» для в�
 #: package/contents/config/ConfigContextMenu.qml
 msgid "Hide 'Move to Desktop' if only one virtual desktop is used"
 msgstr "Скрывать «Переместить на рабочий стол», если рабочий стол один"
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Extra items with Shift"
+msgstr "Дополнительные пункты с Shift"
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Items for a task's menu, and a window's menu in its tooltip, opened with Shift held."
+msgstr "Пункты меню задачи и меню окна в подсказке, открытых с зажатым Shift."
+
+#: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
+msgid "Force Quit"
+msgstr "Завершить принудительно"
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Kills the app's process, for an app that no longer responds to Close."
+msgstr "Убивает процесс приложения, которое больше не отвечает на «Закрыть»."
+
+#: package/contents/config/ConfigContextMenu.qml
+msgctxt "Force Quit option"
+msgid "Animate"
+msgstr "Анимировать"
+
+#: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
+msgid "Restart"
+msgstr "Перезапустить"
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Closes the app and starts it again once it has quit."
+msgstr "Закрывает приложение и запускает его снова, когда оно завершится."
+
+#: package/contents/config/ConfigContextMenu.qml
+msgctxt "Context menu item to show"
+msgid "Copy"
+msgstr "Копировать"
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "The PID, app ID or .desktop file path, for a bug report."
+msgstr "PID, ID приложения или путь к файлу .desktop, для сообщения об ошибке."
 
 #: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
 msgid "Task Layout"
@@ -695,17 +733,17 @@ msgid "As in Plasma's task manager."
 msgstr "Как в штатном диспетчере задач Plasma."
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
-msgctxt "@action:button opens the global shortcuts in System Settings"
-msgid "Shortcuts…"
-msgstr "Сочетания клавиш…"
-
-#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
 msgid "Show the keys on tasks while a modifier is held"
 msgstr "Показывать клавиши на задачах при удержании модификатора"
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
 msgid "Task Actions"
 msgstr "Действия с задачами"
+
+#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
+msgctxt "@action:button opens the global shortcuts in System Settings"
+msgid "Shortcuts…"
+msgstr "Сочетания клавиш…"
 
 #: package/contents/config/ConfigQuickSetup.qml
 msgctxt "App signals"
@@ -1552,8 +1590,23 @@ msgid "&Close"
 msgstr "&Закрыть"
 
 #: package/contents/ui/ContextMenu.qml
-msgid "Force Quit"
-msgstr "Завершить принудительно"
+msgctxt "@item:inmenu submenu of details to copy"
+msgid "Copy"
+msgstr "Копировать"
+
+#: package/contents/ui/ContextMenu.qml
+msgctxt "@item:inmenu %1 is a process id or a list of them"
+msgid "PID: %1"
+msgstr "PID: %1"
+
+#: package/contents/ui/ContextMenu.qml
+msgctxt "@item:inmenu %1 is an app id"
+msgid "App ID: %1"
+msgstr "ID приложения: %1"
+
+#: package/contents/ui/ContextMenu.qml
+msgid ".desktop File Path"
+msgstr "Путь к файлу .desktop"
 
 #: package/contents/ui/Task.qml
 msgctxt "@info:usagetip %1 application name"

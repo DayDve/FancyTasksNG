@@ -570,6 +570,26 @@
       <label>Whether a task's context menu shows Mute/Unmute, for apps playing audio.</label>
       <default>true</default>
     </entry>
+    <entry name="menuShiftItems" type="Bool">
+      <label>Whether a task's context menu opened with Shift held has the extra items chosen below.</label>
+      <default>true</default>
+    </entry>
+    <entry name="menuShiftForceQuit" type="Bool">
+      <label>Whether the Shift menu has Force Quit.</label>
+      <default>true</default>
+    </entry>
+    <entry name="menuShiftRestart" type="Bool">
+      <label>Whether the Shift menu has Restart.</label>
+      <default>true</default>
+    </entry>
+    <entry name="menuShiftCopy" type="Bool">
+      <label>Whether the Shift menu has Copy (PID, app ID, .desktop file path).</label>
+      <default>true</default>
+    </entry>
+    <entry name="forceQuitBurn" type="Bool">
+      <label>Whether a task's icon burns away after Force Quit.</label>
+      <default>true</default>
+    </entry>
     <entry name="showBrowserHistory" type="Bool">
       <label>Show browsing history in the context menu of web browsers.</label>
       <default>false</default>

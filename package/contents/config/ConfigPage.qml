@@ -294,6 +294,16 @@ Kirigami.Page {
     property bool cfg_menuMediaControlsDefault: true
     property bool cfg_menuMute: true
     property bool cfg_menuMuteDefault: true
+    property bool cfg_menuShiftItems: true
+    property bool cfg_menuShiftItemsDefault: true
+    property bool cfg_menuShiftForceQuit: true
+    property bool cfg_menuShiftForceQuitDefault: true
+    property bool cfg_menuShiftRestart: true
+    property bool cfg_menuShiftRestartDefault: true
+    property bool cfg_menuShiftCopy: true
+    property bool cfg_menuShiftCopyDefault: true
+    property bool cfg_forceQuitBurn: true
+    property bool cfg_forceQuitBurnDefault: true
     property int cfg_audioBadgeSize: 100
     property int cfg_audioBadgeSizeDefault: 100
     property int cfg_audioBadgeColorMode: 0

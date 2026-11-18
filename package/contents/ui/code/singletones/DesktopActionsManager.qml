@@ -234,6 +234,17 @@ Item {
         _call("ForceQuit", "(s)", [pids.filter(pid => pid > 0).join(",")]);
     }
 
+    // Launches the app again once the given processes have exited (the
+    // windows are asked to close first); gives up if they keep running.
+    function restart(pids, launcherUrl) {
+        _call("Restart", "(ss)", [pids.filter(pid => pid > 0).join(","), String(launcherUrl || "")]);
+    }
+
+    // callback receives the path of the app's .desktop file, "" if none.
+    function desktopFile(launcherUrl, callback) {
+        _call("DesktopFile", "(s)", [String(launcherUrl || "")], value => callback(value ? String(value) : ""));
+    }
+
     // Registers Meta+1..10 under component; callback receives the object
     // path that emits the presses, "" if the call failed.
     function registerTaskEntryShortcuts(component, callback) {
