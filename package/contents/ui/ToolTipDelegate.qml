@@ -231,8 +231,11 @@ Loader {
 
         Item {
             id: singleRoot
-            implicitWidth: singleLayout.implicitWidth
-            implicitHeight: singleLayout.implicitHeight
+            // A launcher's tooltip is only text: it gets the padding that a
+            // window's tooltip has around its own content.
+            readonly property int padding: toolTipDelegate.isWin ? 0 : Kirigami.Units.mediumSpacing
+            implicitWidth: singleLayout.implicitWidth + padding * 2
+            implicitHeight: singleLayout.implicitHeight + padding * 2
 
             property bool isHovered: singleHover.hovered || singleDrop.containsDrag
 
@@ -247,6 +250,8 @@ Loader {
 
             ColumnLayout {
                 id: singleLayout
+                x: singleRoot.padding
+                y: singleRoot.padding
                 spacing: Kirigami.Units.smallSpacing
 
                 AppTitleRow {
@@ -256,18 +261,31 @@ Loader {
                 }
 
             PlasmaComponents3.Label {
+                id: singleSubText
                 Layout.alignment: Qt.AlignHCenter
-                Layout.fillWidth: true
                 Layout.leftMargin: Kirigami.Units.gridUnit / 2
                 Layout.rightMargin: Kirigami.Units.gridUnit / 2
-                Layout.maximumWidth: toolTipDelegate.tooltipInstanceMaximumWidth - Layout.leftMargin - Layout.rightMargin
+                // As wide as its longest line once wrapped, not as the
+                // widest it may be: otherwise wrapped text leaves wide
+                // margins at its sides.
+                Layout.preferredWidth: Math.ceil(subTextFit.contentWidth)
                 horizontalAlignment: Text.AlignHCenter
-                
+
                 text: toolTipDelegate.generateSubText()
                 wrapMode: Text.Wrap
                 visible: text.length > 0 && (!toolTipDelegate.isWin || toolTipDelegate.showThumbnails)
                 opacity: 0.6
                 textFormat: Text.PlainText
+
+                PlasmaComponents3.Label {
+                    id: subTextFit
+                    visible: false
+                    width: toolTipDelegate.tooltipInstanceMaximumWidth - singleSubText.Layout.leftMargin - singleSubText.Layout.rightMargin
+                    text: singleSubText.text
+                    font: singleSubText.font
+                    wrapMode: Text.Wrap
+                    textFormat: Text.PlainText
+                }
             }
 
             Loader {
