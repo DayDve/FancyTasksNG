@@ -55,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **Tooltips of Pinned Apps:** The tooltip of a pinned app that isn't running has padding around its text again, and a description that wraps no longer leaves wide margins at its sides.
+- **Pinned Apps on a Classic Panel:** The icon of a pinned app that isn't running sits in the middle of its button instead of leaving a wider gap on its right.
 - **Smoke Animation Ending:** The smoke at the end of the closing animation no longer flashes back for a moment as it disappears.
 - **Context Menu of Some Apps:** Apps whose launcher is in a subfolder of the applications folder (Wine, q4wine) got no actions or recent documents in their menu, and a copy of an app's launcher in your own applications folder was ignored in favour of the system one.
 - **Relocated User Folders:** With `XDG_DATA_HOME`, `XDG_CONFIG_HOME` or `XDG_CACHE_HOME` set, the context menu finds the places, recent documents, browser history and the user's own apps in those folders instead of the default ones under the home folder.

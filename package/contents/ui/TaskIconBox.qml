@@ -325,6 +325,20 @@ Item {
     }
 
     states: [
+        // A launcher's button is only its icon, with the button's margins on
+        // both sides: centered, not kept left as for a title next to it.
+        State {
+            name: "launcher"
+            when: !iconBox._iconsOnly && iconBox._taskHasModel && iconBox.taskItem.model.IsLauncher
+            AnchorChanges {
+                target: iconBox
+                anchors.left: undefined
+                anchors.horizontalCenter: iconBox.parent.horizontalCenter
+            }
+            PropertyChanges {
+                iconBox.anchors.leftMargin: 0
+            }
+        },
         State {
             name: "standalone"
             when: !iconBox._iconsOnly && !iconBox.labelVisible && iconBox.taskItem && iconBox.taskItem.parent && iconBox._taskHasModel && !iconBox.taskItem.model.IsLauncher
