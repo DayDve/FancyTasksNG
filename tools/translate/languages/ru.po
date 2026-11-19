@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-18 22:35+0200\n"
+"POT-Creation-Date: 2026-11-19 16:03+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -244,7 +244,7 @@ msgstr "Только когда виджет находится на панел�
 msgid "Animate task icon when a window wants attention"
 msgstr "Анимировать значок окна, требующего внимания"
 
-#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigPinnedApps.qml package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml package/contents/config/ConfigTaskStyle.qml
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskStyle.qml
 msgid "Only in the icons-only mode."
 msgstr "Только в режиме «Только значки»."
 
@@ -334,6 +334,14 @@ msgstr "Пункты меню задачи и меню окна в подска�
 msgid "Force Quit"
 msgstr "Завершить принудительно"
 
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Kills the app's process, for an app that no longer responds to Close."
+msgstr "Убивает процесс приложения, которое больше не отвечает на «Закрыть»."
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Animation:"
+msgstr "Анимация:"
+
 #: package/contents/config/ConfigContextMenu.qml package/contents/config/ConfigPinnedApps.qml package/contents/config/ConfigTaskActions.qml
 msgctxt "No animation"
 msgid "None"
@@ -348,10 +356,6 @@ msgstr "Сгорание"
 msgctxt "Animation"
 msgid "Blaze"
 msgstr "Пламя"
-
-#: package/contents/config/ConfigContextMenu.qml
-msgid "Kills the app's process, for an app that no longer responds to Close. The list: how its icon goes away on the panel."
-msgstr "Убивает процесс приложения, которое больше не отвечает на «Закрыть». Список: как исчезает его значок на панели."
 
 #: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
 msgid "Restart"

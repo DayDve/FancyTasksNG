@@ -787,6 +787,9 @@ PlasmoidItem {
         if (taskItem.model.IsLauncher || taskItem.model.IsStartup)
             return;
 
+        if (tasks.config.iconOnly !== 1)
+            return;
+
         if (taskItem.forceQuitAt > 0 && Date.now() - taskItem.forceQuitAt < 5000) {
             // The neighbors move in once the icon has mostly gone.
             if (tasks.config.forceQuitAnimation === 1)
@@ -796,7 +799,7 @@ PlasmoidItem {
             return;
         }
 
-        if (tasks.config.iconOnly === 1 && taskItem.wasMiddleClicked)
+        if (taskItem.wasMiddleClicked)
             spawnCloseEffect(tasks.config.closeAnimation, taskItem);
     }
 

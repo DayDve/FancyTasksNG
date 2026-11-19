@@ -385,22 +385,23 @@ ConfigPage {
                         onToggled: cfg_page.cfg_unpinByDrag = checked
                     }
 
+                    // Only with unpinning on; the animations are played in the
+                    // icons-only mode.
                     RowLayout {
+                        visible: unpinByDragCheck.checked && cfg_page.cfg_iconOnly === 1
                         Item { implicitWidth: Kirigami.Units.gridUnit }
                         Label {
-                            enabled: unpinAnimationBox.enabled
                             text: Wrappers.i18n("Unpinning animation:")
                         }
-                        ComboBox {
-                            id: unpinAnimationBox
-                            enabled: unpinByDragCheck.checked && cfg_page.cfg_iconOnly === 1
-                            model: [Wrappers.i18nc("No animation", "None"), Wrappers.i18nc("Animation", "Smoke"), Wrappers.i18nc("Animation", "Shatter")]
+                        AnimationCards {
+                            dragOff: true
+                            choices: [
+                                { text: Wrappers.i18nc("No animation", "None"), effect: "" },
+                                { text: Wrappers.i18nc("Animation", "Smoke"), effect: "smoke" },
+                                { text: Wrappers.i18nc("Animation", "Shatter"), effect: "shatter" }
+                            ]
                             currentIndex: cfg_page.cfg_unpinAnimation
                             onActivated: (index) => cfg_page.cfg_unpinAnimation = index
-                        }
-                        ConfigHint {
-                            target: unpinAnimationBox
-                            reason: cfg_page.cfg_iconOnly !== 1 ? Wrappers.i18n("Only in the icons-only mode.") : ""
                         }
                     }
                 }

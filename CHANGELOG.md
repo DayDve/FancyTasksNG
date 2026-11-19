@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Extra Items with Shift:** Holding Shift while opening a task's menu, or a window's menu in its tooltip, adds:
-  - "Force Quit", which kills the app's process (every window's process for a group), for an app that no longer responds to Close. Its icon then goes away on the panel with an animation picked from a list: "Burn", where it burns away from the panel edge on, or "Blaze", where cartoon flames engulf it and turn into puffs of smoke. The buttons next to it move in once the icon has mostly gone.
+  - "Force Quit", which kills the app's process (every window's process for a group), for an app that no longer responds to Close. In the icons-only mode, its icon then goes away on the panel with an animation of your choice: "Burn", where it burns away from the panel edge on, or "Blaze", where cartoon flames engulf it and turn into puffs of smoke. The buttons next to it move in once the icon has mostly gone.
   - "Restart": closes the app and starts it again once it has quit.
   - "Copy": the PID, the app ID or the path of the app's .desktop file.
 
@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Audio Mark Appearance:** The audio mark has its own tab under App Signals: its size relative to the notification count, its color (the theme's, the accent or a custom one) and an optional round background like the count's.
 
 ### Changed
-- **Closing and Unpinning Animations:** The animations for closing a task by middle-click and for unpinning an app by dragging it off the panel are picked from a list instead of turned on with a checkbox: "Smoke", the animation from before, or "Shatter", where the icon breaks into pieces that fly off with a flash, sparks and a puff of smoke. Settings turned on before keep "Smoke".
+- **Closing and Unpinning Animations:** The animations for closing a task by middle-click and for unpinning an app by dragging it off the panel are picked instead of turned on with a checkbox: "Smoke", the animation from before, or "Shatter", where the icon breaks into pieces that fly off with a flash, sparks and a puff of smoke. Settings turned on before keep "Smoke". Each choice, the Force Quit ones too, is a button with an icon that goes away with its animation while the button is pointed at (for unpinning, once dragged off), so they can be told apart before picking one. Like the animations themselves, they show in the icons-only mode only.
 - **Settings Look:** Options sit on panels of a fixed width in the middle of the window, aligned to the left, with the preview above them as wide; Quick Setup has a panel for each group, with app signals, grouping and tooltips side by side.
 - **Tooltip Transitions:** Moving the cursor from one task to another no longer makes the tooltip wobble. The tooltip glides to the new button and grows or shrinks around the middle of its side facing the panel; a group's thumbnails show in place right away while the tooltip widens over them.
 - **Tooltip Distance:** Tooltips open close to the panel instead of well away from it. When hover zoom makes an icon stick out of the panel, the tooltip keeps the same small distance from the zoomed icon.

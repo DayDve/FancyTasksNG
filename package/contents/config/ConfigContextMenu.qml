@@ -144,15 +144,27 @@ ConfigPage {
                     checked: menuPage.cfg_menuShiftForceQuit
                     onToggled: menuPage.cfg_menuShiftForceQuit = checked
                 }
-                ComboBox {
-                    Layout.leftMargin: Kirigami.Units.largeSpacing
-                    enabled: shiftItems.checked && shiftForceQuit.checked
-                    model: [Wrappers.i18nc("No animation", "None"), Wrappers.i18nc("Animation", "Burn"), Wrappers.i18nc("Animation", "Blaze")]
+                ConfigHint {
+                    info: Wrappers.i18n("Kills the app's process, for an app that no longer responds to Close.")
+                }
+            }
+            // How its icon goes away: only with Force Quit on, greyed out with
+            // it; played in the icons-only mode.
+            RowLayout {
+                visible: shiftForceQuit.checked && menuPage.cfg_iconOnly === 1
+                enabled: shiftItems.checked
+                Item { implicitWidth: Kirigami.Units.gridUnit * 2 }
+                Label {
+                    text: Wrappers.i18n("Animation:")
+                }
+                AnimationCards {
+                    choices: [
+                        { text: Wrappers.i18nc("No animation", "None"), effect: "" },
+                        { text: Wrappers.i18nc("Animation", "Burn"), effect: "burn" },
+                        { text: Wrappers.i18nc("Animation", "Blaze"), effect: "blaze" }
+                    ]
                     currentIndex: menuPage.cfg_forceQuitAnimation
                     onActivated: (index) => menuPage.cfg_forceQuitAnimation = index
-                }
-                ConfigHint {
-                    info: Wrappers.i18n("Kills the app's process, for an app that no longer responds to Close. The list: how its icon goes away on the panel.")
                 }
             }
             RowLayout {

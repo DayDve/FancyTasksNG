@@ -146,32 +146,27 @@ ConfigPage {
                         onActivated: (index) => actionsPage.cfg_middleClickAction = index
                     }
 
-                    // Only for "Closes window or group": nothing else closes with it.
+                    // Only for "Closes window or group": nothing else closes
+                    // with it. The animations are played in the icons-only mode.
                     Label {
                         Layout.row: 3
                         Layout.column: 0
                         Layout.leftMargin: Kirigami.Units.gridUnit
-                        visible: middleClickAction.currentIndex === 1
-                        enabled: closeAnimation.enabled
+                        visible: closeAnimation.visible
                         text: Wrappers.i18n("Closing animation")
                     }
-                    ComboBox {
+                    AnimationCards {
                         id: closeAnimation
                         Layout.row: 3
                         Layout.column: 1
-                        Layout.fillWidth: true
-                        visible: middleClickAction.currentIndex === 1
-                        enabled: actionsPage.cfg_iconOnly === 1
-                        model: [Wrappers.i18nc("No animation", "None"), Wrappers.i18nc("Animation", "Smoke"), Wrappers.i18nc("Animation", "Shatter")]
+                        visible: middleClickAction.currentIndex === 1 && actionsPage.cfg_iconOnly === 1
+                        choices: [
+                            { text: Wrappers.i18nc("No animation", "None"), effect: "" },
+                            { text: Wrappers.i18nc("Animation", "Smoke"), effect: "smoke" },
+                            { text: Wrappers.i18nc("Animation", "Shatter"), effect: "shatter" }
+                        ]
                         currentIndex: actionsPage.cfg_closeAnimation
                         onActivated: (index) => actionsPage.cfg_closeAnimation = index
-                    }
-                    ConfigHint {
-                        Layout.row: 3
-                        Layout.column: 2
-                        visible: middleClickAction.currentIndex === 1
-                        target: closeAnimation
-                        reason: Wrappers.i18n("Only in the icons-only mode.")
                     }
                 }
             }
