@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-19 16:03+0200\n"
+"POT-Creation-Date: 2026-11-20 10:41+0200\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -626,6 +626,14 @@ msgid "Browse the Web"
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
+msgid "Default Mail Client"
+msgstr ""
+
+#: package/contents/config/ConfigPinnedApps.qml
+msgid "Send and Receive Email"
+msgstr ""
+
+#: package/contents/config/ConfigPinnedApps.qml
 msgid "Default File Manager"
 msgstr ""
 
@@ -634,11 +642,24 @@ msgid "Manage Files"
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
-msgid "Default Mail Client"
+msgid "Default Terminal"
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
-msgid "Send and Receive Email"
+msgid "Run Commands"
+msgstr ""
+
+#: package/contents/config/ConfigPinnedApps.qml
+msgid "Default Applications"
+msgstr ""
+
+#: package/contents/config/ConfigPinnedApps.qml
+msgid "Applications"
+msgstr ""
+
+#: package/contents/config/ConfigPinnedApps.qml
+msgctxt "The app a default-app launcher opens now"
+msgid "Now: %1"
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
@@ -669,10 +690,6 @@ msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
 msgid "Add Application..."
-msgstr ""
-
-#: package/contents/config/ConfigPinnedApps.qml
-msgid "Add Special Launcher..."
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml

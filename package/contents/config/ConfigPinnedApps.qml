@@ -10,6 +10,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
+import org.kde.taskmanager as TaskManager
 
 import "../ui/code/singletones"
 
@@ -25,17 +26,77 @@ ConfigPage {
     property var appMetadataCache: ({})
     property string currentSearchText: ""
 
-    // The "preferred://" launchers: whichever app is set as the default one.
+    // The "preferred://" launchers: whichever app is set in System Settings'
+    // Default Applications. Plasma resolves only these four hosts itself.
     readonly property var specialLaunchers: [
         {url: "preferred://browser", name: Wrappers.i18n("Default Web Browser"), comment: Wrappers.i18n("Browse the Web"),
          icon: "internet-web-browser", keywords: "web browser internet"},
+        {url: "preferred://mailer", name: Wrappers.i18n("Default Mail Client"), comment: Wrappers.i18n("Send and Receive Email"),
+         icon: "internet-mail", keywords: "email mail"},
         {url: "preferred://filemanager", name: Wrappers.i18n("Default File Manager"), comment: Wrappers.i18n("Manage Files"),
          icon: "system-file-manager", keywords: "files folder"},
-        {url: "preferred://mail", name: Wrappers.i18n("Default Mail Client"), comment: Wrappers.i18n("Send and Receive Email"),
-         icon: "internet-mail", keywords: "email mail"}
+        {url: "preferred://terminal", name: Wrappers.i18n("Default Terminal"), comment: Wrappers.i18n("Run Commands"),
+         icon: "utilities-terminal", keywords: "terminal console shell"}
     ]
     function specialLauncher(url: string): var {
         return specialLaunchers.find(launcher => launcher.url === url);
+    }
+
+    // The app each special launcher stands for now: {preferred url: {name, url}}.
+    property var defaultApps: ({})
+
+    // Resolves the special launchers the way the panel does, and again once
+    // System Settings changes a default app (libtaskmanager re-reads them on
+    // a KSycoca rebuild). Window rows are there too, and are skipped.
+    TaskManager.TasksModel {
+        id: defaultAppsModel
+        launcherList: cfg_page.specialLaunchers.map(launcher => launcher.url)
+        separateLaunchers: true
+        hideActivatedLaunchers: false
+        groupMode: TaskManager.TasksModel.GroupDisabled
+    }
+    Instantiator {
+        id: defaultAppsResolver
+        model: defaultAppsModel
+        delegate: QtObject {
+            required property var model
+            readonly property bool isLauncher: model.IsLauncher === true
+            readonly property string appUrl: isLauncher ? String(model.LauncherUrlWithoutIcon) : ""
+            readonly property string appName: isLauncher ? (model.AppName || "") : ""
+            onAppUrlChanged: defaultAppsTimer.restart()
+            onAppNameChanged: defaultAppsTimer.restart()
+        }
+        onObjectAdded: defaultAppsTimer.restart()
+        onObjectRemoved: defaultAppsTimer.restart()
+    }
+    Timer {
+        id: defaultAppsTimer
+        interval: 0
+        onTriggered: cfg_page.updateDefaultApps()
+    }
+    function updateDefaultApps() {
+        const apps = {};
+        for (let i = 0; i < defaultAppsResolver.count; i++) {
+            const row = defaultAppsResolver.objectAt(i);
+            if (!row?.isLauncher)
+                continue;
+            const position = defaultAppsModel.launcherPosition(row.appUrl);
+            const url = defaultAppsModel.launcherList[position];
+            // Unresolved (no such app): the URL stays a preferred:// one.
+            if (url && !row.appUrl.startsWith("preferred:"))
+                apps[url] = {name: row.appName, url: row.appUrl};
+        }
+        defaultApps = apps;
+        for (const list of [installedAppsModel, filteredAppsModel]) {
+            for (let i = 0; i < list.count; i++) {
+                const url = list.get(i).url;
+                if (url.startsWith("preferred://")) {
+                    list.setProperty(i, "genericName", getGenericNameForUrl(url));
+                    list.setProperty(i, "icon", getIconForUrl(url));
+                }
+            }
+        }
+        refreshPinnedAppsModel();
     }
 
     // ---------------------------------------
@@ -80,17 +141,20 @@ ConfigPage {
         isLoadingApps = true;
         DesktopActionsManager.listApps(apps => {
             const cache = {};
+            for (const app of apps)
+                cache["applications:" + app.id] = {name: app.name, icon: app.icon, genericName: app.genericName, comment: app.comment};
+            cfg_page.appMetadataCache = cache;
             const items = cfg_page.specialLaunchers.map(launcher => ({
                 name: launcher.name,
-                icon: launcher.icon,
+                icon: cfg_page.getIconForUrl(launcher.url),
                 url: launcher.url,
                 keywords: launcher.keywords,
-                genericName: "",
-                comment: launcher.comment
+                genericName: cfg_page.getGenericNameForUrl(launcher.url),
+                comment: launcher.comment,
+                section: Wrappers.i18n("Default Applications")
             }));
             for (const app of apps) {
                 const url = "applications:" + app.id;
-                cache[url] = {name: app.name, icon: app.icon, genericName: app.genericName, comment: app.comment};
                 // Hidden apps are listed only if they're already pinned.
                 if (!app.display && !cfg_page.isPinned(url))
                     continue;
@@ -100,10 +164,10 @@ ConfigPage {
                     url: url,
                     keywords: app.keywords.join(" "),
                     genericName: app.genericName,
-                    comment: app.comment
+                    comment: app.comment,
+                    section: Wrappers.i18n("Applications")
                 });
             }
-            cfg_page.appMetadataCache = cache;
             installedAppsModel.clear();
             installedAppsModel.append(items);
             cfg_page.isLoadingApps = false;
@@ -174,6 +238,10 @@ ConfigPage {
     }
 
     function getGenericNameForUrl(url) {
+        if (url.startsWith("preferred://")) {
+            const app = defaultApps[url];
+            return app ? Wrappers.i18nc("The app a default-app launcher opens now", "Now: %1", app.name) : "";
+        }
         if (appMetadataCache[url]) {
             return appMetadataCache[url].genericName || "";
         }
@@ -234,7 +302,10 @@ ConfigPage {
 
     function getIconForUrl(url) {
         if (url.startsWith("preferred://")) {
-            return cfg_page.specialLauncher(url)?.icon ?? "preferences-desktop-default-applications";
+            // The current default app's icon, as on the panel.
+            const app = defaultApps[url];
+            return (app && appMetadataCache[app.url]?.icon)
+                || (cfg_page.specialLauncher(url)?.icon ?? "preferences-desktop-default-applications");
         }
 
         if (appMetadataCache[url]) {
@@ -421,29 +492,6 @@ ConfigPage {
                         }
                         Layout.fillWidth: true
                     }
-
-                    Button {
-                        id: addSpecialButton
-                        icon.name: "preferences-desktop-default-applications"
-                        text: Wrappers.i18n("Add Special Launcher...")
-                        onClicked: specialLauncherMenu.popup()
-
-                        Menu {
-                            id: specialLauncherMenu
-
-                            Instantiator {
-                                model: cfg_page.specialLaunchers
-                                delegate: MenuItem {
-                                    required property var modelData
-                                    text: modelData.name
-                                    icon.name: modelData.icon
-                                    onTriggered: cfg_page.addLauncher(modelData.url)
-                                }
-                                onObjectAdded: (index, object) => specialLauncherMenu.insertItem(index, object)
-                                onObjectRemoved: (index, object) => specialLauncherMenu.removeItem(object)
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -523,6 +571,13 @@ ConfigPage {
                         id: appsListView
                         model: filteredAppsModel
                         clip: true
+
+                        section.property: "section"
+                        section.delegate: Kirigami.ListSectionHeader {
+                            required property string section
+                            width: ListView.view.width
+                            text: section
+                        }
 
                         onContentYChanged: {
                             if (contentY + height >= contentHeight - 100) {
