@@ -104,6 +104,8 @@ if [ -n "$catalogs" ]; then
             --no-fuzzy-matching \
             -o "$cat.new" \
             "$cat.new" "${SCRIPT_DIR}/translate/languages/template.pot"
+        # Strings gone from the code aren't kept as #~ entries.
+        msgattrib --width=400 --no-obsolete -o "$cat.new" "$cat.new"
 
         sed -i 's/# SOME DESCRIPTIVE TITLE./'"# Translation of ${widgetName} in ${catLocale}"'/' "$cat.new"
         mv "$cat.new" "$cat"
