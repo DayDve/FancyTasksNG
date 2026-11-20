@@ -20,14 +20,20 @@ Item {
     // Frames are stepped by hand: an AnimatedSprite that runs out of loops
     // shows its first frame again for a moment before it reports finished.
     property real frame: 0
+    // A still frame for the settings: nothing runs, `frame` is set from
+    // outside and the item stays.
+    property bool still: false
+    // The icon's opacity in a still frame.
+    property real stillIconOpacity: 1
 
     Kirigami.Icon {
         id: icon
         anchors.fill: parent
         source: root.iconSource
+        opacity: root.still ? root.stillIconOpacity : 1
     }
     SequentialAnimation {
-        running: true
+        running: !root.still
         PauseAnimation { duration: 120 }
         NumberAnimation { target: icon; property: "opacity"; to: 0; duration: 380; easing.type: Easing.InQuad }
     }
@@ -55,6 +61,9 @@ Item {
             frameWidth: 256
             frameHeight: 256
             frameDuration: 40
+            // Starting the sprite puts it on its first frame, past the
+            // binding: a still frame is set once it has started.
+            Component.onCompleted: if (root.still) Qt.callLater(() => sprite.currentFrame = Math.floor(root.frame))
         }
     }
     NumberAnimation {
@@ -63,7 +72,7 @@ Item {
         from: 0
         to: sprite.frameCount
         duration: sprite.frameCount * sprite.frameDuration
-        running: true
+        running: !root.still
         onFinished: root.destroy()
     }
 }

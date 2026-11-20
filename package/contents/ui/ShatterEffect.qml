@@ -23,6 +23,9 @@ Item {
     property real room: 0
     property int duration: 650
     property real progress: 0
+    // A still frame for the settings: nothing runs, `progress` is set from
+    // outside and the item stays.
+    property bool still: false
 
     // Particles are laid out for "up" and turned, like in BurnEffect.
     readonly property int turn: edge === PlasmaCore.Types.TopEdge ? 180
@@ -77,14 +80,14 @@ Item {
         target: root
         property: "progress"
         from: 0; to: 1
-        running: true
+        running: !root.still
         duration: root.duration
         onFinished: root.destroy(800)
     }
 
     // The particles burst a moment in, when the icon breaks.
     Timer {
-        running: true
+        running: !root.still
         interval: root.duration * 0.06
         onTriggered: {
             flash.burst(1);
@@ -93,7 +96,7 @@ Item {
         }
     }
     Timer {
-        running: true
+        running: !root.still
         interval: root.duration * 0.15
         onTriggered: smoke.burst(12)
     }

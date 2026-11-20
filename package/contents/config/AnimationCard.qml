@@ -13,9 +13,9 @@ import org.kde.plasma.core as PlasmaCore
 
 import "../ui" as FancyUI
 
-// A choice of how a task's icon goes away: a button with an icon that,
-// hovered or clicked, goes away with that animation (the widget's own
-// effects) and comes back.
+// A choice of how a task's icon goes away: a button that shows a key frame
+// of that animation, and while hovered or clicked, an icon going away with
+// it (the widget's own effects) and coming back.
 Button {
     id: card
 
@@ -28,6 +28,15 @@ Button {
 
     // FancyTasksExplosion.spawn() reads the panel's edge from its container.
     readonly property int effectiveLocation: PlasmaCore.Types.BottomEdge
+
+    // The key frames shown while the animation isn't playing: the shader
+    // effects' progress, the sprites' frame.
+    readonly property real shatterKeyFrame: 0.12
+    readonly property real burnKeyFrame: 0.5
+    readonly property int smokeKeyFrame: 3
+    readonly property int blazeKeyFrame: 9
+    // Playing, or about to: the key frame gives way to the icon.
+    readonly property bool demoing: card.hovered || dragAnim.running || comeBack.running || fadeIn.running
 
     // Drawn as a pressed button while picked; AnimationCards keeps
     // `checked` bound to the setting.
@@ -128,6 +137,61 @@ Button {
         FancyUI.BlazeEffect {}
     }
 
+    Component {
+        id: shatterKeyFrame
+        FancyUI.ShatterEffect {
+            still: true
+            progress: card.shatterKeyFrame
+            room: card.topPadding
+            iconSource: demoIcon.source
+        }
+    }
+    Component {
+        id: burnKeyFrame
+        FancyUI.BurnEffect {
+            still: true
+            progress: card.burnKeyFrame
+            iconSource: demoIcon.source
+        }
+    }
+    Component {
+        id: blazeKeyFrame
+        FancyUI.BlazeEffect {
+            still: true
+            frame: card.blazeKeyFrame
+            stillIconOpacity: 0.5
+            iconSource: demoIcon.source
+        }
+    }
+    // As in FancyTasksExplosion: the icon fading under the smoke sprite.
+    Component {
+        id: smokeKeyFrame
+        Item {
+            Kirigami.Icon {
+                anchors.fill: parent
+                opacity: 0.4
+                source: demoIcon.source
+            }
+            AnimatedSprite {
+                id: smokeSprite
+                width: parent.width + 10
+                height: parent.height + 10
+                x: (parent.width - width) / 2
+                y: parent.height - height
+                interpolate: false
+                running: true
+                paused: true
+                source: "../ui/assets/smoke_explosion.png"
+                frameCount: 24
+                frameWidth: 312
+                frameHeight: 256
+                // Starting the sprite puts it on its first frame: the key
+                // frame is set once it has started.
+                Component.onCompleted: Qt.callLater(() => smokeSprite.currentFrame = card.smokeKeyFrame)
+            }
+        }
+    }
+
     // Just the icon, like a task button in the icons-only mode; the name is
     // under the button (AnimationCards).
     contentItem: Item {
@@ -136,7 +200,16 @@ Button {
         Kirigami.Icon {
             id: demoIcon
             anchors.fill: parent
+            visible: card.demoing || card.effect === ""
             source: "org.kde.dolphin"
+        }
+        Loader {
+            anchors.fill: parent
+            visible: !card.demoing
+            sourceComponent: card.effect === "smoke" ? smokeKeyFrame
+                : card.effect === "shatter" ? shatterKeyFrame
+                : card.effect === "burn" ? burnKeyFrame
+                : card.effect === "blaze" ? blazeKeyFrame : null
         }
         // Stands for the task button: the smoke takes its size from it.
         Item {

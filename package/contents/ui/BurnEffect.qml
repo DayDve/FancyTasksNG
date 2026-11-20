@@ -23,6 +23,9 @@ Item {
     property real room: 0
     property int duration: 950
     property real progress: 0
+    // A still frame for the settings: nothing runs, `progress` is set from
+    // outside and the item stays.
+    property bool still: false
 
     // Fire goes off the panel edge into the screen, where the window has
     // room: up from a bottom panel, down from a top one, sideways from the
@@ -77,14 +80,14 @@ Item {
         target: shader
         property: "time"
         from: 0; to: 1000; duration: 1000000
-        running: true
+        running: !root.still
     }
     NumberAnimation {
         id: burnAnim
         target: root
         property: "progress"
         from: 0; to: 1
-        running: true
+        running: !root.still
         duration: root.duration
         onFinished: root.destroy(900)
     }
