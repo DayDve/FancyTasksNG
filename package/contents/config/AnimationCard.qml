@@ -16,14 +16,14 @@ import "../ui" as FancyUI
 // A choice of how a task's icon goes away: a button that shows a key frame
 // of that animation, and while hovered or clicked, an icon going away with
 // it (the widget's own effects) and coming back.
-Button {
+AbstractButton {
     id: card
 
     // "" for none, or "smoke", "shatter", "burn", "blaze".
     property string effect: ""
     // Unpinning: the icon is first dragged off, then goes away in its place.
     property bool dragOff: false
-    // For screen readers; not the button's text, the style would draw it.
+    // For screen readers; the name is under the button (AnimationCards).
     property string title: ""
 
     // FancyTasksExplosion.spawn() reads the panel's edge from its container.
@@ -38,9 +38,20 @@ Button {
     // Playing, or about to: the key frame gives way to the icon.
     readonly property bool demoing: card.hovered || dragAnim.running || comeBack.running || fadeIn.running
 
-    // Drawn as a pressed button while picked; AnimationCards keeps
-    // `checked` bound to the setting.
+    // AnimationCards keeps `checked` bound to the setting.
     checkable: true
+    hoverEnabled: true
+    focusPolicy: Qt.StrongFocus
+    // Picked: framed like the Quick Setup cards (PreviewCard), not drawn
+    // as a pressed button, which is hard to tell from the others.
+    background: Rectangle {
+        radius: Kirigami.Units.cornerRadius
+        color: Kirigami.Theme.alternateBackgroundColor
+        border.width: card.checked || card.visualFocus ? 2 : 1
+        border.color: card.checked || card.visualFocus || card.hovered
+            ? Kirigami.Theme.highlightColor
+            : Qt.alpha(Kirigami.Theme.textColor, 0.25)
+    }
     leftPadding: Kirigami.Units.smallSpacing
     rightPadding: Kirigami.Units.smallSpacing
     topPadding: Kirigami.Units.smallSpacing
