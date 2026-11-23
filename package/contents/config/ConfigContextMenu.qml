@@ -9,6 +9,7 @@ import org.kde.kirigami as Kirigami
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import "../ui" as FancyUI
 import "../ui/code/singletones"
 
 // Context menu: what a task's menu and the widget's own menu show.
@@ -207,9 +208,17 @@ ConfigPage {
             RowLayout {
                 Item { implicitWidth: Kirigami.Units.gridUnit }
                 CheckBox {
+                    enabled: systemMonitor.installed
                     text: Wrappers.i18n("System Monitor")
                     checked: menuPage.cfg_systemMonitorMenuItem
                     onToggled: menuPage.cfg_systemMonitorMenuItem = checked
+                }
+                ConfigHint {
+                    visible: !systemMonitor.installed
+                    info: Wrappers.i18n("System Monitor isn't installed.")
+                }
+                FancyUI.SystemMonitorLauncher {
+                    id: systemMonitor
                 }
             }
         }

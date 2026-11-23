@@ -437,30 +437,12 @@ PlasmoidItem {
         PlasmaCore.Action {
             text: Wrappers.i18n("System Monitor")
             icon.name: "office-chart-line-symbolic"
-            visible: tasks.config.systemMonitorMenuItem
-            onTriggered: tasks.openSystemMonitor()
+            visible: tasks.config.systemMonitorMenuItem && systemMonitor.installed
+            onTriggered: systemMonitor.open()
         }
     ]
-    // Started like a pinned app, with startup feedback: a model of its own
-    // with System Monitor as its only launcher, so nothing gets pinned.
-    Component {
-        id: systemMonitorModel
-        TaskManager.TasksModel {
-            launcherList: ["applications:org.kde.plasma-systemmonitor.desktop"]
-            hideActivatedLaunchers: false
-            groupMode: TaskManager.TasksModel.GroupDisabled
-        }
-    }
-    function openSystemMonitor(): void {
-        const model = systemMonitorModel.createObject(tasks);
-        for (let row = 0; row < model.count; row++) {
-            const index = model.makeModelIndex(row);
-            if (model.data(index, TaskManager.AbstractTasksModel.IsLauncher)) {
-                model.requestActivate(index);
-                break;
-            }
-        }
-        model.destroy();
+    SystemMonitorLauncher {
+        id: systemMonitor
     }
 
     Layout.fillWidth: vertical ? true : tasks.config.fill

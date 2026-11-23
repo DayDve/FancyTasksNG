@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-23 11:37+0200\n"
+"POT-Creation-Date: 2026-11-23 11:51+0200\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -389,6 +389,10 @@ msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml package/contents/ui/main.qml
 msgid "System Monitor"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "System Monitor isn't installed."
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
