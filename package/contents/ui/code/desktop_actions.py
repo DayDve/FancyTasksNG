@@ -796,10 +796,14 @@ BRIDGE_XML = """
 
 
 def _request_name(name):
-    """Takes a bus name without queueing; True if this process owns it."""
+    """Takes one of our bus names; True if this process owns it. A helper
+    still running for an earlier shell (one that didn't quit with it) gives
+    the name up to the new one and quits: it only answers that earlier shell,
+    so it would leave the new one without app names or jump lists."""
     try:
+        # 1: ALLOW_REPLACEMENT, 2: REPLACE_EXISTING, 4: DO_NOT_QUEUE
         reply = _dbus_call("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus",
-                           "RequestName", GLib.Variant("(su)", (name, 4)), "(u)")  # 4: DO_NOT_QUEUE
+                           "RequestName", GLib.Variant("(su)", (name, 7)), "(u)")
         return reply[0] == 1  # PRIMARY_OWNER
     except GLib.Error as e:
         log.warning(f"could not request {name}: {e}")
@@ -1150,12 +1154,13 @@ class BadgeBridge:
             log.error(f"{BRIDGE_NAME} is already taken")
             sys.exit(1)
         # Apps such as KMail only send badge updates while com.canonical.Unity
-        # is on the bus. If it's taken (Plasma's own task manager), the
-        # signals are still received through the subscription below.
-        if _request_name("com.canonical.Unity"):
-            log.info("registered as com.canonical.Unity")
-        else:
-            log.info("com.canonical.Unity already owned, listening passively")
+        # is on the bus. If it's taken (Plasma's own task manager, or the
+        # helper this one replaces, until it quits), the signals are still
+        # received through the subscription below, and the name is taken
+        # once it's free.
+        Gio.bus_own_name_on_connection(
+            self.bus, "com.canonical.Unity", Gio.BusNameOwnerFlags.NONE,
+            lambda connection, name: log.info(f"registered as {name}"), None)
         self.bus.signal_subscribe(None, "com.canonical.Unity.LauncherEntry", "Update", None, None,
                                   Gio.DBusSignalFlags.NONE, self._on_update)
 
@@ -1180,9 +1185,45 @@ class BadgeBridge:
                              GLib.Variant("(sidu)", (app_id, count, progress, self._sender_pid(sender))))
 
 
+def _quit_with_shell(bus):
+    """Quits once the shell that started this helper is gone, or once a
+    helper for a newer shell takes over our bus names. PR_SET_PDEATHSIG alone
+    misses a shell that runs the helper through /bin/sh, which then outlives
+    it."""
+    # The parent, and its parent too when the parent is a /bin/sh in between.
+    # Not every ancestor: one may well be a terminal that `plasmashell
+    # --replace &` was run from, gone long before the shell.
+    shell_pids = [os.getppid()]
+    try:
+        with open(f"/proc/{shell_pids[0]}/status", encoding="utf-8") as f:
+            status = dict(line.rstrip("\n").split(":\t", 1) for line in f if ":\t" in line)
+        if status.get("Name") in ("sh", "dash", "bash", "zsh"):
+            shell_pids.append(int(status["PPid"]))
+    except (OSError, ValueError, KeyError):
+        pass
+
+    def on_name_lost(connection, sender, path, iface, signal_name, params):
+        name = params.unpack()[0]
+        if name in (SERVICE_NAME, BRIDGE_NAME):
+            log.info(f"{name} taken over by a newer helper, quitting")
+            os._exit(0)
+
+    bus.signal_subscribe("org.freedesktop.DBus", "org.freedesktop.DBus", "NameLost",
+                         "/org/freedesktop/DBus", None, Gio.DBusSignalFlags.NONE, on_name_lost)
+
+    def check_shell():
+        if not all(os.path.exists(f"/proc/{pid}") for pid in shell_pids):
+            log.info("the shell is gone, quitting")
+            os._exit(0)
+        return True
+
+    GLib.timeout_add_seconds(5, check_shell)
+
+
 def main():
     _apply_name_suffix(sys.argv)
     set_pdeathsig()
+    _quit_with_shell(_get_session_bus())
     DesktopActionsService()
     BadgeBridge()
     loop = GLib.MainLoop()
