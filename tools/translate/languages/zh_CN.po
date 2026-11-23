@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-20 10:41+0200\n"
+"POT-Creation-Date: 2026-11-23 11:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -373,6 +373,22 @@ msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "The PID, app ID or .desktop file path, for a bug report."
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Widget Menu"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Show in the widget's menu:"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "The menu on a right-click off the task buttons."
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml package/contents/ui/main.qml
+msgid "System Monitor"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml

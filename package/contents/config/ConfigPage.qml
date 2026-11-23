@@ -149,6 +149,8 @@ Kirigami.Page {
     property int cfg_mediaControlsLocationDefault: 0
     property int cfg_groupMediaControls: 0
     property int cfg_groupMediaControlsDefault: 0
+    property bool cfg_systemMonitorMenuItem: false
+    property bool cfg_systemMonitorMenuItemDefault: false
 
     property bool cfg_groupPopups: true
     property bool cfg_groupPopupsDefault: true

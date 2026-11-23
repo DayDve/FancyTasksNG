@@ -11,8 +11,7 @@ import QtQuick.Layouts
 
 import "../ui/code/singletones"
 
-// Context menu: what a task's menu shows. A tab for the widget's own menu
-// may join it later.
+// Context menu: what a task's menu and the widget's own menu show.
 ConfigPage {
     id: menuPage
     fullTitle: Wrappers.i18n("Context Menu")
@@ -189,6 +188,28 @@ ConfigPage {
                 }
                 ConfigHint {
                     info: Wrappers.i18n("The PID, app ID or .desktop file path, for a bug report.")
+                }
+            }
+        }
+
+        ConfigTab {
+            title: Wrappers.i18n("Widget Menu")
+            iconName: "configure"
+
+            RowLayout {
+                Label {
+                    text: Wrappers.i18n("Show in the widget's menu:")
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("The menu on a right-click off the task buttons.")
+                }
+            }
+            RowLayout {
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+                CheckBox {
+                    text: Wrappers.i18n("System Monitor")
+                    checked: menuPage.cfg_systemMonitorMenuItem
+                    onToggled: menuPage.cfg_systemMonitorMenuItem = checked
                 }
             }
         }
