@@ -10,14 +10,16 @@ import QtQuick
 import QtQml
 import org.kde.taskmanager as TaskManager
 
-// System Monitor, started like a pinned app, with startup feedback: a model
-// of its own with it as the only launcher, so nothing gets pinned. It may not
-// be installed (a package of its own): its launcher then has no app id (the
-// name falls back to the file name), and the model follows apps being
-// installed or removed.
+// An app given by its desktop file id, started like a pinned app, with
+// startup feedback: a model of its own with it as the only launcher, so
+// nothing gets pinned. It may not be installed (some come in packages of
+// their own): its launcher then has no app id (the name falls back to the
+// file name), and the model follows apps being installed or removed.
 QtObject {
     id: root
 
+    // Such as "org.kde.plasma-systemmonitor.desktop".
+    property string desktopId
     property bool installed: false
 
     function open(): void {
@@ -31,7 +33,7 @@ QtObject {
     }
 
     readonly property TaskManager.TasksModel model: TaskManager.TasksModel {
-        launcherList: ["applications:org.kde.plasma-systemmonitor.desktop"]
+        launcherList: root.desktopId ? ["applications:" + root.desktopId] : []
         hideActivatedLaunchers: false
         groupMode: TaskManager.TasksModel.GroupDisabled
         // No windows, only the launcher: a screen that no window is on.

@@ -240,6 +240,10 @@ Item {
         _call("Restart", "(ss)", [pids.filter(pid => pid > 0).join(","), String(launcherUrl || "")]);
     }
 
+    function editApplication(launcherUrl) {
+        _call("EditApplication", "(s)", [String(launcherUrl || "")]);
+    }
+
     // callback receives the path of the app's .desktop file, "" if none.
     function desktopFile(launcherUrl, callback) {
         _call("DesktopFile", "(s)", [String(launcherUrl || "")], value => callback(value ? String(value) : ""));

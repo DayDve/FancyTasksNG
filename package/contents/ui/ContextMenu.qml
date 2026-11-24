@@ -938,6 +938,17 @@ PlasmaExtras.Menu {
         }
     }
 
+    // As in the app menu, for a pinned app that isn't running: not with a
+    // system-wide locked-down Plasma.
+    PlasmaExtras.MenuItem {
+        visible: menu.shiftItems && menu.tasksRoot.config.menuShiftEditApp && menu.tasksRoot.canEditApps
+            && menu.get(menu.atm.IsLauncher) === true && Plasmoid.immutability !== PlasmaCore.Types.SystemImmutable
+            && menu.get(menu.atm.LauncherUrlWithoutIcon).toString() !== ""
+        text: Wrappers.i18n("Edit Application…")
+        icon: "kmenuedit"
+        onClicked: DesktopActionsManager.editApplication(menu.get(menu.atm.LauncherUrlWithoutIcon))
+    }
+
     // Details for a bug report, each copied on a click.
     PlasmaExtras.MenuItem {
         id: copyMenuItem

@@ -441,9 +441,16 @@ PlasmoidItem {
             onTriggered: systemMonitor.open()
         }
     ]
-    SystemMonitorLauncher {
+    InstalledApp {
         id: systemMonitor
+        desktopId: "org.kde.plasma-systemmonitor.desktop"
     }
+    // The menu editor, for "Edit Application…" in a task's menu.
+    InstalledApp {
+        id: menuEditor
+        desktopId: "org.kde.kmenuedit.desktop"
+    }
+    readonly property bool canEditApps: menuEditor.installed
 
     Layout.fillWidth: vertical ? true : tasks.config.fill
     Layout.fillHeight: !vertical ? true : tasks.config.fill

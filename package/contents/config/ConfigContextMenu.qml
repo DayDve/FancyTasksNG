@@ -191,6 +191,18 @@ ConfigPage {
                     info: Wrappers.i18n("The PID, app ID or .desktop file path, for a bug report.")
                 }
             }
+            RowLayout {
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+                CheckBox {
+                    enabled: shiftItems.checked
+                    text: Wrappers.i18n("Edit Application…")
+                    checked: menuPage.cfg_menuShiftEditApp
+                    onToggled: menuPage.cfg_menuShiftEditApp = checked
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("A pinned app that isn't running: opens it in the Menu Editor.")
+                }
+            }
         }
 
         ConfigTab {
@@ -217,8 +229,9 @@ ConfigPage {
                     visible: !systemMonitor.installed
                     info: Wrappers.i18n("System Monitor isn't installed.")
                 }
-                FancyUI.SystemMonitorLauncher {
+                FancyUI.InstalledApp {
                     id: systemMonitor
+                    desktopId: "org.kde.plasma-systemmonitor.desktop"
                 }
             }
         }

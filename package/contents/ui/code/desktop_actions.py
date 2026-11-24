@@ -772,6 +772,7 @@ SERVICE_XML = """
     <method name="OpenUrl"><arg type="s" direction="in"/><arg type="s" direction="in"/></method>
     <method name="ForceQuit"><arg type="s" direction="in"/><arg type="i" direction="out"/></method>
     <method name="Restart"><arg type="s" direction="in"/><arg type="s" direction="in"/></method>
+    <method name="EditApplication"><arg type="s" direction="in"/></method>
     <method name="DesktopFile"><arg type="s" direction="in"/><arg type="s" direction="out"/></method>
     <method name="RegisterTaskEntryShortcuts"><arg type="s" direction="in"/><arg type="o" direction="out"/></method>
   </interface>
@@ -951,6 +952,19 @@ class DesktopActionsService:
                 app.launch_action(action_id, None)
         except GLib.Error as e:
             log.warning(f"LaunchAction error: {e}")
+
+    def EditApplication(self, launcher_url):
+        """Opens the app in the menu editor (KMenuEdit), as "Edit
+        Application…" in the app menu does. An edited system launcher is saved
+        as a copy in ~/.local/share/applications, which then wins over it."""
+        app = app_for_launcher(launcher_url)
+        editor = Gio.DesktopAppInfo.new("org.kde.kmenuedit.desktop")
+        if not app or not app.get_id() or not editor:
+            return
+        try:
+            GLib.spawn_async([editor.get_executable(), app.get_id()], flags=GLib.SpawnFlags.SEARCH_PATH)
+        except GLib.Error as e:
+            log.warning(f"EditApplication error: {e}")
 
     def ParentPids(self, pids_csv):
         """Map comma-separated PIDs to their parent PIDs (JSON object).

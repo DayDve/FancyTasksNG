@@ -600,6 +600,10 @@
       <label>Whether the Shift menu has Copy (PID, app ID, .desktop file path).</label>
       <default>true</default>
     </entry>
+    <entry name="menuShiftEditApp" type="Bool">
+      <label>Whether the Shift menu of a pinned app that isn't running has Edit Application, which opens the app in the Menu Editor.</label>
+      <default>true</default>
+    </entry>
     <entry name="forceQuitAnimation" type="Int">
       <label>Animation of a task's icon after Force Quit: 0 = None, 1 = Burn, 2 = Blaze.</label>
       <default>1</default>
