@@ -141,16 +141,20 @@ ConfigPage {
                     }
                 }
             }
+        }
 
-            Item { height: Kirigami.Units.largeSpacing }
+        // Every icon drawn in one style (IconStylizer), so that the panel
+        // looks as one set without another icon theme.
+        ConfigTab {
+            id: stylizationTab
+            title: Wrappers.i18n("Stylization")
+            iconName: "draw-brush"
 
-            // Every icon drawn in one style (IconStylizer), so that the
-            // panel looks as one set without another icon theme.
             readonly property var stylizations: [0, 1, 2, 3]
             RowLayout {
                 spacing: Kirigami.Units.smallSpacing
                 Label {
-                    text: Wrappers.i18n("Stylization:")
+                    text: Wrappers.i18n("Style:")
                 }
                 ComboBox {
                     model: [
@@ -159,8 +163,8 @@ ConfigPage {
                         Wrappers.i18nc("Icon stylization", "Lines"),
                         Wrappers.i18nc("Icon stylization", "Monochrome")
                     ]
-                    currentIndex: Math.max(0, iconTab.stylizations.indexOf(stylePage.cfg_iconStylization))
-                    onActivated: (index) => stylePage.cfg_iconStylization = iconTab.stylizations[index]
+                    currentIndex: Math.max(0, stylizationTab.stylizations.indexOf(stylePage.cfg_iconStylization))
+                    onActivated: (index) => stylePage.cfg_iconStylization = stylizationTab.stylizations[index]
                 }
             }
             RowLayout {

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-25 12:09+0200\n"
+"POT-Creation-Date: 2026-11-25 12:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -178,7 +178,7 @@ msgstr ""
 msgid "Progress"
 msgstr ""
 
-#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigWindowIndicators.qml
+#: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigTaskStyle.qml package/contents/config/ConfigWindowIndicators.qml
 msgid "Style:"
 msgstr ""
 
@@ -1139,7 +1139,7 @@ msgid "Background opacity:"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
-msgid "Stylization:"
+msgid "Stylization"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
