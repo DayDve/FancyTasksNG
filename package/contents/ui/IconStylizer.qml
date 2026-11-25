@@ -80,21 +80,24 @@ Item {
     readonly property bool darkIcon: colors.average ? luminance(colors.average) < 0.35 : false
     readonly property bool darkPanel: luminance(Kirigami.Theme.backgroundColor) < 0.5
 
-    // The icon's own color, made to stand out on the panel: at full
-    // strength on a dark one, darkened on a light one.
+    // The icon's own color, made to stand out on the panel: as bright as
+    // it gets on a dark one, darkened on a light one, its hue and saturation
+    // kept. A greyish color (Breeze's greys are slightly blue: brightened,
+    // they'd turn into a pale blue), or none at all (the icon couldn't be
+    // read: ImageColors then gives the panel's background), is the theme's
+    // text color.
+    readonly property bool colorsRead: colors.palette.length > 0
     function onPanel(c: color): color {
-        const m = Math.max(c.r, c.g, c.b);
-        if (m < 0.05)
+        if (!colorsRead || c.hsvSaturation < 0.25)
             return Kirigami.Theme.textColor;
-        const k = (darkPanel ? 1 : 0.55) / m;
-        return Qt.rgba(c.r * k, c.g * k, c.b * k, 1);
+        return Qt.hsva(c.hsvHue, c.hsvSaturation, darkPanel ? 1 : 0.55, 1);
     }
     readonly property color color: {
         switch (colorization) {
         case 1: return Kirigami.Theme.highlightColor;
         case 2: return customColor;
-        case 3: return colors.dominant ? onPanel(colors.dominant) : Kirigami.Theme.textColor;
-        case 4: return colors.average ? onPanel(colors.average) : Kirigami.Theme.textColor;
+        case 3: return onPanel(colors.dominant);
+        case 4: return onPanel(colors.average);
         default: return Kirigami.Theme.textColor;
         }
     }
@@ -102,8 +105,8 @@ Item {
         switch (hoverHighlight) {
         case 2: return Kirigami.Theme.highlightColor;
         case 3: return hoverCustomColor;
-        case 4: return colors.dominant ? onPanel(colors.dominant) : Kirigami.Theme.highlightColor;
-        case 5: return colors.average ? onPanel(colors.average) : Kirigami.Theme.highlightColor;
+        case 4: return onPanel(colors.dominant);
+        case 5: return onPanel(colors.average);
         default: return Kirigami.Theme.highlightColor;
         }
     }
