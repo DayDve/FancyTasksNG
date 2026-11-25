@@ -335,10 +335,23 @@ Item {
     readonly property bool isBadgeHovered: badgeLoader.item ? (badgeLoader.item as TaskBadgeOverlay).hovered : false
     readonly property bool containsMouse: task.interactive && (hoverHandler.hovered || isBadgeHovered)
 
+    // Where the cursor was when a click hid the tooltip; null otherwise.
+    property var reopenTooltipAt: null
+
     HoverHandler {
         enabled: task.interactive
         id: hoverHandler
         onPointChanged: {
+            // A click hid the tooltip: it comes back once the cursor moves
+            // on over the button, as on Windows, not while it stays put.
+            if (hovered && task.reopenTooltipAt !== null) {
+                const at = task.reopenTooltipAt;
+                if (Math.abs(point.position.x - at.x) + Math.abs(point.position.y - at.y) > 3) {
+                    task.reopenTooltipAt = null;
+                    if (task.tasksRoot.currentHoveredTask !== task)
+                        openTimer.restart();
+                }
+            }
             if (hovered && task.tasksRoot.instantHoveredTask === task) {
                 let fraction;
                 if (task.tasksRoot.vertical) {
@@ -389,6 +402,7 @@ Item {
             if (tasksRoot.instantHoveredTask === task) {
                 tasksRoot.instantHoveredTask = null;
             }
+            task.reopenTooltipAt = null;
             openTimer.stop();
             switchTimer.stop();
         }
@@ -703,6 +717,9 @@ Item {
 
         function leftClick(): void {
             task.tasksRoot.currentHoveredTask = null;
+            openTimer.stop();
+            if (task.containsMouse)
+                task.reopenTooltipAt = hoverHandler.point.position;
             TaskTools.activateTask(task.modelIndex(), task.model, point.modifiers, task, Plasmoid, task.tasksRoot, task.tasksRoot.effectWatcher.registered);
         }
     }

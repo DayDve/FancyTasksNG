@@ -56,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Task Order After a Plasma Restart:** The saved order of tasks is put back as soon as all of them are on the panel again, instead of a fixed 1.5 s after the start. If some never come back (apps not reopened after a login), it's put back for the rest after the same 1.5 s as before.
 - **Active and Minimized Windows in the Classic Mode:** As on classic taskbars, the active window's title is bold, and a minimized window's title and icon are dimmed.
 - **Dragging Files Into a Window From a Group's Tooltip:** A file dragged over a thumbnail in a group's tooltip highlights the thumbnail and its window. Moving the file off the thumbnail on any side but the panel's activates that window, so the file can be dropped into it. Before, holding the file over a thumbnail activated its window after a moment, and the thumbnail over the button, crossed on the way to the others, often got there first. Dropping the file on a thumbnail opens it in that window, as before.
+- **Tooltip After a Click:** A click on a task button hides its tooltip, as before; it now comes back as soon as the cursor moves on over the button, instead of only after leaving the button and pointing at it again.
 
 ### Fixed
 - **Default Mail Client Launcher:** A "Default Mail Client" pinned from the settings didn't find the mail client set in System Settings. Pin it again to fix one pinned before.
