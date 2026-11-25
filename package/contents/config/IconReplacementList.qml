@@ -44,13 +44,21 @@ ColumnLayout {
     }
 
     // "applications:<id>" -> {name, icon}, for the replaced apps that are
-    // neither pinned nor running.
+    // neither pinned nor running; and the apps shown in menus, for "Add
+    // Replacement…".
     property var apps: ({})
+    property var appList: []
     Component.onCompleted: DesktopActionsManager.listApps(apps => {
         const map = {};
-        for (const app of apps)
-            map["applications:" + app.id] = { name: app.name, icon: app.icon };
+        const shown = [];
+        for (const app of apps) {
+            const key = "applications:" + app.id;
+            map[key] = { name: app.name, icon: app.icon };
+            if (app.display)
+                shown.push({ key: key, name: app.name, icon: app.icon, search: (app.name + " " + app.id + " " + app.keywords.join(" ")).toLowerCase() });
+        }
         list.apps = map;
+        list.appList = shown;
     })
 
     // The pinned apps (a default app's launcher resolves to the app it
@@ -145,6 +153,64 @@ ColumnLayout {
     function pickIcon(key: string): void {
         iconDialog.key = key;
         iconDialog.open();
+    }
+
+    RowLayout {
+        Layout.fillWidth: true
+        Layout.maximumWidth: Kirigami.Units.gridUnit * 40
+        Layout.alignment: Qt.AlignHCenter
+        Button {
+            icon.name: "list-add"
+            text: Wrappers.i18n("Add Replacement…")
+            onClicked: {
+                appSearch.text = "";
+                appSearch.open();
+            }
+        }
+        Item { Layout.fillWidth: true }
+        Button {
+            visible: Object.keys(list.replacements).length > 0
+            icon.name: "edit-clear-all"
+            text: Wrappers.i18n("Remove All Replacements")
+            onClicked: removeAllPrompt.open()
+        }
+    }
+
+    // Any installed app, for one neither pinned nor running.
+    Kirigami.SearchDialog {
+        id: appSearch
+        searchFieldPlaceholderText: Wrappers.i18n("Search…")
+        model: {
+            const text = appSearch.text.trim().toLowerCase();
+            return text ? list.appList.filter(app => app.search.includes(text)) : list.appList;
+        }
+        delegate: ItemDelegate {
+            required property var modelData
+            width: ListView.view.width
+            icon.name: typeof modelData.icon === "string" ? modelData.icon : ""
+            text: modelData.name
+            onClicked: {
+                appSearch.close();
+                list.pickIcon(modelData.key);
+            }
+        }
+    }
+
+    Kirigami.PromptDialog {
+        id: removeAllPrompt
+        title: Wrappers.i18n("Remove All Replacements")
+        subtitle: Wrappers.i18np("Remove %1 icon replacement?", "Remove all %1 icon replacements?", Object.keys(list.replacements).length)
+        standardButtons: Kirigami.Dialog.Cancel
+        customFooterActions: [
+            Kirigami.Action {
+                text: Wrappers.i18nc("Remove all icon replacements", "Remove")
+                icon.name: "edit-clear-all"
+                onTriggered: {
+                    list.page.cfg_iconReplacements = "";
+                    removeAllPrompt.close();
+                }
+            }
+        ]
     }
 
     // Pinned and running side by side, the others below them, each on a

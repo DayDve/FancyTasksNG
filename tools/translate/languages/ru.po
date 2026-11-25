@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-25 14:28+0200\n"
+"POT-Creation-Date: 2026-11-25 14:31+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -1511,6 +1511,30 @@ msgid "window class: %1"
 msgstr "класс окна: %1"
 
 #: package/contents/config/IconReplacementList.qml
+msgid "Add Replacement…"
+msgstr "Добавить замену…"
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Remove All Replacements"
+msgstr "Убрать все замены"
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Search…"
+msgstr "Поиск…"
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Remove %1 icon replacement?"
+msgid_plural "Remove all %1 icon replacements?"
+msgstr[0] "Убрать %1 замену значка?"
+msgstr[1] "Убрать все %1 замены значков?"
+msgstr[2] "Убрать все %1 замен значков?"
+
+#: package/contents/config/IconReplacementList.qml
+msgctxt "Remove all icon replacements"
+msgid "Remove"
+msgstr "Убрать"
+
+#: package/contents/config/IconReplacementList.qml
 msgctxt "Icon replacements group"
 msgid "Pinned"
 msgstr "Закреплённые"
@@ -1529,10 +1553,6 @@ msgstr "Остальные"
 msgctxt "%1 is an app name; the dot marks a running app"
 msgid "%1 ●"
 msgstr "%1 ●"
-
-#: package/contents/config/IconReplacementList.qml
-msgid "Add Replacement…"
-msgstr "Добавить замену…"
 
 #: package/contents/config/IconReplacementList.qml
 msgid "Remove Replacement"

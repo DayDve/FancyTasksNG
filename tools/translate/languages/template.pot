@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-25 14:28+0200\n"
+"POT-Creation-Date: 2026-11-25 14:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1510,6 +1510,29 @@ msgid "window class: %1"
 msgstr ""
 
 #: package/contents/config/IconReplacementList.qml
+msgid "Add Replacement…"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Remove All Replacements"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Search…"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Remove %1 icon replacement?"
+msgid_plural "Remove all %1 icon replacements?"
+msgstr[0] ""
+msgstr[1] ""
+
+#: package/contents/config/IconReplacementList.qml
+msgctxt "Remove all icon replacements"
+msgid "Remove"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
 msgctxt "Icon replacements group"
 msgid "Pinned"
 msgstr ""
@@ -1527,10 +1550,6 @@ msgstr ""
 #: package/contents/config/IconReplacementList.qml
 msgctxt "%1 is an app name; the dot marks a running app"
 msgid "%1 ●"
-msgstr ""
-
-#: package/contents/config/IconReplacementList.qml
-msgid "Add Replacement…"
 msgstr ""
 
 #: package/contents/config/IconReplacementList.qml
