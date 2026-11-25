@@ -201,8 +201,8 @@ ConfigPage {
                 }
                 Slider {
                     Layout.fillWidth: true
-                    from: 40
-                    to: 60
+                    from: 30
+                    to: 80
                     // No stepSize: with it the style draws a tick per step.
                     value: stylePage.cfg_iconLinesThickness
                     onMoved: stylePage.cfg_iconLinesThickness = Math.round(value)

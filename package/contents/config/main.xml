@@ -651,8 +651,8 @@
     <entry name="iconLinesThickness" type="Int">
       <label>Line thickness of the Lines stylization, in hundredths of a pixel (the blur's sigma).</label>
       <default>50</default>
-      <min>40</min>
-      <max>60</max>
+      <min>30</min>
+      <max>80</max>
     </entry>
     <entry name="iconMonochromeContrast" type="Int">
       <label>Contrast of the Monochrome stylization, in percent (100: none).</label>
