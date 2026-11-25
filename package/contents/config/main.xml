@@ -638,6 +638,10 @@
       <label>Draw a glow on the panel that follows the cursor over task buttons.</label>
       <default>false</default>
     </entry>
+    <entry name="clickFeedback" type="Bool">
+      <label>Show a click on a task button: icons-only, the icon shrinks a little; on a classic panel, the button darkens.</label>
+      <default>false</default>
+    </entry>
     <entry name="mediaControlsLocation" type="Int">
       <label>Location of media controls on thumbnails: 0 = On thumbnails (Overlay), 1 = Under thumbnails</label>
       <default>0</default>

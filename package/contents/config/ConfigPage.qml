@@ -278,6 +278,8 @@ Kirigami.Page {
     property int cfg_closeAnimationDefault: 0
     property bool cfg_cursorGlow: false
     property bool cfg_cursorGlowDefault: false
+    property bool cfg_clickFeedback: false
+    property bool cfg_clickFeedbackDefault: false
     property bool cfg_unpinByDrag: false
     property bool cfg_unpinByDragDefault: false
     property bool cfg_unpinByDragExplosion: false

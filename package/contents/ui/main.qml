@@ -925,8 +925,10 @@ PlasmoidItem {
         if (typeof index !== "number" || !tasks.config.taskEntryShortcuts)
             return;
         const task = internalTaskRepeater.itemAt(index) as Task;
-        if (task)
+        if (task) {
+            task.showPress();
             TaskTools.activateTask(task.modelIndex(), task.model, null, task, Plasmoid, tasks, windowViewEffectWatcher.registered);
+        }
     }
     function adjustGlobalVolume(increment: int) {
         if (!mediaRegistry.preferredSink)

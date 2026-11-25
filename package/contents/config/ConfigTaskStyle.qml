@@ -330,6 +330,17 @@ ConfigPage {
                     reason: Wrappers.i18n("Only in the icons-only mode.")
                 }
             }
+
+            RowLayout {
+                CheckBox {
+                    text: Wrappers.i18n("Click feedback")
+                    checked: stylePage.cfg_clickFeedback
+                    onToggled: stylePage.cfg_clickFeedback = checked
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("On a click, the icon shrinks a little; on a classic panel, the button darkens.")
+                }
+            }
         }
     }
 }

@@ -514,7 +514,10 @@ Item {
         return badgeDescription ? `${action}; ${badgeDescription}` : action;
     }
     Accessible.role: Accessible.Button
-    Accessible.onPressAction: leftTapHandler.leftClick()
+    Accessible.onPressAction: {
+        task.showPress();
+        leftTapHandler.leftClick();
+    }
 
     onHighlightedChanged: {
         tasksRoot.cancelHighlightWindows();
@@ -671,11 +674,32 @@ Item {
         onTriggered: menuTapHandler.longPressed()
     }
 
+    // With "Click feedback", a click shows like an ordinary button's:
+    // icons-only, the icon shrinks a little (TaskIconBox); on a classic
+    // panel, the button darkens. It shows for a quick click too, held for at
+    // least a moment, and for activation from the keyboard.
+    readonly property bool pressShown: task.config.clickFeedback && (leftTapHandler.pressed || pressHold.running)
+    property real pressAmount: pressShown ? 1 : 0
+    Behavior on pressAmount {
+        NumberAnimation {
+            duration: Kirigami.Units.shortDuration
+            easing.type: Easing.OutQuad
+        }
+    }
+    Timer {
+        id: pressHold
+        interval: Kirigami.Units.shortDuration
+    }
+    function showPress(): void {
+        pressHold.restart();
+    }
+
     TapHandler {
         enabled: task.interactive
         id: leftTapHandler
         acceptedButtons: Qt.LeftButton
         onTapped: leftClick()
+        onPressedChanged: if (pressed) pressHold.restart()
 
         function leftClick(): void {
             task.tasksRoot.currentHoveredTask = null;
@@ -798,6 +822,17 @@ Item {
             return !task.config.disableButtonInactiveSvg && task.config.buttonColorizeInactive;
         }
         layer.enabled: colorized()
+
+        // A click on a classic panel: the button darkens for a moment.
+        Rectangle {
+            anchors.fill: parent
+            visible: opacity > 0
+            radius: Kirigami.Units.cornerRadius / 2
+            // Black, not a theme color: a light one would brighten it in a
+            // dark theme.
+            color: "black"
+            opacity: task.tasksRoot.iconsOnly ? 0 : 0.25 * task.pressAmount
+        }
 
         layer.effect: MultiEffect {
             brightness: 1.0

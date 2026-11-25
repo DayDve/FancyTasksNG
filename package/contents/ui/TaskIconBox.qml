@@ -90,6 +90,7 @@ Item {
     }
 
     property int growSize: Math.round(iconBox.zoomMultiplier * iconBox.config.iconZoomFactor)
+    readonly property real pressAmount: iconBox.taskItem ? iconBox.taskItem.pressAmount : 0
 
     readonly property bool isParabolicTracking: iconBox.config.taskHoverEffectStyle === 1 && iconBox.tasksRoot && iconBox.tasksRoot.instantHoveredIndex !== -1 && iconBox.myIndex !== -1 && !(iconBox._taskHasModel && iconBox.taskItem.model.IsStartup)
 
@@ -152,7 +153,10 @@ Item {
                 }
                 return iconBox.height / 2;
             }
-            xScale: 1 + (iconBox.growSize / Math.max(1, iconBox.height))
+            // The hover zoom, and a press: icons-only, the icon (and the
+            // badges, which follow `zoom`) shrinks a little on a click.
+            xScale: (1 + (iconBox.growSize / Math.max(1, iconBox.height)))
+                * (iconBox._iconsOnly ? 1 - 0.1 * iconBox.pressAmount : 1)
             yScale: xScale
         }
     ]
