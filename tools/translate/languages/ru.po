@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-25 11:58+0200\n"
+"POT-Creation-Date: 2026-11-25 12:04+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -1159,6 +1159,11 @@ msgid "Lines"
 msgstr "Линии"
 
 #: package/contents/config/ConfigTaskStyle.qml
+msgctxt "Icon stylization"
+msgid "Monochrome"
+msgstr "Монохром"
+
+#: package/contents/config/ConfigTaskStyle.qml
 msgid "Sensitivity:"
 msgstr "Чувствительность:"
 
@@ -1170,6 +1175,10 @@ msgstr "Сбросить"
 msgctxt "Line thickness"
 msgid "Thickness:"
 msgstr "Толщина:"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Contrast:"
+msgstr "Контраст:"
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Button background:"

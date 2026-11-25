@@ -284,6 +284,8 @@ Kirigami.Page {
     property int cfg_iconOutlineSensitivityDefault: 50
     property int cfg_iconLinesThickness: 50
     property int cfg_iconLinesThicknessDefault: 50
+    property int cfg_iconMonochromeContrast: 120
+    property int cfg_iconMonochromeContrastDefault: 120
     property bool cfg_clickFeedback: false
     property bool cfg_clickFeedbackDefault: false
     property bool cfg_unpinByDrag: false

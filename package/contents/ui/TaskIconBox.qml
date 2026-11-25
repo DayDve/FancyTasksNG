@@ -306,6 +306,7 @@ Item {
                     style: iconBox.config.iconStylization
                     sensitivity: iconBox.config.iconOutlineSensitivity / 100
                     thickness: iconBox.config.iconLinesThickness / 100
+                    contrast: iconBox.config.iconMonochromeContrast / 100
                     clipToShape: iconBox.config.clipIconToShape
                     cornerRadius: iconBox.config.iconClipRadius / 200
                     backingVisible: iconBackgroundCard.visible

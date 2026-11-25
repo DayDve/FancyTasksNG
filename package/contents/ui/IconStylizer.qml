@@ -23,12 +23,14 @@ Item {
 
     // The icon: an icon name, a QIcon or a file.
     property var source
-    // 1: Outline, 2: Lines.
+    // 1: Outline, 2: Lines, 3: Monochrome.
     property int style: 2
     // Outline: how weak an edge still gets a line, 0..1.
     property real sensitivity: 0.5
     // Lines: the line thickness, the blur's sigma in output pixels.
     property real thickness: 0.5
+    // Monochrome: the contrast, 1 for none.
+    property real contrast: 1.2
     property color color: Kirigami.Theme.textColor
     // Icon Shape under Task Styling: corners rounded to `cornerRadius` (a
     // fraction of the side), with a backing behind when it's shown.
@@ -48,8 +50,14 @@ Item {
         Component.onCompleted: update()
         onSourceChanged: update()
     }
-    readonly property bool darkIcon: colors.average
-        ? (0.2126 * colors.average.r + 0.7152 * colors.average.g + 0.0722 * colors.average.b) < 0.35 : false
+    function luminance(c: color): real {
+        return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
+    }
+    readonly property bool darkIcon: colors.average ? luminance(colors.average) < 0.35 : false
+    // Monochrome: the icon's own darkest and lightest tones, stretched to
+    // the whole range (kept apart, so a one-color icon isn't blown up).
+    readonly property real levelLow: colors.closestToBlack ? Math.min(0.45, luminance(colors.closestToBlack)) : 0
+    readonly property real levelHigh: colors.closestToWhite ? Math.max(0.55, luminance(colors.closestToWhite)) : 1
 
     // Room around the icon: a line along its very edge (a backing's border)
     // is drawn there instead of being cut off.
@@ -137,6 +145,17 @@ Item {
             readonly property real invert: stylizer.darkIcon ? 1 : 0
             readonly property color lineColor: stylizer.color
             fragmentShader: Qt.resolvedUrl("shaders/lines.frag.qsb")
+        }
+        ShaderEffect {
+            visible: stylizer.style === 3
+            anchors.fill: parent
+            readonly property var source: iconTexture
+            readonly property real lo: stylizer.levelLow
+            readonly property real hi: stylizer.levelHigh
+            readonly property real contrast: stylizer.contrast
+            readonly property color darkColor: "black"
+            readonly property color lightColor: "white"
+            fragmentShader: Qt.resolvedUrl("shaders/monochrome.frag.qsb")
         }
     }
 }
