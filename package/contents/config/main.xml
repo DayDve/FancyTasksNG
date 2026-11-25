@@ -638,6 +638,16 @@
       <label>Draw a glow on the panel that follows the cursor over task buttons.</label>
       <default>false</default>
     </entry>
+    <entry name="iconStylization" type="Int">
+      <label>Task icons drawn in one style for the whole panel: 0 none, 2 lines.</label>
+      <default>0</default>
+    </entry>
+    <entry name="iconLinesThickness" type="Int">
+      <label>Line thickness of the Lines stylization, in hundredths of a pixel (the blur's sigma).</label>
+      <default>50</default>
+      <min>40</min>
+      <max>60</max>
+    </entry>
     <entry name="clickFeedback" type="Bool">
       <label>Show a click on a task button: icons-only, the icon shrinks a little; on a classic panel, the button darkens.</label>
       <default>false</default>

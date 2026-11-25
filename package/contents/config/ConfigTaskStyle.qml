@@ -141,6 +141,51 @@ ConfigPage {
                     }
                 }
             }
+
+            Item { height: Kirigami.Units.largeSpacing }
+
+            // Every icon drawn in one style (IconStylizer), so that the
+            // panel looks as one set without another icon theme.
+            readonly property var stylizations: [0, 2]
+            RowLayout {
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Stylization:")
+                }
+                ComboBox {
+                    model: [
+                        Wrappers.i18nc("No icon stylization", "None"),
+                        Wrappers.i18nc("Icon stylization", "Lines")
+                    ]
+                    currentIndex: Math.max(0, iconTab.stylizations.indexOf(stylePage.cfg_iconStylization))
+                    onActivated: (index) => stylePage.cfg_iconStylization = iconTab.stylizations[index]
+                }
+            }
+            RowLayout {
+                visible: stylePage.cfg_iconStylization === 2
+                spacing: Kirigami.Units.smallSpacing
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+                Label {
+                    text: Wrappers.i18nc("Line thickness", "Thickness:")
+                }
+                Slider {
+                    Layout.fillWidth: true
+                    from: 40
+                    to: 60
+                    // No stepSize: with it the style draws a tick per step.
+                    value: stylePage.cfg_iconLinesThickness
+                    onMoved: stylePage.cfg_iconLinesThickness = Math.round(value)
+                }
+                Button {
+                    icon.name: "edit-reset"
+                    flat: true
+                    enabled: stylePage.cfg_iconLinesThickness !== stylePage.cfg_iconLinesThicknessDefault
+                    onClicked: stylePage.cfg_iconLinesThickness = stylePage.cfg_iconLinesThicknessDefault
+                    ToolTip.text: Wrappers.i18n("Reset to default")
+                    ToolTip.visible: hovered
+                    ToolTip.delay: 1000
+                }
+            }
         }
 
         ConfigTab {

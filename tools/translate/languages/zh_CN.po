@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-25 01:17+0200\n"
+"POT-Creation-Date: 2026-11-25 11:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1138,6 +1138,29 @@ msgid "Background opacity:"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
+msgid "Stylization:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgctxt "No icon stylization"
+msgid "None"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgctxt "Icon stylization"
+msgid "Lines"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgctxt "Line thickness"
+msgid "Thickness:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml package/contents/config/IconSizeControl.qml
+msgid "Reset to default"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
 msgid "Button background:"
 msgstr ""
 
@@ -1419,10 +1442,6 @@ msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Desaturate when minimized"
-msgstr ""
-
-#: package/contents/config/IconSizeControl.qml
-msgid "Reset to default"
 msgstr ""
 
 #: package/contents/config/LivePreview.qml

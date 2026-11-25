@@ -91,6 +91,10 @@ Item {
 
     property int growSize: Math.round(iconBox.zoomMultiplier * iconBox.config.iconZoomFactor)
     readonly property real pressAmount: iconBox.taskItem ? iconBox.taskItem.pressAmount : 0
+    // Stylization under Task Styling: the icon drawn in one style for the
+    // whole panel (IconStylizer).
+    readonly property bool stylized: iconBox.config.iconStylization > 0
+    readonly property real iconOpacity: !iconBox._iconsOnly && iconBox._taskHasModel && iconBox.taskItem.model.IsMinimized ? 0.5 : 1
 
     readonly property bool isParabolicTracking: iconBox.config.taskHoverEffectStyle === 1 && iconBox.tasksRoot && iconBox.tasksRoot.instantHoveredIndex !== -1 && iconBox.myIndex !== -1 && !(iconBox._taskHasModel && iconBox.taskItem.model.IsStartup)
 
@@ -246,7 +250,8 @@ Item {
                 roundToIconSize: false
                 active: iconBox._taskHighlighted
                 // Classic mode dims a minimized window's icon with its title.
-                opacity: !iconBox._iconsOnly && iconBox._taskHasModel && iconBox.taskItem.model.IsMinimized ? 0.5 : 1
+                // A stylized icon is drawn by the stylizer instead.
+                opacity: iconBox.stylized ? 0 : iconBox.iconOpacity
 
                 source: iconBox._taskHasModel ? iconBox.taskItem.model.decoration : ""
 
@@ -289,6 +294,17 @@ Item {
                 opacity: iconBox.config.clipIconBackgroundOpacity / 100
                 visible: iconBox.config.clipIconToShape && iconBox.config.clipIconBackgroundEnabled
                 z: -1
+            }
+
+            Loader {
+                anchors.fill: innerIcon
+                active: iconBox.stylized
+                sourceComponent: IconStylizer {
+                    opacity: iconBox.iconOpacity
+                    source: innerIcon.source
+                    style: iconBox.config.iconStylization
+                    thickness: iconBox.config.iconLinesThickness / 100
+                }
             }
         }
     }
