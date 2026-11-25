@@ -94,6 +94,9 @@ Item {
     // Stylization under Task Styling: the icon drawn in one style for the
     // whole panel (IconStylizer).
     readonly property bool stylized: iconBox.config.iconStylization > 0
+    // With "Active task in color", the active window's icon shows as it is.
+    readonly property bool plainWhileStylized: iconBox.stylized && iconBox.config.iconActiveInColor
+        && iconBox._taskHasModel && !!iconBox.taskItem.model.IsActive
     readonly property real iconOpacity: !iconBox._iconsOnly && iconBox._taskHasModel && iconBox.taskItem.model.IsMinimized ? 0.5 : 1
 
     readonly property bool isParabolicTracking: iconBox.config.taskHoverEffectStyle === 1 && iconBox.tasksRoot && iconBox.tasksRoot.instantHoveredIndex !== -1 && iconBox.myIndex !== -1 && !(iconBox._taskHasModel && iconBox.taskItem.model.IsStartup)
@@ -251,7 +254,11 @@ Item {
                 active: iconBox._taskHighlighted
                 // Classic mode dims a minimized window's icon with its title.
                 // A stylized icon is drawn by the stylizer instead.
-                opacity: iconBox.stylized ? 0 : iconBox.iconOpacity
+                opacity: iconBox.stylized && !iconBox.plainWhileStylized ? 0 : iconBox.iconOpacity
+                Behavior on opacity {
+                    enabled: iconBox.stylized
+                    NumberAnimation { duration: Kirigami.Units.longDuration }
+                }
 
                 source: iconBox._taskHasModel ? iconBox.taskItem.model.decoration : ""
 
@@ -293,7 +300,7 @@ Item {
                 }
                 // A stylized icon draws its own (IconStylizer).
                 visible: iconBox.config.clipIconToShape && iconBox.config.clipIconBackgroundEnabled
-                opacity: iconBox.stylized ? 0 : iconBox.config.clipIconBackgroundOpacity / 100
+                opacity: iconBox.stylized && !iconBox.plainWhileStylized ? 0 : iconBox.config.clipIconBackgroundOpacity / 100
                 z: -1
             }
 
@@ -301,7 +308,10 @@ Item {
                 anchors.fill: innerIcon
                 active: iconBox.stylized
                 sourceComponent: IconStylizer {
-                    opacity: iconBox.iconOpacity
+                    opacity: iconBox.plainWhileStylized ? 0 : iconBox.iconOpacity
+                    Behavior on opacity {
+                        NumberAnimation { duration: Kirigami.Units.longDuration }
+                    }
                     source: innerIcon.source
                     style: iconBox.config.iconStylization
                     sensitivity: iconBox.config.iconOutlineSensitivity / 100

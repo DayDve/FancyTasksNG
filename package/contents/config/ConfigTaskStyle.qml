@@ -289,6 +289,12 @@ ConfigPage {
                     onEdited: (picked) => stylePage.cfg_iconHoverHighlightColor = picked
                 }
             }
+            CheckBox {
+                enabled: stylePage.cfg_iconStylization > 0
+                text: Wrappers.i18n("Active task in color")
+                checked: stylePage.cfg_iconActiveInColor
+                onToggled: stylePage.cfg_iconActiveInColor = checked
+            }
         }
 
         ConfigTab {

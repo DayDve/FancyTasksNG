@@ -676,6 +676,10 @@
       <label>Custom color of the hover highlight of stylized icons.</label>
       <default>#ffffff</default>
     </entry>
+    <entry name="iconActiveInColor" type="Bool">
+      <label>With a stylization, show the active window's icon as it is.</label>
+      <default>false</default>
+    </entry>
     <entry name="clickFeedback" type="Bool">
       <label>Show a click on a task button: icons-only, the icon shrinks a little; on a classic panel, the button darkens.</label>
       <default>false</default>
