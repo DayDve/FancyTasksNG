@@ -118,10 +118,21 @@ Item {
     // How far the fully zoomed icon reaches past its task button on the
     // side away from the panel edge (negative while it stays inside); the
     // tooltip keeps its distance from whichever is further out.
-    readonly property real zoomedOverflow: {
+    readonly property real zoomedOverflow: iconBox.overflowAt(iconBox.maxZoom)
+    // The same at the zoom of the moment, as the icon grows and shrinks.
+    readonly property real overflow: iconBox.overflowAt(iconBox.zoom)
+
+    // Zoomed out past the panel, over whatever is behind it (a window, the
+    // wallpaper), the icon casts a shadow, growing with how far it reaches
+    // out: up to a fifth of the icon. Only that icon gets the shadow's layer.
+    readonly property real shadowStrength: iconBox._iconsOnly
+        ? Math.max(0, Math.min(1, iconBox.overflow / Math.max(1, iconWrapper.iconSize * 0.2))) : 0
+    readonly property bool castsShadow: iconBox._iconOverflows || iconBox.shadowStrength > 0
+    readonly property real shadowOpacity: iconBox._iconOverflows ? 1 : iconBox.shadowStrength
+
+    function overflowAt(s: real): real {
         const vertical = iconBox.location === PlasmaCore.Types.LeftEdge || iconBox.location === PlasmaCore.Types.RightEdge
             || (iconBox.location === PlasmaCore.Types.Floating && iconBox.tasksRoot && iconBox.tasksRoot.vertical);
-        const s = iconBox.maxZoom;
         const button = iconBox.parent;
         if (!button)
             return 0;
@@ -262,7 +273,7 @@ Item {
 
                 source: iconBox._taskHasModel ? iconBox.taskItem.model.decoration : ""
 
-                layer.enabled: iconBox._iconOverflows || iconBox.config.clipIconToShape
+                layer.enabled: iconBox.castsShadow || iconBox.config.clipIconToShape
                 layer.smooth: true
                 layer.effect: MultiEffect {
                     maskEnabled: iconBox.config.clipIconToShape
@@ -270,11 +281,12 @@ Item {
                     maskThresholdMin: 0.5
                     maskSpreadAtMin: 1.0
 
-                    shadowEnabled: iconBox._iconOverflows
-                    shadowBlur: 1.0
+                    shadowEnabled: iconBox.castsShadow
+                    shadowBlur: 0.6
+                    shadowOpacity: iconBox.shadowOpacity
                     shadowHorizontalOffset: 0
                     shadowVerticalOffset: 0
-                    shadowColor: Qt.rgba(0, 0, 0, 0.5)
+                    shadowColor: Qt.rgba(0, 0, 0, 0.8)
                     autoPaddingEnabled: true
                 }
             }
@@ -308,6 +320,18 @@ Item {
                 anchors.fill: innerIcon
                 active: iconBox.stylized
                 sourceComponent: IconStylizer {
+                    // The same shadow as the plain icon's (above).
+                    layer.enabled: iconBox.castsShadow
+                    layer.smooth: true
+                    // With the room around the icon, where lines along its edge are.
+                    layer.sourceRect: Qt.rect(-margin, -margin, width + 2 * margin, height + 2 * margin)
+                    layer.effect: MultiEffect {
+                        shadowEnabled: true
+                        shadowBlur: 0.6
+                        shadowOpacity: iconBox.shadowOpacity
+                        shadowColor: Qt.rgba(0, 0, 0, 0.8)
+                        autoPaddingEnabled: true
+                    }
                     opacity: iconBox.plainWhileStylized ? 0 : iconBox.iconOpacity
                     Behavior on opacity {
                         NumberAnimation { duration: Kirigami.Units.longDuration }
