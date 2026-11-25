@@ -336,6 +336,8 @@ Kirigami.Page {
     property bool cfg_menuShiftCopyDefault: true
     property bool cfg_menuShiftEditApp: true
     property bool cfg_menuShiftEditAppDefault: true
+    property bool cfg_menuShiftChangeIcon: true
+    property bool cfg_menuShiftChangeIconDefault: true
     property int cfg_forceQuitAnimation: 1
     property int cfg_forceQuitAnimationDefault: 1
     property int cfg_audioBadgeSize: 100

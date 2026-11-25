@@ -773,6 +773,7 @@ SERVICE_XML = """
     <method name="ForceQuit"><arg type="s" direction="in"/><arg type="i" direction="out"/></method>
     <method name="Restart"><arg type="s" direction="in"/><arg type="s" direction="in"/></method>
     <method name="EditApplication"><arg type="s" direction="in"/></method>
+    <method name="StoreIcon"><arg type="s" direction="in"/><arg type="s" direction="out"/></method>
     <method name="DesktopFile"><arg type="s" direction="in"/><arg type="s" direction="out"/></method>
     <method name="RegisterTaskEntryShortcuts"><arg type="s" direction="in"/><arg type="o" direction="out"/></method>
   </interface>
@@ -1121,6 +1122,26 @@ class DesktopActionsService:
                 log.warning(f"Restart error: {e}")
             return False
         GLib.timeout_add(200, check)
+
+    def StoreIcon(self, path):
+        """Copies an icon file picked for an icon replacement into the widget's
+        data folder, so it stays when the original is moved or deleted. Named
+        after its content: the same picture is stored once. Returns its
+        file:// URL, "" if it couldn't be copied."""
+        src = Path(path)
+        if not src.is_file():
+            return ""
+        try:
+            data = src.read_bytes()
+            folder = DATA_HOME / "fancytasksng" / "icons"
+            folder.mkdir(parents=True, exist_ok=True)
+            dest = folder / (hashlib.sha1(data).hexdigest() + src.suffix.lower())
+            if not dest.exists():
+                dest.write_bytes(data)
+            return dest.as_uri()
+        except OSError as e:
+            log.warning(f"StoreIcon error: {e}")
+            return ""
 
     def DesktopFile(self, launcher_url):
         """The path of the app's .desktop file, "" if there's none."""

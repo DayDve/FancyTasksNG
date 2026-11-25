@@ -949,6 +949,25 @@ PlasmaExtras.Menu {
         onClicked: DesktopActionsManager.editApplication(menu.get(menu.atm.LauncherUrlWithoutIcon))
     }
 
+    // A custom icon for the app, on this widget only (Task Styling › Icon
+    // Replacements).
+    readonly property string iconReplacementKey: menu.visualParent
+        ? TaskTools.iconReplacementKey({ LauncherUrlWithoutIcon: menu.get(menu.atm.LauncherUrlWithoutIcon), AppId: menu.get(menu.atm.AppId) }) : ""
+    PlasmaExtras.MenuItem {
+        visible: menu.shiftItems && menu.tasksRoot.config.menuShiftChangeIcon && menu.iconReplacementKey !== ""
+            && menu.get(menu.atm.IsStartup) !== true
+        text: Wrappers.i18n("Change Icon…")
+        icon: "preferences-desktop-icons"
+        onClicked: menu.tasksRoot.changeIconOf(menu.iconReplacementKey)
+    }
+    PlasmaExtras.MenuItem {
+        visible: menu.shiftItems && menu.tasksRoot.config.menuShiftChangeIcon && menu.iconReplacementKey !== ""
+            && menu.get(menu.atm.IsStartup) !== true && !!menu.tasksRoot.iconReplacements[menu.iconReplacementKey]
+        text: Wrappers.i18n("Reset Icon")
+        icon: "edit-reset"
+        onClicked: menu.tasksRoot.setIconReplacement(menu.iconReplacementKey, "")
+    }
+
     // Details for a bug report, each copied on a click.
     PlasmaExtras.MenuItem {
         id: copyMenuItem

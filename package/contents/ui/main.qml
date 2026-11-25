@@ -35,6 +35,7 @@ import org.kde.taskmanager as TaskManager
 import QtCore as QtCore
 import org.kde.plasma.workspace.dbus as DBus
 import org.kde.kitemmodels as KItemModels
+import org.kde.iconthemes as KIconThemes
 
 import "code/layoutmetrics.js" as LayoutMetrics
 import "code/tools.js" as TaskTools
@@ -341,6 +342,38 @@ PlasmoidItem {
     function iconReplacementFor(model: var): string {
         const key = TaskTools.iconReplacementKey(model);
         return key && tasks.iconReplacements[key] ? String(tasks.iconReplacements[key]) : "";
+    }
+
+    // Sets (or, with no icon, removes) an app's icon replacement.
+    function setIconReplacement(key: string, icon: string): void {
+        if (!key)
+            return;
+        const map = Object.assign({}, tasks.iconReplacements);
+        if (icon)
+            map[key] = icon;
+        else
+            delete map[key];
+        Plasmoid.configuration.iconReplacements = Object.keys(map).length > 0 ? JSON.stringify(map) : "";
+    }
+    // "Change Icon…": KDE's icon dialog; a picked file is copied into the
+    // widget's data folder first.
+    function changeIconOf(key: string): void {
+        iconReplacementDialog.key = key;
+        iconReplacementDialog.open();
+    }
+    KIconThemes.IconDialog {
+        id: iconReplacementDialog
+        property string key
+        onAccepted: {
+            const key = iconReplacementDialog.key;
+            const name = iconReplacementDialog.iconName;
+            if (!name)
+                return;
+            if (name.startsWith("/"))
+                DesktopActionsManager.storeIcon(name, url => tasks.setIconReplacement(key, url || "file://" + name));
+            else
+                tasks.setIconReplacement(key, name);
+        }
     }
 
     // The cursor over the widget, in its coordinates: for the hover

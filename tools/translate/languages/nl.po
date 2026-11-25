@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-25 12:40+0200\n"
+"POT-Creation-Date: 2026-11-25 14:19+0200\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -381,6 +381,14 @@ msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "A pinned app that isn't running: opens it in the Menu Editor."
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
+msgid "Change Icon…"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "A custom icon for the app on this widget; Reset Icon puts the app's own back."
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
@@ -1744,6 +1752,10 @@ msgstr ""
 #: package/contents/ui/ContextMenu.qml
 msgid "&Close"
 msgstr "&Sluiten"
+
+#: package/contents/ui/ContextMenu.qml
+msgid "Reset Icon"
+msgstr ""
 
 #: package/contents/ui/ContextMenu.qml
 msgctxt "@item:inmenu submenu of details to copy"

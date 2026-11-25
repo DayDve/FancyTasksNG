@@ -240,6 +240,11 @@ Item {
         _call("Restart", "(ss)", [pids.filter(pid => pid > 0).join(","), String(launcherUrl || "")]);
     }
 
+    // callback receives the stored copy's file:// URL, "" if it failed.
+    function storeIcon(path, callback) {
+        _call("StoreIcon", "(s)", [String(path || "")], value => callback(value ? String(value) : ""));
+    }
+
     function editApplication(launcherUrl) {
         _call("EditApplication", "(s)", [String(launcherUrl || "")]);
     }

@@ -203,6 +203,18 @@ ConfigPage {
                     info: Wrappers.i18n("A pinned app that isn't running: opens it in the Menu Editor.")
                 }
             }
+            RowLayout {
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+                CheckBox {
+                    enabled: shiftItems.checked
+                    text: Wrappers.i18n("Change Icon…")
+                    checked: menuPage.cfg_menuShiftChangeIcon
+                    onToggled: menuPage.cfg_menuShiftChangeIcon = checked
+                }
+                ConfigHint {
+                    info: Wrappers.i18n("A custom icon for the app on this widget; Reset Icon puts the app's own back.")
+                }
+            }
         }
 
         ConfigTab {
