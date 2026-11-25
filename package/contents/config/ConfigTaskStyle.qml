@@ -313,6 +313,18 @@ ConfigPage {
             }
         }
 
+        // A custom icon per app, on this widget only.
+        ConfigTab {
+            title: Wrappers.i18n("Icon Replacements")
+            iconName: "document-replace"
+            framed: false
+
+            IconReplacementList {
+                page: stylePage
+                Layout.fillWidth: true
+            }
+        }
+
         ConfigTab {
             title: Wrappers.i18n("Background")
             iconName: "fill-color"

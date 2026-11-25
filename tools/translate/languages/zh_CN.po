@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-25 14:19+0200\n"
+"POT-Creation-Date: 2026-11-25 14:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -383,7 +383,7 @@ msgstr ""
 msgid "A pinned app that isn't running: opens it in the Menu Editor."
 msgstr ""
 
-#: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
+#: package/contents/config/ConfigContextMenu.qml package/contents/config/IconReplacementList.qml package/contents/ui/ContextMenu.qml
 msgid "Change Icon…"
 msgstr ""
 
@@ -1216,6 +1216,10 @@ msgid "Icons are already in their own colors."
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
+msgid "Icon Replacements"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
 msgid "Button background:"
 msgstr ""
 
@@ -1497,6 +1501,39 @@ msgstr ""
 
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Desaturate when minimized"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgctxt "%1 is a window class"
+msgid "window class: %1"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgctxt "Icon replacements group"
+msgid "Pinned"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgctxt "Icon replacements group"
+msgid "Running"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgctxt "Icon replacements group"
+msgid "Others"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgctxt "%1 is an app name; the dot marks a running app"
+msgid "%1 ●"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Add Replacement…"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Remove Replacement"
 msgstr ""
 
 #: package/contents/config/LivePreview.qml

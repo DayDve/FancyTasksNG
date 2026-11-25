@@ -15,6 +15,9 @@ Kirigami.FormLayout {
     // out while it's off, and the page says why.
     property bool available: true
     property string unavailableReason
+    // Off: the tab has panels of its own instead of the page's frame (as
+    // an unframed ConfigTabbedPage, for this tab only).
+    property bool framed: true
     // Set by ConfigTabbedPage.
     property bool current: false
 

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-25 14:19+0200\n"
+"POT-Creation-Date: 2026-11-25 14:28+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -382,7 +382,7 @@ msgstr "Изменить приложение…"
 msgid "A pinned app that isn't running: opens it in the Menu Editor."
 msgstr "Незапущенный закреп: открывает его в «Редакторе меню»."
 
-#: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
+#: package/contents/config/ConfigContextMenu.qml package/contents/config/IconReplacementList.qml package/contents/ui/ContextMenu.qml
 msgid "Change Icon…"
 msgstr "Сменить значок…"
 
@@ -1218,6 +1218,10 @@ msgid "Icons are already in their own colors."
 msgstr "Значки и так в своих цветах."
 
 #: package/contents/config/ConfigTaskStyle.qml
+msgid "Icon Replacements"
+msgstr "Замена значков"
+
+#: package/contents/config/ConfigTaskStyle.qml
 msgid "Button background:"
 msgstr "Фон кнопок:"
 
@@ -1500,6 +1504,39 @@ msgstr "Непрозрачность неактивных индикаторов
 #: package/contents/config/ConfigWindowIndicators.qml
 msgid "Desaturate when minimized"
 msgstr "Обесцвечивать при сворачивании"
+
+#: package/contents/config/IconReplacementList.qml
+msgctxt "%1 is a window class"
+msgid "window class: %1"
+msgstr "класс окна: %1"
+
+#: package/contents/config/IconReplacementList.qml
+msgctxt "Icon replacements group"
+msgid "Pinned"
+msgstr "Закреплённые"
+
+#: package/contents/config/IconReplacementList.qml
+msgctxt "Icon replacements group"
+msgid "Running"
+msgstr "Запущенные"
+
+#: package/contents/config/IconReplacementList.qml
+msgctxt "Icon replacements group"
+msgid "Others"
+msgstr "Остальные"
+
+#: package/contents/config/IconReplacementList.qml
+msgctxt "%1 is an app name; the dot marks a running app"
+msgid "%1 ●"
+msgstr "%1 ●"
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Add Replacement…"
+msgstr "Добавить замену…"
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Remove Replacement"
+msgstr "Убрать замену"
 
 #: package/contents/config/LivePreview.qml
 msgid "Preview"

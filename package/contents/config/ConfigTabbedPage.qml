@@ -24,6 +24,10 @@ ColumnLayout {
     // The tab's options on a panel. Off for pages that lay out panels of
     // their own.
     property bool framed: true
+    readonly property bool currentTabFramed: {
+        const tab = tabColumn.children[tabbedPage.currentTab];
+        return !tab || tab.framed !== false;
+    }
     // A form above the tab bar, for the options of the whole section.
     property Component header: null
     default property alias tabs: tabColumn.data
@@ -127,7 +131,7 @@ ColumnLayout {
         // as the current one.
         ConfigPanel {
             id: panel
-            framed: tabbedPage.framed
+            framed: tabbedPage.framed && tabbedPage.currentTabFramed
             width: Math.min(parent.width - Kirigami.Units.gridUnit * 2, maxWidth)
             x: Math.round((parent.width - width) / 2)
 
@@ -142,7 +146,7 @@ ColumnLayout {
                 // it stays at the left edge. Unframed, it takes the width.
                 function fit(): void {
                     for (const tab of children)
-                        tab.width = Qt.binding(() => tabbedPage.framed ? Math.min(tabColumn.width, tab.implicitWidth) : tabColumn.width);
+                        tab.width = Qt.binding(() => tabbedPage.framed && tab.framed ? Math.min(tabColumn.width, tab.implicitWidth) : tabColumn.width);
                 }
                 onChildrenChanged: fit()
             }
