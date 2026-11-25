@@ -146,7 +146,7 @@ ConfigPage {
 
             // Every icon drawn in one style (IconStylizer), so that the
             // panel looks as one set without another icon theme.
-            readonly property var stylizations: [0, 2]
+            readonly property var stylizations: [0, 1, 2]
             RowLayout {
                 spacing: Kirigami.Units.smallSpacing
                 Label {
@@ -155,10 +155,36 @@ ConfigPage {
                 ComboBox {
                     model: [
                         Wrappers.i18nc("No icon stylization", "None"),
+                        Wrappers.i18nc("Icon stylization", "Outline"),
                         Wrappers.i18nc("Icon stylization", "Lines")
                     ]
                     currentIndex: Math.max(0, iconTab.stylizations.indexOf(stylePage.cfg_iconStylization))
                     onActivated: (index) => stylePage.cfg_iconStylization = iconTab.stylizations[index]
+                }
+            }
+            RowLayout {
+                visible: stylePage.cfg_iconStylization === 1
+                spacing: Kirigami.Units.smallSpacing
+                Item { implicitWidth: Kirigami.Units.gridUnit }
+                Label {
+                    text: Wrappers.i18n("Sensitivity:")
+                }
+                Slider {
+                    Layout.fillWidth: true
+                    from: 0
+                    to: 100
+                    // No stepSize: with it the style draws a tick per step.
+                    value: stylePage.cfg_iconOutlineSensitivity
+                    onMoved: stylePage.cfg_iconOutlineSensitivity = Math.round(value)
+                }
+                Button {
+                    icon.name: "edit-reset"
+                    flat: true
+                    enabled: stylePage.cfg_iconOutlineSensitivity !== stylePage.cfg_iconOutlineSensitivityDefault
+                    onClicked: stylePage.cfg_iconOutlineSensitivity = stylePage.cfg_iconOutlineSensitivityDefault
+                    ToolTip.text: Wrappers.i18n("Reset to default")
+                    ToolTip.visible: hovered
+                    ToolTip.delay: 1000
                 }
             }
             RowLayout {

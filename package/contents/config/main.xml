@@ -639,8 +639,14 @@
       <default>false</default>
     </entry>
     <entry name="iconStylization" type="Int">
-      <label>Task icons drawn in one style for the whole panel: 0 none, 2 lines.</label>
+      <label>Task icons drawn in one style for the whole panel: 0 none, 1 outline, 2 lines.</label>
       <default>0</default>
+    </entry>
+    <entry name="iconOutlineSensitivity" type="Int">
+      <label>How weak an edge still gets a line in the Outline stylization, in percent.</label>
+      <default>50</default>
+      <min>0</min>
+      <max>100</max>
     </entry>
     <entry name="iconLinesThickness" type="Int">
       <label>Line thickness of the Lines stylization, in hundredths of a pixel (the blur's sigma).</label>

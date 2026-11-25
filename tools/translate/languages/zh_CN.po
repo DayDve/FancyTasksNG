@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-25 11:57+0200\n"
+"POT-Creation-Date: 2026-11-25 11:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1148,16 +1148,25 @@ msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgctxt "Icon stylization"
+msgid "Outline"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgctxt "Icon stylization"
 msgid "Lines"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Sensitivity:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml package/contents/config/IconSizeControl.qml
+msgid "Reset to default"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgctxt "Line thickness"
 msgid "Thickness:"
-msgstr ""
-
-#: package/contents/config/ConfigTaskStyle.qml package/contents/config/IconSizeControl.qml
-msgid "Reset to default"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml

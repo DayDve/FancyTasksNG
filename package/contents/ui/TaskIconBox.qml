@@ -303,6 +303,7 @@ Item {
                     opacity: iconBox.iconOpacity
                     source: innerIcon.source
                     style: iconBox.config.iconStylization
+                    sensitivity: iconBox.config.iconOutlineSensitivity / 100
                     thickness: iconBox.config.iconLinesThickness / 100
                 }
             }

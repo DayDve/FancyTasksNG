@@ -20,8 +20,10 @@ Item {
 
     // The icon: an icon name, a QIcon or a file.
     property var source
-    // 2: Lines.
+    // 1: Outline, 2: Lines.
     property int style: 2
+    // Outline: how weak an edge still gets a line, 0..1.
+    property real sensitivity: 0.5
     // Lines: the line thickness, the blur's sigma in output pixels.
     property real thickness: 0.5
     property color color: Kirigami.Theme.textColor
@@ -61,6 +63,17 @@ Item {
             visible: false
         }
         ShaderEffect {
+            visible: stylizer.style === 1
+            anchors.fill: parent
+            readonly property var source: iconTexture
+            // Lines a pixel thick at the icon's size.
+            readonly property size texel: Qt.size(stylizer.supersampling / width, stylizer.supersampling / height)
+            readonly property real threshold: 0.35 - 0.25 * stylizer.sensitivity
+            readonly property color lineColor: stylizer.color
+            fragmentShader: Qt.resolvedUrl("shaders/outline.frag.qsb")
+        }
+        ShaderEffect {
+            visible: stylizer.style === 2
             anchors.fill: parent
             readonly property var source: iconTexture
             readonly property size texel: Qt.size(1 / width, 1 / height)

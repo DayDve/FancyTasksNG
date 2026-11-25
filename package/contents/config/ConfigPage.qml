@@ -280,6 +280,8 @@ Kirigami.Page {
     property bool cfg_cursorGlowDefault: false
     property int cfg_iconStylization: 0
     property int cfg_iconStylizationDefault: 0
+    property int cfg_iconOutlineSensitivity: 50
+    property int cfg_iconOutlineSensitivityDefault: 50
     property int cfg_iconLinesThickness: 50
     property int cfg_iconLinesThicknessDefault: 50
     property bool cfg_clickFeedback: false
