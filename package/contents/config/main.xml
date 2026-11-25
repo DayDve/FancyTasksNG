@@ -680,6 +680,10 @@
       <label>With a stylization, show the active window's icon as it is.</label>
       <default>false</default>
     </entry>
+    <entry name="iconReplacements" type="String">
+      <label>Custom icons for apps on the panel, as JSON: {"applications:foo.desktop" or "wmclass:foo": icon name or file URL}.</label>
+      <default></default>
+    </entry>
     <entry name="clickFeedback" type="Bool">
       <label>Show a click on a task button: icons-only, the icon shrinks a little; on a classic panel, the button darkens.</label>
       <default>false</default>

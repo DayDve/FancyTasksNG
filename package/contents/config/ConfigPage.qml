@@ -296,6 +296,8 @@ Kirigami.Page {
     property string cfg_iconHoverHighlightColorDefault: "#ffffff"
     property bool cfg_iconActiveInColor: false
     property bool cfg_iconActiveInColorDefault: false
+    property string cfg_iconReplacements: ""
+    property string cfg_iconReplacementsDefault: ""
     property bool cfg_clickFeedback: false
     property bool cfg_clickFeedbackDefault: false
     property bool cfg_unpinByDrag: false

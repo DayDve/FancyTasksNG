@@ -436,3 +436,32 @@ function harmonizeIconColor(iconColor, dominantColor, themeBgColor, isAverageMod
     
     return Qt.hsla(targetHue, targetSat, targetLight, 1.0);
 }
+
+// Icon replacements (Task Styling > Icon Replacements): a custom icon for an
+// app, kept in the widget's settings as JSON, {key: icon}. The key is the
+// app's .desktop id ("applications:org.kde.dolphin.desktop") when the task
+// has one, KWin's "desktop file" window rule included, else the window's
+// app id or WM_CLASS ("wmclass:foo"). The icon is an icon name or a file URL.
+function parseIconReplacements(json) {
+    if (!json)
+        return {};
+    try {
+        const map = JSON.parse(json);
+        return map && typeof map === "object" && !Array.isArray(map) ? map : {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function iconReplacementKey(model) {
+    if (!model)
+        return "";
+    const url = model.LauncherUrlWithoutIcon ? String(model.LauncherUrlWithoutIcon) : "";
+    if (url.startsWith("applications:"))
+        return url;
+    if (url.startsWith("file://") && url.endsWith(".desktop"))
+        return "applications:" + url.substring(url.lastIndexOf("/") + 1);
+    const appId = model.AppId ? String(model.AppId) : "";
+    return appId ? "wmclass:" + appId : "";
+}
+

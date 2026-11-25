@@ -778,12 +778,18 @@ Item {
         }
     }
 
+    // The icon the button shows: the app's own, or its replacement.
+    readonly property var iconSource: {
+        const replacement = task.model && task.tasksRoot.iconReplacementFor ? task.tasksRoot.iconReplacementFor(task.model) : "";
+        return replacement !== "" ? replacement : (task.model ? task.model.decoration : "");
+    }
+
     KSvg.FrameSvgItem {
         id: backgroundFrame
 
         Kirigami.ImageColors {
             id: imageColors
-            source: task.model.decoration
+            source: task.iconSource
         }
         property color dominantColor: imageColors.dominant
         property color indicatorColor: Kirigami.ColorUtils.tintWithAlpha(dominantColor, task.tintColor, .38)

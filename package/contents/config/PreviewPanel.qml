@@ -40,6 +40,11 @@ KSvg.FrameSvgItem {
     property bool forceTaskNumbers: false
     readonly property bool shiftHeld: false
     readonly property bool pointerInside: false
+    readonly property var iconReplacements: TaskTools.parseIconReplacements(config.iconReplacements)
+    function iconReplacementFor(model: var): string {
+        const key = TaskTools.iconReplacementKey(model);
+        return key && iconReplacements[key] ? String(iconReplacements[key]) : "";
+    }
     readonly property point pointerPosition: Qt.point(0, 0)
     readonly property int moveHold: 0
 

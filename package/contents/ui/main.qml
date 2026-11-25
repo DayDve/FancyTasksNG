@@ -336,6 +336,13 @@ PlasmoidItem {
 
     property bool tooltipAnimationEnabled: true
 
+    // Icon replacements: key -> icon (TaskTools.iconReplacementKey()).
+    readonly property var iconReplacements: TaskTools.parseIconReplacements(tasks.config.iconReplacements)
+    function iconReplacementFor(model: var): string {
+        const key = TaskTools.iconReplacementKey(model);
+        return key && tasks.iconReplacements[key] ? String(tasks.iconReplacements[key]) : "";
+    }
+
     // The cursor over the widget, in its coordinates: for the hover
     // highlight of stylized icons (IconStylizer).
     readonly property bool pointerInside: rootHoverHandler.hovered
@@ -892,7 +899,7 @@ PlasmoidItem {
             room = inWindow.x;
         const props = {
             x: pos.x, y: pos.y, width: icon.width, height: icon.height,
-            iconSource: taskItem.model.decoration, edge
+            iconSource: taskItem.iconSource, edge
         };
         if (component !== blazeComponent)
             props.room = Math.max(0, room);
@@ -1503,7 +1510,7 @@ PlasmoidItem {
                     pidParent: taskModel ? taskModel.AppPid : 0
                     windows: taskModel ? taskModel.WinIdList : []
                     isGroup: taskModel ? taskModel.IsGroupParent : false
-                    icon: taskModel ? taskModel.decoration : ""
+                    icon: parentTask ? parentTask.iconSource : ""
                     launcherUrl: taskModel ? taskModel.LauncherUrlWithoutIcon : ""
                     isLauncher: taskModel ? taskModel.IsLauncher : false
                     isMinimized: taskModel ? taskModel.IsMinimized : false

@@ -275,7 +275,7 @@ Item {
                     NumberAnimation { duration: Kirigami.Units.longDuration }
                 }
 
-                source: iconBox._taskHasModel ? iconBox.taskItem.model.decoration : ""
+                source: iconBox._taskHasModel ? iconBox.taskItem.iconSource : ""
 
                 layer.enabled: iconBox.castsShadow || iconBox.config.clipIconToShape
                 layer.smooth: true

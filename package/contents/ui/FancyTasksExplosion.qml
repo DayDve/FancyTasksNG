@@ -27,7 +27,7 @@ Item {
         // and then assigning them manually.
         var obj = effectComponent.createObject(container);
         if (obj) {
-            obj.effectIcon = taskItem.model.decoration;
+            obj.effectIcon = taskItem.iconSource !== undefined ? taskItem.iconSource : taskItem.model.decoration;
             obj.shouldExplode = isExplosion;
             obj.panelLocation = container.effectiveLocation;
             obj.originalX = pos.x;
