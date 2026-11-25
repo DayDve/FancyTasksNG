@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-25 12:11+0200\n"
+"POT-Creation-Date: 2026-11-25 12:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1201,6 +1201,10 @@ msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Active task in color"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Icons are already in their own colors."
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml

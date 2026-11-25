@@ -94,9 +94,13 @@ Item {
     // Stylization under Task Styling: the icon drawn in one style for the
     // whole panel (IconStylizer).
     readonly property bool stylized: iconBox.config.iconStylization > 0
-    // With "Active task in color", the active window's icon shows as it is.
-    readonly property bool plainWhileStylized: iconBox.stylized && iconBox.config.iconActiveInColor
+    // "Active task in color": the active window's icon in its colors. In
+    // Monochrome, it shows as it is; Outline and Lines keep its drawing, in
+    // the icon's average color (unless the colorization already gives every
+    // icon its own color).
+    readonly property bool activeInColor: iconBox.stylized && iconBox.config.iconActiveInColor
         && iconBox._taskHasModel && !!iconBox.taskItem.model.IsActive
+    readonly property bool plainWhileStylized: iconBox.activeInColor && iconBox.config.iconStylization === 3
     readonly property real iconOpacity: !iconBox._iconsOnly && iconBox._taskHasModel && iconBox.taskItem.model.IsMinimized ? 0.5 : 1
 
     readonly property bool isParabolicTracking: iconBox.config.taskHoverEffectStyle === 1 && iconBox.tasksRoot && iconBox.tasksRoot.instantHoveredIndex !== -1 && iconBox.myIndex !== -1 && !(iconBox._taskHasModel && iconBox.taskItem.model.IsStartup)
@@ -341,7 +345,7 @@ Item {
                     sensitivity: iconBox.config.iconOutlineSensitivity / 100
                     thickness: iconBox.config.iconLinesThickness / 100
                     contrast: iconBox.config.iconMonochromeContrast / 100
-                    colorization: iconBox.config.iconColorization
+                    colorization: iconBox.activeInColor && iconBox.config.iconColorization < 3 ? 4 : iconBox.config.iconColorization
                     customColor: iconBox.config.iconColorizationColor
                     hoverHighlight: iconBox.config.iconHoverHighlight
                     hoverCustomColor: iconBox.config.iconHoverHighlightColor

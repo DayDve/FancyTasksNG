@@ -92,7 +92,12 @@ Item {
             return Kirigami.Theme.textColor;
         return Qt.hsva(c.hsvHue, c.hsvSaturation, darkPanel ? 1 : 0.55, 1);
     }
-    readonly property color color: {
+    // Animated: the active task's drawing turns to its own color and back.
+    property color color: colorFor(colorization)
+    Behavior on color {
+        ColorAnimation { duration: Kirigami.Units.longDuration }
+    }
+    function colorFor(colorization: int): color {
         switch (colorization) {
         case 1: return Kirigami.Theme.highlightColor;
         case 2: return customColor;

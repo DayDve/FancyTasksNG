@@ -293,11 +293,23 @@ ConfigPage {
                     onEdited: (picked) => stylePage.cfg_iconHoverHighlightColor = picked
                 }
             }
-            CheckBox {
-                enabled: stylePage.cfg_iconStylization > 0
-                text: Wrappers.i18n("Active task in color")
-                checked: stylePage.cfg_iconActiveInColor
-                onToggled: stylePage.cfg_iconActiveInColor = checked
+            // Outline and Lines color the active task's drawing with the
+            // icon's average color: nothing to do when every icon already
+            // has its own color.
+            readonly property bool ownColors: (stylePage.cfg_iconStylization === 1 || stylePage.cfg_iconStylization === 2)
+                && stylePage.cfg_iconColorization >= 3
+            RowLayout {
+                CheckBox {
+                    id: activeInColor
+                    enabled: stylePage.cfg_iconStylization > 0 && !stylizationTab.ownColors
+                    text: Wrappers.i18n("Active task in color")
+                    checked: stylePage.cfg_iconActiveInColor
+                    onToggled: stylePage.cfg_iconActiveInColor = checked
+                }
+                ConfigHint {
+                    target: activeInColor
+                    reason: stylizationTab.ownColors ? Wrappers.i18n("Icons are already in their own colors.") : ""
+                }
             }
         }
 
