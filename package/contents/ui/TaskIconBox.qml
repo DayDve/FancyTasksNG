@@ -291,8 +291,9 @@ Item {
                     }
                     return iconBox.config.clipIconBackgroundColor;
                 }
-                opacity: iconBox.config.clipIconBackgroundOpacity / 100
+                // A stylized icon draws its own (IconStylizer).
                 visible: iconBox.config.clipIconToShape && iconBox.config.clipIconBackgroundEnabled
+                opacity: iconBox.stylized ? 0 : iconBox.config.clipIconBackgroundOpacity / 100
                 z: -1
             }
 
@@ -305,6 +306,11 @@ Item {
                     style: iconBox.config.iconStylization
                     sensitivity: iconBox.config.iconOutlineSensitivity / 100
                     thickness: iconBox.config.iconLinesThickness / 100
+                    clipToShape: iconBox.config.clipIconToShape
+                    cornerRadius: iconBox.config.iconClipRadius / 200
+                    backingVisible: iconBackgroundCard.visible
+                    backingColor: iconBackgroundCard.color
+                    backingOpacity: iconBox.config.clipIconBackgroundOpacity / 100
                 }
             }
         }
