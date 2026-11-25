@@ -20,8 +20,23 @@ layout(std140, binding = 0) uniform buf {
     float contrast;
     vec4 darkColor;
     vec4 lightColor;
+    // The hover highlight: within `radius` of `mouse` (both in pixels of
+    // this item, itemSize) the drawing takes hoverColor, or the icon's own
+    // colors with useSource.
+    vec4 hoverColor;
+    vec2 itemSize;
+    vec2 mouse;
+    float radius;     // 0: no highlight
+    float useSource;
 };
 layout(binding = 1) uniform sampler2D source;
+
+float hoverLight() {
+    if (radius <= 0.0)
+        return 0.0;
+    float d = distance(qt_TexCoord0 * itemSize, mouse);
+    return 1.0 - smoothstep(radius * 0.35, radius, d);
+}
 
 void main() {
     vec4 c = texture(source, qt_TexCoord0);
@@ -33,5 +48,9 @@ void main() {
     y = clamp((y - lo) / max(0.001, hi - lo), 0.0, 1.0);
     y = clamp((y - 0.5) * contrast + 0.5, 0.0, 1.0);
     vec3 col = mix(darkColor.rgb, lightColor.rgb, y);
+    // Under the highlight: the icon in full color, or the same shades of
+    // hoverColor.
+    vec3 hot = useSource > 0.5 ? c.rgb / c.a : mix(hoverColor.rgb * 0.25, hoverColor.rgb, y);
+    col = mix(col, hot, hoverLight());
     fragColor = vec4(col, 1.0) * c.a * qt_Opacity;
 }

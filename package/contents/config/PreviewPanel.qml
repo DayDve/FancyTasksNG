@@ -39,6 +39,8 @@ KSvg.FrameSvgItem {
     // Show the Meta+N numbers, as while Meta is held.
     property bool forceTaskNumbers: false
     readonly property bool shiftHeld: false
+    readonly property bool pointerInside: false
+    readonly property point pointerPosition: Qt.point(0, 0)
     readonly property int moveHold: 0
 
     imagePath: "widgets/panel-background"

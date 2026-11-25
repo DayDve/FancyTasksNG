@@ -22,6 +22,16 @@ layout(std140, binding = 0) uniform buf {
     float sigma;      // in source pixels: the line thickness
     float invert;     // 1: a light drawing on a mostly dark icon
     vec4 lineColor;
+    // The hover highlight: within `radius` of `mouse` (both in pixels of
+    // this item, itemSize) the drawing takes hoverColor, or the icon's own
+    // colors with useSource.
+    vec4 hoverColor;
+    vec2 itemSize;
+    vec2 mouse;
+    float radius;     // 0: no highlight
+    float useSource;
+    vec2 pixel;       // one source pixel, for the own colors
+    float ownMax;
 };
 layout(binding = 1) uniform sampler2D source;
 
@@ -34,6 +44,29 @@ float ink(float g1, float g2) {
     float d = g1 - tau * g2;
     float e = d >= eps ? 1.0 : 1.0 + tanh(phi * (d - eps));
     return clamp(1.0 - e, 0.0, 1.0);
+}
+
+float hoverLight() {
+    if (radius <= 0.0)
+        return 0.0;
+    float d = distance(qt_TexCoord0 * itemSize, mouse);
+    return 1.0 - smoothstep(radius * 0.35, radius, d);
+}
+
+// The icon's own color here: the most opaque pixel around, at full strength
+// scaled to ownMax (1 on a dark panel, lower on a light one), so a dark or
+// thin pixel still shows its hue.
+vec3 ownColor(vec3 fallback) {
+    vec4 best = vec4(0.0);
+    for (int y = -1; y <= 1; y++) for (int x = -1; x <= 1; x++) {
+        vec4 c = texture(source, qt_TexCoord0 + vec2(x, y) * pixel);
+        if (c.a > best.a) best = c;
+    }
+    if (best.a <= 0.0)
+        return fallback;
+    vec3 own = best.rgb / best.a;
+    float m = max(max(own.r, own.g), own.b);
+    return m > 0.05 ? own / m * ownMax : fallback;
 }
 
 void main() {
@@ -60,5 +93,7 @@ void main() {
     sum1 /= w1;
     sum2 /= w2;
     float m = max(ink(sum1.x, sum2.x), ink(sum1.y, sum2.y));
-    fragColor = vec4(lineColor.rgb, 1.0) * lineColor.a * m * qt_Opacity;
+    vec3 hot = useSource > 0.5 ? ownColor(lineColor.rgb) : hoverColor.rgb;
+    vec3 col = mix(lineColor.rgb, hot, hoverLight());
+    fragColor = vec4(col, 1.0) * lineColor.a * m * qt_Opacity;
 }

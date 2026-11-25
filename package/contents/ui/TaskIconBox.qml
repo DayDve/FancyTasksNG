@@ -309,6 +309,11 @@ Item {
                     contrast: iconBox.config.iconMonochromeContrast / 100
                     colorization: iconBox.config.iconColorization
                     customColor: iconBox.config.iconColorizationColor
+                    hoverHighlight: iconBox.config.iconHoverHighlight
+                    hoverCustomColor: iconBox.config.iconHoverHighlightColor
+                    lightSpace: iconBox.tasksRoot
+                    pointerInside: !!iconBox.tasksRoot && iconBox.tasksRoot.pointerInside
+                    pointerPosition: iconBox.tasksRoot ? iconBox.tasksRoot.pointerPosition : Qt.point(0, 0)
                     clipToShape: iconBox.config.clipIconToShape
                     cornerRadius: iconBox.config.iconClipRadius / 200
                     backingVisible: iconBackgroundCard.visible

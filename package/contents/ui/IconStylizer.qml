@@ -43,7 +43,28 @@ Item {
     property color backingColor: "transparent"
     property real backingOpacity: 1
 
+    // The hover highlight: 0 none, 1 the icon's original colors, 2 the
+    // accent, 3 hoverCustomColor, 4 the icon's dominant color, 5 its average.
+    property int hoverHighlight: 1
+    property color hoverCustomColor: "white"
+    // The cursor, in lightSpace's coordinates, while pointerInside.
+    property Item lightSpace: null
+    property point pointerPosition
+    property bool pointerInside: false
+
     readonly property int supersampling: 2
+
+    // The highlight reaches about one icon from the cursor. An icon it
+    // doesn't reach keeps its uniforms, and isn't drawn again.
+    readonly property real lightRadius: Math.min(width, height) * 0.9
+    readonly property point light: lightSpace ? mapFromItem(lightSpace, pointerPosition) : Qt.point(0, 0)
+    readonly property bool lit: hoverHighlight > 0 && pointerInside && lightSpace !== null
+        && light.x > -lightRadius && light.x < width + lightRadius
+        && light.y > -lightRadius && light.y < height + lightRadius
+    // In the shaders' pixels: the canvas, twice the size, with its margin.
+    readonly property point lightInCanvas: lit
+        ? Qt.point((light.x + margin) * supersampling, (light.y + margin) * supersampling) : Qt.point(-100000, -100000)
+    readonly property real lightRadiusInCanvas: lit ? lightRadius * supersampling : 0
 
     // A mostly dark icon has a light drawing (a terminal's prompt): its
     // brightness is turned over before the lines are found.
@@ -75,6 +96,15 @@ Item {
         case 3: return colors.dominant ? onPanel(colors.dominant) : Kirigami.Theme.textColor;
         case 4: return colors.average ? onPanel(colors.average) : Kirigami.Theme.textColor;
         default: return Kirigami.Theme.textColor;
+        }
+    }
+    readonly property color hoverColor: {
+        switch (hoverHighlight) {
+        case 2: return Kirigami.Theme.highlightColor;
+        case 3: return hoverCustomColor;
+        case 4: return colors.dominant ? onPanel(colors.dominant) : Kirigami.Theme.highlightColor;
+        case 5: return colors.average ? onPanel(colors.average) : Kirigami.Theme.highlightColor;
+        default: return Kirigami.Theme.highlightColor;
         }
     }
     // Monochrome runs from the icon's dark tones to its light ones: on a dark
@@ -163,6 +193,13 @@ Item {
             readonly property size texel: Qt.size(stylizer.supersampling / width, stylizer.supersampling / height)
             readonly property real threshold: 0.35 - 0.25 * stylizer.sensitivity
             readonly property color lineColor: stylizer.color
+            readonly property color hoverColor: stylizer.hoverColor
+            readonly property size itemSize: Qt.size(width, height)
+            readonly property point mouse: stylizer.lightInCanvas
+            readonly property real radius: stylizer.lightRadiusInCanvas
+            readonly property real useSource: stylizer.hoverHighlight === 1 ? 1 : 0
+            readonly property size pixel: Qt.size(1 / width, 1 / height)
+            readonly property real ownMax: stylizer.darkPanel ? 1 : 0.55
             fragmentShader: Qt.resolvedUrl("shaders/outline.frag.qsb")
         }
         ShaderEffect {
@@ -173,6 +210,13 @@ Item {
             readonly property real sigma: stylizer.thickness * stylizer.supersampling
             readonly property real invert: stylizer.darkIcon ? 1 : 0
             readonly property color lineColor: stylizer.color
+            readonly property color hoverColor: stylizer.hoverColor
+            readonly property size itemSize: Qt.size(width, height)
+            readonly property point mouse: stylizer.lightInCanvas
+            readonly property real radius: stylizer.lightRadiusInCanvas
+            readonly property real useSource: stylizer.hoverHighlight === 1 ? 1 : 0
+            readonly property size pixel: Qt.size(1 / width, 1 / height)
+            readonly property real ownMax: stylizer.darkPanel ? 1 : 0.55
             fragmentShader: Qt.resolvedUrl("shaders/lines.frag.qsb")
         }
         ShaderEffect {
@@ -184,6 +228,11 @@ Item {
             readonly property real contrast: stylizer.contrast
             readonly property color darkColor: stylizer.monochromeDark
             readonly property color lightColor: stylizer.monochromeLight
+            readonly property color hoverColor: stylizer.hoverColor
+            readonly property size itemSize: Qt.size(width, height)
+            readonly property point mouse: stylizer.lightInCanvas
+            readonly property real radius: stylizer.lightRadiusInCanvas
+            readonly property real useSource: stylizer.hoverHighlight === 1 ? 1 : 0
             fragmentShader: Qt.resolvedUrl("shaders/monochrome.frag.qsb")
         }
     }

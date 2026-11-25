@@ -263,6 +263,32 @@ ConfigPage {
                     onEdited: (picked) => stylePage.cfg_iconColorizationColor = picked
                 }
             }
+            RowLayout {
+                enabled: stylePage.cfg_iconStylization > 0
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Hover highlight:")
+                }
+                ComboBox {
+                    id: iconHoverHighlight
+                    model: [
+                        Wrappers.i18nc("No hover highlight", "None"),
+                        Wrappers.i18n("Original icon colors"),
+                        Wrappers.i18n("Plasma accent color"),
+                        Wrappers.i18n("Custom color"),
+                        Wrappers.i18n("Dominant icon color"),
+                        Wrappers.i18n("Average icon color")
+                    ]
+                    currentIndex: stylePage.cfg_iconHoverHighlight
+                    onActivated: (index) => stylePage.cfg_iconHoverHighlight = index
+                }
+                ConfigColorButton {
+                    enabled: stylePage.cfg_iconHoverHighlight === 3
+                    Layout.maximumHeight: iconHoverHighlight.height
+                    value: stylePage.cfg_iconHoverHighlightColor
+                    onEdited: (picked) => stylePage.cfg_iconHoverHighlightColor = picked
+                }
+            }
         }
 
         ConfigTab {

@@ -668,6 +668,14 @@
       <label>Custom color of stylized icons.</label>
       <default>#ffffff</default>
     </entry>
+    <entry name="iconHoverHighlight" type="Int">
+      <label>Highlight of stylized icons under the cursor: 0 none, 1 the icon's original colors, 2 the accent, 3 the custom color, 4 the icon's dominant color, 5 its average color.</label>
+      <default>1</default>
+    </entry>
+    <entry name="iconHoverHighlightColor" type="String">
+      <label>Custom color of the hover highlight of stylized icons.</label>
+      <default>#ffffff</default>
+    </entry>
     <entry name="clickFeedback" type="Bool">
       <label>Show a click on a task button: icons-only, the icon shrinks a little; on a classic panel, the button darkens.</label>
       <default>false</default>

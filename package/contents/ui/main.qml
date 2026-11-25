@@ -336,6 +336,11 @@ PlasmoidItem {
 
     property bool tooltipAnimationEnabled: true
 
+    // The cursor over the widget, in its coordinates: for the hover
+    // highlight of stylized icons (IconStylizer).
+    readonly property bool pointerInside: rootHoverHandler.hovered
+    readonly property point pointerPosition: rootHoverHandler.point.position
+
     function showTooltip(task: Task, byClick: bool): void {
         tasks.currentHoveredTask = task;
         tasks.toolTipOpenedByClick = byClick ? task : null;
