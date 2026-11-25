@@ -286,6 +286,10 @@ Kirigami.Page {
     property int cfg_iconLinesThicknessDefault: 50
     property int cfg_iconMonochromeContrast: 120
     property int cfg_iconMonochromeContrastDefault: 120
+    property int cfg_iconColorization: 0
+    property int cfg_iconColorizationDefault: 0
+    property string cfg_iconColorizationColor: "#ffffff"
+    property string cfg_iconColorizationColorDefault: "#ffffff"
     property bool cfg_clickFeedback: false
     property bool cfg_clickFeedbackDefault: false
     property bool cfg_unpinByDrag: false

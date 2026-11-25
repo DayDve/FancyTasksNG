@@ -31,7 +31,10 @@ Item {
     property real thickness: 0.5
     // Monochrome: the contrast, 1 for none.
     property real contrast: 1.2
-    property color color: Kirigami.Theme.textColor
+    // Colorization: 0 the theme's text color, 1 the accent, 2 customColor,
+    // 3 the icon's dominant color, 4 its average color.
+    property int colorization: 0
+    property color customColor: "white"
     // Icon Shape under Task Styling: corners rounded to `cornerRadius` (a
     // fraction of the side), with a backing behind when it's shown.
     property bool clipToShape: false
@@ -54,6 +57,32 @@ Item {
         return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
     }
     readonly property bool darkIcon: colors.average ? luminance(colors.average) < 0.35 : false
+    readonly property bool darkPanel: luminance(Kirigami.Theme.backgroundColor) < 0.5
+
+    // The icon's own color, made to stand out on the panel: at full
+    // strength on a dark one, darkened on a light one.
+    function onPanel(c: color): color {
+        const m = Math.max(c.r, c.g, c.b);
+        if (m < 0.05)
+            return Kirigami.Theme.textColor;
+        const k = (darkPanel ? 1 : 0.55) / m;
+        return Qt.rgba(c.r * k, c.g * k, c.b * k, 1);
+    }
+    readonly property color color: {
+        switch (colorization) {
+        case 1: return Kirigami.Theme.highlightColor;
+        case 2: return customColor;
+        case 3: return colors.dominant ? onPanel(colors.dominant) : Kirigami.Theme.textColor;
+        case 4: return colors.average ? onPanel(colors.average) : Kirigami.Theme.textColor;
+        default: return Kirigami.Theme.textColor;
+        }
+    }
+    // Monochrome runs from the icon's dark tones to its light ones: on a dark
+    // panel from a dim shade of the color up to the color itself, on a light
+    // one from the color up to a pale shade of it, so it never melts into
+    // the panel.
+    readonly property color monochromeDark: darkPanel ? Qt.rgba(color.r * 0.25, color.g * 0.25, color.b * 0.25, 1) : color
+    readonly property color monochromeLight: darkPanel ? color : Qt.tint(color, Qt.rgba(1, 1, 1, 0.8))
     // Monochrome: the icon's own darkest and lightest tones, stretched to
     // the whole range (kept apart, so a one-color icon isn't blown up).
     readonly property real levelLow: colors.closestToBlack ? Math.min(0.45, luminance(colors.closestToBlack)) : 0
@@ -153,8 +182,8 @@ Item {
             readonly property real lo: stylizer.levelLow
             readonly property real hi: stylizer.levelHigh
             readonly property real contrast: stylizer.contrast
-            readonly property color darkColor: "black"
-            readonly property color lightColor: "white"
+            readonly property color darkColor: stylizer.monochromeDark
+            readonly property color lightColor: stylizer.monochromeLight
             fragmentShader: Qt.resolvedUrl("shaders/monochrome.frag.qsb")
         }
     }

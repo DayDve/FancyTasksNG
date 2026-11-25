@@ -660,6 +660,14 @@
       <min>50</min>
       <max>200</max>
     </entry>
+    <entry name="iconColorization" type="Int">
+      <label>Color of a stylized icon: 0 the theme's text color, 1 the accent, 2 the custom color, 3 the icon's dominant color, 4 its average color.</label>
+      <default>0</default>
+    </entry>
+    <entry name="iconColorizationColor" type="String">
+      <label>Custom color of stylized icons.</label>
+      <default>#ffffff</default>
+    </entry>
     <entry name="clickFeedback" type="Bool">
       <label>Show a click on a task button: icons-only, the icon shrinks a little; on a classic panel, the button darkens.</label>
       <default>false</default>

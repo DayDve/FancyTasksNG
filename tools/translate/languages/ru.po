@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-25 12:04+0200\n"
+"POT-Creation-Date: 2026-11-25 12:05+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -1179,6 +1179,14 @@ msgstr "Толщина:"
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Contrast:"
 msgstr "Контраст:"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Colorization:"
+msgstr "Колоризация:"
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgid "Theme text color"
+msgstr "Цвет текста темы"
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Button background:"

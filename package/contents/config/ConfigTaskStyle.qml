@@ -238,6 +238,31 @@ ConfigPage {
                     ToolTip.delay: 1000
                 }
             }
+            RowLayout {
+                enabled: stylePage.cfg_iconStylization > 0
+                spacing: Kirigami.Units.smallSpacing
+                Label {
+                    text: Wrappers.i18n("Colorization:")
+                }
+                ComboBox {
+                    id: iconColorization
+                    model: [
+                        Wrappers.i18n("Theme text color"),
+                        Wrappers.i18n("Plasma accent color"),
+                        Wrappers.i18n("Custom color"),
+                        Wrappers.i18n("Dominant icon color"),
+                        Wrappers.i18n("Average icon color")
+                    ]
+                    currentIndex: stylePage.cfg_iconColorization
+                    onActivated: (index) => stylePage.cfg_iconColorization = index
+                }
+                ConfigColorButton {
+                    enabled: stylePage.cfg_iconColorization === 2
+                    Layout.maximumHeight: iconColorization.height
+                    value: stylePage.cfg_iconColorizationColor
+                    onEdited: (picked) => stylePage.cfg_iconColorizationColor = picked
+                }
+            }
         }
 
         ConfigTab {
