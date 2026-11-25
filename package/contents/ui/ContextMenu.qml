@@ -963,7 +963,7 @@ PlasmaExtras.Menu {
     PlasmaExtras.MenuItem {
         visible: menu.shiftItems && menu.tasksRoot.config.menuShiftChangeIcon && menu.iconReplacementKey !== ""
             && menu.get(menu.atm.IsStartup) !== true && !!menu.tasksRoot.iconReplacements[menu.iconReplacementKey]
-        text: Wrappers.i18n("Reset Icon")
+        text: Wrappers.i18n("Restore Icon")
         icon: "edit-reset"
         onClicked: menu.tasksRoot.setIconReplacement(menu.iconReplacementKey, "")
     }

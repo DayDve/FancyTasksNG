@@ -605,7 +605,7 @@
       <default>true</default>
     </entry>
     <entry name="menuShiftChangeIcon" type="Bool">
-      <label>Whether the Shift menu has Change Icon and Reset Icon (an icon replacement for the app on this widget).</label>
+      <label>Whether the Shift menu has Change Icon and Restore Icon (an icon replacement for the app on this widget).</label>
       <default>true</default>
     </entry>
     <entry name="forceQuitAnimation" type="Int">

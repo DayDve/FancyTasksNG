@@ -212,7 +212,7 @@ ConfigPage {
                     onToggled: menuPage.cfg_menuShiftChangeIcon = checked
                 }
                 ConfigHint {
-                    info: Wrappers.i18n("A custom icon for the app on this widget; Reset Icon puts the app's own back.")
+                    info: Wrappers.i18n("A custom icon for the app on this widget; Restore Icon puts the app's own back.")
                 }
             }
         }

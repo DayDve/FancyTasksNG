@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-25 14:31+0200\n"
+"POT-Creation-Date: 2026-11-25 16:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -389,7 +389,7 @@ msgid "Change Icon…"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "A custom icon for the app on this widget; Reset Icon puts the app's own back."
+msgid "A custom icon for the app on this widget; Restore Icon puts the app's own back."
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
@@ -1811,7 +1811,7 @@ msgid "&Close"
 msgstr ""
 
 #: package/contents/ui/ContextMenu.qml
-msgid "Reset Icon"
+msgid "Restore Icon"
 msgstr ""
 
 #: package/contents/ui/ContextMenu.qml
