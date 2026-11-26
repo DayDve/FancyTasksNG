@@ -252,7 +252,13 @@ Item {
         }
 
         readonly property int maxZoom: iconBox.config.iconZoomFactor
-        readonly property int targetRenderSize: iconBox.growSize > 0 ? (iconSize + maxZoom) : iconSize
+        // A replacement icon is drawn at 48 px at least and scaled down: a
+        // theme's small sizes of an icon can be another drawing (Breeze's
+        // 16 and 22 px folders are flat line icons) and aren't scaled up,
+        // so a replacement would show as a smaller line drawing on a thin
+        // panel. An app's own icon follows the theme as the system does.
+        readonly property bool replaced: iconBox._taskHasModel && iconBox.taskItem.iconReplacement !== ""
+        readonly property int targetRenderSize: Math.max(iconBox.growSize > 0 ? (iconSize + maxZoom) : iconSize, replaced ? 48 : 0)
 
         Item {
             id: renderScaleItem

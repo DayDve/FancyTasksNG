@@ -779,10 +779,8 @@ Item {
     }
 
     // The icon the button shows: the app's own, or its replacement.
-    readonly property var iconSource: {
-        const replacement = task.model && task.tasksRoot.iconReplacementFor ? task.tasksRoot.iconReplacementFor(task.model) : "";
-        return replacement !== "" ? replacement : (task.model ? task.model.decoration : "");
-    }
+    readonly property string iconReplacement: task.model && task.tasksRoot.iconReplacementFor ? task.tasksRoot.iconReplacementFor(task.model) : ""
+    readonly property var iconSource: task.iconReplacement !== "" ? task.iconReplacement : (task.model ? task.model.decoration : "")
 
     KSvg.FrameSvgItem {
         id: backgroundFrame
