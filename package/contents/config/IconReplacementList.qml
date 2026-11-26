@@ -12,6 +12,7 @@ import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.taskmanager as TaskManager
 import org.kde.iconthemes as KIconThemes
+import QtQuick.Dialogs
 
 import "../ui/code/singletones"
 import "../ui/code/tools.js" as TaskTools
@@ -171,10 +172,120 @@ ColumnLayout {
         }
         Item { Layout.fillWidth: true }
         Button {
+            icon.name: "document-import"
+            text: Wrappers.i18nc("Import icon replacements", "Import…")
+            onClicked: importFileDialog.open()
+        }
+        Button {
+            enabled: Object.keys(list.replacements).length > 0
+            icon.name: "document-export"
+            text: Wrappers.i18nc("Export icon replacements", "Export…")
+            onClicked: exportFileDialog.open()
+        }
+        Button {
             visible: Object.keys(list.replacements).length > 0
             icon.name: "edit-clear-all"
             text: Wrappers.i18n("Remove All Replacements")
             onClicked: removeAllPrompt.open()
+        }
+    }
+
+    Label {
+        id: status
+        Layout.fillWidth: true
+        Layout.maximumWidth: Kirigami.Units.gridUnit * 40
+        Layout.alignment: Qt.AlignHCenter
+        visible: text !== ""
+        wrapMode: Text.WordWrap
+        property bool error: false
+        color: error ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.textColor
+        function show(message: string, isError: bool): void {
+            status.text = message;
+            status.error = isError;
+        }
+    }
+
+    // Export and import of the replacements alone: a zip with their icons,
+    // as the settings export makes (the helper puts the files in).
+    function localPath(fileUrl: var): string {
+        return decodeURIComponent(fileUrl.toString().replace(/^file:\/\//, ""));
+    }
+    FileDialog {
+        id: exportFileDialog
+        title: Wrappers.i18n("Export Icon Replacements")
+        fileMode: FileDialog.SaveFile
+        nameFilters: [Wrappers.i18n("Icon replacements (*.zip)")]
+        defaultSuffix: "zip"
+        onAccepted: {
+            const payload = { app: "io.github.daydve.fancytasksng", version: 2,
+                              settings: { iconReplacements: list.page.cfg_iconReplacements } };
+            status.show("", false);
+            DesktopActionsManager.exportConfig(list.localPath(selectedFile), JSON.stringify(payload), result => {
+                if (result === "OK")
+                    status.show(Wrappers.i18n("Icon replacements exported."), false);
+                else
+                    status.show(Wrappers.i18n("Failed to export the icon replacements."), true);
+            });
+        }
+    }
+    FileDialog {
+        id: importFileDialog
+        title: Wrappers.i18n("Import Icon Replacements")
+        fileMode: FileDialog.OpenFile
+        nameFilters: [Wrappers.i18n("Icon replacements or Fancy Tasks NG settings (*.zip)")]
+        onAccepted: {
+            status.show("", false);
+            const path = list.localPath(selectedFile);
+            DesktopActionsManager.importConfig(path, text => {
+                let count = 0;
+                try {
+                    const payload = JSON.parse(text);
+                    if (payload.app === "io.github.daydve.fancytasksng" && payload.settings)
+                        count = Object.keys(JSON.parse(payload.settings.iconReplacements || "{}")).length;
+                } catch (e) {
+                    count = 0;
+                }
+                if (count === 0) {
+                    status.show(Wrappers.i18n("There are no icon replacements in this file."), true);
+                    return;
+                }
+                importPrompt.path = path;
+                importPrompt.count = count;
+                importPrompt.open();
+            });
+        }
+    }
+    Kirigami.Dialog {
+        id: importPrompt
+        property string path
+        property int count
+        title: Wrappers.i18np("Import %1 Icon Replacement", "Import %1 Icon Replacements", importPrompt.count)
+        padding: Kirigami.Units.largeSpacing
+        standardButtons: Kirigami.Dialog.Cancel
+        customFooterActions: [
+            Kirigami.Action {
+                text: Wrappers.i18nc("Import icon replacements", "Import")
+                icon.name: "document-import"
+                onTriggered: {
+                    const add = importOptions.addToCurrent;
+                    DesktopActionsManager.importIcons(importPrompt.path, importOptions.themeMode, text => {
+                        let map;
+                        try {
+                            map = JSON.parse(text);
+                        } catch (e) {
+                            status.show(Wrappers.i18n("Failed to import the icon replacements."), true);
+                            return;
+                        }
+                        const merged = add ? Object.assign({}, list.replacements, map) : map;
+                        list.page.cfg_iconReplacements = Object.keys(merged).length > 0 ? JSON.stringify(merged) : "";
+                        status.show(Wrappers.i18n("Icon replacements imported. Click Apply to save the changes."), false);
+                    });
+                    importPrompt.close();
+                }
+            }
+        ]
+        IconImportOptions {
+            id: importOptions
         }
     }
 
