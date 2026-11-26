@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-25 16:18+0200\n"
+"POT-Creation-Date: 2026-11-26 11:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,11 +34,15 @@ msgid "Export Fancy Tasks NG Configuration"
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
-msgid "JSON files (*.json)"
+msgid "Fancy Tasks NG settings (*.zip)"
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Import Fancy Tasks NG Configuration"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Fancy Tasks NG settings (*.zip *.json)"
 msgstr ""
 
 #: package/contents/config/ConfigAdvanced.qml
@@ -57,8 +61,84 @@ msgstr ""
 msgid "This file is not a valid Fancy Tasks NG configuration."
 msgstr ""
 
+#: package/contents/config/ConfigAdvanced.qml package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task Layout"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task Styling"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Window Indicators"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "App Signals"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task List"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task Actions"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Task Tooltips"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Context Menu"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml package/contents/config/config.qml
+msgid "Advanced"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml package/contents/config/config.qml
+msgctxt "Short section name in the settings sidebar"
+msgid "Pinned Applications"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml package/contents/config/ConfigTaskStyle.qml
+msgid "Icon Replacements"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Import Settings"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgctxt "Import the chosen settings"
+msgid "Import"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "Import from this file:"
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml
+msgid "%2 (%1 app)"
+msgid_plural "%2 (%1 apps)"
+msgstr[0] ""
+msgstr[1] ""
+
 #: package/contents/config/ConfigAdvanced.qml
 msgid "Configuration imported. Click Apply to save the changes."
+msgstr ""
+
+#: package/contents/config/ConfigAdvanced.qml package/contents/config/IconReplacementList.qml
+msgid "Failed to import the icon replacements."
 msgstr ""
 
 #: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigQuickSetup.qml
@@ -1216,10 +1296,6 @@ msgid "Icons are already in their own colors."
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
-msgid "Icon Replacements"
-msgstr ""
-
-#: package/contents/config/ConfigTaskStyle.qml
 msgid "Button background:"
 msgstr ""
 
@@ -1503,6 +1579,30 @@ msgstr ""
 msgid "Desaturate when minimized"
 msgstr ""
 
+#: package/contents/config/IconImportOptions.qml
+msgid "Icons from the icon theme:"
+msgstr ""
+
+#: package/contents/config/IconImportOptions.qml
+msgid "By name if the icon theme is the same, else from the file"
+msgstr ""
+
+#: package/contents/config/IconImportOptions.qml
+msgid "By name, following the current icon theme"
+msgstr ""
+
+#: package/contents/config/IconImportOptions.qml
+msgid "From the file, as when exported"
+msgstr ""
+
+#: package/contents/config/IconImportOptions.qml
+msgid "Add to the current replacements"
+msgstr ""
+
+#: package/contents/config/IconImportOptions.qml
+msgid "Replace the current replacements"
+msgstr ""
+
 #: package/contents/config/IconReplacementList.qml
 msgctxt "%1 is a window class"
 msgid "window class: %1"
@@ -1513,7 +1613,60 @@ msgid "Add Replacement…"
 msgstr ""
 
 #: package/contents/config/IconReplacementList.qml
+msgctxt "Import icon replacements"
+msgid "Import…"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgctxt "Export icon replacements"
+msgid "Export…"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
 msgid "Remove All Replacements"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Export Icon Replacements"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Icon replacements (*.zip)"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Icon replacements exported."
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Failed to export the icon replacements."
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Import Icon Replacements"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Icon replacements or Fancy Tasks NG settings (*.zip)"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgid "There are no icon replacements in this file."
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Import %1 Icon Replacement"
+msgid_plural "Import %1 Icon Replacements"
+msgstr[0] ""
+msgstr[1] ""
+
+#: package/contents/config/IconReplacementList.qml
+msgctxt "Import icon replacements"
+msgid "Import"
+msgstr ""
+
+#: package/contents/config/IconReplacementList.qml
+msgid "Icon replacements imported. Click Apply to save the changes."
 msgstr ""
 
 #: package/contents/config/IconReplacementList.qml
@@ -1582,55 +1735,6 @@ msgstr ""
 #: package/contents/config/config.qml
 msgctxt "Short section name in the settings sidebar"
 msgid "Quick Setup"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Task Layout"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Task Styling"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Window Indicators"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "App Signals"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Task List"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Task Actions"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Task Tooltips"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Context Menu"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgid "Advanced"
-msgstr ""
-
-#: package/contents/config/config.qml
-msgctxt "Short section name in the settings sidebar"
-msgid "Pinned Applications"
 msgstr ""
 
 #: package/contents/ui/ContextMenu.qml
