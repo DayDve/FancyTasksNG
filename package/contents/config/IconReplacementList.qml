@@ -121,8 +121,10 @@ ColumnLayout {
             if (object.isLauncher && !seen.has(object.key))
                 add("pinned", object, windowKeys.has(object.key));
         }
+        // Not Plasma's own windows (this settings window, for one): a
+        // replacement set from a task's Shift menu shows under Others.
         for (const object of objects) {
-            if (object.isWindow && !seen.has(object.key))
+            if (object.isWindow && !seen.has(object.key) && object.key !== "applications:org.kde.plasmashell.desktop")
                 add("running", object, false);
         }
         for (const key of Object.keys(list.replacements)) {
