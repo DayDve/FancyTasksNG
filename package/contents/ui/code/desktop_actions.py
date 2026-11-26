@@ -43,6 +43,8 @@ instead of talking to the installed widget's one, which wouldn't answer it.
 import configparser
 import gettext
 import hashlib
+import io
+import zipfile
 import json
 import logging
 import logging.handlers
@@ -743,6 +745,207 @@ def list_applications():
     return apps
 
 
+# --- Icons in exported settings -------------------------------------------
+#
+# The settings are exported as a zip: settings.json (what the settings page
+# collects, plus "icons") and icons/, the files of the icon replacements.
+# For an icon from the icon theme, "icons" keeps its name and the theme too:
+# on import, the name is used where the same theme is active, the file
+# otherwise, so what was exported is what shows.
+
+ICONS_DIR = DATA_HOME / "fancytasksng" / "icons"
+ICON_EXTENSIONS = (".svg", ".svgz", ".png", ".xpm")
+
+
+def _icon_roots():
+    """Where icon themes are, in lookup order."""
+    roots = [DATA_HOME / "icons", Path.home() / ".icons"]
+    for data_dir in os.environ.get("XDG_DATA_DIRS", "/usr/local/share:/usr/share").split(":"):
+        if data_dir:
+            roots.append(Path(data_dir) / "icons")
+    return roots
+
+
+def current_icon_theme():
+    """The icon theme set in System Settings (kdeglobals [Icons] Theme)."""
+    config = configparser.ConfigParser(interpolation=None, strict=False)
+    try:
+        config.read(CONFIG_HOME / "kdeglobals", encoding="utf-8")
+        return config.get("Icons", "Theme", fallback="breeze")
+    except (configparser.Error, OSError, UnicodeDecodeError):
+        return "breeze"
+
+
+def _theme_index(theme):
+    for root in _icon_roots():
+        index = root / theme / "index.theme"
+        if index.is_file():
+            config = configparser.ConfigParser(interpolation=None, strict=False)
+            try:
+                config.read(index, encoding="utf-8")
+            except (configparser.Error, UnicodeDecodeError):
+                continue
+            return config
+    return None
+
+
+def find_theme_icon(name, theme):
+    """The file of an icon in a theme (or the themes it inherits, then
+    hicolor): a scalable one if there is one, else the biggest; None if
+    there's none."""
+    seen = set()
+    queue = [theme]
+    while queue:
+        current = queue.pop(0)
+        if current in seen:
+            continue
+        seen.add(current)
+        index = _theme_index(current)
+        if index is None:
+            continue
+        best, best_size = None, -1
+        for directory in index.get("Icon Theme", "Directories", fallback="").split(","):
+            directory = directory.strip()
+            if not directory:
+                continue
+            kind = index.get(directory, "Type", fallback="Threshold")
+            size = 10000 if kind == "Scalable" else index.getint(directory, "Size", fallback=0)
+            if size <= best_size:
+                continue
+            for root in _icon_roots():
+                for ext in ICON_EXTENSIONS:
+                    candidate = root / current / directory / (name + ext)
+                    if candidate.is_file():
+                        best, best_size = candidate, size
+                        break
+                if best_size == size:
+                    break
+        if best is not None:
+            return best
+        queue += [t.strip() for t in index.get("Icon Theme", "Inherits", fallback="").split(",") if t.strip()]
+        if "hicolor" not in seen and "hicolor" not in queue:
+            queue.append("hicolor")
+    for root in [Path("/usr/share/pixmaps")]:
+        for ext in ICON_EXTENSIONS:
+            if (root / (name + ext)).is_file():
+                return root / (name + ext)
+    return None
+
+
+def _store_icon_bytes(data, suffix):
+    """Puts icon data in the widget's icon folder, named after its content;
+    returns its file:// URL."""
+    ICONS_DIR.mkdir(parents=True, exist_ok=True)
+    dest = ICONS_DIR / (hashlib.sha1(data).hexdigest() + suffix.lower())
+    if not dest.exists():
+        dest.write_bytes(data)
+    return dest.as_uri()
+
+
+def export_with_icons(path, content):
+    payload = json.loads(content)
+    settings = payload.get("settings", {})
+    replacements = json.loads(settings.get("iconReplacements") or "{}")
+    theme = current_icon_theme()
+    icons = {}
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as archive:
+        for key, icon in replacements.items():
+            entry = {}
+            if icon.startswith("file://"):
+                file = Path(unquote(urlparse(icon).path))
+            else:
+                entry = {"name": icon, "theme": theme}
+                file = find_theme_icon(icon, theme)
+            if file is not None and Path(file).is_file():
+                data = Path(file).read_bytes()
+                member = "icons/" + hashlib.sha1(data).hexdigest() + Path(file).suffix.lower()
+                if member not in archive.namelist():
+                    archive.writestr(member, data)
+                entry["file"] = member
+            if entry:
+                icons[key] = entry
+        payload["icons"] = icons
+        archive.writestr("settings.json", json.dumps(payload, ensure_ascii=False, indent=2))
+
+
+# How an icon from the icon theme comes back on import.
+ICONS_BY_NAME_IF_SAME_THEME = 0  # its name with the same theme, else its file
+ICONS_BY_NAME = 1                # its name if the current theme has it
+ICONS_FROM_FILE = 2              # always its file, as it looked when exported
+
+
+def import_icons(path, mode):
+    """The replacements of an exported .zip, {key: icon}: an icon name, or the
+    archive's file copied into the widget's icon folder (file:// URL)."""
+    with zipfile.ZipFile(path) as archive:
+        payload = json.loads(archive.read("settings.json").decode("utf-8"))
+        icons = payload.get("icons") or {}
+        replacements = json.loads(payload.get("settings", {}).get("iconReplacements") or "{}")
+        theme = current_icon_theme()
+        names = set(archive.namelist())
+        result = {}
+        for key, icon in replacements.items():
+            entry = icons.get(key, {})
+            name, file = entry.get("name"), entry.get("file")
+            safe_file = file if file in names and not Path(file).is_absolute() and ".." not in Path(file).parts else None
+            if name and mode == ICONS_BY_NAME and find_theme_icon(name, theme):
+                result[key] = name
+            elif name and mode == ICONS_BY_NAME_IF_SAME_THEME and entry.get("theme") == theme and find_theme_icon(name, theme):
+                result[key] = name
+            elif safe_file:
+                result[key] = _store_icon_bytes(archive.read(safe_file), Path(safe_file).suffix)
+            elif name:
+                result[key] = name
+            elif not icon.startswith("file://"):
+                result[key] = icon
+    return result
+
+
+# --- Settings sections, for importing some of them -------------------------
+
+CONFIG_DIR = Path(__file__).resolve().parents[2] / "config"
+
+
+def settings_sections():
+    """Each setting's page, read from the pages themselves: the page that
+    uses cfg_<key> itself, else through a component of its own; the first
+    one in the sidebar's order when several do. Quick Setup only repeats
+    the others' settings and isn't counted. A setting on no page is under
+    Advanced. Icon replacements are a section of their own."""
+    order = re.findall(r'source:\s*"\.\./config/(Config\w+)\.qml"', (CONFIG_DIR / "config.qml").read_text(encoding="utf-8"))
+    pages = [page for page in order if page != "ConfigQuickSetup"]
+    texts = {f.stem: f.read_text(encoding="utf-8") for f in CONFIG_DIR.glob("*.qml")}
+    skip = {"ConfigPage", "ConfigQuickSetup", "PreviewPanel", "PreviewCard", "LivePreview"}
+    uses = {}
+    for name, text in texts.items():
+        if name in skip:
+            continue
+        for key in set(re.findall(r"cfg_(\w+?)(?:Default)?\b", text)):
+            uses.setdefault(key, set()).add(name)
+    # A component's settings belong to the pages that use the component.
+    def pages_of(name, depth=0):
+        if name in pages or depth > 3:
+            return {name} if name in pages else set()
+        found = set()
+        for other, text in texts.items():
+            if other != name and other not in skip and re.search(r"\b" + re.escape(name) + r"\s*\{", text):
+                found |= pages_of(other, depth + 1)
+        return found
+    keys = {}
+    for key, files in uses.items():
+        # A page that uses the setting itself comes before one that has it
+        # through a component (the pinned apps also show on Icon
+        # Replacements, under Task Styling).
+        direct = [page for page in pages if page in files]
+        owners = set()
+        for name in files:
+            owners |= pages_of(name)
+        ranked = direct or [page for page in pages if page in owners]
+        keys[key] = ranked[0] if ranked else "ConfigAdvanced"
+    keys["iconReplacements"] = "iconReplacements"
+    return {"pages": pages + ["iconReplacements"], "keys": keys}
+
+
 SERVICE_NAME = "io.github.daydve.fancytasksng.DesktopActions"
 BRIDGE_NAME = "io.github.daydve.fancytasksng.Bridge"
 
@@ -782,6 +985,10 @@ SERVICE_XML = """
       <arg type="s" direction="in"/><arg type="s" direction="in"/><arg type="s" direction="out"/>
     </method>
     <method name="ImportConfig"><arg type="s" direction="in"/><arg type="s" direction="out"/></method>
+    <method name="ImportIcons">
+      <arg type="s" direction="in"/><arg type="i" direction="in"/><arg type="s" direction="out"/>
+    </method>
+    <method name="SettingsSections"><arg type="s" direction="out"/></method>
   </interface>
 </node>
 """
@@ -1030,19 +1237,44 @@ class DesktopActionsService:
         return False
 
     def ExportConfig(self, path, content):
+        """Writes the exported settings. A .zip also carries the icons of the
+        icon replacements (see export_with_icons()); anything else is the
+        settings as they are (the older .json format)."""
         try:
-            with open(path, 'w', encoding='utf-8') as f:
-                f.write(content)
+            if path.lower().endswith(".zip"):
+                export_with_icons(path, content)
+            else:
+                with open(path, 'w', encoding='utf-8') as f:
+                    f.write(content)
             return "OK"
         except Exception as e:
             return f"ERROR: {e}"
 
     def ImportConfig(self, path):
+        """What a file to import holds, as JSON text: settings.json of a .zip
+        (its "icons" tell what the icon files are; ImportIcons() puts them in
+        place once the replacements are chosen) or a plain .json file."""
         try:
+            if zipfile.is_zipfile(path):
+                with zipfile.ZipFile(path) as archive:
+                    return archive.read("settings.json").decode("utf-8")
             with open(path, 'r', encoding='utf-8') as f:
                 return f.read()
         except Exception as e:
             return f"ERROR: {e}"
+
+    def ImportIcons(self, path, mode):
+        """The icon replacements of an exported .zip, ready to use: JSON
+        {key: icon}, or an "ERROR: ..." text. See import_icons() for mode."""
+        try:
+            return json.dumps(import_icons(path, mode), ensure_ascii=False)
+        except Exception as e:
+            return f"ERROR: {e}"
+
+    def SettingsSections(self):
+        """Which settings page each setting is on, for importing some of the
+        sections only: JSON {"pages": [...], "keys": {key: page}}."""
+        return json.dumps(settings_sections())
 
     def RegisterTaskEntryShortcuts(self, component):
         """The actions plasmashell registered up to Plasma 6.7 and the stock
@@ -1132,13 +1364,7 @@ class DesktopActionsService:
         if not src.is_file():
             return ""
         try:
-            data = src.read_bytes()
-            folder = DATA_HOME / "fancytasksng" / "icons"
-            folder.mkdir(parents=True, exist_ok=True)
-            dest = folder / (hashlib.sha1(data).hexdigest() + src.suffix.lower())
-            if not dest.exists():
-                dest.write_bytes(data)
-            return dest.as_uri()
+            return _store_icon_bytes(src.read_bytes(), src.suffix)
         except OSError as e:
             log.warning(f"StoreIcon error: {e}")
             return ""

@@ -184,6 +184,24 @@ Item {
               "io.github.daydve.fancytasksng.Config");
     }
 
+    // The icon replacements of an exported .zip, ready to use; mode: 0 an
+    // icon from the theme by name if the theme is the same, else its file;
+    // 1 by name if the current theme has it; 2 always the file. callback
+    // receives JSON {key: icon} or an "ERROR: ..." text.
+    function importIcons(path, mode, callback) {
+        _call("ImportIcons", "(si)", [String(path || ""), parseInt(mode || 0)],
+              value => callback && callback(value === undefined ? "ERROR: no reply" : String(value)),
+              "io.github.daydve.fancytasksng.Config");
+    }
+
+    // callback receives {pages: [...], keys: {key: page}}: which settings page
+    // each setting is on.
+    function settingsSections(callback) {
+        _call("SettingsSections", "()", [],
+              value => callback && callback(value ? JSON.parse(String(value)) : { pages: [], keys: {} }),
+              "io.github.daydve.fancytasksng.Config");
+    }
+
     // callback receives an object mapping each PID (as a string) to its parent
     // PID; empty while the helper is still starting up.
     function parentPids(pids, callback) {

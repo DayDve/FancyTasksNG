@@ -54,8 +54,9 @@ ConfigPage {
                 id: exportFileDialog
                 title: Wrappers.i18n("Export Fancy Tasks NG Configuration")
                 fileMode: FileDialog.SaveFile
-                nameFilters: [Wrappers.i18n("JSON files (*.json)")]
-                defaultSuffix: "json"
+                // A zip: the settings and the icons of the icon replacements.
+                nameFilters: [Wrappers.i18n("Fancy Tasks NG settings (*.zip)")]
+                defaultSuffix: "zip"
                 onAccepted: advancedPage.exportConfig(exportFileDialog.selectedFile)
             }
 
@@ -63,7 +64,8 @@ ConfigPage {
                 id: importFileDialog
                 title: Wrappers.i18n("Import Fancy Tasks NG Configuration")
                 fileMode: FileDialog.OpenFile
-                nameFilters: [Wrappers.i18n("JSON files (*.json)")]
+                // .json: exported before the icons came along.
+                nameFilters: [Wrappers.i18n("Fancy Tasks NG settings (*.zip *.json)")]
                 onAccepted: advancedPage.importConfig(importFileDialog.selectedFile)
             }
         }
@@ -90,7 +92,9 @@ ConfigPage {
             if (!(propName in advancedPage)) continue;
             settings[key] = advancedPage[propName];
         }
-        return { app: advancedPage.configAppId, version: 1, settings: settings };
+        // 2: exported as a zip with the icons of the icon replacements (the
+        // helper adds them); 1, a plain .json, is still imported.
+        return { app: advancedPage.configAppId, version: 2, settings: settings };
     }
 
     function exportConfig(fileUrl) {
