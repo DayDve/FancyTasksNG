@@ -347,6 +347,8 @@ Item {
                         NumberAnimation { duration: Kirigami.Units.longDuration }
                     }
                     source: innerIcon.source
+                    colorsSource: iconBox.taskItem.iconColorsSource
+                    colorsProbe: iconBox.taskItem.iconColorsProbe
                     style: iconBox.config.iconStylization
                     sensitivity: iconBox.config.iconOutlineSensitivity / 100
                     thickness: iconBox.config.iconLinesThickness / 100
@@ -388,8 +390,15 @@ Item {
         // we only activate this Loader when shape clipping is enabled, background card is enabled,
         // and a dynamic color extraction mode (dominant or average) is selected.
         active: iconBox.config.clipIconToShape && iconBox.config.clipIconBackgroundEnabled && (iconBox.config.clipIconBackgroundColorMode === 1 || iconBox.config.clipIconBackgroundColorMode === 2)
+        // See Task.iconColorsSource.
         sourceComponent: Kirigami.ImageColors {
-            source: innerIcon.source
+            id: backingColors
+            source: iconBox._taskHasModel ? iconBox.taskItem.iconColorsSource : ""
+            readonly property Connections probeChanges: Connections {
+                target: iconBox._taskHasModel ? iconBox.taskItem.iconColorsProbe : null
+                function onValidChanged(): void { backingColors.update(); }
+                function onSourceChanged(): void { backingColors.update(); }
+            }
         }
     }
 

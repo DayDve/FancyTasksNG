@@ -23,6 +23,11 @@ Item {
 
     // The icon: an icon name, a QIcon or a file.
     property var source
+    // What its colors are read from: the app's own icon, or an item showing
+    // its replacement (Task.iconColorsSource), never a name or file URL.
+    property var colorsSource: source
+    // That item, so the colors are read again once its icon is loaded.
+    property Item colorsProbe: null
     // 1: Outline, 2: Lines, 3: Monochrome.
     property int style: 2
     // Outline: how weak an edge still gets a line, 0..1.
@@ -70,9 +75,12 @@ Item {
     // brightness is turned over before the lines are found.
     Kirigami.ImageColors {
         id: colors
-        source: stylizer.source
-        Component.onCompleted: update()
-        onSourceChanged: update()
+        source: stylizer.colorsSource
+        readonly property Connections probeChanges: Connections {
+            target: stylizer.colorsProbe
+            function onValidChanged(): void { colors.update(); }
+            function onSourceChanged(): void { colors.update(); }
+        }
     }
     function luminance(c: color): real {
         return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;

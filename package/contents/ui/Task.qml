@@ -782,12 +782,37 @@ Item {
     readonly property string iconReplacement: task.model && task.tasksRoot.iconReplacementFor ? task.tasksRoot.iconReplacementFor(task.model) : ""
     readonly property var iconSource: task.iconReplacement !== "" ? task.iconReplacement : (task.model ? task.model.decoration : "")
 
+    // What the icon's colors are read from (ImageColors): the app's own icon,
+    // or a replacement drawn out of sight here. Not the replacement's name or
+    // file URL: ImageColors loads a file in the background and crashes when
+    // its source changes meanwhile (Kirigami 6.31), taking plasmashell down;
+    // an item it takes a picture of, without loading anything.
+    Item {
+        width: 0
+        height: 0
+        clip: true
+        Kirigami.Icon {
+            id: replacementProbe
+            width: Kirigami.Units.iconSizes.large
+            height: width
+            visible: task.iconReplacement !== ""
+            source: task.iconReplacement
+        }
+    }
+    readonly property Item iconColorsProbe: replacementProbe
+    readonly property var iconColorsSource: task.iconReplacement !== "" ? replacementProbe : (task.model ? task.model.decoration : "")
+
     KSvg.FrameSvgItem {
         id: backgroundFrame
 
         Kirigami.ImageColors {
             id: imageColors
-            source: task.iconSource
+            source: task.iconColorsSource
+            readonly property Connections probeChanges: Connections {
+                target: task.iconColorsProbe
+                function onValidChanged(): void { imageColors.update(); }
+                function onSourceChanged(): void { imageColors.update(); }
+            }
         }
         property color dominantColor: imageColors.dominant
         property color indicatorColor: Kirigami.ColorUtils.tintWithAlpha(dominantColor, task.tintColor, .38)
