@@ -318,10 +318,16 @@ ConfigPage {
             title: Wrappers.i18n("Icon Replacements")
             iconName: "document-replace"
             framed: false
+            // Otherwise the form takes itself for narrow, squeezes its grid
+            // to 32 grid units in the middle and the panels stick out on
+            // the right.
+            wideMode: true
 
             IconReplacementList {
                 page: stylePage
                 Layout.fillWidth: true
+                // Across the whole form, not in its field column.
+                Kirigami.FormData.isSection: true
             }
         }
 
