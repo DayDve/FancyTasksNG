@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-27 14:36+0200\n"
+"POT-Creation-Date: 2026-11-27 14:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1712,11 +1712,6 @@ msgstr ""
 #: package/contents/config/IconReplacementList.qml
 msgctxt "Icon replacements group"
 msgid "Others"
-msgstr ""
-
-#: package/contents/config/IconReplacementList.qml
-msgctxt "%1 is an app name; the dot marks a running app"
-msgid "%1 ●"
 msgstr ""
 
 #: package/contents/config/IconReplacementList.qml

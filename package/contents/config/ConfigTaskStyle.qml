@@ -167,6 +167,12 @@ ConfigPage {
                     onActivated: (index) => stylePage.cfg_iconStylization = stylizationTab.stylizations[index]
                 }
             }
+            // With no style there's no slider: an empty row of its height
+            // keeps the panel from jumping when a style is picked.
+            Item {
+                visible: stylePage.cfg_iconStylization === 0
+                implicitHeight: Math.max(sensitivitySlider.implicitHeight, sensitivityReset.implicitHeight)
+            }
             RowLayout {
                 visible: stylePage.cfg_iconStylization === 1
                 spacing: Kirigami.Units.smallSpacing
@@ -175,6 +181,7 @@ ConfigPage {
                     text: Wrappers.i18n("Sensitivity:")
                 }
                 Slider {
+                    id: sensitivitySlider
                     Layout.fillWidth: true
                     from: 0
                     to: 100
@@ -183,6 +190,7 @@ ConfigPage {
                     onMoved: stylePage.cfg_iconOutlineSensitivity = Math.round(value)
                 }
                 Button {
+                    id: sensitivityReset
                     icon.name: "edit-reset"
                     flat: true
                     enabled: stylePage.cfg_iconOutlineSensitivity !== stylePage.cfg_iconOutlineSensitivityDefault

@@ -380,6 +380,19 @@ ColumnLayout {
         ToolTip.visible: rowHover.hovered
         ToolTip.delay: Kirigami.Units.toolTipDelay
 
+        // A column of its own for the running dot, so the icons stay in line.
+        Item {
+            implicitWidth: Kirigami.Units.smallSpacing * 2
+            implicitHeight: Kirigami.Units.smallSpacing * 2
+            Rectangle {
+                visible: row.modelData.running
+                anchors.centerIn: parent
+                width: Math.round(Kirigami.Units.smallSpacing * 1.5)
+                height: width
+                radius: width / 2
+                color: Kirigami.Theme.textColor
+            }
+        }
         Kirigami.Icon {
             implicitWidth: Kirigami.Units.iconSizes.medium
             implicitHeight: Kirigami.Units.iconSizes.medium
@@ -391,9 +404,7 @@ ColumnLayout {
             Label {
                 Layout.fillWidth: true
                 elide: Text.ElideRight
-                text: row.modelData.running
-                    ? Wrappers.i18nc("%1 is an app name; the dot marks a running app", "%1 ●", row.modelData.name)
-                    : row.modelData.name
+                text: row.modelData.name
             }
             Label {
                 visible: row.modelData.sub !== ""
