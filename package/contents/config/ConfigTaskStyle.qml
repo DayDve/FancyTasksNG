@@ -417,47 +417,39 @@ ConfigPage {
             title: Wrappers.i18nc("Tab with the hover zoom and the cursor glow", "Effects")
             iconName: "followmouse"
 
-            // A classic panel ignores it (see Task.qml).
-            RowLayout {
-                CheckBox {
-                    id: taskHoverEffect
-                    enabled: stylePage.iconsOnly
-                    text: Wrappers.i18n("Icon hover effects")
-                    checked: stylePage.cfg_taskHoverEffect
-                    onToggled: stylePage.cfg_taskHoverEffect = checked
-                }
-                ConfigHint {
-                    target: taskHoverEffect
-                    reason: Wrappers.i18n("Only in the icons-only mode.")
-                }
-            }
-
-            readonly property bool zoomOn: stylePage.iconsOnly && taskHoverEffect.checked
-            readonly property string zoomReason: stylePage.iconsOnly ? ""
-                : Wrappers.i18n("Only in the icons-only mode.")
-
+            // A classic panel ignores it (see Task.qml). One list for two
+            // settings: zoom off, or on with its style.
             RowLayout {
                 spacing: Kirigami.Units.smallSpacing
                 RowLayout {
-                    id: hoverStyle
-                    enabled: hoverTab.zoomOn
+                    id: hoverEffect
+                    enabled: stylePage.iconsOnly
                     spacing: Kirigami.Units.smallSpacing
                     Label {
-                        text: Wrappers.i18n("Hover style:")
+                        text: Wrappers.i18n("On hover:")
                     }
                     ComboBox {
                         Layout.fillWidth: true
                         Layout.minimumWidth: Kirigami.Units.gridUnit * 14
-                        model: [Wrappers.i18n("Simple"), Wrappers.i18n("Parabolic")]
-                        currentIndex: stylePage.cfg_taskHoverEffectStyle
-                        onActivated: (index) => stylePage.cfg_taskHoverEffectStyle = index
+                        model: [Wrappers.i18nc("Hover effect", "No effect"), Wrappers.i18nc("Hover effect", "Simple zoom"), Wrappers.i18nc("Hover effect", "Parabola")]
+                        currentIndex: stylePage.cfg_taskHoverEffect ? 1 + stylePage.cfg_taskHoverEffectStyle : 0
+                        onActivated: (index) => {
+                            stylePage.cfg_taskHoverEffect = index > 0;
+                            if (index > 0)
+                                stylePage.cfg_taskHoverEffectStyle = index - 1;
+                        }
                     }
                 }
                 ConfigHint {
-                    target: hoverStyle
-                    reason: hoverTab.zoomReason
+                    target: hoverEffect
+                    reason: Wrappers.i18n("Only in the icons-only mode.")
                 }
             }
+
+            readonly property bool zoomOn: stylePage.iconsOnly && stylePage.cfg_taskHoverEffect
+            readonly property string zoomReason: stylePage.iconsOnly ? ""
+                : Wrappers.i18n("Only in the icons-only mode.")
+
             RowLayout {
                 spacing: Kirigami.Units.smallSpacing
                 RowLayout {
@@ -465,7 +457,7 @@ ConfigPage {
                     enabled: hoverTab.zoomOn
                     spacing: Kirigami.Units.smallSpacing
                     Label {
-                        text: Wrappers.i18n("Icon zoom factor (px):")
+                        text: Wrappers.i18nc("Icon zoom on hover, followed by a number of pixels", "Zoom by:")
                     }
                     SpinBox {
                         from: 0
@@ -473,6 +465,9 @@ ConfigPage {
                         stepSize: 1
                         value: stylePage.cfg_iconZoomFactor
                         onValueModified: stylePage.cfg_iconZoomFactor = value
+                    }
+                    Label {
+                        text: Wrappers.i18nc("Pixels, after a number", "px")
                     }
                 }
                 ConfigHint {

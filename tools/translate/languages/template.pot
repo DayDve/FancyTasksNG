@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasksng\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-27 14:30+0200\n"
+"POT-Creation-Date: 2026-11-27 14:36+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -836,7 +836,7 @@ msgstr ""
 msgid "Display"
 msgstr ""
 
-#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskStyle.qml
+#: package/contents/config/ConfigQuickSetup.qml
 msgid "Icon hover effects"
 msgstr ""
 
@@ -1355,19 +1355,32 @@ msgid "Effects"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
-msgid "Hover style:"
+msgid "On hover:"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
-msgid "Simple"
+msgctxt "Hover effect"
+msgid "No effect"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
-msgid "Parabolic"
+msgctxt "Hover effect"
+msgid "Simple zoom"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
-msgid "Icon zoom factor (px):"
+msgctxt "Hover effect"
+msgid "Parabola"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgctxt "Icon zoom on hover, followed by a number of pixels"
+msgid "Zoom by:"
+msgstr ""
+
+#: package/contents/config/ConfigTaskStyle.qml
+msgctxt "Pixels, after a number"
+msgid "px"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
