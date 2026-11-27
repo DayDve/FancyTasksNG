@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Letter Jump:** A shortcut of your choice shows a digit or a letter on every task button; pressing that key switches to the task. Esc, any other key, a click elsewhere or 5 seconds without a key cancels it, and the keyboard goes back to the window that had it. The keys go by their place on the keyboard, so the letters work in any layout. Off by default; turned on, with its shortcut, under Task Actions › Keyboard.
 - **Extra Items with Shift:** Holding Shift while opening a task's menu, or a window's menu in its tooltip, adds:
   - "Force Quit", which kills the app's process (every window's process for a group), for an app that no longer responds to Close. In the icons-only mode, its icon then goes away on the panel with an animation of your choice: "Burn", where it burns away from the panel edge on, or "Blaze", where cartoon flames engulf it and turn into puffs of smoke. The buttons next to it move in once the icon has mostly gone.
   - "Restart": closes the app and starts it again once it has quit.

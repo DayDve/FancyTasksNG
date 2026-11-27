@@ -273,6 +273,10 @@
       <label>Whether task buttons show their Meta+number while Meta is held.</label>
       <default>true</default>
     </entry>
+    <entry name="keyboardHints" type="Bool">
+      <label>Whether the widget's own shortcut shows a key on every task button, to switch to it by that key.</label>
+      <default>false</default>
+    </entry>
     <entry name="labelFont" type="String">
       <label>The font of task button titles as JSON (family, pointSize, weight, italic; styleName only to reopen the font dialog on it). Empty means the system font.</label>
       <default></default>

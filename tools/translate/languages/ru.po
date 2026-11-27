@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-27 14:47+0200\n"
+"POT-Creation-Date: 2026-11-27 20:58+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -1086,6 +1086,15 @@ msgstr "Вне кнопок"
 msgctxt "%1 is the Shift key"
 msgid "With %1 ‒ the system volume instead of a window's or group's"
 msgstr "С %1 ‒ громкость системы вместо громкости окна или группы"
+
+#: package/contents/config/ConfigTaskActions.qml
+msgctxt "Name of the mode: a letter shown on every task switches to it"
+msgid "Letter Jump"
+msgstr "Letter Jump"
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "The shortcut shows a letter on every task; pressing that letter activates the task."
+msgstr "Сочетание клавиш показывает у каждой задачи букву; нажатие этой буквы активирует задачу."
 
 #: package/contents/config/ConfigTaskList.qml
 msgid "Filters"

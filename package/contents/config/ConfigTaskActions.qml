@@ -10,6 +10,8 @@ import org.kde.kirigami as Kirigami
 import org.kde.kcmutils as KCM
 import QtQuick.Controls
 import QtQuick.Layouts
+import org.kde.kquickcontrols as KQuickControls
+import org.kde.plasma.plasmoid
 
 import "../ui/code/singletones"
 import "../ui/code/tools.js" as TaskTools
@@ -17,6 +19,18 @@ import "../ui/code/tools.js" as TaskTools
 // Task actions: what clicks, the mouse wheel and the keyboard do on a task.
 ConfigPage {
     id: actionsPage
+
+    // The widget's shortcut isn't a cfg_ value: the dialog learns of a new
+    // one through unsavedChanges, and it's written in onAboutToSave.
+    readonly property bool unsavedChanges: String(hintShortcut.keySequence) !== String(Plasmoid.globalShortcut)
+    onAboutToSave: {
+        if (unsavedChanges)
+            Plasmoid.globalShortcut = hintShortcut.keySequence;
+        if (actionsPage.cfg_keyboardHints && !hintShortcut.isSet) {
+            actionsPage.cfg_keyboardHints = false;
+            keyboardHintsCheck.checked = false;
+        }
+    }
     fullTitle: Wrappers.i18n("Task Actions")
 
     readonly property bool groupsCombined: actionsPage.cfg_groupingStrategy === 1 && actionsPage.cfg_groupPopups
@@ -331,6 +345,38 @@ ConfigPage {
                     }
                     ConfigHint {
                         info: Wrappers.i18nc("%1 is the held keys, such as Meta or Ctrl+Alt", "While %1 is held, tasks show the keys that switch to them.", TaskEntryShortcuts.heldModifiersName)
+                    }
+                }
+                // Keyboard hints, on the widget's own shortcut (the same one
+                // as on the dialog's standard Keyboard Shortcuts page). Turned
+                // on with no shortcut, it starts recording one; with none set
+                // by Apply, it's turned off again.
+                RowLayout {
+                    CheckBox {
+                        id: keyboardHintsCheck
+                        text: Wrappers.i18nc("Name of the mode: a letter shown on every task switches to it", "Letter Jump")
+                        checked: actionsPage.cfg_keyboardHints
+                        onToggled: {
+                            actionsPage.cfg_keyboardHints = checked;
+                            if (checked && !hintShortcut.isSet)
+                                hintShortcut.startCapturing();
+                        }
+                    }
+                    ConfigHint {
+                        info: Wrappers.i18n("The shortcut shows a letter on every task; pressing that letter activates the task.")
+                    }
+                    KQuickControls.KeySequenceItem {
+                        id: hintShortcut
+                        readonly property bool isSet: String(keySequence) !== ""
+                        keySequence: Plasmoid.globalShortcut
+                        // With a modifier: a bare key would be taken from every app.
+                        // The recorder still takes one (Esc too), so it's dropped:
+                        // Esc then cancels recording.
+                        patterns: KQuickControls.ShortcutPattern.ModifierAndKey
+                        onKeySequenceModified: {
+                            if (isSet && !String(keySequence).includes("+"))
+                                keySequence = "";
+                        }
                     }
                 }
             }

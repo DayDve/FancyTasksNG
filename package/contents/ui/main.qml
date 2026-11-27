@@ -56,6 +56,21 @@ PlasmoidItem {
     readonly property int tooltipDistance: 2
     // The Meta+N numbers shown without Meta held (settings previews only).
     readonly property bool forceTaskNumbers: false
+    // Keyboard hints: the widget's own shortcut shows a key on every task
+    // button; that key switches to the task.
+    property bool hintMode: false
+    // The keys, by their place on the keyboard, so a hint works in any
+    // layout: the label is the US letter, the match is the scan code (XKB
+    // keycode: evdev code + 8, on X11 and Wayland alike).
+    readonly property var hintKeys: [
+        ["1", 10], ["2", 11], ["3", 12], ["4", 13], ["5", 14], ["6", 15], ["7", 16], ["8", 17], ["9", 18], ["0", 19],
+        ["A", 38], ["S", 39], ["D", 40], ["F", 41], ["G", 42], ["H", 43], ["J", 44], ["K", 45], ["L", 46],
+        ["Q", 24], ["W", 25], ["E", 26], ["R", 27], ["T", 28], ["Y", 29], ["U", 30], ["I", 31], ["O", 32], ["P", 33],
+        ["Z", 52], ["X", 53], ["C", 54], ["V", 55], ["B", 56], ["N", 57], ["M", 58]
+    ]
+    function hintLabel(index: int): string {
+        return index >= 0 && index < hintKeys.length ? hintKeys[index][0] : "";
+    }
     // Shift held, for the task menu's Force Quit (ShiftKeyState.qml).
     readonly property bool shiftHeld: _shiftKeyState ? _shiftKeyState.pressed === true : false
     // A var: KeyState isn't an Item, and its type is in a private module.
@@ -959,6 +974,63 @@ PlasmoidItem {
             if (task)
                 task.forceActiveFocus(Qt.TabFocusReason);
         });
+    }
+
+    // The widget's own shortcut ("Keyboard Shortcuts" in its settings).
+    // The panel takes the keyboard only while the widget asks for input
+    // (AcceptingInputStatus, see PanelView::refreshStatus), and gives it back
+    // to the window that had it on PassiveStatus.
+    Connections {
+        target: Plasmoid
+        function onActivated(): void {
+            if (!tasks.config.keyboardHints || internalTaskRepeater.count === 0)
+                return;
+            if (tasks.hintMode) {
+                tasks.endHintMode();
+                return;
+            }
+            tasks.hintMode = true;
+            Plasmoid.status = PlasmaCore.Types.AcceptingInputStatus;
+            // After the panel has put its focus on its first item.
+            Qt.callLater(() => hintKeyReceiver.forceActiveFocus());
+            hintTimeout.restart();
+        }
+    }
+    function endHintMode(): void {
+        if (!tasks.hintMode)
+            return;
+        tasks.hintMode = false;
+        hintTimeout.stop();
+        Plasmoid.status = PlasmaCore.Types.PassiveStatus;
+    }
+    Timer {
+        id: hintTimeout
+        interval: 5000
+        onTriggered: tasks.endHintMode()
+    }
+    Item {
+        id: hintKeyReceiver
+        // A click on another window takes the keyboard away.
+        onActiveFocusChanged: if (!activeFocus) tasks.endHintMode()
+        Keys.onPressed: (event) => {
+            event.accepted = true;
+            const code = event.nativeScanCode;
+            const index = tasks.hintKeys.findIndex(key => key[1] === code);
+            const task = index >= 0 ? internalTaskRepeater.itemAt(index) as Task : null;
+            if (!task) {
+                // Esc, or a key with no task: nothing is switched.
+                tasks.endHintMode();
+                return;
+            }
+            // ActiveStatus first: the panel then forgets the window it would
+            // give the keyboard back to, and the task's window stays active.
+            tasks.hintMode = false;
+            hintTimeout.stop();
+            Plasmoid.status = PlasmaCore.Types.ActiveStatus;
+            task.showPress();
+            TaskTools.activateTask(task.modelIndex(), task.model, null, task, Plasmoid, tasks, windowViewEffectWatcher.registered);
+            Plasmoid.status = PlasmaCore.Types.PassiveStatus;
+        }
     }
 
     // Activates the task for a Meta+number shortcut. Plasmashell up to 6.7 calls

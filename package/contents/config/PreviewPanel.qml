@@ -38,6 +38,8 @@ KSvg.FrameSvgItem {
     property int activeChildRow: 0
     // Show the Meta+N numbers, as while Meta is held.
     property bool forceTaskNumbers: false
+    readonly property bool hintMode: false
+    function hintLabel(index: int): string { return ""; }
     readonly property bool shiftHeld: false
     readonly property bool pointerInside: false
     readonly property var iconReplacements: TaskTools.parseIconReplacements(config.iconReplacements)

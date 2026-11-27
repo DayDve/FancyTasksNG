@@ -1044,7 +1044,9 @@ Item {
     // (the count badges are on the far side).
     Loader {
         id: numberLoader
-        active: task.config.taskEntryShortcuts && task.config.showTaskNumbers && task.index < 9 && (task.tasksRoot.forceTaskNumbers ? TaskEntryShortcuts.badgeText(task.index) !== "" : TaskEntryShortcuts.numbersTarget === task.tasksRoot && TaskEntryShortcuts.shownWhileHeld(task.index))
+        // A keyboard hint, or the Meta+N number.
+        readonly property string hint: task.tasksRoot.hintMode ? task.tasksRoot.hintLabel(task.index) : ""
+        active: hint !== "" || (task.config.taskEntryShortcuts && task.config.showTaskNumbers && task.index < 9 && (task.tasksRoot.forceTaskNumbers ? TaskEntryShortcuts.badgeText(task.index) !== "" : TaskEntryShortcuts.numbersTarget === task.tasksRoot && TaskEntryShortcuts.shownWhileHeld(task.index)))
         z: 1000
         readonly property rect box: taskIconBox.boxRect
         readonly property real size: Math.max(Math.round(Math.min(box.width, box.height) / 3), Math.round(Kirigami.Units.gridUnit * 0.7))
@@ -1066,7 +1068,7 @@ Item {
             height: numberLoader.size
             colorMode: 4
             number: task.index + 1
-            textOverride: TaskEntryShortcuts.badgeText(task.index)
+            textOverride: numberLoader.hint !== "" ? numberLoader.hint : TaskEntryShortcuts.badgeText(task.index)
             // A soft shadow, as on the audio badge, keeps it apart from any icon.
             layer.enabled: true
             layer.effect: MultiEffect {
