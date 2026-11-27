@@ -169,6 +169,16 @@ ConfigPage {
                         onActivated: (index) => actionsPage.cfg_closeAnimation = index
                     }
                 }
+                RowLayout {
+                    CheckBox {
+                        text: Wrappers.i18n("Click feedback")
+                        checked: actionsPage.cfg_clickFeedback
+                        onToggled: actionsPage.cfg_clickFeedback = checked
+                    }
+                    ConfigHint {
+                        info: Wrappers.i18n("On a click, the icon shrinks a little; on a classic panel, the button darkens.")
+                    }
+                }
             }
 
             // The wheel options on a panel of their own.
@@ -300,12 +310,9 @@ ConfigPage {
                 RowLayout {
                     CheckBox {
                         id: taskEntryShortcuts
-                        text: Wrappers.i18n("Activate tasks by global shortcuts")
+                        text: Wrappers.i18n("Task activation")
                         checked: actionsPage.cfg_taskEntryShortcuts
                         onToggled: actionsPage.cfg_taskEntryShortcuts = checked
-                    }
-                    ConfigHint {
-                        info: Wrappers.i18n("As in Plasma's task manager.")
                     }
                     // The keys are set there, one shortcut per task.
                     Button {

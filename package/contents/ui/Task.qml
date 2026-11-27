@@ -694,15 +694,16 @@ Item {
     // least a moment, and for activation from the keyboard.
     readonly property bool pressShown: task.config.clickFeedback && (leftTapHandler.pressed || pressHold.running)
     property real pressAmount: pressShown ? 1 : 0
+    // Down at once, as a pressed button; back up quickly.
     Behavior on pressAmount {
         NumberAnimation {
-            duration: Kirigami.Units.shortDuration
+            duration: task.pressShown ? 0 : Kirigami.Units.shortDuration
             easing.type: Easing.OutQuad
         }
     }
     Timer {
         id: pressHold
-        interval: Kirigami.Units.shortDuration
+        interval: 80
     }
     function showPress(): void {
         pressHold.restart();

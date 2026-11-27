@@ -243,12 +243,9 @@ ConfigPage {
                         RowLayout {
                             CheckBox {
                                 id: quickTaskEntryShortcuts
-                                text: Wrappers.i18n("Activate tasks by global shortcuts")
+                                text: Wrappers.i18n("Task activation")
                                 checked: quickPage.cfg_taskEntryShortcuts
                                 onToggled: quickPage.cfg_taskEntryShortcuts = checked
-                            }
-                            ConfigHint {
-                                info: Wrappers.i18n("As in Plasma's task manager.")
                             }
                         }
                         RowLayout {

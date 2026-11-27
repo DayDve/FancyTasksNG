@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-27 11:50+0200\n"
+"POT-Creation-Date: 2026-11-27 14:30+0200\n"
 "PO-Revision-Date: 2023-07-13 22:27+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -889,11 +889,7 @@ msgid "Keyboard"
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
-msgid "Activate tasks by global shortcuts"
-msgstr ""
-
-#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
-msgid "As in Plasma's task manager."
+msgid "Task activation"
 msgstr ""
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
@@ -1051,6 +1047,14 @@ msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Closing animation"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Click feedback"
+msgstr ""
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "On a click, the icon shrinks a little; on a classic panel, the button darkens."
 msgstr ""
 
 #: package/contents/config/ConfigTaskActions.qml
@@ -1345,7 +1349,8 @@ msgid "Choose a button color other than the Plasma style first."
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
-msgid "Hover"
+msgctxt "Tab with the hover zoom and the cursor glow"
+msgid "Effects"
 msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
@@ -1370,14 +1375,6 @@ msgstr ""
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Glow following the cursor over task buttons"
-msgstr ""
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Click feedback"
-msgstr ""
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "On a click, the icon shrinks a little; on a classic panel, the button darkens."
 msgstr ""
 
 #: package/contents/config/ConfigTooltips.qml

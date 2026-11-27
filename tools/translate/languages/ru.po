@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-27 11:50+0200\n"
+"POT-Creation-Date: 2026-11-27 14:30+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -890,12 +890,8 @@ msgid "Keyboard"
 msgstr "Клавиатура"
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
-msgid "Activate tasks by global shortcuts"
-msgstr "Активировать задачи глобальными сочетаниями клавиш"
-
-#: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
-msgid "As in Plasma's task manager."
-msgstr "Как в штатном диспетчере задач Plasma."
+msgid "Task activation"
+msgstr "Активация задач"
 
 #: package/contents/config/ConfigQuickSetup.qml package/contents/config/ConfigTaskActions.qml
 msgctxt "Shortcut keys shown on tasks"
@@ -1053,6 +1049,14 @@ msgstr "Переносит на текущий рабочий стол"
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Closing animation"
 msgstr "Анимация закрытия"
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "Click feedback"
+msgstr "Отклик на щелчок"
+
+#: package/contents/config/ConfigTaskActions.qml
+msgid "On a click, the icon shrinks a little; on a classic panel, the button darkens."
+msgstr "При щелчке значок слегка сжимается; на классической панели кнопка темнеет."
 
 #: package/contents/config/ConfigTaskActions.qml
 msgid "Mouse wheel"
@@ -1346,8 +1350,9 @@ msgid "Choose a button color other than the Plasma style first."
 msgstr "Сначала выберите цвет кнопок, отличный от стиля Plasma."
 
 #: package/contents/config/ConfigTaskStyle.qml
-msgid "Hover"
-msgstr "Наведение"
+msgctxt "Tab with the hover zoom and the cursor glow"
+msgid "Effects"
+msgstr "Эффекты"
 
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Hover style:"
@@ -1372,14 +1377,6 @@ msgstr "Длительность анимации (мс):"
 #: package/contents/config/ConfigTaskStyle.qml
 msgid "Glow following the cursor over task buttons"
 msgstr "Подсвечивать панель под курсором"
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "Click feedback"
-msgstr "Отклик на щелчок"
-
-#: package/contents/config/ConfigTaskStyle.qml
-msgid "On a click, the icon shrinks a little; on a classic panel, the button darkens."
-msgstr "При щелчке значок слегка сжимается; на классической панели кнопка темнеет."
 
 #: package/contents/config/ConfigTooltips.qml
 msgid "Task Tooltips"

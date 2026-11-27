@@ -414,7 +414,7 @@ ConfigPage {
 
         ConfigTab {
             id: hoverTab
-            title: Wrappers.i18n("Hover")
+            title: Wrappers.i18nc("Tab with the hover zoom and the cursor glow", "Effects")
             iconName: "followmouse"
 
             // A classic panel ignores it (see Task.qml).
@@ -516,17 +516,6 @@ ConfigPage {
                 ConfigHint {
                     target: cursorGlow
                     reason: Wrappers.i18n("Only in the icons-only mode.")
-                }
-            }
-
-            RowLayout {
-                CheckBox {
-                    text: Wrappers.i18n("Click feedback")
-                    checked: stylePage.cfg_clickFeedback
-                    onToggled: stylePage.cfg_clickFeedback = checked
-                }
-                ConfigHint {
-                    info: Wrappers.i18n("On a click, the icon shrinks a little; on a classic panel, the button darkens.")
                 }
             }
         }
