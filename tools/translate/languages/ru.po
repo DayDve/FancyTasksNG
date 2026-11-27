@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-26 11:02+0200\n"
+"POT-Creation-Date: 2026-11-26 11:19+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -342,8 +342,8 @@ msgid "Task Menu"
 msgstr "Меню задачи"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Show in a task's menu:"
-msgstr "Показывать в меню задачи:"
+msgid "Menu without Shift"
+msgstr "Меню без Shift"
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "App actions"
@@ -400,12 +400,17 @@ msgid "Mute/Unmute all the app's sound. For apps with an audio stream open, even
 msgstr "«Выключить звук»/«Включить звук» для всего звука приложения. У приложений с открытым аудиопотоком, даже беззвучным."
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Hide 'Move to Desktop' if only one virtual desktop is used"
-msgstr "Скрывать «Переместить на рабочий стол», если рабочий стол один"
+msgctxt "Context menu item to show"
+msgid "Move to Desktop"
+msgstr "Переместить на рабочий стол"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Extra items with Shift"
-msgstr "Дополнительные пункты с Shift"
+msgid "Hide with only one virtual desktop"
+msgstr "Скрывать, если рабочий стол один"
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Menu with Shift"
+msgstr "Меню с Shift"
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "Items for a task's menu, and a window's menu in its tooltip, opened with Shift held."
@@ -460,8 +465,8 @@ msgid "Edit Application…"
 msgstr "Изменить приложение…"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "A pinned app that isn't running: opens it in the Menu Editor."
-msgstr "Незапущенный закреп: открывает его в «Редакторе меню»."
+msgid "Opens the app in the Menu Editor. Only for a pinned app that isn't running."
+msgstr "Открывает приложение в «Редакторе меню». Только у закреплённого незапущенного приложения."
 
 #: package/contents/config/ConfigContextMenu.qml package/contents/config/IconReplacementList.qml package/contents/ui/ContextMenu.qml
 msgid "Change Icon…"
@@ -475,14 +480,6 @@ msgstr "Свой значок приложения в этом виджете; �
 msgid "Widget Menu"
 msgstr "Меню виджета"
 
-#: package/contents/config/ConfigContextMenu.qml
-msgid "Show in the widget's menu:"
-msgstr "Показывать в меню виджета:"
-
-#: package/contents/config/ConfigContextMenu.qml
-msgid "The menu on a right-click off the task buttons."
-msgstr "Меню по правому щелчку мимо кнопок задач."
-
 #: package/contents/config/ConfigContextMenu.qml package/contents/ui/main.qml
 msgid "System Monitor"
 msgstr "Системный монитор"
@@ -490,6 +487,10 @@ msgstr "Системный монитор"
 #: package/contents/config/ConfigContextMenu.qml
 msgid "System Monitor isn't installed."
 msgstr "«Системный монитор» не установлен."
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "In the menu on a right-click off the task buttons."
+msgstr "В меню по правому щелчку мимо кнопок задач."
 
 #: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
 msgid "Task Layout"

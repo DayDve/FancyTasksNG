@@ -389,7 +389,7 @@ PlasmaExtras.Menu {
     PlasmaExtras.MenuItem {
         id: virtualDesktopsMenuItem
 
-        visible: (menu.virtualDesktopInfo.numberOfDesktops > 1 || !config.hideMoveToDesktopMenuWithOneDesktop) && (menu.visualParent && !menu.get(menu.atm.IsLauncher) && !menu.get(menu.atm.IsStartup) && menu.get(menu.atm.IsVirtualDesktopsChangeable))
+        visible: config.menuMoveToDesktop && (menu.virtualDesktopInfo.numberOfDesktops > 1 || !config.hideMoveToDesktopMenuWithOneDesktop) && (menu.visualParent && !menu.get(menu.atm.IsLauncher) && !menu.get(menu.atm.IsStartup) && menu.get(menu.atm.IsVirtualDesktopsChangeable))
 
         enabled: visible
 

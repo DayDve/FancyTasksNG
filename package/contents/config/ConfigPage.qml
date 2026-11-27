@@ -44,6 +44,8 @@ Kirigami.Page {
     property bool cfg_attentionCustomColorEnabledDefault: false
     property string cfg_attentionCustomColor: ""
     property string cfg_attentionCustomColorDefault: "#ff9800"
+    property bool cfg_menuMoveToDesktop: true
+    property bool cfg_menuMoveToDesktopDefault: true
     property bool cfg_hideMoveToDesktopMenuWithOneDesktop: true
     property bool cfg_hideMoveToDesktopMenuWithOneDesktopDefault: true
     property int cfg_maxStripes: 0

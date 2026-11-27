@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-26 11:02+0200\n"
+"POT-Creation-Date: 2026-11-26 11:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -343,7 +343,7 @@ msgid "Task Menu"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Show in a task's menu:"
+msgid "Menu without Shift"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
@@ -400,11 +400,16 @@ msgid "Mute/Unmute all the app's sound. For apps with an audio stream open, even
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Hide 'Move to Desktop' if only one virtual desktop is used"
+msgctxt "Context menu item to show"
+msgid "Move to Desktop"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Extra items with Shift"
+msgid "Hide with only one virtual desktop"
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "Menu with Shift"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
@@ -460,7 +465,7 @@ msgid "Edit Application…"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "A pinned app that isn't running: opens it in the Menu Editor."
+msgid "Opens the app in the Menu Editor. Only for a pinned app that isn't running."
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml package/contents/config/IconReplacementList.qml package/contents/ui/ContextMenu.qml
@@ -475,20 +480,16 @@ msgstr ""
 msgid "Widget Menu"
 msgstr ""
 
-#: package/contents/config/ConfigContextMenu.qml
-msgid "Show in the widget's menu:"
-msgstr ""
-
-#: package/contents/config/ConfigContextMenu.qml
-msgid "The menu on a right-click off the task buttons."
-msgstr ""
-
 #: package/contents/config/ConfigContextMenu.qml package/contents/ui/main.qml
 msgid "System Monitor"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "System Monitor isn't installed."
+msgstr ""
+
+#: package/contents/config/ConfigContextMenu.qml
+msgid "In the menu on a right-click off the task buttons."
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
