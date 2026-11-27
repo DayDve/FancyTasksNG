@@ -205,7 +205,7 @@ ConfigPage {
                 ConfigHint {
                     target: iconSpacing
                     info: Wrappers.i18n("Outer: the space between neighboring buttons. Inner: the padding inside a button around its icon and title, so it also sets the button size.")
-                    reason: Wrappers.i18n("Automatically set to Large when in Touch mode")
+                    reason: Wrappers.i18n("Set automatically in Touch mode")
                 }
             }
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fancytasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-26 11:19+0200\n"
+"POT-Creation-Date: 2026-11-27 11:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -154,7 +154,7 @@ msgid "Show app signals"
 msgstr ""
 
 #: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigQuickSetup.qml
-msgid "Some apps send signals about audio playback, notification count and operation progress. When on, Fancy Tasks NG shows the matching indicators on the buttons of such apps."
+msgid "Audio, notifications and progress on task buttons"
 msgstr ""
 
 #: package/contents/config/ConfigAppSignals.qml
@@ -343,7 +343,8 @@ msgid "Task Menu"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Menu without Shift"
+msgctxt "Items of a task's menu"
+msgid "Main"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
@@ -396,7 +397,7 @@ msgid "Mute"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Mute/Unmute all the app's sound. For apps with an audio stream open, even a silent one."
+msgid "With an audio stream open"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
@@ -409,11 +410,12 @@ msgid "Hide with only one virtual desktop"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Menu with Shift"
+msgctxt "Items of a task's menu added with Shift"
+msgid "Extended"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Items for a task's menu, and a window's menu in its tooltip, opened with Shift held."
+msgid "Appears with Shift held"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
@@ -421,7 +423,7 @@ msgid "Force Quit"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Kills the app's process, for an app that no longer responds to Close."
+msgid "Kills the process without asking. Unsaved data is lost."
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
@@ -457,7 +459,7 @@ msgid "Copy"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "The PID, app ID or .desktop file path, for a bug report."
+msgid "Copy various details about the running app"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
@@ -465,7 +467,7 @@ msgid "Edit Application…"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Opens the app in the Menu Editor. Only for a pinned app that isn't running."
+msgid "Opens the app's properties in the KDE Menu Editor"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml package/contents/config/IconReplacementList.qml package/contents/ui/ContextMenu.qml
@@ -473,7 +475,7 @@ msgid "Change Icon…"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "A custom icon for the app on this widget; Restore Icon puts the app's own back."
+msgid "Only in this widget"
 msgstr ""
 
 #: package/contents/config/ConfigContextMenu.qml
@@ -602,7 +604,7 @@ msgid "Outer: the space between neighboring buttons. Inner: the padding inside a
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Automatically set to Large when in Touch mode"
+msgid "Set automatically in Touch mode"
 msgstr ""
 
 #: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
@@ -792,6 +794,10 @@ msgid "Unpin app by dragging its icon off the panel"
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
+msgid "Only apps that aren't running"
+msgstr ""
+
+#: package/contents/config/ConfigPinnedApps.qml
 msgid "Unpinning animation:"
 msgstr ""
 
@@ -806,7 +812,7 @@ msgid "Shatter"
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
-msgid "Add Application..."
+msgid "Add Application…"
 msgstr ""
 
 #: package/contents/config/ConfigPinnedApps.qml
@@ -1177,9 +1183,7 @@ msgid "Keep launchers separate"
 msgstr ""
 
 #: package/contents/config/ConfigTaskList.qml
-msgid ""
-"On: pinned apps always come first and stay in place when launched; pinned apps are dragged among themselves, other tasks among themselves.\n"
-"Off: any task can be dragged anywhere; a new window of a pinned app goes to the end of the list."
+msgid "Pinned apps always come first"
 msgstr ""
 
 #: package/contents/config/ConfigTaskList.qml

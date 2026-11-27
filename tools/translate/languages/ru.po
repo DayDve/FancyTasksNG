@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fancy Tasks\n"
 "Report-Msgid-Bugs-To: https://github.com/daydve/FancyTasksNG\n"
-"POT-Creation-Date: 2026-11-26 11:19+0200\n"
+"POT-Creation-Date: 2026-11-27 11:50+0200\n"
 "PO-Revision-Date: 2025-12-22 13:00+0300\n"
 "Last-Translator: Vitaliy Elin <daydve@smbit/.pro>\n"
 "Language-Team: Russian\n"
@@ -153,8 +153,8 @@ msgid "Show app signals"
 msgstr "Показывать сигналы приложений"
 
 #: package/contents/config/ConfigAppSignals.qml package/contents/config/ConfigQuickSetup.qml
-msgid "Some apps send signals about audio playback, notification count and operation progress. When on, Fancy Tasks NG shows the matching indicators on the buttons of such apps."
-msgstr "Некоторые приложения передают сигналы о воспроизводимом звуке, числе уведомлений и ходе выполнения операций. Если включено, Fancy Tasks NG показывает соответствующие индикаторы на кнопках таких приложений."
+msgid "Audio, notifications and progress on task buttons"
+msgstr "Звук, уведомления и прогресс на кнопках задач"
 
 #: package/contents/config/ConfigAppSignals.qml
 msgid "Mark applications playing audio"
@@ -342,8 +342,9 @@ msgid "Task Menu"
 msgstr "Меню задачи"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Menu without Shift"
-msgstr "Меню без Shift"
+msgctxt "Items of a task's menu"
+msgid "Main"
+msgstr "Основное"
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "App actions"
@@ -396,8 +397,8 @@ msgid "Mute"
 msgstr "Выключение звука"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Mute/Unmute all the app's sound. For apps with an audio stream open, even a silent one."
-msgstr "«Выключить звук»/«Включить звук» для всего звука приложения. У приложений с открытым аудиопотоком, даже беззвучным."
+msgid "With an audio stream open"
+msgstr "При открытом аудиопотоке"
 
 #: package/contents/config/ConfigContextMenu.qml
 msgctxt "Context menu item to show"
@@ -409,20 +410,21 @@ msgid "Hide with only one virtual desktop"
 msgstr "Скрывать, если рабочий стол один"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Menu with Shift"
-msgstr "Меню с Shift"
+msgctxt "Items of a task's menu added with Shift"
+msgid "Extended"
+msgstr "Расширенное"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Items for a task's menu, and a window's menu in its tooltip, opened with Shift held."
-msgstr "Пункты меню задачи и меню окна в подсказке, открытых с зажатым Shift."
+msgid "Appears with Shift held"
+msgstr "Появляется при зажатом Shift"
 
 #: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
 msgid "Force Quit"
 msgstr "Завершить принудительно"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Kills the app's process, for an app that no longer responds to Close."
-msgstr "Убивает процесс приложения, которое больше не отвечает на «Закрыть»."
+msgid "Kills the process without asking. Unsaved data is lost."
+msgstr "Убивает процесс без подтверждения. Несохранённые данные будут потеряны."
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "Animation:"
@@ -457,24 +459,24 @@ msgid "Copy"
 msgstr "Копировать"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "The PID, app ID or .desktop file path, for a bug report."
-msgstr "PID, ID приложения или путь к файлу .desktop, для сообщения об ошибке."
+msgid "Copy various details about the running app"
+msgstr "Копировать различную информацию о запущенном приложении"
 
 #: package/contents/config/ConfigContextMenu.qml package/contents/ui/ContextMenu.qml
 msgid "Edit Application…"
 msgstr "Изменить приложение…"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "Opens the app in the Menu Editor. Only for a pinned app that isn't running."
-msgstr "Открывает приложение в «Редакторе меню». Только у закреплённого незапущенного приложения."
+msgid "Opens the app's properties in the KDE Menu Editor"
+msgstr "Открывает свойства приложения в редакторе меню KDE"
 
 #: package/contents/config/ConfigContextMenu.qml package/contents/config/IconReplacementList.qml package/contents/ui/ContextMenu.qml
 msgid "Change Icon…"
 msgstr "Сменить значок…"
 
 #: package/contents/config/ConfigContextMenu.qml
-msgid "A custom icon for the app on this widget; Restore Icon puts the app's own back."
-msgstr "Свой значок приложения в этом виджете; «Восстановить значок» возвращает исходный."
+msgid "Only in this widget"
+msgstr "Только в этом виджете"
 
 #: package/contents/config/ConfigContextMenu.qml
 msgid "Widget Menu"
@@ -602,8 +604,8 @@ msgid "Outer: the space between neighboring buttons. Inner: the padding inside a
 msgstr "Внешние ‒ расстояние между соседними кнопками. Внутренние ‒ поля внутри кнопки вокруг значка и названия, от них зависит и размер кнопки."
 
 #: package/contents/config/ConfigLayout.qml
-msgid "Automatically set to Large when in Touch mode"
-msgstr "Автоматически «Большой» в сенсорном режиме"
+msgid "Set automatically in Touch mode"
+msgstr "Задаётся автоматически в сенсорном режиме"
 
 #: package/contents/config/ConfigLayout.qml package/contents/config/ConfigQuickSetup.qml
 msgid "Icon size:"
@@ -792,6 +794,10 @@ msgid "Unpin app by dragging its icon off the panel"
 msgstr "Откреплять, перетащив значок с панели"
 
 #: package/contents/config/ConfigPinnedApps.qml
+msgid "Only apps that aren't running"
+msgstr "Только незапущенные"
+
+#: package/contents/config/ConfigPinnedApps.qml
 msgid "Unpinning animation:"
 msgstr "Анимация открепления:"
 
@@ -806,8 +812,8 @@ msgid "Shatter"
 msgstr "Осколки"
 
 #: package/contents/config/ConfigPinnedApps.qml
-msgid "Add Application..."
-msgstr "Добавить приложение..."
+msgid "Add Application…"
+msgstr "Добавить приложение…"
 
 #: package/contents/config/ConfigPinnedApps.qml
 msgid "Back"
@@ -1178,12 +1184,8 @@ msgid "Keep launchers separate"
 msgstr "Держать закреплённые приложения отдельно"
 
 #: package/contents/config/ConfigTaskList.qml
-msgid ""
-"On: pinned apps always come first and stay in place when launched; pinned apps are dragged among themselves, other tasks among themselves.\n"
-"Off: any task can be dragged anywhere; a new window of a pinned app goes to the end of the list."
-msgstr ""
-"Включено: закреплённые приложения всегда в начале и при запуске остаются на своих местах; закреплённые перетаскиваются между собой, остальные задачи между собой.\n"
-"Выключено: любую задачу можно перетащить куда угодно; новое окно закреплённого приложения добавляется в конец списка."
+msgid "Pinned apps always come first"
+msgstr "Закреплённые всегда в начале списка"
 
 #: package/contents/config/ConfigTaskList.qml
 msgid "Only for manual sorting."

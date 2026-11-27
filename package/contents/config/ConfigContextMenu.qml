@@ -44,7 +44,7 @@ ConfigPage {
                     Layout.preferredWidth: 1
                     Kirigami.Heading {
                         level: 4
-                        text: Wrappers.i18n("Menu without Shift")
+                        text: Wrappers.i18nc("Items of a task's menu", "Main")
                     }
                     RowLayout {
                         CheckBox {
@@ -122,7 +122,7 @@ ConfigPage {
                             onToggled: menuPage.cfg_menuMute = checked
                         }
                         ConfigHint {
-                            info: Wrappers.i18n("Mute/Unmute all the app's sound. For apps with an audio stream open, even a silent one.")
+                            info: Wrappers.i18n("With an audio stream open")
                         }
                     }
                     CheckBox {
@@ -148,12 +148,12 @@ ConfigPage {
                     RowLayout {
                         CheckBox {
                             id: shiftItems
-                            text: Wrappers.i18n("Menu with Shift")
+                            text: Wrappers.i18nc("Items of a task's menu added with Shift", "Extended")
                             checked: menuPage.cfg_menuShiftItems
                             onToggled: menuPage.cfg_menuShiftItems = checked
                         }
                         ConfigHint {
-                            info: Wrappers.i18n("Items for a task's menu, and a window's menu in its tooltip, opened with Shift held.")
+                            info: Wrappers.i18n("Appears with Shift held")
                         }
                     }
                     RowLayout {
@@ -166,7 +166,7 @@ ConfigPage {
                             onToggled: menuPage.cfg_menuShiftForceQuit = checked
                         }
                         ConfigHint {
-                            info: Wrappers.i18n("Kills the app's process, for an app that no longer responds to Close.")
+                            info: Wrappers.i18n("Kills the process without asking. Unsaved data is lost.")
                         }
                     }
                     // How its icon goes away: only with Force Quit on, greyed out with
@@ -209,7 +209,7 @@ ConfigPage {
                             onToggled: menuPage.cfg_menuShiftCopy = checked
                         }
                         ConfigHint {
-                            info: Wrappers.i18n("The PID, app ID or .desktop file path, for a bug report.")
+                            info: Wrappers.i18n("Copy various details about the running app")
                         }
                     }
                     RowLayout {
@@ -221,7 +221,7 @@ ConfigPage {
                             onToggled: menuPage.cfg_menuShiftEditApp = checked
                         }
                         ConfigHint {
-                            info: Wrappers.i18n("Opens the app in the Menu Editor. Only for a pinned app that isn't running.")
+                            info: Wrappers.i18n("Opens the app's properties in the KDE Menu Editor")
                         }
                     }
                     RowLayout {
@@ -233,7 +233,7 @@ ConfigPage {
                             onToggled: menuPage.cfg_menuShiftChangeIcon = checked
                         }
                         ConfigHint {
-                            info: Wrappers.i18n("A custom icon for the app on this widget; Restore Icon puts the app's own back.")
+                            info: Wrappers.i18n("Only in this widget")
                         }
                     }
                 }

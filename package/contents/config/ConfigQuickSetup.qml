@@ -303,7 +303,7 @@ ConfigPage {
                             onToggled: quickPage.cfg_showAppSignals = checked
                         }
                         ConfigHint {
-                            info: Wrappers.i18n("Some apps send signals about audio playback, notification count and operation progress. When on, Fancy Tasks NG shows the matching indicators on the buttons of such apps.")
+                            info: Wrappers.i18n("Audio, notifications and progress on task buttons")
                         }
                     }
                     // The link to the section sits at the bottom of the panel.

@@ -449,11 +449,16 @@ ConfigPage {
                     Layout.fillWidth: true
                     spacing: Kirigami.Units.smallSpacing
 
-                    CheckBox {
-                        id: unpinByDragCheck
-                        text: Wrappers.i18n("Unpin app by dragging its icon off the panel")
-                        checked: cfg_page.cfg_unpinByDrag
-                        onToggled: cfg_page.cfg_unpinByDrag = checked
+                    RowLayout {
+                        CheckBox {
+                            id: unpinByDragCheck
+                            text: Wrappers.i18n("Unpin app by dragging its icon off the panel")
+                            checked: cfg_page.cfg_unpinByDrag
+                            onToggled: cfg_page.cfg_unpinByDrag = checked
+                        }
+                        ConfigHint {
+                            info: Wrappers.i18n("Only apps that aren't running")
+                        }
                     }
 
                     // Only with unpinning on; the animations are played in the
@@ -483,7 +488,7 @@ ConfigPage {
                     Button {
                         id: addAppButton
                         icon.name: "list-add"
-                        text: Wrappers.i18n("Add Application...")
+                        text: Wrappers.i18n("Add Application…")
                         onClicked: {
                             // Force refresh to ensure unpinned apps appear
                             cfg_page.filterAppsModel(cfg_page.currentSearchText, true);

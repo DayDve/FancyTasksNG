@@ -163,7 +163,7 @@ ConfigPage {
                 }
                 ConfigHint {
                     target: keepLaunchersSeparate
-                    info: Wrappers.i18n("On: pinned apps always come first and stay in place when launched; pinned apps are dragged among themselves, other tasks among themselves.\nOff: any task can be dragged anywhere; a new window of a pinned app goes to the end of the list.")
+                    info: Wrappers.i18n("Pinned apps always come first")
                     reason: Wrappers.i18n("Only for manual sorting.")
                 }
             }
