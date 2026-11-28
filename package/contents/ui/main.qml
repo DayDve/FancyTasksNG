@@ -990,18 +990,40 @@ PlasmoidItem {
                 return;
             }
             tasks.hintMode = true;
+            tasks.hintReturnTask = tasks.persistentActiveTask();
             Plasmoid.status = PlasmaCore.Types.AcceptingInputStatus;
             // After the panel has put its focus on its first item.
             Qt.callLater(() => hintKeyReceiver.forceActiveFocus());
             hintTimeout.restart();
         }
     }
-    function endHintMode(): void {
+    // The window that had the keyboard before the hints, given it back when
+    // they're cancelled. The panel only does that itself while none of its
+    // widgets is active (a player, a monitor): the panel's status is the
+    // highest of its widgets', and from ActiveStatus it gives the keyboard
+    // to no one (PanelView::refreshStatus).
+    property var hintReturnTask: null
+    function persistentActiveTask(): var {
+        const active = tasks.tasksModel.activeTask;
+        if (!active || !active.valid)
+            return null;
+        const parent = tasks.tasksModel.parent(active);
+        return parent && parent.valid
+            ? tasks.tasksModel.makePersistentModelIndex(parent.row, active.row)
+            : tasks.tasksModel.makePersistentModelIndex(active.row);
+    }
+    // giveBack: false when the keyboard has already gone elsewhere (a click
+    // on another window).
+    function endHintMode(giveBack = true): void {
         if (!tasks.hintMode)
             return;
         tasks.hintMode = false;
         hintTimeout.stop();
         Plasmoid.status = PlasmaCore.Types.PassiveStatus;
+        const back = tasks.hintReturnTask;
+        tasks.hintReturnTask = null;
+        if (giveBack && back && back.valid)
+            tasks.tasksModel.requestActivate(back);
     }
     Timer {
         id: hintTimeout
@@ -1011,7 +1033,7 @@ PlasmoidItem {
     Item {
         id: hintKeyReceiver
         // A click on another window takes the keyboard away.
-        onActiveFocusChanged: if (!activeFocus) tasks.endHintMode()
+        onActiveFocusChanged: if (!activeFocus) tasks.endHintMode(false)
         Keys.onPressed: (event) => {
             event.accepted = true;
             const code = event.nativeScanCode;
@@ -1025,6 +1047,7 @@ PlasmoidItem {
             // ActiveStatus first: the panel then forgets the window it would
             // give the keyboard back to, and the task's window stays active.
             tasks.hintMode = false;
+            tasks.hintReturnTask = null;
             hintTimeout.stop();
             Plasmoid.status = PlasmaCore.Types.ActiveStatus;
             task.showPress();

@@ -443,10 +443,7 @@ Kirigami.Page {
     // Called by the config dialog right before it writes the cfg_ properties
     // back. Also covers changes that bypass onValueChanged (the containment
     // writes length/expanding from C++).
-    // Before the cfg_ values are written: a page can still change them.
-    signal aboutToSave()
     function saveConfig(): void {
-        configPage.aboutToSave();
         for (const key of configPage.plasmoidConfiguration.keys())
             configPage._followLiveValue(key);
         // What's on the page has just become the saved state.
